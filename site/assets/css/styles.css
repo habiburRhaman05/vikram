@@ -1388,14 +1388,7 @@ p:last-child { margin-bottom: 0; }
   background: color-mix(in srgb, var(--aqua-500) 4%, white);
   padding-top: 40px;
 }
-.plan--featured::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 4px;
-  border-radius: var(--r-lg) var(--r-lg) 0 0;
-  background: var(--aqua-500);
-}
+
 .plan--featured:hover { box-shadow: var(--sh-lg), 0 0 0 1px var(--aqua-500); }
 
 .plan__badge {
