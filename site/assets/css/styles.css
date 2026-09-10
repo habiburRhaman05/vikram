@@ -1594,18 +1594,12 @@ p:last-child { margin-bottom: 0; }
 
 /* Wrapper for any pasted GHL snippet. Keeps iframes on-brand and responsive. */
 .ghl-embed {
-  position: relative;
-  background: var(--paper);
+ 
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
-  box-shadow: var(--sh-lg);
-  overflow: hidden;
+
 }
-.ghl-embed iframe {
-  display: block;
-  width: 100% !important;
-  border: 0;
-}
+
 
 /* Contact form: GHL ships height:100%, which collapses in normal flow, so
    the iframe carries an explicit pixel height sized to this form's actual
@@ -2070,4 +2064,8 @@ p:last-child { margin-bottom: 0; }
   .footer-bottom { flex-direction: column; align-items: stretch; gap: 18px; }
   .footer-meta { line-height: 1.65; }
   .footer-bottom nav { gap: 20px; }
+}
+
+.topbar{
+  display: none;
 }
