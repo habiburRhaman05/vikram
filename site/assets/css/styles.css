@@ -335,6 +335,14 @@ p:last-child { margin-bottom: 0; }
 .btn--lg { padding: 17px 32px; font-size: 1.03rem; }
 .btn--block { width: 100%; }
 
+/* Icons inside CTAs use the same feather-style stroke language as the rest
+   of the site; size them relative to the button variant and keep the text
+   vertically aligned with them (the .btn row already centres content). */
+.btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+.btn--lg svg { width: 19px; height: 19px; }
+.btn--sm svg { width: 16px; height: 16px; }
+.btn--block svg { flex-shrink: 0; }
+
 .btn-row {
   display: flex;
   flex-wrap: wrap;
