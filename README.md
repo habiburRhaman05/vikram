@@ -84,18 +84,18 @@ fields change) rather than reverting to `data-height`.
 (`420px`) than before - it's a guard against a blank flash before the
 explicit height above applies, not a size to grow into.
 
-### Still to paste - chat widget
+### Chat widget (wired in)
 
-Every page has this slot just above `</body>`:
+Every page carries the GHL chat widget just above `</body>`:
 
 ```html
-<!-- GHL EMBED SLOT - CHAT WIDGET -->
-<!-- PASTE GHL CHAT WIDGET CODE HERE -->
+<!-- GHL CHAT WIDGET (site-wide) -->
+<script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6aa299149639fc2c916e7c72"></script>
 ```
 
-Paste the snippet into **all 8 pages** (it's a per-page script tag, not shared).
-For the four generated pages, paste it into `platform.html`'s footer block and
-re-run `assemble.js` instead.
+It's a per-page script tag, so all 8 pages need it. The four generated pages
+get it from `platform.html`'s footer block - re-run `assemble.js` to
+propagate changes there.
 
 ---
 
@@ -144,7 +144,6 @@ quicktaxnbooks.com site.
 
 ## Before launch
 
-- [ ] Paste the chat-widget snippet into all 8 pages
 - [ ] Legal review of `privacy.html` and `terms.html` (both carry a visible draft banner - remove it once reviewed)
 - [ ] Confirm office hours (currently Mon–Fri 9am–6pm ET) and the phone/email as the agency-facing contacts
 - [ ] Decide whether to name the AI receptionist

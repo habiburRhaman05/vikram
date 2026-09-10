@@ -118,6 +118,9 @@ html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
   scroll-padding-top: 96px;
+  overflow-x: hidden; /* safety net - nothing on the page should need this, but a full-bleed
+                          section (.flow-bleed's 100vw trick) is exactly the kind of thing that
+                          can introduce a stray 1px horizontal scrollbar on some browsers */
 }
 
 body {
@@ -369,6 +372,10 @@ p:last-child { margin-bottom: 0; }
   min-height: 40px;
   text-align: center;
 }
+/* The announcement is a single short line on desktop but wraps to two or
+   three on a phone - balance keeps each line roughly equal instead of
+   leaving one orphaned word dangling on its own line. */
+.topbar__inner span { text-wrap: balance; }
 .topbar strong { color: var(--on-dark); font-weight: 600; }
 .topbar a { color: var(--aqua-400); font-weight: 600; }
 .topbar a:hover { text-decoration: underline; }
@@ -444,6 +451,15 @@ p:last-child { margin-bottom: 0; }
   flex-shrink: 0;
   margin-left: auto; /* .nav__links is out of flow now, so this pins actions right */
 }
+
+/* Duplicate "Book a Demo": .nav__cta-desktop is the one in .nav__actions
+   above, .nav__cta-mobile is a second copy inside the dropdown menu itself
+   (added in markup after the plain links). Below the 1150px cutover the
+   desktop one hides and the dropdown one shows - see Responsive - so the
+   header row in mobile mode only ever has to fit the logo and the toggle,
+   not the logo AND a button AND the phone number squeezed into one row on
+   a phone screen. */
+.nav__cta-mobile { display: none; }
 .nav__phone {
   display: inline-flex;
   align-items: center;
@@ -458,40 +474,66 @@ p:last-child { margin-bottom: 0; }
 .nav__phone:hover { color: var(--aqua-600); }
 
 /* Mobile toggle ---------------------------------------------------------- */
+/* Compact icon button (44px, rounded corners, subtle border) carrying the
+   three-bar hamburger icon, which folds into an X when open. Styled in the
+   same language as the .btn components. Hidden on desktop; appears at the
+   1150px cutover, where it becomes the only thing in the header row besides
+   the logo (the phone hid earlier and the CTA moved into the dropdown). */
 .nav__toggle {
   display: none;
+  align-items: center;
+  justify-content: center;
   width: 44px; height: 44px;
+  padding: 0;
   border: 1px solid var(--line);
-  border-radius: var(--r-sm);
+  border-radius: var(--r-md);
   background: var(--paper);
   cursor: pointer;
-  padding: 0;
-  place-items: center;
+  transition: border-color .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
 }
-.nav__toggle span {
+.nav__toggle:hover {
+  border-color: rgba(31, 199, 172, .5);
+  background: var(--mist);
+  transform: translateY(-1px);
+}
+.nav__toggle:active { transform: translateY(0); }
+
+/* The three-bar icon (middle bar + the two pseudo-element bars above and
+   below it) that folds into an X when the menu is open. */
+.nav__toggle-bars {
+  position: relative;
   display: block;
   width: 18px; height: 2px;
   background: var(--text);
   border-radius: 2px;
-  position: relative;
+  flex-shrink: 0;
   transition: background .2s var(--ease);
 }
-.nav__toggle span::before,
-.nav__toggle span::after {
+.nav__toggle-bars::before,
+.nav__toggle-bars::after {
   content: "";
   position: absolute;
   left: 0;
   width: 18px; height: 2px;
   background: var(--text);
   border-radius: 2px;
-  transition: transform .24s var(--ease);
+  transition: transform .26s var(--ease), background .2s var(--ease);
 }
-.nav__toggle span::before { top: -6px; }
-.nav__toggle span::after  { top: 6px; }
+.nav__toggle-bars::before { top: -6px; }
+.nav__toggle-bars::after  { top: 6px; }
 
-.nav__toggle[aria-expanded="true"] span { background: transparent; }
-.nav__toggle[aria-expanded="true"] span::before { transform: translateY(6px) rotate(45deg); }
-.nav__toggle[aria-expanded="true"] span::after  { transform: translateY(-6px) rotate(-45deg); }
+/* Open state: the button inverts to the dark brand colour and the bars
+   fold into an X. */
+.nav__toggle[aria-expanded="true"] {
+  background: var(--ink-900);
+  border-color: var(--ink-900);
+  box-shadow: var(--sh-sm);
+}
+.nav__toggle[aria-expanded="true"] .nav__toggle-bars { background: transparent; }
+.nav__toggle[aria-expanded="true"] .nav__toggle-bars::before { transform: translateY(6px) rotate(45deg); }
+.nav__toggle[aria-expanded="true"] .nav__toggle-bars::after  { transform: translateY(-6px) rotate(-45deg); }
+.nav__toggle[aria-expanded="true"] .nav__toggle-bars::before,
+.nav__toggle[aria-expanded="true"] .nav__toggle-bars::after { background: #fff; }
 
 
 /* 07. Hero ================================================================ */
@@ -542,6 +584,13 @@ p:last-child { margin-bottom: 0; }
   gap: 64px;
   align-items: center;
 }
+/* Grid items default to min-width: auto, which sizes the tracks to the
+   widest unbreakable content inside them. The inbox mock's single-line
+   message text (white-space: nowrap) is exactly that kind of content, and
+   on phones it pushed both columns past the viewport edge, clipping the
+   heading and paragraph. min-width: 0 lets the tracks shrink to the space
+   that's actually available. */
+.hero__inner > * { min-width: 0; }
 
 .hero h1 { color: #fff; }
 .hero .lede {
@@ -582,6 +631,7 @@ p:last-child { margin-bottom: 0; }
   font-size: .875rem;
   color: var(--on-dark-muted);
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 9px;
 }
@@ -761,8 +811,11 @@ p:last-child { margin-bottom: 0; }
   background: var(--paper);
   padding-block: 30px;
 }
+/* Label and items start from the left edge of the container instead of
+   being centred - the section reads as a lead-in to the content below it
+   rather than a standalone centred block. */
 .trustbar__label {
-  text-align: center;
+  text-align: left;
   font-family: var(--font-display);
   font-size: .76rem;
   font-weight: 700;
@@ -774,7 +827,7 @@ p:last-child { margin-bottom: 0; }
 .trustbar__items {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 14px 40px;
 }
@@ -1070,6 +1123,13 @@ p:last-child { margin-bottom: 0; }
 /* 11. Pipeline / steps ==================================================== */
 
 .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; counter-reset: step; }
+/* Was an inline style on industries.html (a 2x2 grid sitting in a half-width
+   column). Inline styles beat every external rule regardless of specificity,
+   which meant the 640px breakpoint's `.steps { grid-template-columns: 1fr }`
+   below could never actually collapse it on a phone - a real, silent gap in
+   mobile coverage. A class-based modifier plays by the normal cascade rules
+   instead, so that collapse applies correctly again. */
+.steps--2col { grid-template-columns: 1fr 1fr; }
 .step { position: relative; padding-top: 30px; }
 .step::before {
   content: "";
@@ -1151,6 +1211,11 @@ p:last-child { margin-bottom: 0; }
 
 /* ---- .tl: straight sequence ---------------------------------------------- */
 
+/* Desktop: four steps sit side by side, each with its node on top and the
+   step number, title and description centred beneath it, joined by a
+   horizontal connector. Below the 900px cutover this becomes a vertical
+   rail timeline (icon on the left, content stacked to the right) - see
+   Responsive. */
 .tl { display: flex; align-items: flex-start; }
 
 .tl-step { position: relative; flex: 1; min-width: 0; text-align: center; padding: 0 6px; }
@@ -1234,13 +1299,10 @@ p:last-child { margin-bottom: 0; }
 .tl-step h4 { margin-bottom: 8px; }
 .tl-step p { font-size: .91rem; color: var(--text-mid); max-width: 240px; margin-inline: auto; }
 
-/* Compact modifier: used for the mobile branch groups, where three of
-   these sit stacked instead of one set of four spanning the page. */
-.tl--compact .tl-node { width: 44px; height: 44px; margin-bottom: 14px; }
+/* Compact modifier: a smaller node for the branch groups on platform.html
+   (those render only on mobile, where the vertical rail applies). */
+.tl--compact .tl-node { width: 44px; height: 44px; }
 .tl--compact .tl-node svg { width: 18px; height: 18px; }
-.tl--compact .tl-step:not(:first-child)::before,
-.tl--compact .tl-fill,
-.tl--compact .tl-pulse { top: 22px; }
 .tl--compact .tl-step p { font-size: .87rem; }
 
 /* ---- .flow: branching diagram (desktop) ---------------------------------- */
@@ -1587,6 +1649,17 @@ p:last-child { margin-bottom: 0; }
   align-items: start;
 }
 
+/* book.html's aside+calendar layout - same shape as .contact-grid, was an
+   inline style with no responsive rule attached at all, so a fixed 340px
+   sidebar plus the calendar iframe were both trying to fit side by side
+   on any screen, phones included. */
+.book-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 56px;
+  align-items: start;
+}
+
 .info-card {
   background: var(--paper);
   border: 1px solid var(--line);
@@ -1737,12 +1810,92 @@ p:last-child { margin-bottom: 0; }
 
 /* 17. Responsive ========================================================== */
 
-/* .flow's six-column branch fork needs real width to stay legible - well
-   more than a typical 2/3-column grid needs, hence its own breakpoint
-   rather than reusing 1080px. Below it, the grouped .flow-mobile fallback
-   takes over entirely (see the call-automation section in platform.html). */
+/* .flow's six-column branch fork and the centered desktop nav both need
+   more width than a typical 2/3-column grid does, hence a dedicated
+   breakpoint above the general 1080px one rather than reusing it:
+     - .flow: below this, .flow-bleed hides and the grouped .flow-mobile
+       fallback (see platform.html's call-automation section) takes over.
+     - Nav: the centered nav (brand left, links dead-centre, phone+CTA+
+       logo right) was modelled with real content widths - it starts
+       overlapping its own logo/actions around ~900-1100px, and only
+       clears with margin to spare at 1150px, so that's where the toggle
+       takes over instead of 900px. */
 @media (max-width: 1150px) {
   .flow-bleed { display: none; }
+
+  .nav { gap: 16px; }
+  .nav__toggle { display: inline-flex; }
+
+  .nav__links {
+    position: fixed;
+    inset: 0 0 auto;
+    top: var(--header-h, 74px);
+    /* Content height (5 links + the CTA button added below them) has no
+       relationship to viewport height, since this is position:fixed rather
+       than something that scrolls with the page - on a short viewport
+       (landscape phone, a small laptop window with dev tools open) it can
+       genuinely be taller than the space below the header. Without its own
+       scroll, whatever doesn't fit renders off the bottom of the screen and
+       stays unreachable; nothing else on the page can scroll it into view. */
+    max-height: calc(100vh - var(--header-h, 74px));
+    overflow-y: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    margin: 0;
+    padding: 18px var(--gutter) 28px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    border-radius: 0 0 var(--r-lg) var(--r-lg);
+    box-shadow: var(--sh-lg);
+    transform: translateY(-12px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .22s var(--ease), transform .22s var(--ease), visibility .22s;
+  }
+  /* A thin brand accent along the top edge of the panel ties the dropdown
+     to the header above it instead of reading as a floating white slab. */
+  .nav__links::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+    background: var(--grad-accent);
+  }
+  .nav__links.is-open { opacity: 1; visibility: visible; transform: none; }
+  .nav__link {
+    position: relative;
+    padding: 15px 16px 15px 20px;
+    font-size: 1.02rem;
+    border-radius: var(--r-md);
+  }
+  .nav__link:hover { background: var(--mist); color: var(--text); }
+  /* The current page gets a tinted row plus a small accent bar on the left
+     edge, mirroring the panel's top accent line, so it's obvious at a
+     glance which page you're on. */
+  .nav__link.is-active {
+    background: rgba(31, 199, 172, .09);
+    color: var(--ink-900);
+  }
+  .nav__link.is-active::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 3px; height: 20px;
+    border-radius: 3px;
+    background: var(--grad-accent);
+  }
+
+  .nav__actions { margin-left: auto; }
+  .nav__phone { display: none; }
+
+  /* Swap which "Book a Demo" copy shows, per the comment on
+     .nav__cta-mobile above - keeps the mobile header row down to just the
+     logo and the toggle. */
+  .nav__cta-desktop { display: none; }
+  .nav__cta-mobile { display: flex; margin-top: 16px; }
 }
 @media (min-width: 1151px) {
   .flow-mobile { display: none; }
@@ -1751,66 +1904,65 @@ p:last-child { margin-bottom: 0; }
 @media (max-width: 1080px) {
   :root { --section-y: 88px; }
 
+  .hero { padding-block: 92px 100px; }
   .hero__inner { grid-template-columns: 1fr; gap: 56px; }
-  .hero__visual { max-width: 560px; }
+  /* width: 100% is what actually lets the visual shrink on narrow screens:
+     with only margin-inline: auto + max-width, the grid item sizes itself
+     to its content's min-content (the nowrap mock text ~466px) and stays
+     pinned wider than the viewport. width: 100% + max-width gives 560px on
+     tablets (centred by the auto margins) and full-width on phones. */
+  .hero__visual { width: 100%; max-width: 560px; margin-inline: auto; }
   .hero .lede { max-width: none; }
 
   .spotlight { gap: 48px; }
   .spotlight + .spotlight { margin-top: 88px; }
 
   .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  .book-grid { grid-template-columns: 1fr; gap: 40px; }
 }
 
 @media (max-width: 900px) {
-  /* Mobile navigation */
-  .nav__toggle { display: grid; }
-
-  .nav__links {
-    position: fixed;
-    inset: 0 0 auto;
-    top: var(--header-h, 74px);
-    flex-direction: column;
-    align-items: stretch;
-    gap: 2px;
-    margin: 0;
-    padding: 16px var(--gutter) 26px;
-    background: var(--paper);
-    border-bottom: 1px solid var(--line);
-    box-shadow: var(--sh-lg);
-    transform: translateY(-12px);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity .22s var(--ease), transform .22s var(--ease), visibility .22s;
-  }
-  .nav__links.is-open { opacity: 1; visibility: visible; transform: none; }
-  .nav__link { padding: 14px 12px; font-size: 1.02rem; border-radius: var(--r-md); }
-
-  .nav__actions { margin-left: auto; }
-  .nav__phone { display: none; }
 
   .grid--3, .grid--4 { grid-template-columns: repeat(2, 1fr); }
   .steps { grid-template-columns: repeat(2, 1fr); gap: 32px 24px; }
   .stats { grid-template-columns: repeat(2, 1fr); gap: 20px 2px; }
 
-  /* .tl: a horizontal row of 4 (or 3, compact) no longer fits - the
-     connector rotates from a horizontal line above each node to a
-     vertical one to its left, and steps stack instead of sitting side by
-     side. Same elements, same classes, just re-pointed: `right:50%` (this
+  /* .tl: four steps side by side no longer fit, so the timeline becomes a
+     vertical rail - icon on the left, content stacked to the right - the
+     phone format from the design. The connector rotates from a horizontal
+     line above each node to a vertical one to its left: `right:50%` (this
      step's centre, reaching left to the previous step) becomes `left:26px`
-     (this node's own centre-x, reaching UP to the previous step, which is
-     now directly above rather than to the left). */
-  .tl { flex-direction: column; align-items: stretch; }
-  .tl-step { text-align: left; display: flex; align-items: flex-start; gap: 20px; padding: 0 0 40px; }
-  .tl-step:last-child { padding-bottom: 0; }
-  .tl-node { margin: 0; flex-shrink: 0; }
-  .tl-step p { max-width: none; }
+     (this node's own centre-x, reaching UP to the next step, which is now
+     directly below rather than to the right). */
+  .tl { flex-direction: column; align-items: stretch; max-width: 560px; margin-inline: auto; }
 
+  .tl-step {
+    display: grid;
+    grid-template-columns: 54px 1fr;
+    column-gap: 20px;
+    row-gap: 6px;
+    padding: 0 0 40px;
+    text-align: left;
+  }
+  .tl-step:last-child { padding-bottom: 0; }
+  .tl-node { grid-column: 1; grid-row: 1 / 4; align-self: start; margin: 0; }
+  .tl-step__num { grid-column: 2; grid-row: 1; display: block; margin-bottom: 0; }
+  .tl-step h4 { grid-column: 2; grid-row: 2; margin-bottom: 0; }
+  .tl-step p { grid-column: 2; grid-row: 3; margin: 0; max-width: none; }
+
+  /* Vertical connector: `bottom: 0` (not a fixed height) means it always
+     reaches the next step regardless of how tall this step's description
+     is. The last step has no next step to reach, so its connector is
+     dropped rather than dangling past the list. */
   .tl-step:not(:first-child)::before,
   .tl-fill,
   .tl-pulse {
-    top: 54px; left: 26px; right: auto;
-    width: 2px; height: calc(100% - 34px);
+    top: 54px; left: 26px; right: auto; bottom: 0;
+    width: 2px; height: auto;
   }
+  .tl-step:last-child::before,
+  .tl-step:last-child .tl-fill,
+  .tl-step:last-child .tl-pulse { display: none; }
   .tl-fill { transform: scaleY(0); transform-origin: top; }
   .tl.is-in .tl-fill { transform: scaleY(1); }
   .tl-pulse::after { top: 0; left: 50%; margin-top: 0; margin-left: -3.5px; }
@@ -1822,9 +1974,17 @@ p:last-child { margin-bottom: 0; }
     100% { top: 100%; opacity: 0; }
   }
 
+  /* Compact groups keep the same rail with a smaller icon. */
+  .tl--compact { max-width: 440px; }
+  .tl--compact .tl-step { grid-template-columns: 44px 1fr; column-gap: 20px; }
+  .tl--compact .tl-node { grid-row: 1 / 3; }
+  .tl--compact .tl-node svg { width: 18px; height: 18px; }
   .tl--compact .tl-step:not(:first-child)::before,
   .tl--compact .tl-fill,
-  .tl--compact .tl-pulse { top: 44px; left: 21px; height: calc(100% - 24px); }
+  .tl--compact .tl-pulse { top: 44px; left: 21px; }
+  .tl--compact .tl-step h4 { grid-row: 1; }
+  .tl--compact .tl-step p { grid-row: 2; }
+
   .plans { grid-template-columns: 1fr; max-width: 460px; margin-inline: auto; }
   .plan--featured { order: -1; }
 
@@ -1840,8 +2000,24 @@ p:last-child { margin-bottom: 0; }
 
   body { font-size: 16px; }
 
-  .hero { padding-block: 68px 84px; }
+  /* The announcement wraps to two lines on a phone - smaller type and a
+     touch more line-height keep it readable in the 40px-high bar. */
+  .topbar { font-size: .76rem; }
+  .topbar__inner { min-height: 44px; line-height: 1.45; }
+
+  /* At this width the header row is just the logo and the toggle (the CTA
+     already moved into the dropdown at 1150px, the phone number hid even
+     earlier) - 200px is comfortable up there, but on a 320-360px phone a
+     header that's half logo looks oversized rather than just proportionate. */
+  .brand__logo { width: 160px; }
+
+  .hero { padding-block: 60px 76px; }
+  .hero__inner { gap: 44px; }
+  .hero h1 { font-size: clamp(2.2rem, 8.5vw, 2.8rem); }
+  .hero .btn-row { margin-top: 28px; }
   .hero .btn-row .btn { width: 100%; }
+  .hero__pill { flex-wrap: wrap; row-gap: 8px; }
+  .hero__note { align-items: flex-start; }
 
   .grid--2, .grid--3, .grid--4 { grid-template-columns: 1fr; }
   .steps { grid-template-columns: 1fr; }
@@ -1863,8 +2039,27 @@ p:last-child { margin-bottom: 0; }
   .footer-top { flex-direction: column; align-items: flex-start; gap: 22px; }
   .footer-bottom { flex-direction: column; align-items: flex-start; }
 
-  .feature-row { grid-template-columns: 1fr; gap: 12px; }
-
-  .trustbar__items { gap: 14px 24px; }
+  .feature-row { grid-template-columns: 1fr; gap: 12px; }  .trustbar__items { gap: 14px 24px; }
   .trust-item { font-size: .86rem; }
+
+  /* ---- Footer (mobile) ---- */
+  /* Brand, nav and CTA stack into one column; the nav becomes a full-width
+     vertical list with roomy tap targets and hairline separators, and the
+     demo CTA takes the whole row. */
+  .footer-top { flex-direction: column; align-items: stretch; gap: 26px; }
+
+  .footer-nav { flex-direction: column; gap: 0; }
+  .footer-nav a {
+    padding: 13px 2px;
+    border-radius: 0;
+    font-size: .98rem;
+    border-bottom: 1px solid var(--line-dark-soft);
+  }
+  .footer-nav a:last-child { border-bottom: 0; }
+
+  .footer-top .btn { width: 100%; }
+
+  .footer-bottom { flex-direction: column; align-items: stretch; gap: 18px; }
+  .footer-meta { line-height: 1.65; }
+  .footer-bottom nav { gap: 20px; }
 }

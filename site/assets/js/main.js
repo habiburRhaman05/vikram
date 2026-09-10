@@ -45,8 +45,10 @@
     var links  = document.querySelector(".nav__links");
 
     if (toggle && links) {
+      // The accessible name tracks the open/closed state.
       var setMenu = function (open) {
         toggle.setAttribute("aria-expanded", String(open));
+        toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
         links.classList.toggle("is-open", open);
       };
 
