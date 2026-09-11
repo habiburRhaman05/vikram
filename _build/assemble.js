@@ -65,7 +65,7 @@ const pages = [
 ];
 
 const FAVICON_LINKS = `<link rel="icon" href="assets/img/favicon.ico" sizes="32x32">
-<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/favicon.ico" type="image/svg+xml">
 <link rel="icon" href="assets/img/favicon-96x96.png" type="image/png" sizes="96x96">`;
 
 const withTopbar = (page) => {
