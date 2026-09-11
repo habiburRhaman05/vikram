@@ -1,5 +1,5 @@
 /* ==========================================================================
-   QuickTaxnBooks - Agency / Platform site
+   GHLevelUp - Agency / Platform site
    Design system + components
    --------------------------------------------------------------------------
    Contents
@@ -423,8 +423,22 @@ p:last-child { margin-bottom: 0; }
 .brand {
   display: inline-flex;
   align-items: center;
+  gap: 10px;
   flex: 1 1 0;
 }
+
+/* Company name set beside the logo mark, split into its two halves so
+   each can carry its own brand color - "GH" in the accent teal, the
+   "LevelUp" half in dark navy ink. */
+.brand__name {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.brand__name-gh { color: #04BF56; }
+.brand__name-levelup { color: var(--ink-900); }
 
 /* Header and footer use two DIFFERENT logo files, each shaped for its own
    context, and each on its own class - not a shared asset any more, and
@@ -474,7 +488,7 @@ p:last-child { margin-bottom: 0; }
   color: var(--text-mid);
   transition: color .16s var(--ease), background .16s var(--ease);
 }
-.nav__link:hover { color: var(--text); background: var(--mist); }
+.nav__link:hover { color: var(--aqua-600); }
 .nav__link.is-active { color: var(--text); font-weight: 600; }
 
 .nav__actions {
@@ -1916,7 +1930,7 @@ p:last-child { margin-bottom: 0; }
     font-size: 1.02rem;
     border-radius: var(--r-md);
   }
-  .nav__link:hover { background: var(--mist); color: var(--text); }
+  .nav__link:hover { color: var(--aqua-600); }
   /* The current page gets a tinted row plus a small accent bar on the left
      edge, mirroring the panel's top accent line, so it's obvious at a
      glance which page you're on. */

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   QuickTaxnBooks - site behaviour
+   GHLevelUp - site behaviour
    No dependencies. Safe to inline into a GoHighLevel custom-code block.
    --------------------------------------------------------------------------
      1. Sticky header shadow
