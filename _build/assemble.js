@@ -64,10 +64,9 @@ const pages = [
   }
 ];
 
-const FAVICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>" +
-  "<rect width='32' height='32' rx='8' fill='%23070D18'/>" +
-  "<path d='M9 21V11h5.4c2 0 3.3 1.1 3.3 2.8 0 1.2-.7 2-1.7 2.4 1.3.3 2.2 1.3 2.2 2.7 0 1.9-1.4 3.1-3.6 3.1H9Z' fill='%233DE0C6'/>" +
-  "<path d='M20.5 21v-6.5h2.2V21h-2.2Z' fill='%237C6BFF'/></svg>";
+const FAVICON_LINKS = `<link rel="icon" href="assets/img/favicon.ico" sizes="32x32">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/favicon-96x96.png" type="image/png" sizes="96x96">`;
 
 const withTopbar = (page) => {
   if (!TOPBAR_RE.test(header)) {
@@ -94,7 +93,7 @@ const shell = (page, body) => `<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/styles.css">
-<link rel="icon" href="${FAVICON}">
+${FAVICON_LINKS}
 </head>
 <body>
 

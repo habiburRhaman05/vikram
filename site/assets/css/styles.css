@@ -417,14 +417,32 @@ p:last-child { margin-bottom: 0; }
   flex-shrink: 0;
 }
 
-/* Logo art is a wide lockup — icon + wordmark — at a 3:1 aspect ratio.
-   Width is set; height follows automatically. Same size and markup in the
-   header and the footer; only the file differs between them:
-     - header (light background): logo.png, dark-navy wordmark
-     - footer (dark background):  logo-dark.png, white wordmark */
+/* Header and footer use two DIFFERENT logo files, each shaped for its own
+   context, and each on its own class - not a shared asset any more, and
+   not sharing CSS via ancestor scoping either:
+     - header (light background): logo.png via .brand__logo - a
+       near-square badge (icon + "ghlevelup" stacked, ~1.166:1) on an
+       opaque dark-navy fill. Sized by height, and given its own corner
+       radius + shadow so its hard PNG rectangle reads as a deliberate
+       badge rather than a stray dark box.
+     - footer (dark background): footer-logo.png via .footer-logo - a wide
+       horizontal lockup (~2.79:1) on a TRANSPARENT background with a
+       white wordmark, built for sitting directly on a dark surface.
+       Badge treatment (radius/shadow) would be wrong here - a shadow
+       would draw around the image's full transparent bounding box, not
+       just the visible logo marks - so it gets none. */
 .brand__logo {
   display: block;
-  width: 200px;
+  height: 44px;
+  width: auto;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(5, 10, 18, .18);
+}
+
+.footer-logo {
+  display: block;
+  height: 64px;
+  width: auto;
 }
 
 /* Links ------------------------------------------------------------------ */
@@ -1596,11 +1614,17 @@ p:last-child { margin-bottom: 0; }
 /* 14. Embeds (GoHighLevel) ================================================ */
 
 /* Wrapper for any pasted GHL snippet. Keeps iframes on-brand and responsive. */
+/* overflow:hidden is load-bearing here, not decoration: the embedded
+   iframe carries its OWN corner radius (GHL's inline style - 8px on the
+   contact form, e.g.), which doesn't match this wrapper's 20px. Without
+   clipping, the iframe's sharper corners poke out past this box's rounder
+   ones at each corner - exactly what read as a "broken" border. Clipping
+   the iframe to this box's shape makes its own radius irrelevant; only
+   the wrapper's corner is ever visible. */
 .ghl-embed {
- 
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
-
+  overflow: hidden;
 }
 
 
@@ -2012,9 +2036,11 @@ p:last-child { margin-bottom: 0; }
 
   /* At this width the header row is just the logo and the toggle (the CTA
      already moved into the dropdown at 1150px, the phone number hid even
-     earlier) - 200px is comfortable up there, but on a 320-360px phone a
-     header that's half logo looks oversized rather than just proportionate. */
-  .brand__logo { width: 160px; }
+     earlier) - trim the badge down a touch so it doesn't dominate a
+     320-360px phone header. .footer-logo is its own class now, sized
+     independently. */
+  .site-header .brand__logo { height: 38px; }
+  .footer-logo { height: 50px; }
 
   .hero { padding-block: 60px 76px; }
   .hero__inner { gap: 44px; }
