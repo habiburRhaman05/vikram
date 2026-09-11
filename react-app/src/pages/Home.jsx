@@ -166,10 +166,10 @@ export default function Home() {
           ))}
         </div>
         <Reveal className="btn-row" style={{ marginTop: 48 }}>
-          <a className="link-arrow" href="/platform">
-            Explore every feature in detail
+          <Link className="link-arrow" to="/platform">
             <Icon name="arrowRight" strokeWidth={2.5} width={17} height={17} />
-          </a>
+            Explore every feature in detail
+          </Link>
         </Reveal>
       </Section>
 

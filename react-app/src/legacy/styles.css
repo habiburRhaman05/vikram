@@ -346,24 +346,27 @@ p:last-child { margin-bottom: 0; }
 .btn--sm svg { width: 16px; height: 16px; }
 .btn--block svg { flex-shrink: 0; }
 
-/* Floating "back to top" button (React app only - see ScrollToTop.jsx).
+/* Floating "back to top" pill (React app only - see ScrollToTop.jsx).
    Bottom-left deliberately, so it never sits under the GHL chat bubble
-   (bottom-right on every page). Same outline-button language as
-   .btn--outline: teal border + teal icon at rest, filling solid teal with
-   a white icon on hover. */
+   (bottom-right on every page). Same outline-button language and markup
+   order as .btn--outline: icon leading, text after - teal border + teal
+   text/icon at rest, filling solid teal with white text/icon on hover. */
 .scroll-top-btn {
   position: fixed;
   left: 24px;
   bottom: 24px;
   z-index: 90;
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 20px;
   border-radius: var(--r-pill);
   background: var(--paper);
   border: 1.5px solid var(--aqua-600);
   color: var(--aqua-600);
+  font-family: var(--font-display);
+  font-size: .89rem;
+  font-weight: 700;
   box-shadow: var(--sh-md);
   cursor: pointer;
   opacity: 0;
@@ -375,10 +378,9 @@ p:last-child { margin-bottom: 0; }
 }
 .scroll-top-btn.is-visible { opacity: 1; visibility: visible; transform: translateY(0); }
 .scroll-top-btn:hover { background: var(--grad-accent); color: #fff; box-shadow: var(--sh-glow); }
-.scroll-top-btn svg { width: 20px; height: 20px; }
+.scroll-top-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
 @media (max-width: 640px) {
-  .scroll-top-btn { left: 16px; bottom: 16px; width: 44px; height: 44px; }
-  .scroll-top-btn svg { width: 18px; height: 18px; }
+  .scroll-top-btn { left: 16px; bottom: 16px; padding: 11px 18px; }
 }
 
 .btn-row {
