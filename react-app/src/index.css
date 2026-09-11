@@ -1,0 +1,5 @@
+/* Migrated as-is from site/assets/css/styles.css - see src/legacy/styles.css
+   for the untouched copy this is generated from. Do not hand-edit visual
+   rules here without also reflecting the change back to the static site
+   (or retiring the static site, once this app replaces it). */
+@import "./legacy/styles.css";

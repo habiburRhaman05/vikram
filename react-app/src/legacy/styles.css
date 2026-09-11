@@ -346,8 +346,7 @@ p:last-child { margin-bottom: 0; }
 .btn--sm svg { width: 16px; height: 16px; }
 .btn--block svg { flex-shrink: 0; }
 
-/* Floating "back to top" pill (see main.js's "8. Scroll to top" and the
-   .scroll-top-btn markup near the end of <body> on every page).
+/* Floating "back to top" pill (React app only - see ScrollToTop.jsx).
    Bottom-left deliberately, so it never sits under the GHL chat bubble
    (bottom-right on every page). Same outline-button language and markup
    order as .btn--outline: icon leading, text after - teal border + teal
@@ -499,6 +498,7 @@ p:last-child { margin-bottom: 0; }
   display: block;
   height: 44px;
   width: auto;
+  border-radius: 10px;
 
 }
 
@@ -2167,4 +2167,51 @@ p:last-child { margin-bottom: 0; }
 
 .topbar{
   display: none;
+}
+
+
+/* === Glass effect for GHL chat widget === */
+
+/* Main chat window container */
+#lc_text-widget--box {
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25) !important;
+  overflow: hidden !important;
+}
+
+/* Header bar */
+.lc_text-widget--header-wrapper {
+  background: rgba(0, 64, 193, 0.55) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Floating chat bubble button */
+.lc_text-widget--bubble {
+  background: rgba(17, 24, 40, 0.6) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Agency branding footer strip */
+.lc_text-widget--agency-branding {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+/* === Deeper elements (inside Shadow DOM) — override via CSS custom properties === */
+.lc_text-widget {
+  --chat-widget-background-color: rgba(255, 255, 255, 0.12) !important;
+  --chat-widget-header-color: rgba(0, 64, 193, 0.55) !important;
+  --chat-widget-received-message-color: rgba(242, 244, 247, 0.5) !important;
+  --chat-widget-sender-message-color: rgba(0, 64, 193, 0.75) !important;
+  --chat-widget-bubble-color: rgba(17, 24, 40, 0.6) !important;
 }

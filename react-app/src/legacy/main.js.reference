@@ -9,7 +9,6 @@
      5. Reveal on scroll
      6. Footer year
      7. GHL embed height guard
-     8. Scroll to top
    ========================================================================== */
 
 (function () {
@@ -166,22 +165,6 @@
         frame.style.height = floor + "px";
       }
     });
-
-
-    /* 8. Scroll to top ------------------------------------------------------ */
-    var scrollTopBtn = document.querySelector(".scroll-top-btn");
-
-    if (scrollTopBtn) {
-      var toggleScrollTopBtn = function () {
-        scrollTopBtn.classList.toggle("is-visible", window.scrollY > window.innerHeight * 0.6);
-      };
-      toggleScrollTopBtn();
-      window.addEventListener("scroll", toggleScrollTopBtn, { passive: true });
-
-      scrollTopBtn.addEventListener("click", function () {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-    }
 
   });
 })();

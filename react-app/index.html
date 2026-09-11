@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Per-page <title>/<meta description>/canonical/og: tags are rendered
+         by each page component (React 19 hoists <title>/<meta>/<link>
+         rendered anywhere in the tree up into <head> automatically) - see
+         src/hooks/usePageMeta.js. This is just the fallback shown before
+         the app mounts. -->
+    <title>GHLevelUp - The complete operating system for your tax practice</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon-96x96.png" type="image/png" sizes="96x96" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+
+    <!-- GHL CHAT WIDGET (site-wide, identical on every page - kept as a
+         plain script tag here rather than injected by React, since it is
+         genuinely global and not tied to any one route/component). -->
+    <script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6aa3ebfbf095905710c4d288"></script>
+ <script>
+(function () {
+  function injectGlassCSS(shadowRoot) {
+    if (shadowRoot.querySelector('#glass-effect-override')) return; // avoid duplicates
+    const style = document.createElement('style');
+    style.id = 'glass-effect-override';
+    style.textContent = `
+      #lc_text-widget--box {
+        background: rgba(255, 255, 255, 0.15) !important;
+        backdrop-filter: blur(20px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 20px !important;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.25) !important;
+        overflow: hidden !important;
+      }
+      .lc_text-widget--header-wrapper {
+        background: rgba(0, 64, 193, 0.55) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+      }
+      .lc_text-widget--bubble {
+        background: rgba(17, 24, 40, 0.6) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255,255,255,0.25) !important;
+      }
+      .lc_text-widget--agency-branding {
+        background: rgba(255,255,255,0.1) !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+      }
+    `;
+    shadowRoot.appendChild(style);
+  }
+
+  function tryInject() {
+    const widget = document.querySelector('chat-widget');
+    if (widget && widget.shadowRoot) {
+      injectGlassCSS(widget.shadowRoot);
+      return true;
+    }
+    return false;
+  }
+
+  // Widget loads asynchronously via loader.js, so poll + observe for it
+  if (!tryInject()) {
+    const observer = new MutationObserver(() => {
+      if (tryInject()) observer.disconnect();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+})();
+</script>
+  </body>
+</html>
