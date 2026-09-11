@@ -403,7 +403,6 @@ p:last-child { margin-bottom: 0; }
 }
 
 .nav {
-  position: relative; /* containing block for the centered .nav__links below */
   display: flex;
   align-items: center;
   gap: 32px;
@@ -411,10 +410,20 @@ p:last-child { margin-bottom: 0; }
 }
 
 /* Brand ------------------------------------------------------------------ */
+/* flex:1 1 0 here and on .nav__actions below (both grow from a zero basis)
+   is what actually centers .nav__links on the true middle of the bar: two
+   equal-flex-grow items are FORCED to end up the same rendered width
+   regardless of how different their own content's natural width is - the
+   logo (~50px) vs phone number + button (~300px) - so whichever is wider
+   sets the width both sides end up at, and .nav__links sitting between two
+   equal-width flanks lands exactly at centre by construction. Restored to
+   fixed-size (not flex-grown) for mobile - see Responsive - where
+   .nav__links leaves the flow entirely and the old 2-item "logo left,
+   actions pinned right via margin-left:auto" layout takes over instead. */
 .brand {
   display: inline-flex;
   align-items: center;
-  flex-shrink: 0;
+  flex: 1 1 0;
 }
 
 /* Header and footer use two DIFFERENT logo files, each shaped for its own
@@ -446,15 +455,13 @@ p:last-child { margin-bottom: 0; }
 }
 
 /* Links ------------------------------------------------------------------ */
-/* Centered on the full nav bar (not just the space between brand and
-   actions) via absolute positioning against .nav, which is position:relative
-   for exactly this. The mobile media query below overrides `position` to
-   `fixed`, so this has no effect once the menu collapses to the toggle. */
+/* Sits in normal flow, between .brand and .nav__actions in source order -
+   flex:0 0 auto (its own natural width, no grow/shrink) plus equal
+   flex-grow on both neighbours (see .brand above) is what puts it at the
+   true centre of the bar. The mobile media query below switches this to
+   position:fixed for the dropdown panel instead. */
 .nav__links {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -473,9 +480,9 @@ p:last-child { margin-bottom: 0; }
 .nav__actions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 12px;
-  flex-shrink: 0;
-  margin-left: auto; /* .nav__links is out of flow now, so this pins actions right */
+  flex: 1 1 0;
 }
 
 /* Duplicate "Book a Demo": .nav__cta-desktop is the one in .nav__actions
@@ -1855,6 +1862,16 @@ p:last-child { margin-bottom: 0; }
   .nav { gap: 16px; }
   .nav__toggle { display: inline-flex; }
 
+  /* .nav__links leaves the flow entirely below (position:fixed, for the
+     dropdown panel), which would otherwise leave .brand and .nav__actions
+     as the only two flex children left in .nav - and since both still
+     carry flex:1 1 0 from the desktop rule, they'd each grow to claim half
+     the row, landing the actions column in the middle of the header rather
+     than pinned to its right edge. Fixed sizing restores the old 2-item
+     "logo left, actions right" layout for exactly this narrower range. */
+  .brand { flex: none; }
+  .nav__actions { flex: none; margin-left: auto; }
+
   .nav__links {
     position: fixed;
     inset: 0 0 auto;
@@ -1917,7 +1934,6 @@ p:last-child { margin-bottom: 0; }
     background: var(--grad-accent);
   }
 
-  .nav__actions { margin-left: auto; }
   .nav__phone { display: none; }
 
   /* Swap which "Book a Demo" copy shows, per the comment on

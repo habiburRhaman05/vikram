@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="bn" style="margin: 0; padding: 0; width: 100%;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <title>BrainyBox BD — শিশুর শেখা হোক আনন্দময়</title>
+  <!--[if mso]>
+  <noscript><xml><o:OfficeDocumentSettings xmlns:o="urn:schemas-microsoft-com:office:office"><o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+  <![endif]-->
+  <style>
+@font-face {
+  font-family: 'FN Mamun Bornolipi Unicode';
+  src: local('FN Mamun Bornolipi Unicode');}
+@font-face {
+  font-family: 'Bornomala';
+  src: local('Bornomala');}
+@media only screen and (max-width: 620px) {
+  .email-shell {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .content-width {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .mobile-pad {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  .header-pad {
+    padding-top: 16px !important;
+    padding-bottom: 14px !important;
+  }
+
+  .logo-img {
+    width: 120px !important;
+  }
+
+  .intro-pad {
+    padding: 26px 20px 24px !important;
+  }
+
+  .headline {
+    font-size: 24px !important;
+    line-height: 1.35 !important;
+  }
+
+  .intro-copy {
+    font-size: 14px !important;
+    line-height: 1.65 !important;
+  }
+
+  .intro-label {
+    font-size: 15px !important;
+  }
+
+  .gift-pad {
+    padding: 4px 18px 24px !important;
+  }
+
+  .gift-img {
+    width: 100% !important;
+    max-width: 430px !important;
+  }
+
+  /* ---------- Categories: 2 per row on mobile ---------- */
+  .category-pad {
+    padding: 28px 14px 34px !important;
+  }
+
+  .section-title {
+    font-size: 22px !important;
+    line-height: 1.35 !important;
+  }
+
+  .category-pad .content-width,
+  .category-pad .content-width tbody {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .category-pad .content-width tr {
+    display: block !important;
+    font-size: 0 !important;
+    text-align: center !important;
+  }
+
+  .category-pad td.category-cell {
+    display: inline-block !important;
+    width: 50% !important;
+    max-width: 50% !important;
+    padding: 4px !important;
+    vertical-align: top !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+  }
+
+  .category-image {
+    width: 100% !important;
+    max-width: 112px !important;
+  }
+
+  .category-name {
+    font-size: 12px !important;
+    line-height: 1.3 !important;
+    padding-top: 8px !important;
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    word-wrap: break-word !important;
+    white-space: normal !important;
+  }
+
+  /* ---------- Products: 2 per row on mobile ---------- */
+  .products-pad {
+    padding: 30px 14px 32px !important;
+  }
+
+  .pgrid,
+  .pgrid tbody {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .pgrid tr {
+    display: block !important;
+    font-size: 0 !important;
+    text-align: center !important;
+  }
+
+  .pgrid td.pcard {
+    display: inline-block !important;
+    width: 47% !important;
+    max-width: 47% !important;
+    margin: 1.5% !important;
+    vertical-align: top !important;
+    box-sizing: border-box !important;
+  }
+
+  .pgrid td.pgap {
+    display: none !important;
+  }
+
+  .pgrid td.prow-sp {
+    display: none !important;
+    height: 0 !important;
+  }
+
+  .pcard {
+    padding: 8px 8px 12px !important;
+    border-radius: 10px !important;
+  }
+
+  .pimg {
+    max-width: 100% !important;
+    border-radius: 7px !important;
+  }
+
+  .pprice {
+    font-size: 14px !important;
+    margin-top: 7px !important;
+  }
+
+  .pold {
+    display: block !important;
+    font-size: 10px !important;
+  }
+
+  .poff {
+    font-size: 10px !important;
+    margin-top: 2px !important;
+  }
+
+  .pname {
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+    margin-top: 2px !important;
+  }
+
+  .plast {
+    width: 47% !important;
+    max-width: 47% !important;
+    margin: 8px auto 0 !important;
+  }
+
+  .feature-pad {
+    padding: 30px 18px 34px !important;
+  }
+
+  .feature-column {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 5px 0 !important;
+  }
+
+  .feature-card {
+    width: 100% !important;
+  }
+
+  .feature-inner {
+    padding: 18px 14px !important;
+  }
+
+  .feature-title {
+    font-size: 18px !important;
+    line-height: 1.35 !important;
+    margin-top: 8px !important;
+  }
+
+  .feature-copy {
+    font-size: 13px !important;
+    line-height: 1.55 !important;
+  }
+
+  /* ---------- Footer: full-width image, no side padding ---------- */
+  .footer-visual-pad {
+    padding: 26px 0 0 !important;
+  }
+
+  .footer-cta-pad {
+    padding: 0 16px 16px !important;
+  }
+
+  .footer-img {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+  }
+
+  .footer-contact {
+    padding: 22px 18px 30px !important;
+  }
+
+  .contact-line {
+    font-size: 13px !important;
+    line-height: 1.55 !important;
+  }
+
+  .social-icon {
+    width: 22px !important;
+  }
+
+  .policy-link {
+    display: block !important;
+    padding: 4px 0 !important;
+  }
+
+  .unsubscribe {
+    font-size: 11px !important;
+    line-height: 1.55 !important;
+  }
+}
+
+/* ===================== DARK MODE ===================== */
+:root { color-scheme: light dark; supported-color-schemes: light dark; }
+
+@media (prefers-color-scheme: dark) {
+  body, .dm-page { background: #0E1012 !important; background-color: #0E1012 !important; }
+  .dm-bg-1 { background: #15181A !important; background-color: #15181A !important; }
+  .dm-bg-2 { background: #1C2023 !important; background-color: #1C2023 !important; }
+  .pcard { background: #262B2F !important; background-color: #262B2F !important; }
+  .feature-card { background: #22272A !important; background-color: #22272A !important; }
+  .dm-tile-blue { background: #173A43 !important; background-color: #173A43 !important; }
+  .dm-tile-green { background: #26361C !important; background-color: #26361C !important; }
+  .dm-tile-grey { background: #2C3034 !important; background-color: #2C3034 !important; }
+  .dm-tile-peach { background: #3D2E1C !important; background-color: #3D2E1C !important; }
+  .dm-btn { background: #EDEDED !important; background-color: #EDEDED !important; }
+  .headline, .section-title { color: #F4F5F6 !important; }
+  .intro-label { color: #E9ECEE !important; }
+  .intro-copy { color: #C9CED2 !important; }
+  .category-name { color: #E6E9EB !important; }
+  .pprice { color: #5CCBDD !important; }
+  .pold { color: #9BA3A8 !important; }
+  .poff { color: #FFC247 !important; }
+  .pname { color: #EEF0F1 !important; }
+  .feature-title { color: #F2F4F5 !important; }
+  .feature-copy { color: #BFC5C9 !important; }
+  .contact-line { color: #D5D9DC !important; }
+  .policy-link, .dm-link { color: #C9CED2 !important; }
+  .unsubscribe { color: #8F979C !important; }
+  .dm-btn-text { color: #121416 !important; }
+  .dm-border { border-top-color: #2A2F33 !important; }
+  .logo-img { background: #F4F4F4 !important; padding: 8px 14px !important; border-radius: 12px !important; }
+  .dm-icon { background: #ECEFF1 !important; padding: 8px !important; border-radius: 50% !important; }
+
+  /* Social icons are no longer touched here - see the "why" note above the
+     footer markup below. Their white circular plate is now unconditional
+     (inline on each <img>, not class+media-query driven), so this block
+     has nothing left to do for them and doesn't try. */
+}
+
+/* Outlook.com / Outlook apps */
+  [data-ogsb] .dm-page { background: #0E1012 !important; background-color: #0E1012 !important; }
+  [data-ogsb] .dm-bg-1 { background: #15181A !important; background-color: #15181A !important; }
+  [data-ogsb] .dm-bg-2 { background: #1C2023 !important; background-color: #1C2023 !important; }
+  [data-ogsb] .pcard { background: #262B2F !important; background-color: #262B2F !important; }
+  [data-ogsb] .feature-card { background: #22272A !important; background-color: #22272A !important; }
+  [data-ogsb] .dm-tile-blue { background: #173A43 !important; background-color: #173A43 !important; }
+  [data-ogsb] .dm-tile-green { background: #26361C !important; background-color: #26361C !important; }
+  [data-ogsb] .dm-tile-grey { background: #2C3034 !important; background-color: #2C3034 !important; }
+  [data-ogsb] .dm-tile-peach { background: #3D2E1C !important; background-color: #3D2E1C !important; }
+  [data-ogsb] .dm-btn { background: #EDEDED !important; background-color: #EDEDED !important; }
+  [data-ogsc] .headline, [data-ogsc] .section-title { color: #F4F5F6 !important; }
+  [data-ogsc] .intro-label { color: #E9ECEE !important; }
+  [data-ogsc] .intro-copy { color: #C9CED2 !important; }
+  [data-ogsc] .category-name { color: #E6E9EB !important; }
+  [data-ogsc] .pprice { color: #5CCBDD !important; }
+  [data-ogsc] .pold { color: #9BA3A8 !important; }
+  [data-ogsc] .poff { color: #FFC247 !important; }
+  [data-ogsc] .pname { color: #EEF0F1 !important; }
+  [data-ogsc] .feature-title { color: #F2F4F5 !important; }
+  [data-ogsc] .feature-copy { color: #BFC5C9 !important; }
+  [data-ogsc] .contact-line { color: #D5D9DC !important; }
+  [data-ogsc] .policy-link, [data-ogsc] .dm-link { color: #C9CED2 !important; }
+  [data-ogsc] .unsubscribe { color: #8F979C !important; }
+  [data-ogsc] .dm-btn-text { color: #121416 !important; }
+  [data-ogsb] .dm-border { border-top-color: #2A2F33 !important; }
+  [data-ogsb] .logo-img { background: #F4F4F4 !important; padding: 8px 14px !important; border-radius: 12px !important; }
+  [data-ogsb] .dm-icon { background: #ECEFF1 !important; padding: 8px !important; border-radius: 50% !important; }
+</style>
+</head>
+<body class="body dm-page" bgcolor="#f3f3f3" style="-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; background: #f3f3f3; margin: 0; padding: 0; width: 100%;">
+  <div style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent; mso-hide:all;">শিশুর মস্তিষ্কের দ্রুততম বিকাশ ঘটে এখনই  প্রতিটি খেলাকে অর্থপূর্ণ করি।</div>
+
+  <table role="presentation" class="dm-page" width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#f3f3f3" style="border-collapse: collapse; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #f3f3f3;">
+    <tr>
+      <td align="center" valign="top" style="mso-line-height-rule: exactly; padding: 0;">
+        <table role="presentation" class="email-shell dm-bg-1" width="600" border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 600px; max-width: 600px;">
+
+          <!-- Header -->
+          <tr>
+            <td class="header-pad dm-bg-1" align="center" bgcolor="#fff" style="mso-line-height-rule: exactly; padding: 20px 18px 16px; background: #fff;">
+              <a href="https://brainyboxbd.com" target="_blank" style="text-decoration: none;">
+                <img class="logo-img" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa22d158d826740050797bf.png" width="130" alt="BrainyBox BD" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 130px; height: auto; margin: 0 auto;">
+              </a>
+            </td>
+          </tr>
+
+          <!-- Hero -->
+          <tr>
+            <td align="left" style="mso-line-height-rule: exactly; padding: 0; margin: 0; border: 0; font-size: 0; line-height: 0;">
+              <img src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa3be68b5c228431be89bd0.png" width="600" alt="মা ও শিশু শিক্ষামূলক খেলনা নিয়ে খেলছে" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 100%; max-width: 600px; height: auto; margin: 0; padding: 0;">
+            </td>
+          </tr>
+
+          <!-- Intro -->
+          <tr>
+            <td class="intro-pad dm-bg-2" align="center" bgcolor="#f3f3f3" style="mso-line-height-rule: exactly; padding: 30px 42px 24px; background: #f3f3f3;">
+              <p class="headline" style="margin:0; color:#080808; font-family:'FN Mamun Bornolipi Unicode','Noto Sans Bengali',Arial,sans-serif; font-size:24px; font-weight:700; line-height:1.35;">শিশুর মস্তিষ্কের দ্রুততম বিকাশ ঘটে এখনই<br>আসুন প্রতিটি খেলাকে অর্থপূর্ণ করি!</p>
+              <p class="intro-label" style="margin:20px 0 0; color:#222222; font-family:'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size:15px; font-weight:700; line-height:1.5;">প্রিয় অভিভাবক,</p>
+              <p class="intro-copy" style="margin:8px 0 0; color:#333333; font-family:'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size:14px; line-height:1.65;">শিশুর জীবনের প্রথম ১,০০০ দিনে দ্রুত মস্তিষ্কের বিকাশ ঘটে। তাই নিরাপদ ও স্পর্শনির্ভর খেলনা শিশুর মনোযোগ, পেশির নিয়ন্ত্রণ ও যোগাযোগের দক্ষতা বাড়াতে সাহায্য করে।</p>
+            </td>
+          </tr>
+
+          <!-- Offer / gift -->
+          <tr>
+            <td class="gift-pad dm-bg-2" align="center" bgcolor="#fff" style="mso-line-height-rule: exactly; padding: 50px 4px 40px 28px; background: #fff;">
+              <table role="presentation" class="content-width dm-bg-2" width="430" border="0" cellpadding="0" cellspacing="0" align="center" bgcolor="#fff" style="border-collapse: collapse; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 430px; max-width: 100%; background: #fff;">
+                <tr>
+                  <td align="center" style="mso-line-height-rule: exactly; padding: 0;">
+                    <img class="gift-img" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa22dc39572e3a91b1f9ed3.png" width="430" alt="প্রথম অর্ডারে বিশেষ অফার" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 430px; max-width: 100%; height: auto; margin: 0 auto;">
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Categories -->
+          <tr>
+            <td class="category-pad dm-bg-1" align="center" bgcolor="#ffffff" style="mso-line-height-rule: exactly; padding: 30px 34px 38px; background: #ffffff;">
+              <p class="section-title" style="margin:0 0 22px; color:#080808; font-family:'FN Mamun Bornolipi Unicode','Noto Sans Bengali',Arial,sans-serif; font-size:24px; font-weight:700; line-height:1.35;">অভিভাবকদের পছন্দের তালিকায়<br>শীর্ষে থাকা প্রোডাক্টসমূহ</p>
+              <table role="presentation" class="content-width" width="532" border="0" cellpadding="0" cellspacing="0" align="center" style="border-collapse: collapse; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 532px; max-width: 100%;">
+                <tr>
+                  <td class="category-cell" width="25%" align="center" valign="top" style="mso-line-height-rule: exactly; width: 25%; padding: 4px; text-align: center;">
+                    <table role="presentation" width="100%" align="center" border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse; border-spacing: 0; margin: 0 auto; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                      <tr><td align="center" style="mso-line-height-rule: exactly; padding: 10px;"><a href="https://brainyboxbd.com/products" target="_blank" style="text-decoration: none;"><img class="category-image" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa22ce18d82674005079207.png" width="105" alt="Kaleidoscope" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 105px; max-width: 100%; height: auto; margin: 0 auto;"></a></td></tr>
+                      <tr><td class="category-name" align="center" style="mso-line-height-rule: exactly; padding: 8px 2px 0; color: #111111; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 12px; font-weight: 700; line-height: 1.35; text-align: center; display: block; width: 100%; box-sizing: border-box; word-wrap: break-word;">Kaleidoscope</td></tr>
+                    </table>
+                  </td>
+                  <td class="category-cell" width="25%" align="center" valign="top" style="mso-line-height-rule: exactly; width: 25%; padding: 4px; text-align: center;">
+                    <table role="presentation" width="100%" align="center" border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse; border-spacing: 0; margin: 0 auto; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                      <tr><td align="center" style="mso-line-height-rule: exactly; padding: 10px;"><a href="https://brainyboxbd.com/products" target="_blank" style="text-decoration: none;"><img class="category-image" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa22ce01628941963a99427.png" width="105" alt="Music Toy" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 105px; max-width: 100%; height: auto; margin: 0 auto;"></a></td></tr>
+                      <tr><td class="category-name" align="center" style="mso-line-height-rule: exactly; padding: 8px 2px 0; color: #111111; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 12px; font-weight: 700; line-height: 1.35; text-align: center; display: block; width: 100%; box-sizing: border-box; word-wrap: break-word;">Music Toy</td></tr>
+                    </table>
+                  </td>
+                  <td class="category-cell" width="25%" align="center" valign="top" style="mso-line-height-rule: exactly; width: 25%; padding: 4px; text-align: center;">
+                    <table role="presentation" width="100%" align="center" border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse; border-spacing: 0; margin: 0 auto; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                      <tr><td align="center" style="mso-line-height-rule: exactly; padding: 10px;"><a href="https://brainyboxbd.com/products" target="_blank" style="text-decoration: none;"><img class="category-image" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa22cde1628941963a993fc.png" width="105" alt="Busy Cube Premium" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 105px; max-width: 100%; height: auto; margin: 0 auto;"></a></td></tr>
+                      <tr><td class="category-name" align="center" style="mso-line-height-rule: exactly; padding: 8px 2px 0; color: #111111; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 12px; font-weight: 700; line-height: 1.35; text-align: center; display: block; width: 100%; box-sizing: border-box; word-wrap: break-word;">Busy Cube Premium</td></tr>
+                    </table>
+                  </td>
+                  <td class="category-cell" width="25%" align="center" valign="top" style="mso-line-height-rule: exactly; width: 25%; padding: 4px; text-align: center;">
+                    <table role="presentation" width="100%" align="center" border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse; border-spacing: 0; margin: 0 auto; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                      <tr><td align="center" style="mso-line-height-rule: exactly; padding: 10px;"><a href="https://brainyboxbd.com/shop" target="_blank" style="text-decoration: none;"><img class="category-image" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa22cdd1628941963a993e0.png" width="105" alt="Writing Board" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 105px; max-width: 100%; height: auto; margin: 0 auto;"></a></td></tr>
+                      <tr><td class="category-name" align="center" style="mso-line-height-rule: exactly; padding: 8px 2px 0; color: #111111; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 12px; font-weight: 700; line-height: 1.35; text-align: center; display: block; width: 100%; box-sizing: border-box; word-wrap: break-word;">Writing Board</td></tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Products -->
+          <tr>
+            <td class="products-pad dm-bg-2" align="center" bgcolor="#f3f3f3" style="mso-line-height-rule: exactly; padding: 34px 20px 34px; background: #f3f3f3;">
+              <p class="section-title" style="margin:0 0 24px; color:#080808; font-family:'FN Mamun Bornolipi Unicode','Noto Sans Bengali',Arial,sans-serif; font-size:24px; font-weight:700; line-height:1.35;">আমাদের প্রোডাক্ট সমূহ</p>
+
+              <table role="presentation" class="pgrid" width="560" border="0" cellpadding="0" cellspacing="0" align="center" style="border-collapse: collapse; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; max-width: 560px; table-layout: fixed;">
+                <tr>
+                  <td class="pcard" width="23.5%" valign="top" bgcolor="#ffffff" style="mso-line-height-rule: exactly; width:23.5%; padding: 10px 10px 14px; vertical-align: top; background: #ffffff; border-radius: 13px;">
+                    <a href="https://brainyboxbd.com/products/bubblepop-sensory-toy" target="_blank" style="text-decoration: none;"><img class="pimg" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa3bd59060c86b932c054a1.png" width="112" alt="BubblePop Sensory Toy" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 100%; max-width: 112px; height: auto; margin: 0 auto; border-radius: 10px;"></a>
+                    <p class="pprice" style="margin: 10px 0 0; color: #168699; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 16px; font-weight: 700; line-height: 1.2;">৳১,৮৩০ <span class="pold" style="color: #777777; font-size: 9px; font-weight: 400; line-height: 1.2; text-decoration: line-through;">৳১,৮৮৮</span></p>
+                    <p class="poff" style="margin: 3px 0 0; color: #f0a500; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 10px; font-weight: 700; line-height: 1.2;">2% off</p>
+                    <p class="pname" style="margin: 3px 0 0; color: #141414; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 11px; font-weight: 700; line-height: 1.3;">BubblePop Sensory Toy</p>
+                  </td>
+                  <td class="pgap" width="2%" style="mso-line-height-rule: exactly; width: 2%; padding: 0; font-size: 0; line-height: 0;">&nbsp;</td>
+                  <td class="pcard" width="23.5%" valign="top" bgcolor="#ffffff" style="mso-line-height-rule: exactly; width:23.5%; padding: 10px 10px 14px; vertical-align: top; background: #ffffff; border-radius: 13px;">
+                    <a href="https://brainyboxbd.com/products/driving-toy" target="_blank" style="text-decoration: none;"><img class="pimg" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa3bfc9b5c228431be8bb76.png" width="112" alt="Driving Toy" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 100%; max-width: 112px; height: auto; margin: 0 auto; border-radius: 10px;"></a>
+                    <p class="pprice" style="margin: 10px 0 0; color: #168699; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 16px; font-weight: 700; line-height: 1.2;">৳১,৯২৫ <span class="pold" style="color: #777777; font-size: 9px; font-weight: 400; line-height: 1.2; text-decoration: line-through;">৳২,০২৫</span></p>
+                    <p class="poff" style="margin: 3px 0 0; color: #f0a500; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 10px; font-weight: 700; line-height: 1.2;">3% off</p>
+                    <p class="pname" style="margin: 3px 0 0; color: #141414; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 11px; font-weight: 700; line-height: 1.3;">Driving Toy</p>
+                  </td>
+                  <td class="pgap" width="2%" style="mso-line-height-rule: exactly; width: 2%; padding: 0; font-size: 0; line-height: 0;">&nbsp;</td>
+                  <td class="pcard" width="23.5%" valign="top" bgcolor="#ffffff" style="mso-line-height-rule: exactly; width:23.5%; padding: 10px 10px 14px; vertical-align: top; background: #ffffff; border-radius: 13px;">
+                    <a href="https://brainyboxbd.com/products/egg-and-cup-toy" target="_blank" style="text-decoration: none;"><img class="pimg" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa3bf67d1b3cd745baee131.png" width="112" alt="Egg and Cup Toy" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 100%; max-width: 112px; height: auto; margin: 0 auto; border-radius: 10px;"></a>
+                    <p class="pprice" style="margin: 10px 0 0; color: #168699; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 16px; font-weight: 700; line-height: 1.2;">৳১,৮০৫ <span class="pold" style="color: #777777; font-size: 9px; font-weight: 400; line-height: 1.2; text-decoration: line-through;">৳১,৯০০</span></p>
+                    <p class="poff" style="margin: 3px 0 0; color: #f0a500; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 10px; font-weight: 700; line-height: 1.2;">2% off</p>
+                    <p class="pname" style="margin: 3px 0 0; color: #141414; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 11px; font-weight: 700; line-height: 1.3;">Egg and Cup Toy</p>
+                  </td>
+                  <td class="pgap" width="2%" style="mso-line-height-rule: exactly; width: 2%; padding: 0; font-size: 0; line-height: 0;">&nbsp;</td>
+                  <td class="pcard" width="23.5%" valign="top" bgcolor="#ffffff" style="mso-line-height-rule: exactly; width:23.5%; padding: 10px 10px 14px; vertical-align: top; background: #ffffff; border-radius: 13px;">
+                    <a href="https://brainyboxbd.com/products/tummy-time-moon-pillow" target="_blank" style="text-decoration: none;"><img class="pimg" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa2490ca25ea54318e32119.png" width="112" alt="Tummy Time Moon Pillow" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 100%; max-width: 112px; height: auto; margin: 0 auto; border-radius: 10px;"></a>
+                    <p class="pprice" style="margin: 10px 0 0; color: #168699; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 16px; font-weight: 700; line-height: 1.2;">৳৫২২ <span class="pold" style="color: #777777; font-size: 9px; font-weight: 400; line-height: 1.2; text-decoration: line-through;">৳৫৫০</span></p>
+                    <p class="poff" style="margin: 3px 0 0; color: #f0a500; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 10px; font-weight: 700; line-height: 1.2;">2% off</p>
+                    <p class="pname" style="margin: 3px 0 0; color: #141414; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 11px; font-weight: 700; line-height: 1.3;">Tummy Time Moon Pillow</p>
+                  </td>
+                </tr>
+                <tr><td class="prow-sp" colspan="7" height="10" style="mso-line-height-rule: exactly; height: 10px; padding: 0; font-size: 0; line-height: 0;">&nbsp;</td></tr>
+                <tr>
+                  <td class="pcard" width="23.5%" valign="top" bgcolor="#ffffff" style="mso-line-height-rule: exactly; width:23.5%; padding: 10px 10px 14px; vertical-align: top; background: #ffffff; border-radius: 13px;">
+                    <a href="https://brainyboxbd.com/products/wooden-baby-rattle" target="_blank" style="text-decoration: none;"><img class="pimg" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa3bf67f88eb22e7268a407.png" width="112" alt="Wooden Baby Rattle" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 100%; max-width: 112px; height: auto; margin: 0 auto; border-radius: 10px;"></a>
+                    <p class="pprice" style="margin: 10px 0 0; color: #168699; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 16px; font-weight: 700; line-height: 1.2;">৳৭৬০ <span class="pold" style="color: #777777; font-size: 9px; font-weight: 400; line-height: 1.2; text-decoration: line-through;">৳৮০০</span></p>
+                    <p class="poff" style="margin: 3px 0 0; color: #f0a500; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 10px; font-weight: 700; line-height: 1.2;">2% off</p>
+                    <p class="pname" style="margin: 3px 0 0; color: #141414; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 11px; font-weight: 700; line-height: 1.3;">Wooden Baby Rattle (Panda)</p>
+                  </td>
+                  <td class="pgap" width="2%" style="mso-line-height-rule: exactly; width: 2%; padding: 0; font-size: 0; line-height: 0;">&nbsp;</td>
+                  <td class="pcard" width="23.5%" valign="top" bgcolor="#ffffff" style="mso-line-height-rule: exactly; width:23.5%; padding: 10px 10px 14px; vertical-align: top; background: #ffffff; border-radius: 13px;">
+                    <a href="https://brainyboxbd.com/products/clock-time-puzzle" target="_blank" style="text-decoration: none;"><img class="pimg" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa3d02fd1b3cd745bb09233.png" width="112" alt="Clock Time Puzzle" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 100%; max-width: 112px; height: auto; margin: 0 auto; border-radius: 10px;"></a>
+                    <p class="pprice" style="margin: 10px 0 0; color: #168699; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 16px; font-weight: 700; line-height: 1.2;">৳৭৮৫ <span class="pold" style="color: #777777; font-size: 9px; font-weight: 400; line-height: 1.2; text-decoration: line-through;">৳৮৫০</span></p>
+                    <p class="poff" style="margin: 3px 0 0; color: #f0a500; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 10px; font-weight: 700; line-height: 1.2;">2% off</p>
+                    <p class="pname" style="margin: 3px 0 0; color: #141414; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 11px; font-weight: 700; line-height: 1.3;">Clock Time Puzzle</p>
+                  </td>
+                  <td class="pgap" width="2%" style="mso-line-height-rule: exactly; width: 2%; padding: 0; font-size: 0; line-height: 0;">&nbsp;</td>
+                  <td class="pcard" width="23.5%" valign="top" bgcolor="#ffffff" style="mso-line-height-rule: exactly; width:23.5%; padding: 10px 10px 14px; vertical-align: top; background: #ffffff; border-radius: 13px;">
+                    <a href="https://brainyboxbd.com/products/cloth-blanket" target="_blank" style="text-decoration: none;"><img class="pimg" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa2490ca25ea54318e32110.png" width="112" alt="Cloth Blanket" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 100%; max-width: 112px; height: auto; margin: 0 auto; border-radius: 10px;"></a>
+                    <p class="pprice" style="margin: 10px 0 0; color: #168699; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 16px; font-weight: 700; line-height: 1.2;">৳৮৪০ <span class="pold" style="color: #777777; font-size: 9px; font-weight: 400; line-height: 1.2; text-decoration: line-through;">৳৮৮২</span></p>
+                    <p class="poff" style="margin: 3px 0 0; color: #f0a500; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 10px; font-weight: 700; line-height: 1.2;">2% off</p>
+                    <p class="pname" style="margin: 3px 0 0; color: #141414; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 11px; font-weight: 700; line-height: 1.3;">Cloth Blanket</p>
+                  </td>
+                  <td class="pgap" width="2%" style="mso-line-height-rule: exactly; width: 2%; padding: 0; font-size: 0; line-height: 0;">&nbsp;</td>
+                  <td class="pcard" width="23.5%" valign="top" bgcolor="#ffffff" style="mso-line-height-rule: exactly; width:23.5%; padding: 10px 10px 14px; vertical-align: top; background: #ffffff; border-radius: 13px;">
+                    <a href="https://brainyboxbd.com/products/sensory-pop-toy" target="_blank" style="text-decoration: none;"><img class="pimg" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa2490cdd867dc12d0a89a1.png" width="112" alt="Sensory Pop Toy" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 100%; max-width: 112px; height: auto; margin: 0 auto; border-radius: 10px;"></a>
+                    <p class="pprice" style="margin: 10px 0 0; color: #168699; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 16px; font-weight: 700; line-height: 1.2;">৳৬৯০ <span class="pold" style="color: #777777; font-size: 9px; font-weight: 400; line-height: 1.2; text-decoration: line-through;">৳৭৫০</span></p>
+                    <p class="poff" style="margin: 3px 0 0; color: #f0a500; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 10px; font-weight: 700; line-height: 1.2;">2% off</p>
+                    <p class="pname" style="margin: 3px 0 0; color: #141414; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 11px; font-weight: 700; line-height: 1.3;">Sensory Pop Toy</p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- More products button -->
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" style="border-collapse: collapse; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; margin: 20px auto 0;">
+                <tr><td class="dm-btn" align="center" bgcolor="#2e2e2e" style="mso-line-height-rule: exactly; background: #2e2e2e; border-radius: 24px;">
+                  <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" href="https://brainyboxbd.com/shop" style="height:44px;v-text-anchor:middle;width:190px;" arcsize="55%" stroke="f" fillcolor="#2e2e2e"><w:anchorlock/><center style="color:#ffffff;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;">আরো প্রোডাক্ট দেখুন&nbsp;&nbsp;→</center></v:roundrect><![endif]-->
+                  <!--[if !mso]><!-- -->
+                  <a class="dm-btn-text" href="https://brainyboxbd.com/shop" target="_blank" style="display: inline-block; padding: 12px 24px; color: #ffffff; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 14px; font-weight: 700; line-height: 18px; text-decoration: none;"><!--[if mso]><font color="#ffffff"><![endif]-->আরো প্রোডাক্ট দেখুন&nbsp;&nbsp;→<!--[if mso]></font><![endif]--></a>
+                  <!--<![endif]-->
+                </td></tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Trust / features -->
+          <tr>
+            <td class="feature-pad dm-bg-1 dm-border" align="center" bgcolor="#ffffff" style="mso-line-height-rule: exactly; padding: 34px 34px 38px; background: #ffffff; border-top: 1px solid #eeeeee;">
+              <p class="section-title" style="margin:0 0 22px; color:#080808; font-family:'FN Mamun Bornolipi Unicode','Noto Sans Bengali',Arial,sans-serif; font-size:24px; font-weight:700; line-height:1.35;">কেন বাংলাদেশের হাজারও অভিভাবক<br>BrainyBox BD এর ওপর আস্থা রাখেন:</p>
+              <table role="presentation" class="content-width" width="532" border="0" cellpadding="0" cellspacing="0" align="center" style="border-collapse: collapse; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 532px; max-width: 100%;">
+                <tr>
+                  <td class="feature-column" width="50%" valign="top" style="mso-line-height-rule: exactly; width: 50%; padding: 5px;"><table role="presentation" class="feature-card" width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#f5f5f5" style="border-collapse: collapse; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #f5f5f5; border-radius: 10px;"><tr><td class="feature-inner" align="center" style="mso-line-height-rule: exactly; padding: 20px 14px;"><img class="dm-icon" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa2367e8d82674005085d98.png" width="40" alt="নিরাপদ" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 40px; height: auto; margin: 0 auto;"><p class="feature-title" style="margin:9px 0 0; color:#111111; font-family:'FN Mamun Bornolipi Unicode','Noto Sans Bengali',Arial,sans-serif; font-size:18px; font-weight:700; line-height:1.35;">নন-টক্সিক সার্টিফাইড নিরাপদ:</p><p class="feature-copy" style="margin:4px 0 0; color:#3a3a3a; font-family:'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size:13px; line-height:1.55;">শিশুর চিবানো বা মুখে নেওয়ার জন্য সম্পূর্ণ সুরক্ষিত।</p></td></tr></table></td>
+                  <td class="feature-column" width="50%" valign="top" style="mso-line-height-rule: exactly; width: 50%; padding: 5px;"><table role="presentation" class="feature-card" width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#f5f5f5" style="border-collapse: collapse; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #f5f5f5; border-radius: 10px;"><tr><td class="feature-inner" align="center" style="mso-line-height-rule: exactly; padding: 20px 14px;"><img class="dm-icon" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa236ad1628941963aa644b.png" width="40" alt="স্ক্রিন-ফ্রি" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 40px; height: auto; margin: 0 auto;"><p class="feature-title" style="margin:9px 0 0; color:#111111; font-family:'FN Mamun Bornolipi Unicode','Noto Sans Bengali',Arial,sans-serif; font-size:18px; font-weight:700; line-height:1.35;">১০০% স্ক্রিন-ফ্রি শেখার মাধ্যম:</p><p class="feature-copy" style="margin:4px 0 0; color:#3a3a3a; font-family:'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size:13px; line-height:1.55;">আসল দুনিয়ার বস্তু ছুঁয়ে শেখা ও মনোযোগ বৃদ্ধির উপযোগী।</p></td></tr></table></td>
+                </tr>
+                <tr>
+                  <td class="feature-column" width="50%" valign="top" style="mso-line-height-rule: exactly; width: 50%; padding: 5px;"><table role="presentation" class="feature-card" width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#f5f5f5" style="border-collapse: collapse; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #f5f5f5; border-radius: 10px;"><tr><td class="feature-inner" align="center" style="mso-line-height-rule: exactly; padding: 20px 14px;"><img class="dm-icon" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa23699dd867dc12d08bcab.png" width="40" alt="পরিবেশবান্ধব" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 40px; height: auto; margin: 0 auto;"><p class="feature-title" style="margin:9px 0 0; color:#111111; font-family:'FN Mamun Bornolipi Unicode','Noto Sans Bengali',Arial,sans-serif; font-size:18px; font-weight:700; line-height:1.35;">পরিবেশবান্ধব উপাদান:</p><p class="feature-copy" style="margin:4px 0 0; color:#3a3a3a; font-family:'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size:13px; line-height:1.55;">প্রিমিয়াম কাঠ এবং ফুড-গ্রেড সিলিকন দিয়ে তৈরি।</p></td></tr></table></td>
+                  <td class="feature-column" width="50%" valign="top" style="mso-line-height-rule: exactly; width: 50%; padding: 5px;"><table role="presentation" class="feature-card" width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#f5f5f5" style="border-collapse: collapse; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #f5f5f5; border-radius: 10px;"><tr><td class="feature-inner" align="center" style="mso-line-height-rule: exactly; padding: 20px 14px;"><img class="dm-icon" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa236b9dd867dc12d08c02c.png" width="40" alt="দ্রুত ডেলিভারি" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 40px; height: auto; margin: 0 auto;"><p class="feature-title" style="margin:9px 0 0; color:#111111; font-family:'FN Mamun Bornolipi Unicode','Noto Sans Bengali',Arial,sans-serif; font-size:18px; font-weight:700; line-height:1.35;">দ্রুত হোম ডেলিভারি:</p><p class="feature-copy" style="margin:4px 0 0; color:#3a3a3a; font-family:'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size:13px; line-height:1.55;">ঢাকাসহ পুরো বাংলাদেশে আপনার ঘরে বসেই ডেলিভারি।</p></td></tr></table></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Bottom visual -->
+          <tr>
+            <td class="footer-visual-pad dm-bg-2" align="center" bgcolor="#f3f3f3" style="mso-line-height-rule: exactly; padding-top:100px; background: #f3f3f3;">
+              <table role="presentation" class="content-width"  border="0" cellpadding="0" cellspacing="0" align="center" style="border-collapse: collapse; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; max-width: 100%;">
+                <tr>
+                  <td class="footer-cta-pad" align="center" style="mso-line-height-rule: exactly; padding: 0  16px 40px;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" style="border-collapse: collapse; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                      <tr><td class="dm-btn" align="center" bgcolor="#2e2e2e" style="mso-line-height-rule: exactly; background: #2e2e2e; border-radius: 24px;">
+                        <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" href="https://brainyboxbd.com/shop" style="height:42px;v-text-anchor:middle;width:180px;" arcsize="55%" stroke="f" fillcolor="#2e2e2e"><w:anchorlock/><center style="color:#ffffff;font-family:Arial,sans-serif;font-size:13px;font-weight:bold;">আরও কালেকশন দেখুন&nbsp;&nbsp;→</center></v:roundrect><![endif]-->
+                        <!--[if !mso]><!-- -->
+                        <a class="dm-btn-text" href="https://brainyboxbd.com/shop" target="_blank" style="display: inline-block; padding: 11px 22px; color: #ffffff; font-family: 'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size: 13px; font-weight: 700; line-height: 18px; text-decoration: none;"><!--[if mso]><font color="#ffffff"><![endif]-->আরও কালেকশন দেখুন&nbsp;&nbsp;→<!--[if mso]></font><![endif]--></a>
+                        <!--<![endif]-->
+                      </td></tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="mso-line-height-rule: exactly; padding: 0;width:100%">
+                    <img class="footer-img" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa3a4c4b5c228431be5e104.png" width="600" alt="BrainyBox BD collection" style="border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 100%; height: auto; margin: 0 auto;">
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Contact / legal footer -->
+          <tr>
+            <td class="footer-contact dm-bg-1" align="center" bgcolor="#ffffff" style="mso-line-height-rule: exactly; padding: 22px 34px 34px; background: #ffffff;">
+              <p class="contact-line" style="margin:0; color:#333333; font-family:'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size:14px; font-weight:700; line-height:1.55;">+8801819-408381 &nbsp;•&nbsp; support@brainyboxbd.com<br>House-41, Road-14, DIT Project, Dhaka-1212</p>
+              <!-- ════════════════════════════════════════════════════════════
+                   SOCIAL ICONS - white circular plate is now UNCONDITIONAL,
+                   applied inline on every icon, identically, at all times -
+                   not just inside @media (prefers-color-scheme: dark).
+
+                   Why: that media query is exactly what caused Facebook,
+                   TikTok and WhatsApp to render differently from Instagram
+                   and YouTube in the Gmail app. Gmail's mobile app has
+                   long-standing, inconsistent, per-element support for
+                   `@media (prefers-color-scheme: dark)` inside a `<style>`
+                   block - it does not reliably apply such rules to every
+                   element a class touches, and which ones it honours can
+                   differ image-by-image with no visible logic tied to your
+                   markup (it depends on internal heuristics Google does not
+                   document or guarantee). That is why only 2 of the 5 -
+                   Instagram and YouTube - were getting the white circle:
+                   Gmail app was simply failing to apply the class+media-query
+                   rule to the other 3, not because anything in this file
+                   treated them differently.
+
+                   The fix is to stop depending on Gmail's media-query support
+                   for this at all. Inline styles directly on the element are
+                   the one thing every email client - including Gmail's app -
+                   reliably renders regardless of dark-mode support quality.
+                   So the white circle, the padding and the border-radius are
+                   now inline on all 5 <img> tags below, unconditionally, in
+                   both light and dark mode.
+
+                   This is safe in light mode: the footer's own background is
+                   already bgcolor="#ffffff" here, so a white circle on white
+                   is invisible - zero visual change - and only becomes
+                   visible once the surrounding background actually goes dark.
+
+                   Sizing: 22px image + 4px padding on each side keeps the
+                   same ~30px overall visual footprint every icon already
+                   had before this fix (the .social-icon width:22px mobile
+                   override above matches this, so mobile stays consistent
+                   with desktop too - previously mobile forced 30px on the
+                   image itself, which combined with dark mode's own 22px+8px
+                   padding would have made mobile icons visibly bigger than
+                   desktop; that mismatch is fixed here as well).
+                   ════════════════════════════════════════════════════════════ -->
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" style="border-collapse: collapse; border-spacing: 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; margin: 14px auto 0;">
+                <tr>
+                  <td style="mso-line-height-rule: exactly; padding: 3px;"><a href="https://facebook.com" target="_blank" style="text-decoration: none;"><img class="social-icon" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa29992d1b3cd745b902fd5.png" width="22" alt="Facebook" style="outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 22px; height: auto; background-color: #ffffff; border-radius: 50%; padding: 4px; box-sizing: content-box;"></a></td>
+                  <td style="mso-line-height-rule: exactly; padding: 3px;"><a href="https://instagram.com" target="_blank" style="text-decoration: none;"><img class="social-icon" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa29991d1b3cd745b902fac.png" width="22" alt="Instagram" style="outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 22px; height: auto; background-color: #ffffff; border-radius: 50%; padding: 4px; box-sizing: content-box;"></a></td>
+                  <td style="mso-line-height-rule: exactly; padding: 3px;"><a href="https://youtube.com" target="_blank" style="text-decoration: none;"><img class="social-icon" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa2998f9a6d26f39f85a0fc.png" width="22" alt="YouTube" style="outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 22px; height: auto; background-color: #ffffff; border-radius: 50%; padding: 4px; box-sizing: content-box;"></a></td>
+                  <td style="mso-line-height-rule: exactly; padding: 3px;"><a href="https://tiktok.com" target="_blank" style="text-decoration: none;"><img class="social-icon" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa2998a4f724d7ea29f9d54.png" width="22" alt="TikTok" style="outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 22px; height: auto; background-color: #ffffff; border-radius: 50%; padding: 4px; box-sizing: content-box;"></a></td>
+                  <td style="mso-line-height-rule: exactly; padding: 3px;"><a href="https://wa.me/8801819408381" target="_blank" style="text-decoration: none;"><img class="social-icon" src="https://assets.cdn.filesafe.space/MchptoGAJlN1a0TmPjaq/media/6aa29988d1b3cd745b902ee3.png" width="22" alt="WhatsApp" style="outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; width: 22px; height: auto; background-color: #ffffff; border-radius: 50%; padding: 4px; box-sizing: content-box;"></a></td>
+                </tr>
+              </table>
+              <p style="margin:14px 0 0; color:#333333; font-family:'Bornomala','Noto Sans Bengali',Arial,sans-serif; font-size:12px; line-height:1.7;">
+                <a class="policy-link" href="https://brainyboxbd.com/privacy-policy" target="_blank" style="color: #333333; padding: 0 6px; text-decoration: none; mso-style-textfill-fill-color: #333333;"><!--[if mso]><font color="#333333"><![endif]-->Privacy Policy<!--[if mso]></font><![endif]--></a>
+                <a class="policy-link" href="https://brainyboxbd.com/terms" target="_blank" style="color: #333333; padding: 0 6px; text-decoration: none; mso-style-textfill-fill-color: #333333;"><!--[if mso]><font color="#333333"><![endif]-->Terms &amp; Conditions<!--[if mso]></font><![endif]--></a>
+                <a class="policy-link" href="https://brainyboxbd.com/refund-policy" target="_blank" style="color: #333333; padding: 0 6px; text-decoration: none; mso-style-textfill-fill-color: #333333;"><!--[if mso]><font color="#333333"><![endif]-->Refund Policy<!--[if mso]></font><![endif]--></a>
+                <a class="policy-link" href="https://brainyboxbd.com/disclaimer" target="_blank" style="color: #333333; padding: 0 6px; text-decoration: none; mso-style-textfill-fill-color: #333333;"><!--[if mso]><font color="#333333"><![endif]-->Disclaimer<!--[if mso]></font><![endif]--></a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
