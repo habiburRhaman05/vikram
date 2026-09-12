@@ -41,7 +41,6 @@ export default function Platform() {
       <PageMeta
         title="Platform - GHLevelUp"
         description="Reception, client documents, workflow, e-sign, invoicing and reporting - every part of the tax-practice operating system, explained."
-        path="/platform.html"
       />
 
       <PageHero

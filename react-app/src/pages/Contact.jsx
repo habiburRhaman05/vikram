@@ -56,7 +56,6 @@ export default function Contact() {
       <PageMeta
         title="Contact - GHLevelUp"
         description="Talk to the team about running your tax practice on one system. Call, text, email, or send a message and we'll come back the same business day."
-        path="/contact.html"
       />
 
       <PageHero

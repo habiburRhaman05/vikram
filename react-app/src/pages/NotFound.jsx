@@ -10,7 +10,7 @@ import BtnRow from "@/components/common/BtnRow.jsx";
 export default function NotFound() {
   return (
     <Layout topbar="Now onboarding tax preparers for the upcoming filing season">
-      <PageMeta title="Page not found - GHLevelUp" description="This page doesn't exist." path="/404" />
+      <PageMeta title="Page not found - GHLevelUp" description="This page doesn't exist." noIndex />
       <PageHero crumb="Not found" title="That page doesn't exist" center lede="Let's get you back on track.">
         <BtnRow center style={{ marginTop: 32 }}>
           <Button to="/" variant="accent" icon="arrowRight">

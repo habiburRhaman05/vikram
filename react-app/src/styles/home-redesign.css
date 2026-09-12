@@ -1,0 +1,567 @@
+/* ==========================================================================
+   Home redesign - scoped design system
+   --------------------------------------------------------------------------
+   Everything here is namespaced under `.home-v2`. That is deliberate: the
+   site-wide tokens in legacy/styles.css are consumed by seven other pages,
+   so redefining :root would have restyled the whole site. Scoping them to
+   the Home wrapper means this redesign is completely isolated - the other
+   routes render byte-for-byte as before.
+
+   Contents
+     01. Tokens
+     02. Base & layout primitives
+     03. Typography
+     04. Buttons & links
+     05. Badges, pills, chips
+     06. Cards
+     07. Backgrounds & decoration
+     08. Motion
+   ========================================================================== */
+
+
+/* 01. Tokens =============================================================== */
+
+.home-v2 {
+  /* -- Surfaces ---------------------------------------------------------- */
+  --hv-bg:            #FFFFFF;
+  --hv-bg-mint:       #EAF7F1;   /* hero + alternating section wash        */
+  --hv-bg-mint-deep:  #D8F0E5;   /* icon badges, subtle fills              */
+  --hv-bg-dark:       #052E29;   /* stats band, closing CTA, dark cards    */
+  --hv-bg-dark-2:     #03211E;   /* footer-adjacent / deeper layer         */
+
+  /* -- Accent -----------------------------------------------------------
+     Two accents, and which one you use is a contrast decision, not a
+     taste one (measured against WCAG 2.1 AA):
+
+       --hv-accent        #0EA46B  3.21:1 on white, 2.92:1 on mint.
+                          Fills behind LARGE text, and decoration only.
+                          Never small text, never an icon on mint.
+       --hv-accent-strong #0A7F52  5.04:1 on white, 4.57:1 on mint.
+                          Everything that must be read: button fills with
+                          white text, eyebrows, links, icons on light.
+       --hv-accent-bright #35D9A0  8.10:1 on --hv-bg-dark.
+                          Accent on dark surfaces only (stat numbers).
+     ------------------------------------------------------------------- */
+  --hv-accent:        #0EA46B;
+  --hv-accent-strong: #0A7F52;
+  --hv-accent-deep:   #06603E;
+  --hv-accent-bright: #35D9A0;
+  --hv-grad-accent:   linear-gradient(135deg, #0A7F52 0%, #06603E 100%);
+
+  /* -- Text -------------------------------------------------------------- */
+  --hv-text:          #0B1F1A;   /* 17.1:1 on white                        */
+  --hv-text-muted:    #4C6560;   /*  6.3:1 on white, 5.7:1 on mint         */
+  --hv-on-dark:       #DCEFE8;   /* 12.3:1 on --hv-bg-dark                 */
+  --hv-on-dark-muted: #92B3AA;   /*  6.5:1 on --hv-bg-dark                 */
+
+  /* -- Lines ------------------------------------------------------------- */
+  --hv-border:        #DDEDE6;
+  --hv-border-strong: #C3E2D6;
+  --hv-border-dark:   rgba(255, 255, 255, .12);
+
+  /* -- Type -------------------------------------------------------------- */
+  --hv-font:          "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --hv-font-script:   "Caveat", "Segoe Script", cursive;
+
+  /* Fluid scale - each clamp is (min, preferred, max) so type scales with
+     the viewport instead of stepping at breakpoints. */
+  --hv-fs-display:    clamp(2.15rem, 1.35rem + 2.6vw, 3.15rem);
+  --hv-fs-h2:         clamp(1.70rem, 1.15rem + 1.9vw, 2.50rem);
+  --hv-fs-h3:         clamp(1.05rem, 0.98rem + 0.3vw, 1.25rem);
+  --hv-fs-lede:       clamp(1.00rem, 0.96rem + 0.2vw, 1.10rem);
+  --hv-fs-body:       0.975rem;
+  --hv-fs-sm:         0.875rem;
+  --hv-fs-xs:         0.80rem;
+  --hv-fs-eyebrow:    0.775rem;
+
+  /* -- Space ------------------------------------------------------------- */
+  --hv-s1: 4px;   --hv-s2: 8px;   --hv-s3: 12px;  --hv-s4: 16px;
+  --hv-s5: 20px;  --hv-s6: 24px;  --hv-s7: 32px;  --hv-s8: 40px;
+  --hv-s9: 48px;  --hv-s10: 64px; --hv-s11: 80px; --hv-s12: 96px;
+  --hv-section-y: clamp(56px, 4vw + 32px, 104px);
+
+  /* -- Radii ------------------------------------------------------------- */
+  --hv-r-sm:   10px;
+  --hv-r-md:   14px;
+  --hv-r-lg:   20px;
+  --hv-r-xl:   28px;
+  --hv-r-pill: 999px;
+
+  /* -- Elevation --------------------------------------------------------- */
+  --hv-sh-sm: 0 1px 2px rgba(6, 40, 34, .05), 0 1px 3px rgba(6, 40, 34, .04);
+  --hv-sh-md: 0 6px 20px rgba(6, 40, 34, .07), 0 2px 6px rgba(6, 40, 34, .04);
+  --hv-sh-lg: 0 20px 50px rgba(6, 40, 34, .10), 0 6px 16px rgba(6, 40, 34, .05);
+  --hv-sh-float: 0 14px 38px rgba(6, 40, 34, .13);
+
+  /* Accent-tinted elevation. A neutral grey drop shadow under a green
+     card is exactly what makes a layout read as a default template - the
+     shadow has to belong to the palette, so hover states lift into this
+     rather than into --hv-sh-lg. */
+  --hv-sh-accent: 0 22px 48px rgba(10, 127, 82, .16),
+                  0 6px 16px rgba(10, 127, 82, .09);
+  --hv-sh-accent-sm: 0 10px 22px rgba(10, 127, 82, .28);
+
+  /* -- Glass -------------------------------------------------------------
+     Translucency alone looks like a flat tint. What reads as glass is the
+     combination: blur + saturation lift behind it, a lit top edge, and a
+     hairline ring. These three are always used together. */
+  --hv-glass:      rgba(255, 255, 255, .62);
+  --hv-glass-blur: saturate(180%) blur(20px);
+  --hv-glass-edge: inset 0 1px 0 rgba(255, 255, 255, .92),
+                   inset 0 0 0 1px rgba(10, 127, 82, .07);
+  --hv-sh-glass:   0 12px 34px rgba(6, 40, 34, .10),
+                   0 2px 8px rgba(6, 40, 34, .05);
+
+  /* -- Motion ------------------------------------------------------------ */
+  --hv-dur-fast: 160ms;
+  --hv-dur:      280ms;
+  --hv-dur-slow: 460ms;
+  --hv-ease:     cubic-bezier(.22, .61, .36, 1);
+  /* Slight overshoot, for things that should feel physical when they pop
+     (icon tiles, arrows). Never used on anything that changes size in
+     flow - the overshoot would jitter the layout. */
+  --hv-ease-spring: cubic-bezier(.34, 1.46, .64, 1);
+}
+
+
+/* 02. Base & layout primitives ============================================ */
+
+.home-v2 {
+  background: var(--hv-bg);
+  color: var(--hv-text);
+  font-family: var(--hv-font);
+}
+
+/* The page sets its own rhythm rather than inheriting the legacy
+   .section padding, so the two systems can't fight each other. */
+.hv-section { padding-block: var(--hv-section-y); position: relative; }
+.hv-section--mint { background: var(--hv-bg-mint); }
+.hv-section--dark { background: var(--hv-bg-dark); color: var(--hv-on-dark); }
+.hv-section--tight { padding-block: calc(var(--hv-section-y) * .62); }
+.hv-section--flush-top { padding-top: 0; }
+
+.hv-container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 4vw, 32px);
+}
+
+/* Visible to assistive tech, not to the eye. Used to give repeated
+   link labels ("Learn More") their subject without changing the design. */
+.hv-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hv-grid { display: grid; gap: var(--hv-s6); }
+
+/* auto-fit grids: cards choose their own column count from a min width,
+   so there is no breakpoint at which text is squeezed below readability. */
+.hv-grid--auto-4 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+.hv-grid--auto-3 { grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
+.hv-grid--auto-2 { grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); }
+
+.hv-split {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .hv-split { grid-template-columns: 1fr; }
+}
+
+
+/* 03. Typography ========================================================== */
+
+.home-v2 h1, .home-v2 h2, .home-v2 h3, .home-v2 h4 {
+  font-family: var(--hv-font);
+  color: inherit;
+  letter-spacing: -0.025em;
+  line-height: 1.12;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.hv-display { font-size: var(--hv-fs-display); font-weight: 800; letter-spacing: -0.035em; }
+.hv-h2      { font-size: var(--hv-fs-h2); font-weight: 800; }
+.hv-h3      { font-size: var(--hv-fs-h3); font-weight: 700; letter-spacing: -0.015em; }
+
+.hv-lede {
+  font-size: var(--hv-fs-lede);
+  line-height: 1.65;
+  color: var(--hv-text-muted);
+  margin: var(--hv-s4) 0 0;
+  max-width: 56ch;
+}
+.hv-section--dark .hv-lede { color: var(--hv-on-dark-muted); }
+
+.hv-body { font-size: var(--hv-fs-body); line-height: 1.6; color: var(--hv-text-muted); margin: 0; }
+.hv-section--dark .hv-body { color: var(--hv-on-dark-muted); }
+
+/* Eyebrow uses --hv-accent-strong, not --hv-accent: at 0.775rem it is
+   body-size text and needs 4.5:1, which the brighter tone fails. */
+.hv-eyebrow {
+  display: inline-block;
+  font-size: var(--hv-fs-eyebrow);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--hv-accent-strong);
+  margin-bottom: var(--hv-s3);
+}
+.hv-section--dark .hv-eyebrow { color: var(--hv-accent-bright); }
+
+/* The handwritten accent word in the h1 ("Grow"). */
+.hv-script {
+  font-family: var(--hv-font-script);
+  font-weight: 700;
+  font-style: italic;
+  color: var(--hv-accent-strong);
+  letter-spacing: 0;
+  /* Caveat sits small next to Jakarta at the same px size. */
+  font-size: 1.18em;
+  line-height: 1;
+}
+
+.hv-section-head { max-width: 60ch; margin-bottom: var(--hv-s9); }
+.hv-section-head--center { margin-inline: auto; text-align: center; }
+
+
+/* 04. Buttons & links ===================================================== */
+
+.hv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--hv-s2);
+  padding: 13px 22px;
+  border: 1.5px solid transparent;
+  border-radius: var(--hv-r-pill);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  /* 44px min touch target (WCAG 2.5.5) even at the small size. */
+  min-height: 44px;
+  transition: transform var(--hv-dur-fast) var(--hv-ease),
+              box-shadow var(--hv-dur-fast) var(--hv-ease),
+              background var(--hv-dur-fast) var(--hv-ease),
+              color var(--hv-dur-fast) var(--hv-ease),
+              border-color var(--hv-dur-fast) var(--hv-ease);
+}
+.hv-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+.hv-btn:hover { transform: translateY(-2px); }
+.hv-btn:active { transform: translateY(0); }
+
+/* Focus is never removed - only restyled, and it must be visible on both
+   light and dark surfaces. */
+.hv-btn:focus-visible,
+.home-v2 a:focus-visible,
+.home-v2 button:focus-visible {
+  outline: 3px solid var(--hv-accent);
+  outline-offset: 3px;
+  border-radius: var(--hv-r-sm);
+}
+.hv-section--dark :focus-visible { outline-color: var(--hv-accent-bright); }
+
+/* Primary: gradient stays dark enough that white label text holds
+   5:1 across the whole fill. */
+.hv-btn--primary {
+  background: var(--hv-grad-accent);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(10, 127, 82, .25);
+}
+.hv-btn--primary:hover { box-shadow: 0 12px 28px rgba(10, 127, 82, .32); }
+
+.hv-btn--outline {
+  background: transparent;
+  color: var(--hv-accent-strong);
+  border-color: var(--hv-border-strong);
+}
+.hv-btn--outline:hover {
+  background: var(--hv-accent-strong);
+  border-color: var(--hv-accent-strong);
+  color: #fff;
+}
+
+/* Dark treatment keys off the SURFACE, not the section: the featured
+   work card is a dark card sitting inside a light section, and without
+   .hv-card--dark here its outline button kept the light-surface green
+   (#0A7F52 on #052E29 - about 1.6:1, unreadable). */
+.hv-section--dark .hv-btn--outline,
+.hv-card--dark .hv-btn--outline {
+  color: var(--hv-on-dark);
+  border-color: var(--hv-border-dark);
+}
+.hv-section--dark .hv-btn--outline:hover,
+.hv-card--dark .hv-btn--outline:hover {
+  background: rgba(255, 255, 255, .12);
+  border-color: rgba(255, 255, 255, .3);
+  color: #fff;
+}
+
+.hv-btn--lg { padding: 16px 28px; font-size: 0.95rem; min-height: 52px; }
+
+.hv-btn-row { display: flex; flex-wrap: wrap; gap: var(--hv-s3); align-items: center; }
+
+/* Text link with a trailing arrow that nudges on hover. */
+.hv-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hv-s2);
+  font-weight: 700;
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-accent-strong);
+  text-decoration: none;
+  min-height: 44px;
+}
+.hv-link svg { width: 15px; height: 15px; transition: transform var(--hv-dur-fast) var(--hv-ease); }
+.hv-link:hover svg { transform: translateX(4px); }
+.hv-section--dark .hv-link { color: var(--hv-accent-bright); }
+
+/* Circular icon-only control (carousel prev/next).
+   44px square: the minimum comfortable touch target (WCAG 2.5.5). The
+   reference draws these noticeably smaller, which is awkward on a phone. */
+.hv-icon-btn {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--hv-r-pill);
+  border: 1.5px solid var(--hv-border-strong);
+  background: transparent;
+  color: var(--hv-accent-strong);
+  cursor: pointer;
+  transition: background var(--hv-dur-fast) var(--hv-ease),
+              color var(--hv-dur-fast) var(--hv-ease),
+              border-color var(--hv-dur-fast) var(--hv-ease);
+}
+.hv-icon-btn::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+}
+.hv-icon-btn svg { width: 16px; height: 16px; }
+.hv-icon-btn:hover:not(:disabled) {
+  background: var(--hv-accent-strong);
+  border-color: var(--hv-accent-strong);
+  color: #fff;
+}
+.hv-icon-btn:disabled { opacity: .4; cursor: not-allowed; }
+.hv-card--dark .hv-icon-btn,
+.hv-section--dark .hv-icon-btn { border-color: var(--hv-border-dark); color: var(--hv-accent-bright); }
+
+
+/* 05. Badges, pills, chips ================================================ */
+
+/* Rounded-square icon tile. Icon colour is --hv-accent-strong because
+   the bright accent measures 2.92:1 on mint and fails the 3:1 floor for
+   meaningful graphics. */
+.hv-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: var(--hv-r-md);
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+}
+.hv-badge svg { width: 21px; height: 21px; }
+.hv-badge--sm { width: 38px; height: 38px; border-radius: var(--hv-r-sm); }
+.hv-badge--sm svg { width: 18px; height: 18px; }
+.hv-badge--round { border-radius: var(--hv-r-pill); }
+
+.hv-card--dark .hv-badge,
+.hv-section--dark .hv-badge {
+  background: rgba(53, 217, 160, .14);
+  color: var(--hv-accent-bright);
+}
+
+.hv-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hv-s2);
+  padding: 6px 12px;
+  border-radius: var(--hv-r-pill);
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+  font-size: var(--hv-fs-xs);
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+.hv-card--dark .hv-chip,
+.hv-section--dark .hv-chip {
+  background: rgba(53, 217, 160, .16);
+  color: var(--hv-accent-bright);
+}
+
+
+/* 06. Cards =============================================================== */
+
+.hv-card {
+  background: var(--hv-bg);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  padding: var(--hv-s6);
+  transition: transform var(--hv-dur) var(--hv-ease),
+              box-shadow var(--hv-dur) var(--hv-ease),
+              border-color var(--hv-dur) var(--hv-ease);
+}
+.hv-card--hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--hv-sh-lg);
+  border-color: var(--hv-border-strong);
+}
+.hv-card--dark {
+  background: var(--hv-bg-dark);
+  border-color: rgba(255, 255, 255, .08);
+  color: var(--hv-on-dark);
+}
+.hv-card--dark .hv-body { color: var(--hv-on-dark-muted); }
+.hv-card--raised { box-shadow: var(--hv-sh-md); border-color: transparent; }
+
+/* Check bullet list */
+.hv-checks { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--hv-s3); }
+.hv-checks li {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: var(--hv-s3);
+  align-items: start;
+  font-size: var(--hv-fs-sm);
+  line-height: 1.5;
+  color: var(--hv-text-muted);
+}
+.hv-checks svg { width: 18px; height: 18px; margin-top: 1px; color: var(--hv-accent-strong); }
+.hv-card--dark .hv-checks li, .hv-section--dark .hv-checks li { color: var(--hv-on-dark-muted); }
+.hv-card--dark .hv-checks svg, .hv-section--dark .hv-checks svg { color: var(--hv-accent-bright); }
+
+
+/* 07. Backgrounds & decoration ============================================ */
+
+/* Soft topographic wash behind the hero and mint sections. Pure CSS
+   gradients rather than an image: no extra request, no CLS, and it
+   scales to any viewport. */
+.hv-wash { position: relative; overflow: hidden; isolation: isolate; }
+.hv-wash::before {
+  content: "";
+  position: absolute;
+  inset: -20% -10% auto -10%;
+  height: 140%;
+  z-index: -1;
+  background:
+    radial-gradient(58% 44% at 12% 18%, rgba(53, 217, 160, .16) 0%, transparent 62%),
+    radial-gradient(48% 38% at 88% 8%, rgba(14, 164, 107, .13) 0%, transparent 60%),
+    radial-gradient(70% 50% at 70% 92%, rgba(53, 217, 160, .10) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.hv-divider { height: 1px; background: var(--hv-border); border: 0; margin: 0; }
+.hv-section--dark .hv-divider { background: var(--hv-border-dark); }
+
+
+/* 08. Image slots & script annotations ==================================== */
+
+.hv-imgslot {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  background: var(--hv-bg-mint-deep);
+}
+.hv-imgslot--rounded { border-radius: var(--hv-r-lg); }
+.hv-imgslot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* Placeholder state - visibly intentional rather than broken, so an
+   unreviewed page still reads as "asset pending" not "bug". */
+.hv-imgslot--empty {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--hv-s2);
+  background:
+    repeating-linear-gradient(
+      135deg,
+      rgba(10, 127, 82, .05) 0 12px,
+      rgba(10, 127, 82, .09) 12px 24px
+    );
+  border: 1px dashed var(--hv-border-strong);
+  color: var(--hv-accent-strong);
+  font-size: var(--hv-fs-xs);
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-align: center;
+  padding: var(--hv-s4);
+}
+.hv-imgslot--empty svg { width: 22px; height: 22px; opacity: .75; }
+.hv-card--dark .hv-imgslot--empty,
+.hv-section--dark .hv-imgslot--empty {
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(53, 217, 160, .06) 0 12px,
+    rgba(53, 217, 160, .11) 12px 24px
+  );
+  border-color: var(--hv-border-dark);
+  color: var(--hv-accent-bright);
+}
+
+.hv-script-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--hv-s2);
+  color: var(--hv-accent-strong);
+  pointer-events: none;
+}
+.hv-script-note__text {
+  font-family: var(--hv-font-script);
+  font-size: clamp(1.15rem, 1rem + .6vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0;
+  max-width: 22ch;
+}
+.hv-script-note__arrow { width: 62px; height: 48px; flex-shrink: 0; }
+.hv-script-note--down-left .hv-script-note__arrow { transform: scaleX(-1) rotate(-8deg); }
+.hv-script-note--down-right .hv-script-note__arrow { transform: rotate(8deg); }
+.hv-section--dark .hv-script-note { color: var(--hv-accent-bright); }
+
+@media (max-width: 900px) {
+  /* The annotations are charm, not information - they get in the way on
+     a phone, where there's no whitespace for them to live in. */
+  .hv-script-note { display: none; }
+}
+
+
+/* 09. Motion ============================================================== */
+
+.hv-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 640ms var(--hv-ease), transform 640ms var(--hv-ease);
+}
+.hv-reveal.is-in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .home-v2 *,
+  .home-v2 *::before,
+  .home-v2 *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .hv-reveal { opacity: 1; transform: none; }
+}

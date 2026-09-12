@@ -1,12 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { maxWidth } from "@/lib/breakpoints";
 
 /**
- * Port of main.js's "2. Mobile navigation" behaviour: open/closed state
- * for the `.nav__links` dropdown, closing on Escape or once the viewport
- * crosses back over the desktop breakpoint. The original also closed on
- * "click a link inside the panel"; here that's just closing on route
- * change, since a Link click always causes one.
+ * Open/closed state for the `.nav__links` dropdown panel.
+ *
+ * Closes on Escape, on route change (a Link click always causes one), and
+ * once the viewport grows past the hamburger cutover. That last one reads
+ * the breakpoint from src/lib/breakpoints.js rather than hard-coding it:
+ * this hook used to close at 900px while the CSS switched to the dropdown
+ * at 1150px, so dragging a window wider between those two widths left the
+ * panel open over a desktop nav that had already come back.
+ *
+ * Uses matchMedia rather than a resize listener - it only fires on the
+ * actual crossing instead of on every resize frame.
  */
 export default function useMobileNav() {
   const [open, setOpen] = useState(false);
@@ -18,17 +25,21 @@ export default function useMobileNav() {
 
   useEffect(() => {
     if (!open) return;
+
     const onKeyDown = (e) => {
       if (e.key === "Escape") setOpen(false);
     };
-    const onResize = () => {
-      if (window.innerWidth > 900) setOpen(false);
+    const mql = window.matchMedia(maxWidth("nav"));
+    const onChange = (e) => {
+      // e.matches === true means we're still narrow enough for the panel.
+      if (!e.matches) setOpen(false);
     };
+
     document.addEventListener("keydown", onKeyDown);
-    window.addEventListener("resize", onResize);
+    mql.addEventListener("change", onChange);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("resize", onResize);
+      mql.removeEventListener("change", onChange);
     };
   }, [open]);
 

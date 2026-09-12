@@ -20,7 +20,6 @@ export default function About() {
       <PageMeta
         title="About - GHLevelUp"
         description="An engineering team that builds and runs the operating layer for tax practices - configuration where it fits, custom software where it doesn't."
-        path="/about.html"
       />
 
       <PageHero
