@@ -21,25 +21,77 @@ const COPIES = 4;
  * home-chrome.css section 21.
  *
  * It pauses on hover, and on focus-within so a keyboard user can read a
- * card without it sliding away. The duplicate set is aria-hidden so a
- * screen reader hears each testimonial once rather than twice.
+ * card without it sliding away. Every copy after the first is aria-hidden
+ * so a screen reader hears each testimonial once rather than N times.
  *
- * The prev/next buttons nudge the track manually. Doing that pauses the
- * auto-scroll, because a control that fights the animation feels broken;
- * it resumes after a few seconds of no interaction.
+ * The prev/next buttons nudge the SAME transform the auto-play animation
+ * drives, rather than scrolling anything: an infinite linear CSS animation's
+ * visual position is just a function of elapsed time and its
+ * animation-delay, so shifting that delay jumps the track instantly to a
+ * new position without ever restarting the animation (which would snap
+ * back to translateX(0) and be exactly the kind of visible jump this is
+ * meant to avoid). The jump is paused immediately after, then resumes
+ * smoothly from the new position after a few seconds of no interaction.
  */
 export default function Testimonials() {
-  const viewportRef = useRef(null);
+  const trackRef = useRef(null);
   const [paused, setPaused] = useState(false);
   const resumeTimer = useRef(null);
+  // Cumulative animation-delay applied by nudging, in seconds. Negative
+  // values fast-forward an animation (it behaves as though it started
+  // that long ago); this just keeps adding to that as the user clicks,
+  // rather than resetting it, so repeated nudges compound correctly.
+  const delayRef = useRef(0);
+  // How many back-to-back copies of the list the track renders. Starts at
+  // the bare minimum for the wrap math to be valid; the effect below
+  // grows it to however many are actually needed once it can measure.
+  const [copies, setCopies] = useState(2);
 
   useEffect(() => () => clearTimeout(resumeTimer.current), []);
 
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const recompute = () => {
+      // scrollWidth reflects the CURRENTLY rendered number of copies
+      // (data-copies), never the transform applied to the track - dividing
+      // it back out gives the width of one copy regardless of how many are
+      // on screen right now.
+      const renderedCopies = Number(track.dataset.copies) || 1;
+      const oneSetWidth = track.scrollWidth / renderedCopies;
+      if (!oneSetWidth) return;
+
+      const viewportWidth = track.parentElement?.clientWidth || window.innerWidth;
+      // Worst case is the instant just before the track wraps: only
+      // (copies - 1) full sets remain ahead of the current view, and that
+      // has to be enough to cover the viewport on its own, or the tail end
+      // of the track runs out before the wrap point arrives. +1 copy of
+      // headroom on top of the minimum so a mid-resize measurement doesn't
+      // leave it running exactly on the edge.
+      const needed = Math.max(2, Math.ceil(viewportWidth / oneSetWidth) + 1);
+      setCopies((prev) => (prev === needed ? prev : needed));
+    };
+
+    recompute();
+
+    const ro = new ResizeObserver(recompute);
+    ro.observe(track);
+    if (track.parentElement) ro.observe(track.parentElement);
+    return () => ro.disconnect();
+  }, []);
+
   const nudge = (dir) => {
-    const el = viewportRef.current;
-    if (!el) return;
+    const track = trackRef.current;
+    if (!track) return;
+    const oneLoopWidth = track.scrollWidth / copies;
+    if (!oneLoopWidth) return;
+
+    const deltaSeconds = ((dir * 340) / oneLoopWidth) * MARQUEE_DURATION_S;
+    delayRef.current -= deltaSeconds;
+    track.style.animationDelay = `${delayRef.current}s`;
+
     setPaused(true);
-    el.scrollBy({ left: dir * 340, behavior: "smooth" });
     clearTimeout(resumeTimer.current);
     resumeTimer.current = setTimeout(() => setPaused(false), 4000);
   };
@@ -63,7 +115,6 @@ export default function Testimonials() {
           bleed to both edges and the loop has room to breathe. */}
       <div
         className={`hv-marquee${paused ? " is-paused" : ""}`}
-        ref={viewportRef}
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
