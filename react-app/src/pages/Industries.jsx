@@ -20,7 +20,6 @@ export default function Industries() {
       <PageMeta
         title="Industries - GHLevelUp"
         description="Built for tax preparers first, then the offices around them - bookkeeping, real estate, medical practices and freight brokers."
-        path="/industries.html"
       />
 
       {/* center: true - matches the page-hero--center fix applied earlier

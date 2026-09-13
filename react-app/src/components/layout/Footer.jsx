@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import Button from "@/components/common/Button.jsx";
 import { FOOTER_LINKS } from "@/data/nav";
 import { SITE } from "@/data/site";
-import footerLogo from "@/assets/img/footer-logo.png";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -13,7 +12,25 @@ export default function Footer() {
         <div className="footer-top">
           <div className="footer-brand">
             <Link className="brand brand--light" to="/">
-              <img className="footer-logo" src={footerLogo} alt="GHLevelUp" width={2094} height={751} />
+              {/* 375 KB PNG originally; now 1x/2x WebP sized to the 64px
+                  render height (see scripts/optimize-images.mjs). Lazy:
+                  the footer is always below the fold. */}
+              <picture>
+                <source
+                  type="image/webp"
+                  srcSet="/img/footer-logo.webp 1x, /img/footer-logo@2x.webp 2x"
+                />
+                <img
+                  className="footer-logo"
+                  src="/img/footer-logo.png"
+                  srcSet="/img/footer-logo.png 1x, /img/footer-logo@2x.png 2x"
+                  alt="GHLevelUp"
+                  width={178}
+                  height={64}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
             </Link>
             <p>Reception, documents, workflow and follow-up - in one system.</p>
           </div>

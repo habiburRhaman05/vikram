@@ -8,7 +8,7 @@ import { TERMS_SECTIONS } from "@/data/legal";
 export default function Terms() {
   return (
     <Layout topbar={<>Questions about these terms? <a href="/contact">Contact us</a></>}>
-      <PageMeta title="Terms of Service - GHLevelUp" description="The terms that govern use of the GHLevelUp website and platform." path="/terms.html" />
+      <PageMeta title="Terms of Service - GHLevelUp" description="The terms that govern use of the GHLevelUp website and platform." />
 
       <PageHero crumb="Terms of Service" title="Terms of Service" lede="The terms that govern use of this website and the GHLevelUp platform." />
 

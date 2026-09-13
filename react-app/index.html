@@ -13,8 +13,14 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- display=optional rather than swap: with swap the fallback font
+         paints first and then the real face swaps in at a different
+         width, which measured as a CLS of 0.16 (a Core Web Vitals
+         failure). `optional` gives the font a short window to arrive and
+         otherwise keeps the fallback for that page view - so the text
+         never re-flows. Fonts are cached from the first visit onward. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@700&family=Caveat:wght@600;700&display=optional"
       rel="stylesheet"
     />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
@@ -65,7 +71,26 @@
     shadowRoot.appendChild(style);
   }
 
+  /* The widget renders its launcher avatar as an <img> with no alt,
+     which is a real accessibility failure on our page even though the
+     markup is theirs. It is decorative (the button already has a label),
+     so an empty alt is the correct value - it hides it from screen
+     readers instead of announcing a filename. */
+  function fixWidgetA11y() {
+    var roots = [document];
+    var host = document.querySelector('chat-widget');
+    // The launcher lives inside the widget's shadow root, which
+    // document.querySelectorAll cannot see through - query both.
+    if (host && host.shadowRoot) roots.push(host.shadowRoot);
+    roots.forEach(function (root) {
+      root.querySelectorAll('img:not([alt])').forEach(function (img) {
+        img.setAttribute('alt', '');
+      });
+    });
+  }
+
   function tryInject() {
+    fixWidgetA11y();
     const widget = document.querySelector('chat-widget');
     if (widget && widget.shadowRoot) {
       injectGlassCSS(widget.shadowRoot);
@@ -81,6 +106,11 @@
     });
     observer.observe(document.body, { childList: true, subtree: true });
   }
+
+  /* The launcher image can be swapped in after the shadow root exists
+     (which is when the observer above stops), so re-apply the alt fix a
+     few times over the first few seconds rather than only once. */
+  [500, 1500, 3000, 6000].forEach(function (ms) { setTimeout(fixWidgetA11y, ms); });
 })();
 </script>
   </body>

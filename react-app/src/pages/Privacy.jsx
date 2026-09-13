@@ -8,7 +8,7 @@ import { PRIVACY_SECTIONS } from "@/data/legal";
 export default function Privacy() {
   return (
     <Layout topbar={<>Questions about your data? <a href="/contact">Contact us</a></>}>
-      <PageMeta title="Privacy Policy - GHLevelUp" description="How GHLevelUp collects, uses and protects your information." path="/privacy.html" />
+      <PageMeta title="Privacy Policy - GHLevelUp" description="How GHLevelUp collects, uses and protects your information." />
 
       <PageHero crumb="Privacy Policy" title="Privacy Policy" lede="How we collect, use and protect information you share with us." />
 

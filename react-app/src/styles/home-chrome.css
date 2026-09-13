@@ -1,0 +1,688 @@
+/* ==========================================================================
+   Home redesign - chrome, marquee, FAQ columns and motion
+   --------------------------------------------------------------------------
+   Third and final stylesheet for the redesign. Everything is scoped to
+   `.home-v2`, which now wraps the whole Layout shell (header + main +
+   footer) rather than just the page body, so the header and footer can be
+   restyled here without touching the other seven routes.
+
+   Contents
+     20. Header
+     21. Testimonial marquee
+     22. FAQ columns
+     23. Footer
+     24. Motion and hover polish
+     25. Surface craft
+   ========================================================================== */
+
+
+/* 20. Header ============================================================== */
+
+.home-v2 .topbar {
+  background: var(--hv-bg-dark);
+  color: var(--hv-on-dark-muted);
+  border-bottom: 0;
+  font-size: var(--hv-fs-xs);
+}
+.home-v2 .topbar a { color: var(--hv-accent-bright); font-weight: 700; text-decoration: none; }
+.home-v2 .topbar a:hover { text-decoration: underline; }
+
+/* The bar itself never paints anything. At rest it is completely
+   transparent, so the hero's mint wash runs right up under the logo with
+   no seam - the flat white bar butted against a tinted hero was the thing
+   that made the old header look bolted on.
+   The glass is a separate layer (::before) rather than a background on
+   the header, because opacity is cheap to animate and background +
+   backdrop-filter + box-shadow together are not: this way the scroll
+   transition is one composited fade instead of three paints. */
+.home-v2 .site-header {
+  background: transparent;
+  backdrop-filter: none;
+  border-bottom: 0;
+  box-shadow: none;
+}
+.home-v2 .site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--hv-glass);
+  backdrop-filter: var(--hv-glass-blur);
+  -webkit-backdrop-filter: var(--hv-glass-blur);
+  box-shadow: var(--hv-glass-edge), var(--hv-sh-glass);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--hv-dur-slow) var(--hv-ease);
+}
+/* The bottom edge is a gradient hairline, not a border: a full-width 1px
+   line cuts the page in half, this one dissolves at the margins so the
+   bar sits on the content rather than fencing it off. */
+.home-v2 .site-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(10, 127, 82, .22) 18%,
+    rgba(10, 127, 82, .28) 50%,
+    rgba(10, 127, 82, .22) 82%,
+    transparent
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--hv-dur-slow) var(--hv-ease);
+}
+.home-v2 .site-header.is-stuck::before,
+.home-v2 .site-header.is-stuck::after { opacity: 1; }
+
+/* Content has to sit above the glass layer. */
+.home-v2 .nav {
+  position: relative;
+  z-index: 2;
+  min-height: 80px;
+  transition: min-height var(--hv-dur-slow) var(--hv-ease);
+}
+/* Condenses once you start scrolling, which keeps the hero feeling open
+   on arrival and buys back vertical space as you read. */
+.home-v2 .site-header.is-stuck .nav { min-height: 64px; }
+.home-v2 .brand,
+.home-v2 .nav__actions { position: relative; z-index: 2; }
+
+/* A transparent bar is only worth anything if there is something behind
+   it. The header is in normal flow above <main>, so at rest it was simply
+   showing the white page background - the same flat strip as before, just
+   arrived at differently. Pulling the hero up by exactly the header's
+   height puts the hero's mint wash behind the logo and nav, and adding the
+   same amount back as padding keeps the content where it was.
+   --header-h is maintained by useStickyHeader and is measured before
+   .is-stuck applies, so it holds the tall (un-condensed) height and the
+   hero does not move when the bar shrinks on scroll. */
+.home-v2 .hv-hero {
+  margin-top: calc(-1 * var(--header-h, 80px));
+  padding-top: calc(var(--header-h, 80px) + clamp(40px, 5vw, 72px));
+}
+
+/* Firefox until recently, and any browser with backdrop-filter disabled,
+   would render the header as a 62% white wash with no blur - legible, but
+   the text behind it shows through. Opaque fallback in that case. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .home-v2 .site-header::before { background: rgba(255, 255, 255, .96); }
+}
+
+.home-v2 .brand__name { font-family: var(--hv-font); font-size: 1.16rem; letter-spacing: -.02em; }
+.home-v2 .brand__name-levelup { color: var(--hv-text); }
+
+.home-v2 .nav__link {
+  position: relative;
+  font-family: var(--hv-font);
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--hv-text-muted);
+  border-radius: var(--hv-r-pill);
+  transition: color var(--hv-dur-fast) var(--hv-ease);
+}
+/* Underline grows from the centre instead of a background pill. */
+.home-v2 .nav__link::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--hv-grad-accent);
+  transform: translateX(-50%);
+  transition: width var(--hv-dur) var(--hv-ease);
+}
+.home-v2 .nav__link:hover { color: var(--hv-accent-strong); background: transparent; }
+.home-v2 .nav__link:hover::after { width: calc(100% - 28px); }
+.home-v2 .nav__link.is-active { color: var(--hv-accent-strong); font-weight: 700; }
+.home-v2 .nav__link.is-active::after { width: calc(100% - 28px); }
+
+.home-v2 .nav__phone {
+  font-family: var(--hv-font);
+  font-weight: 700;
+  font-size: .88rem;
+  color: var(--hv-text);
+}
+.home-v2 .nav__phone svg { color: var(--hv-accent-strong); }
+
+/* The header CTA adopts the page button language exactly. */
+.home-v2 .nav__cta-desktop,
+.home-v2 .nav__cta-mobile {
+  background: var(--hv-grad-accent);
+  border: 0;
+  border-radius: var(--hv-r-pill);
+  font-family: var(--hv-font);
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(10, 127, 82, .25);
+  transition: transform var(--hv-dur-fast) var(--hv-ease), box-shadow var(--hv-dur-fast) var(--hv-ease);
+}
+.home-v2 .nav__cta-desktop:hover,
+.home-v2 .nav__cta-mobile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(10, 127, 82, .32);
+  filter: none;
+}
+.home-v2 .nav__toggle { border-radius: var(--hv-r-md); border-color: var(--hv-border-strong); }
+
+@media (max-width: 1150px) {
+  .home-v2 .nav__links { border-radius: 0 0 var(--hv-r-lg) var(--hv-r-lg); }
+  .home-v2 .nav__link::after { display: none; }
+  .home-v2 .nav__link.is-active { background: rgba(14, 164, 107, .10); }
+}
+
+/* With the bar transparent at rest, opening the mobile menu would leave
+   the logo and close button floating over the hero with the panel's hard
+   edge underneath. Opening the menu brings the glass in too, at the top
+   of the page or anywhere else. */
+.home-v2 .site-header:has(.nav__links.is-open)::before,
+.home-v2 .site-header:has(.nav__links.is-open)::after { opacity: 1; }
+
+
+/* 21. Testimonial marquee ================================================= */
+
+.hv-testi { overflow: hidden; }
+
+.hv-marquee {
+  /* Full-bleed: escapes the container so the track runs edge to edge.
+     overflow:hidden, not auto/scroll - the track's position is driven
+     entirely by the transform animation below, and a native scroll offset
+     stacking on top of that transform is exactly what caused the loop to
+     visibly jump/show empty space: scrollLeft and transform are two
+     independent offsets the browser composes without either one knowing
+     about the other, so the animation's "-50% is precisely a seamless
+     wrap" calibration only holds at scrollLeft:0. The moment anything
+     scrolled the container - the old prev/next buttons, or a touch-drag
+     swipe on mobile - that calibration silently broke. Making this
+     unscrollable removes every path to that bug, auto-play or manual. */
+  width: 100%;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+
+.hv-marquee__track {
+  display: flex;
+  gap: var(--hv-s5);
+  list-style: none;
+  margin: 0;
+  padding: var(--hv-s2) var(--hv-s5);
+  width: max-content;
+  animation: hv-marquee 46s linear infinite;
+}
+/* Travels exactly one copy's width - -100% divided by however many
+   back-to-back copies the track actually renders (--hv-marquee-copies,
+   set inline by Testimonials.jsx) - which is where the next copy has
+   moved into the position the previous one started at, so the restart is
+   invisible. This is NOT a fixed -50%: that only tiles seamlessly if a
+   single copy of the list is already at least as wide as the viewport,
+   which fails whenever there are few items and/or the viewport is wide -
+   short of that, the track runs dry before the next copy scrolls in,
+   showing empty space right at the point it's supposed to loop. */
+@keyframes hv-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(-100% / var(--hv-marquee-copies, 2))); }
+}
+
+/* Pause on hover, and on focus so a keyboard user can read a card
+   without it sliding out from under them. */
+.hv-marquee:hover .hv-marquee__track,
+.hv-marquee:focus-within .hv-marquee__track,
+.hv-marquee.is-paused .hv-marquee__track { animation-play-state: paused; }
+
+.hv-marquee .hv-testimonial {
+  flex: 0 0 clamp(280px, 26vw, 380px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--hv-s4);
+  background: var(--hv-bg);
+}
+.hv-testimonial__mark { width: 26px; height: 26px; color: var(--hv-accent); opacity: .55; }
+.hv-testimonial__quote {
+  margin: 0;
+  font-size: .92rem;
+  line-height: 1.65;
+  color: var(--hv-text-muted);
+}
+.hv-testimonial__quote::before { content: open-quote; }
+.hv-testimonial__quote::after { content: close-quote; }
+.hv-testimonial__person { display: flex; align-items: center; gap: var(--hv-s3); margin-top: auto; }
+.hv-testimonial__avatar { width: 44px; flex-shrink: 0; border-radius: var(--hv-r-pill); }
+.hv-testimonial__person strong { display: block; font-size: .875rem; font-weight: 800; }
+.hv-testimonial__person em {
+  display: block;
+  font-style: normal;
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-text-muted);
+}
+
+.hv-marquee__controls {
+  display: flex;
+  justify-content: center;
+  gap: var(--hv-s3);
+  margin-top: var(--hv-s7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hv-marquee__track { animation: none; }
+}
+
+
+/* 22. FAQ columns ========================================================= */
+
+.hv-faq__aside {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--hv-s3);
+  margin-top: var(--hv-s5);
+  flex-wrap: wrap;
+}
+
+/* Two independent stacks, never one grid: in a grid the two sides share
+   rows, so opening a question on the left would stretch the row and
+   shove the right-hand card down with it. */
+.hv-faq {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--hv-s6);
+  align-items: start;
+}
+.hv-faq__col { display: flex; flex-direction: column; gap: var(--hv-s3); }
+
+@media (max-width: 860px) {
+  .hv-faq { grid-template-columns: 1fr; gap: var(--hv-s3); }
+}
+
+
+/* 23. Footer ============================================================== */
+
+.hv-footer {
+  background: var(--hv-bg-dark-2);
+  color: var(--hv-on-dark);
+  padding-block: clamp(48px, 5vw, 76px) var(--hv-s6);
+}
+.hv-footer__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 2fr);
+  gap: clamp(32px, 5vw, 72px);
+  padding-bottom: var(--hv-s8);
+}
+@media (max-width: 980px) { .hv-footer__top { grid-template-columns: 1fr; } }
+
+.hv-footer__logo { display: inline-block; }
+.hv-footer__logo img { display: block; height: 56px; width: auto; }
+.hv-footer__pitch {
+  margin: var(--hv-s5) 0 var(--hv-s6);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.7;
+  color: var(--hv-on-dark-muted);
+  max-width: 42ch;
+}
+.hv-footer__contact { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--hv-s3); }
+.hv-footer__contact li { display: flex; align-items: flex-start; gap: var(--hv-s3); font-size: var(--hv-fs-sm); }
+.hv-footer__contact svg { width: 17px; height: 17px; flex-shrink: 0; margin-top: 2px; color: var(--hv-accent-bright); }
+.hv-footer__contact a, .hv-footer__contact span { color: var(--hv-on-dark-muted); text-decoration: none; }
+.hv-footer__contact a:hover { color: var(--hv-accent-bright); }
+
+.hv-footer__nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--hv-s7) var(--hv-s5);
+}
+.hv-footer__coltitle {
+  margin: 0 0 var(--hv-s4);
+  font-size: var(--hv-fs-xs);
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.hv-footer__col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--hv-s1); }
+/* inline-block + vertical padding gives each link a comfortable tap
+   height on a phone without visually spacing the list out. */
+.hv-footer__col a {
+  display: inline-block;
+  padding-block: 7px;
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-on-dark-muted);
+  text-decoration: none;
+  transition: color var(--hv-dur-fast) var(--hv-ease), padding-left var(--hv-dur-fast) var(--hv-ease);
+}
+.hv-footer__col a:hover { color: var(--hv-accent-bright); padding-left: 4px; }
+.hv-footer__contact a, .hv-footer__legal a { display: inline-block; padding-block: 5px; }
+
+.hv-footer__cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--hv-s5);
+  padding: var(--hv-s6);
+  border: 1px solid var(--hv-border-dark);
+  border-radius: var(--hv-r-lg);
+  background: linear-gradient(120deg, rgba(53, 217, 160, .10), rgba(53, 217, 160, .02));
+}
+.hv-footer__ctatitle { margin: 0; font-size: 1.05rem; font-weight: 800; color: #fff; }
+.hv-footer__ctasub { margin: var(--hv-s1) 0 0; font-size: var(--hv-fs-sm); color: var(--hv-on-dark-muted); }
+
+.hv-footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--hv-s4);
+  margin-top: var(--hv-s7);
+  padding-top: var(--hv-s6);
+  border-top: 1px solid var(--hv-border-dark);
+}
+.hv-footer__copy { margin: 0; font-size: var(--hv-fs-xs); color: var(--hv-on-dark-muted); }
+
+.hv-footer__social { list-style: none; margin: 0; padding: 0; display: flex; gap: var(--hv-s2); }
+.hv-footer__social a {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--hv-r-pill);
+  border: 1px solid var(--hv-border-dark);
+  color: var(--hv-on-dark-muted);
+  transition: background var(--hv-dur-fast) var(--hv-ease),
+              color var(--hv-dur-fast) var(--hv-ease),
+              transform var(--hv-dur-fast) var(--hv-ease);
+}
+.hv-footer__social svg { width: 17px; height: 17px; }
+.hv-footer__social a:hover {
+  background: var(--hv-accent-bright);
+  color: var(--hv-bg-dark);
+  transform: translateY(-2px);
+}
+
+.hv-footer__legal { list-style: none; margin: 0; padding: 0; display: flex; gap: var(--hv-s5); }
+.hv-footer__legal a { font-size: var(--hv-fs-xs); color: var(--hv-on-dark-muted); text-decoration: none; }
+.hv-footer__legal a:hover { color: var(--hv-accent-bright); }
+
+@media (max-width: 640px) {
+  .hv-footer__bottom { flex-direction: column; align-items: flex-start; }
+}
+
+
+/* 24. Motion and hover polish ============================================= */
+
+/* Reveal gets a touch more travel and a gentle scale, which reads richer
+   than a straight fade without being slow. */
+.hv-reveal { transform: translateY(22px) scale(.995); }
+.hv-reveal.is-in { transform: none; }
+
+/* Cards lift and their media eases in slightly. */
+.hv-stack-card,
+.hv-solution,
+.hv-project { transition: transform var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease), border-color var(--hv-dur) var(--hv-ease); }
+.hv-stack-card .hv-imgslot,
+.hv-project__media { overflow: hidden; }
+.hv-stack-card .hv-imgslot img,
+.hv-project__media img { transition: transform 600ms var(--hv-ease); }
+.hv-stack-card:hover .hv-imgslot img,
+.hv-project:hover .hv-project__media img { transform: scale(1.05); }
+
+/* Constellation cards drift gently, each offset so they never move as
+   one block. Purely decorative, so it is fully disabled below. */
+@keyframes hv-float {
+  0%, 100% { transform: translate(-50%, -50%); }
+  50%      { transform: translate(-50%, calc(-50% - 7px)); }
+}
+@media (min-width: 901px) {
+  .hv-cnode, .hv-cstat { animation: hv-float 7s ease-in-out infinite; }
+  .hv-cnode--2 { animation-delay: -1.1s; }
+  .hv-cnode--3 { animation-delay: -2.3s; }
+  .hv-cnode--4 { animation-delay: -3.1s; }
+  .hv-cnode--5 { animation-delay: -1.8s; }
+  .hv-cnode--6 { animation-delay: -4.2s; }
+  .hv-cnode--7 { animation-delay: -2.9s; }
+  .hv-cstat    { animation-delay: -3.6s; }
+}
+
+/* Primary buttons get a soft sheen that sweeps across on hover. */
+.hv-btn--primary { position: relative; overflow: hidden; isolation: isolate; }
+.hv-btn--primary::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -60%;
+  width: 40%;
+  z-index: -1;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .22), transparent);
+  transform: skewX(-18deg);
+  transition: left 700ms var(--hv-ease);
+}
+.hv-btn--primary:hover::after { left: 120%; }
+
+/* Badges warm up when their row is hovered. */
+.hv-solution:hover .hv-badge,
+.hv-flow__step:hover .hv-badge {
+  background: var(--hv-accent-strong);
+  color: #fff;
+  transition: background var(--hv-dur-fast) var(--hv-ease), color var(--hv-dur-fast) var(--hv-ease);
+}
+
+.home-v2 { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hv-cnode, .hv-cstat { animation: none; }
+  .hv-btn--primary::after { display: none; }
+  .home-v2 { scroll-behavior: auto; }
+}
+
+
+/* 25. Surface craft ======================================================= */
+/* -------------------------------------------------------------------------
+   Everything below exists to get the page off the default-template look.
+   Three things were doing that: flat single-colour icon tiles, cards whose
+   only depth cue was a 1px grey border and a grey drop shadow, and a nine
+   card grid with no direction in it. The fixes are all lighting cues - a
+   lit top edge, a hairline ring, a tinted shadow - because those are what
+   the eye reads as a made object rather than a filled rectangle.
+   ---------------------------------------------------------------------- */
+
+/* --- Icon tiles --------------------------------------------------------- */
+
+/* A flat mint square with a thin stroke icon is the stock component. This
+   gives the tile a light source: a vertical gradient, a bright top edge,
+   an accent hairline, and a soft glow beneath it. */
+.home-v2 .hv-badge {
+  position: relative;
+  background: linear-gradient(180deg, #F4FCF8 0%, var(--hv-bg-mint-deep) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .95),
+    inset 0 0 0 1px rgba(10, 127, 82, .11),
+    0 4px 12px rgba(10, 127, 82, .10);
+  transition: background var(--hv-dur) var(--hv-ease),
+              box-shadow var(--hv-dur) var(--hv-ease),
+              color var(--hv-dur) var(--hv-ease),
+              transform var(--hv-dur) var(--hv-ease-spring);
+}
+.home-v2 .hv-badge svg { position: relative; z-index: 1; }
+
+/* The tile inverts to the accent when its card is hovered, which gives
+   every card one clear focal point that moves with the cursor. */
+.home-v2 .hv-card--hover:hover .hv-badge,
+.home-v2 .hv-card--hover:focus-within .hv-badge {
+  background: var(--hv-grad-accent);
+  color: #fff;
+  transform: translateY(-2px) scale(1.07);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .28),
+    var(--hv-sh-accent-sm);
+}
+
+/* On a dark card the mint tile is nearly invisible, so it becomes a lit
+   glass chip instead - same lighting model, inverted. */
+.home-v2 .hv-card--dark .hv-badge,
+.home-v2 .hv-section--dark .hv-badge {
+  background: linear-gradient(180deg, rgba(53, 217, 160, .20), rgba(53, 217, 160, .05));
+  color: var(--hv-accent-bright);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .16),
+    inset 0 0 0 1px rgba(53, 217, 160, .24),
+    0 4px 14px rgba(0, 0, 0, .18);
+}
+.home-v2 .hv-card--dark.hv-card--hover:hover .hv-badge {
+  background: linear-gradient(180deg, rgba(53, 217, 160, .34), rgba(53, 217, 160, .12));
+  color: #EAFFF7;
+}
+
+/* --- Cards -------------------------------------------------------------- */
+
+/* isolation plus a negative z-index child is what lets the wash paint over
+   the card background but under its content, with no extra markup. */
+.home-v2 .hv-card { position: relative; isolation: isolate; }
+.home-v2 .hv-card--hover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(115% 80% at 0% 0%, rgba(14, 164, 107, .11), transparent 62%);
+  opacity: 0;
+  transition: opacity var(--hv-dur) var(--hv-ease);
+}
+.home-v2 .hv-card--dark.hv-card--hover::before {
+  background: radial-gradient(115% 80% at 0% 0%, rgba(53, 217, 160, .16), transparent 62%);
+}
+.home-v2 .hv-card--hover:hover::before,
+.home-v2 .hv-card--hover:focus-within::before { opacity: 1; }
+
+/* The lift goes into an accent-tinted shadow rather than the neutral grey
+   one - same geometry, but it now belongs to this palette. */
+.home-v2 .hv-card--hover:hover,
+.home-v2 .hv-card--hover:focus-within {
+  transform: translateY(-6px);
+  box-shadow: var(--hv-sh-accent);
+  border-color: rgba(10, 127, 82, .26);
+}
+.home-v2 .hv-card--dark.hv-card--hover:hover {
+  border-color: rgba(53, 217, 160, .30);
+  box-shadow: 0 24px 50px rgba(3, 33, 30, .38);
+}
+
+/* --- Service card media ------------------------------------------------- */
+
+/* The photo gets a slow push-in on hover. Scaling the image inside a
+   clipped box rather than scaling the card keeps the card edges crisp and
+   costs nothing in layout. */
+.home-v2 .hv-stack-card__media { overflow: hidden; }
+.home-v2 .hv-stack-card__media img {
+  transition: transform var(--hv-dur-slow) var(--hv-ease);
+}
+.home-v2 .hv-stack-card:hover .hv-stack-card__media img { transform: scale(1.06); }
+
+/* The circular arrow fills in and the whole link shifts toward it, so the
+   affordance reads before you get to the words. */
+.home-v2 .hv-stack-card__arrow {
+  transition: background var(--hv-dur) var(--hv-ease),
+              border-color var(--hv-dur) var(--hv-ease),
+              color var(--hv-dur) var(--hv-ease),
+              transform var(--hv-dur) var(--hv-ease-spring);
+}
+.home-v2 .hv-stack-card__link:hover .hv-stack-card__arrow,
+.home-v2 .hv-stack-card__link:focus-visible .hv-stack-card__arrow {
+  background: var(--hv-grad-accent);
+  border-color: transparent;
+  color: #fff;
+  transform: translateX(4px) scale(1.08);
+}
+
+/* --- Solutions grid ----------------------------------------------------- */
+
+/* Nine identical boxes was the most generic thing on the page. An accent
+   rail draws in from the left edge on hover and the content steps toward
+   it, which gives the grid a reading direction and makes each tile read as
+   an entry rather than filler. */
+.home-v2 .hv-solution {
+  overflow: hidden;
+  transition: transform var(--hv-dur) var(--hv-ease),
+              box-shadow var(--hv-dur) var(--hv-ease),
+              border-color var(--hv-dur) var(--hv-ease);
+}
+.home-v2 .hv-solution::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 3px;
+  height: 0;
+  border-radius: 0 3px 3px 0;
+  background: var(--hv-grad-accent);
+  transform: translateY(-50%);
+  transition: height var(--hv-dur) var(--hv-ease);
+}
+.home-v2 .hv-solution:hover::after,
+.home-v2 .hv-solution:focus-within::after { height: 64%; }
+.home-v2 .hv-solution > div { transition: transform var(--hv-dur) var(--hv-ease); }
+.home-v2 .hv-solution:hover > div { transform: translateX(3px); }
+.home-v2 .hv-solution .hv-h3 { transition: color var(--hv-dur-fast) var(--hv-ease); }
+.home-v2 .hv-solution:hover .hv-h3 { color: var(--hv-accent-strong); }
+
+/* --- Client logo strip -------------------------------------------------- */
+
+/* Icon-plus-wordmark lockups at full strength read as unfinished
+   placeholder art. Muted by default and resolving individually on hover is
+   how a real logo wall behaves, and it stops the strip competing with the
+   hero directly above it. */
+.home-v2 .hv-trust__item {
+  opacity: .62;
+  transition: opacity var(--hv-dur) var(--hv-ease),
+              color var(--hv-dur) var(--hv-ease),
+              transform var(--hv-dur) var(--hv-ease);
+}
+.home-v2 .hv-trust__item svg { color: var(--hv-accent-strong); }
+.home-v2 .hv-trust__item:hover {
+  opacity: 1;
+  color: var(--hv-text);
+  transform: translateY(-2px);
+}
+
+/* --- Pending-asset placeholders ----------------------------------------- */
+
+/* The diagonal hatch read as a broken image. This reads as a deliberate
+   abstract tile: a soft accent field with a faint grid over it, so a page
+   with assets still outstanding does not look unfinished in review. */
+.home-v2 .hv-imgslot--empty {
+  background:
+    linear-gradient(rgba(10, 127, 82, .07) 1px, transparent 1px) 0 0 / 22px 22px,
+    linear-gradient(90deg, rgba(10, 127, 82, .07) 1px, transparent 1px) 0 0 / 22px 22px,
+    radial-gradient(120% 90% at 30% 0%, #F2FBF7, var(--hv-bg-mint-deep));
+  border: 1px solid rgba(10, 127, 82, .14);
+}
+.home-v2 .hv-card--dark .hv-imgslot--empty,
+.home-v2 .hv-section--dark .hv-imgslot--empty {
+  background:
+    linear-gradient(rgba(53, 217, 160, .09) 1px, transparent 1px) 0 0 / 22px 22px,
+    linear-gradient(90deg, rgba(53, 217, 160, .09) 1px, transparent 1px) 0 0 / 22px 22px,
+    radial-gradient(120% 90% at 30% 0%, rgba(53, 217, 160, .10), rgba(3, 33, 30, .35));
+  border-color: rgba(53, 217, 160, .18);
+}
+
+/* Everything above is a hover or scroll embellishment, so all of it is
+   surrendered wholesale when the user has asked for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .home-v2 .hv-badge,
+  .home-v2 .hv-card--hover,
+  .home-v2 .hv-solution > div,
+  .home-v2 .hv-stack-card__media img,
+  .home-v2 .hv-stack-card__arrow,
+  .home-v2 .hv-trust__item,
+  .home-v2 .site-header::before,
+  .home-v2 .site-header::after,
+  .home-v2 .nav { transition-duration: 1ms; }
+  .home-v2 .hv-card--hover:hover,
+  .home-v2 .hv-card--hover:focus-within,
+  .home-v2 .hv-trust__item:hover { transform: none; }
+  .home-v2 .hv-stack-card:hover .hv-stack-card__media img { transform: none; }
+}

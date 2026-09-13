@@ -14,7 +14,7 @@
      09. Cards & feature grids
      10. Spotlight (alternating feature rows)
      11. Pipeline / steps
-     11b. Connected flow — timeline & branching diagram
+     11b. Connected flow - timeline & branching diagram
      12. Plans
      13. FAQ accordion
      14. Embeds (GoHighLevel)
@@ -43,6 +43,10 @@
   --aqua-400:  #3DE0C6;
   --aqua-500:  #1FC7AC;
   --aqua-600:  #12A791;
+  /* Same teal, deep enough to pass WCAG AA as text on white (5.26:1 vs
+     --aqua-600's 3.02:1, which fails for anything under 18.66px bold).
+     Use this whenever the teal is TEXT rather than a fill or a border. */
+  --aqua-650:  #0B7A67;
   --aqua-700:  #0E8C78;
   --aqua-800:  #0A6F5F;
   --aqua-900:  #07564A;  /* darkest stop in the brand gradient */
@@ -528,8 +532,8 @@ p:last-child { margin-bottom: 0; }
   color: var(--text-mid);
   transition: color .16s var(--ease), background .16s var(--ease);
 }
-.nav__link:hover { color: var(--aqua-600); }
-.nav__link.is-active { color: var(--aqua-600); font-weight: 600; }
+.nav__link:hover { color: var(--aqua-650); }
+.nav__link.is-active { color: var(--aqua-650); font-weight: 600; }
 
 .nav__actions {
   display: flex;
@@ -1283,20 +1287,20 @@ p:last-child { margin-bottom: 0; }
 .pipeline__arrow svg { width: 15px; height: 15px; }
 
 
-/* 11b. Connected flow — timeline & branching diagram ======================
+/* 11b. Connected flow - timeline & branching diagram ======================
    Shared visual language for "a sequence with wires": icon-node circles or
    cards linked by an animated line/path. Two consumers:
-     .tl    — a straight numbered sequence (the onboarding timeline; also
+     .tl    - a straight numbered sequence (the onboarding timeline; also
               reused, one instance per branch, as the mobile fallback for
               the branching diagram below).
-     .flow  — an actual branching diagram (desktop only — see the 1150px
+     .flow  - an actual branching diagram (desktop only - see the 1150px
               cutover in Responsive) with real SVG wires, used for the call-
               automation walkthrough.
    Reveal is driven by the existing .reveal/IntersectionObserver system:
    wrap the whole thing in .reveal, then every node/wire keys off that
    ancestor's .is-in rather than tracking its own visibility, so a wire can
    never "arrive" before the node it connects to has. Per-node stagger is
-   just a hand-set `transition-delay` in the markup — cheap, and there are
+   just a hand-set `transition-delay` in the markup - cheap, and there are
    few enough nodes here that hand-tuned beats computed. */
 
 /* ---- .tl: straight sequence ---------------------------------------------- */
@@ -1313,7 +1317,7 @@ p:last-child { margin-bottom: 0; }
 /* The connector (base line + its animated teal overlay + travelling pulse)
    sits on every step but the first, spanning backward to the previous
    step's node. `right:50%; width:100%` anchors the line's right edge on
-   this step's centre and extends it left by exactly one step's width —
+   this step's centre and extends it left by exactly one step's width -
    since steps are equal width, that lands precisely on the previous
    step's centre, without either step needing to know the other exists. */
 .tl-step:not(:first-child)::before {
@@ -1692,7 +1696,7 @@ p:last-child { margin-bottom: 0; }
 /* Contact form: GHL ships height:100%, which collapses in normal flow, so
    the iframe carries an explicit pixel height sized to this form's actual
    fields (see contact.html). This floor is just a guard against a 0-height
-   flash before that inline height applies — it is intentionally well below
+   flash before that inline height applies - it is intentionally well below
    the visible form height, not a size to grow into. */
 .ghl-embed--form iframe { min-height: 420px; }
 
@@ -1970,13 +1974,13 @@ p:last-child { margin-bottom: 0; }
     font-size: 1.02rem;
     border-radius: var(--r-md);
   }
-  .nav__link:hover { color: var(--aqua-600); }
+  .nav__link:hover { color: var(--aqua-650); }
   /* The current page gets a tinted row plus a small accent bar on the left
      edge, mirroring the panel's top accent line, so it's obvious at a
      glance which page you're on. */
   .nav__link.is-active {
     background: rgba(31, 199, 172, .09);
-    color: var(--aqua-600);
+    color: var(--aqua-650);
   }
   .nav__link.is-active::before {
     content: "";
@@ -2207,7 +2211,7 @@ p:last-child { margin-bottom: 0; }
   -webkit-backdrop-filter: blur(8px) !important;
 }
 
-/* === Deeper elements (inside Shadow DOM) — override via CSS custom properties === */
+/* === Deeper elements (inside Shadow DOM) - override via CSS custom properties === */
 .lc_text-widget {
   --chat-widget-background-color: rgba(255, 255, 255, 0.12) !important;
   --chat-widget-header-color: rgba(0, 64, 193, 0.55) !important;

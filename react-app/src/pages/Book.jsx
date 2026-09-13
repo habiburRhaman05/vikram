@@ -28,7 +28,6 @@ export default function Book() {
       <PageMeta
         title="Book a Demo - GHLevelUp"
         description="Book a 20-minute walkthrough of the platform: the AI receptionist answering live, a client uploading documents, and a return moving through the board."
-        path="/book.html"
       />
 
       <PageHero

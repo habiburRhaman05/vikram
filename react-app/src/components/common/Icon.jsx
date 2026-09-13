@@ -181,6 +181,114 @@ const paths = {
       <circle cx="18.5" cy="18.5" r="2.5" />
     </>
   ),
+
+  /* -- Added for the Home redesign ------------------------------------- */
+  cloud: <path d="M17.5 19a4.5 4.5 0 0 0 .5-8.97 6 6 0 0 0-11.66-1.5A4 4 0 0 0 6.5 19Z" />,
+  brain: (
+    <>
+      <path d="M12 5a3 3 0 0 0-6 0 3 3 0 0 0-1.6 5.5A3 3 0 0 0 6 16a3 3 0 0 0 6 .5Z" />
+      <path d="M12 5a3 3 0 0 1 6 0 3 3 0 0 1 1.6 5.5A3 3 0 0 1 18 16a3 3 0 0 1-6 .5Z" />
+    </>
+  ),
+  megaphone: (
+    <>
+      <path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1Z" />
+      <path d="M16 8a5 5 0 0 1 0 8" />
+    </>
+  ),
+  palette: (
+    <>
+      <path d="M12 21a9 9 0 1 1 9-9c0 2-1.6 2.5-3 2.5h-1.5a2 2 0 0 0-1.3 3.5 1.6 1.6 0 0 1-1.2 3Z" />
+      <circle cx="7.5" cy="12" r="1.2" />
+      <circle cx="10" cy="7.5" r="1.2" />
+      <circle cx="15" cy="8" r="1.2" />
+    </>
+  ),
+  play: (
+    <>
+      <rect x="2" y="4" width="20" height="16" rx="3" />
+      <path d="m10 9 5 3-5 3Z" />
+    </>
+  ),
+  target: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" r="1.4" />
+    </>
+  ),
+  lineChart: (
+    <>
+      <path d="M3 3v18h18" />
+      <path d="m6 15 4-5 3.5 3L20 6" />
+    </>
+  ),
+  search: (
+    <>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.6-3.6" />
+    </>
+  ),
+  sparkle: (
+    <>
+      <path d="M12 3v6M12 15v6M3 12h6M15 12h6" />
+      <path d="m6.5 6.5 3 3M14.5 14.5l3 3M17.5 6.5l-3 3M9.5 14.5l-3 3" />
+    </>
+  ),
+  quote: <path d="M9 7H6a3 3 0 0 0-3 3v7h7v-7H6m15-3h-3a3 3 0 0 0-3 3v7h7v-7h-4" />,
+  chevronLeft: <path d="m15 18-6-6 6-6" />,
+  chevronRight: <path d="m9 6 6 6-6 6" />,
+  plane: <path d="M21 3 3 10.5l7 3 3 7L21 3Z" />,
+  heart: <path d="M12 20.5 4.6 13a4.6 4.6 0 0 1 6.5-6.5l.9.9.9-.9A4.6 4.6 0 1 1 19.4 13Z" />,
+  cart: (
+    <>
+      <circle cx="9" cy="20" r="1.6" />
+      <circle cx="18" cy="20" r="1.6" />
+      <path d="M2 3h2.5l2.4 12h12L21 7H6" />
+    </>
+  ),
+  building: (
+    <>
+      <rect x="4" y="3" width="16" height="18" rx="2" />
+      <path d="M9 8h2M13 8h2M9 12h2M13 12h2M10 21v-4h4v4" />
+    </>
+  ),
+  graduationCap: (
+    <>
+      <path d="m12 4 10 5-10 5L2 9Z" />
+      <path d="M6 11v5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-5" />
+    </>
+  ),
+  wallet: (
+    <>
+      <rect x="3" y="6" width="18" height="13" rx="2.5" />
+      <path d="M3 10h18M16.5 14.5h.01" />
+    </>
+  ),
+
+  /* Social - brand marks, so these are filled rather than stroked. */
+  facebook: <path d="M14 9h3V6h-3c-2 0-3.5 1.5-3.5 3.5V12H8v3h2.5v7h3v-7H16l.5-3h-3V9.8c0-.5.4-.8 1-.8Z" />,
+  x: <path d="M4 3h4.2l4 5.6L17 3h3l-6.4 8L20.5 21h-4.2l-4.4-6.1L6.6 21H3.5l6.9-8.4Z" />,
+  linkedin: (
+    <>
+      <path d="M4.5 9h3v12h-3z" />
+      <circle cx="6" cy="5" r="1.8" />
+      <path d="M10.5 21V9h3v1.6A3.6 3.6 0 0 1 17 9c2.4 0 4 1.7 4 4.6V21h-3v-6.8c0-1.5-.7-2.4-2-2.4s-2.5 1-2.5 2.6V21Z" />
+    </>
+  ),
+  instagram: (
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.2" cy="6.8" r="1" />
+    </>
+  ),
+  youtube: (
+    <>
+      <rect x="2" y="5" width="20" height="14" rx="4.5" />
+      <path d="m10 9 5.5 3L10 15Z" />
+    </>
+  ),
 };
 
 export default function Icon({ name, strokeWidth = 2, className, style, width, height, "aria-hidden": ariaHidden = true, ...rest }) {
