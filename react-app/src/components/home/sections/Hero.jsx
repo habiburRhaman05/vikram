@@ -24,7 +24,7 @@ export default function Hero() {
           <span className="hv-eyebrow">{HERO.eyebrow}</span>
 
           <h1 className="hv-display hv-hero__title">
-            {HERO.titleLead} <span className="hv-script">{HERO.titleScript}</span> {HERO.titleTail}
+            {HERO.titleLead} <span className="hv-scrip">{HERO.titleScript}</span> {HERO.titleTail}
           </h1>
 
           <p className="hv-lede">{HERO.lede}</p>
