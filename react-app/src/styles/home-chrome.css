@@ -191,14 +191,22 @@
 .hv-testi { overflow: hidden; }
 
 .hv-marquee {
-  /* Full-bleed: escapes the container so the track runs edge to edge. */
+  /* Full-bleed: escapes the container so the track runs edge to edge.
+     overflow:hidden, not auto/scroll - the track's position is driven
+     entirely by the transform animation below, and a native scroll offset
+     stacking on top of that transform is exactly what caused the loop to
+     visibly jump/show empty space: scrollLeft and transform are two
+     independent offsets the browser composes without either one knowing
+     about the other, so the animation's "-50% is precisely a seamless
+     wrap" calibration only holds at scrollLeft:0. The moment anything
+     scrolled the container - the old prev/next buttons, or a touch-drag
+     swipe on mobile - that calibration silently broke. Making this
+     unscrollable removes every path to that bug, auto-play or manual. */
   width: 100%;
-  overflow-x: auto;
-  scrollbar-width: none;
+  overflow: hidden;
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
   mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
 }
-.hv-marquee::-webkit-scrollbar { display: none; }
 
 .hv-marquee__track {
   display: flex;
@@ -209,11 +217,18 @@
   width: max-content;
   animation: hv-marquee 46s linear infinite;
 }
-/* Travels exactly half the track, which is where the duplicated set has
-   moved into the original's position - so the restart is invisible. */
+/* Travels exactly one copy's width - -100% divided by however many
+   back-to-back copies the track actually renders (--hv-marquee-copies,
+   set inline by Testimonials.jsx) - which is where the next copy has
+   moved into the position the previous one started at, so the restart is
+   invisible. This is NOT a fixed -50%: that only tiles seamlessly if a
+   single copy of the list is already at least as wide as the viewport,
+   which fails whenever there are few items and/or the viewport is wide -
+   short of that, the track runs dry before the next copy scrolls in,
+   showing empty space right at the point it's supposed to loop. */
 @keyframes hv-marquee {
   from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  to   { transform: translateX(calc(-100% / var(--hv-marquee-copies, 2))); }
 }
 
 /* Pause on hover, and on focus so a keyboard user can read a card

@@ -52,7 +52,7 @@ export default function Hero() {
           {/* Decorative as a whole: every capability named here is also
               stated in the Services sections below, so nothing is lost
               to a screen reader by hiding the diagram. */}
-          <div className="hv-constellation" role="img" aria-label="GHLevelUp connects CRM, AI automation, web development, social media, creative design and video into one system.">
+          {/* <div className="hv-constellation" role="img" aria-label="GHLevelUp connects CRM, AI automation, web development, social media, creative design and video into one system.">
             <svg className="hv-constellation__wires" viewBox="0 0 100 95" aria-hidden="true" preserveAspectRatio="none">
               {[
                 "M18,18 L46,44", "M50,10 L48,40", "M82,17 L54,42",
@@ -93,7 +93,7 @@ export default function Hero() {
                 />
               </svg>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>
