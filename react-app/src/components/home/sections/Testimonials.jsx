@@ -4,13 +4,21 @@ import ImageSlot from "../ImageSlot.jsx";
 import { Reveal, IconButton } from "../primitives.jsx";
 import { TESTIMONIALS } from "@/data/homeV2";
 
+/** Copies of the card list on the track - see the note above. */
+const COPIES = 4;
+
 /**
  * Full-bleed testimonial marquee.
  *
- * The track scrolls continuously via a CSS animation on a duplicated
- * list, so the loop is seamless: the animation travels exactly -50% of
- * the track, at which point the copy has moved into the original's
- * position and the reset is invisible.
+ * The track scrolls continuously via a CSS animation on a repeated list,
+ * so the loop is seamless: each lap travels exactly one copy, at which
+ * point the next copy has moved into the first one's position and the
+ * reset is invisible. It is repeated COPIES times (not just twice)
+ * because one copy of three cards is narrower than a desktop window -
+ * with only a duplicate, the tail of every lap left bare background at
+ * the right edge. The count is passed to CSS as --hv-marquee-copies,
+ * which is what the keyframe divides the track by; see TrustBar.jsx and
+ * home-chrome.css section 21.
  *
  * It pauses on hover, and on focus-within so a keyboard user can read a
  * card without it sliding away. The duplicate set is aria-hidden so a
@@ -36,8 +44,8 @@ export default function Testimonials() {
     resumeTimer.current = setTimeout(() => setPaused(false), 4000);
   };
 
-  // Rendered twice: the second pass is the seamless-loop duplicate.
-  const cards = [...TESTIMONIALS.items, ...TESTIMONIALS.items];
+  // Every pass after the first is a seamless-loop duplicate.
+  const cards = Array.from({ length: COPIES }, () => TESTIMONIALS.items).flat();
 
   return (
     <section className="hv-section hv-section--mint hv-testi" aria-labelledby="testi-title">
@@ -59,7 +67,7 @@ export default function Testimonials() {
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
-        <ul className="hv-marquee__track">
+        <ul className="hv-marquee__track" style={{ "--hv-marquee-copies": COPIES }}>
           {cards.map((t, i) => {
             const isClone = i >= TESTIMONIALS.items.length;
             return (

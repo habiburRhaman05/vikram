@@ -60,7 +60,12 @@
   --hv-border-dark:   rgba(255, 255, 255, .12);
 
   /* -- Type -------------------------------------------------------------- */
-  --hv-font:          "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  /* Headings, buttons, nav, labels - the UI. */
+  --hv-font:          "DM Sans", "Segoe UI", system-ui, sans-serif;
+  /* Reading copy. Monospace fallback for the same reason as legacy's
+     --font-body: if Space Mono has not arrived, a monospace stand-in keeps
+     the measure and the wrapping close to what the real face produces. */
+  --hv-font-body:     "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --hv-font-script:   "Caveat", "Segoe Script", cursive;
 
   /* Fluid scale - each clamp is (min, preferred, max) so type scales with
@@ -140,11 +145,20 @@
 .hv-section--tight { padding-block: calc(var(--hv-section-y) * .62); }
 .hv-section--flush-top { padding-top: 0; }
 
+/* ONE width for the whole page - the header's, not a second value of its
+   own. This used to be a hard-coded 1200px here while the header and the
+   hero ran at 1340px, so the logo and every section's first column sat on
+   different left edges and the mismatch was visible on every scroll.
+
+   --container / --gutter are the site-wide tokens the header's .container
+   already uses (legacy/styles.css), so reading them here is what
+   guarantees the two can never drift apart again: change the token once
+   and the bar, the sections and the footer all move together. */
 .hv-container {
   width: 100%;
-  max-width: 1200px;
+  max-width: var(--container, 1340px);
   margin-inline: auto;
-  padding-inline: clamp(20px, 4vw, 32px);
+  padding-inline: var(--gutter, 24px);
 }
 
 /* Visible to assistive tech, not to the eye. Used to give repeated
@@ -194,6 +208,26 @@
 .hv-display { font-size: var(--hv-fs-display); font-weight: 800; letter-spacing: -0.035em; }
 .hv-h2      { font-size: var(--hv-fs-h2); font-weight: 800; }
 .hv-h3      { font-size: var(--hv-fs-h3); font-weight: 700; letter-spacing: -0.015em; }
+
+/**
+ * Reading copy is the one bucket set in Space Mono. Headings (above),
+ * buttons, the nav, eyebrows and every uppercase label stay in DM Sans.
+ *
+ * The prose classes are listed explicitly rather than making the whole
+ * section monospace on purpose: mono paragraphs read as a decision, but a
+ * mono nav, mono buttons and mono uppercase labels read as a rendering
+ * mistake. Add new prose classes to this list, or they will quietly
+ * inherit DM Sans.
+ */
+.home-v2 .hv-body,
+.home-v2 .hv-lede,
+.home-v2 .hv-hero__lede,
+.home-v2 .hv-why__text,
+.home-v2 .hv-post__excerpt,
+.home-v2 .hv-testimonial__quote,
+.home-v2 .hv-footer__pitch {
+  font-family: var(--hv-font-body);
+}
 
 .hv-lede {
   font-size: var(--hv-fs-lede);

@@ -45,11 +45,14 @@ export function HvSection({
 }
 
 /** Scroll reveal. Wraps the existing useReveal IntersectionObserver hook
- *  but with the redesign's own `.hv-reveal` transition. */
+ *  but with the redesign's own `.hv-reveal` transition. `is-in` comes from
+ *  the hook's state, not an imperative DOM write, so a wrapper whose own
+ *  className changes after mount (the Why Choose Us accordion rows) keeps
+ *  its revealed state instead of falling back to opacity:0. */
 export function Reveal({ as: Tag = "div", index = 0, className = "", children, ...rest }) {
-  const ref = useReveal(index);
+  const { ref, shown } = useReveal(index);
   return (
-    <Tag ref={ref} className={`hv-reveal ${className}`.trim()} {...rest}>
+    <Tag ref={ref} className={`hv-reveal${shown ? " is-in" : ""} ${className}`.trim()} {...rest}>
       {children}
     </Tag>
   );

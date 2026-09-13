@@ -32,31 +32,68 @@
 /* -- 1. Hero -------------------------------------------------------------- */
 
 export const HERO = {
-  eyebrow: "Your digital growth partner",
-  titleLead: "We Build Digital Systems That",
-  titleScript: "Grow",
-  titleTail: "Your Business",
+  eyebrow: "CRM. Automation. AI. Web. Creative.",
+  /* Two short lines with the accent word in the script face, which is the
+     shape the reference uses.
+
+     HARD LIMIT, measured: the copy column is capped at 36rem (576px) and
+     the display size reaches 4.4rem at desktop, so a line fits roughly 15
+     characters. "Turn traffic into" is 17 and wrapped onto a third line.
+     Keep each line at two words plus punctuation, and check the rendered
+     height before changing either one.
+
+     The promise is the outcome rather than the activity, because the list
+     of services is already on the right of this same screen. */
+  lineOne: "Less admin,",
+  lineTwoLead: "more",
+  lineTwoScript: "revenue.",
+  /* Short on purpose: three promises in one sentence, no pile-up of clauses
+     to read through before the buttons. */
   lede:
-    "From CRM and AI automation to web development, marketing and creative - we help you build modern digital systems that attract, engage and convert.",
-  primary: { label: "Get a Free Consultation", to: "/book", icon: "arrowRight" },
-  secondary: { label: "Explore Our Services", to: "/platform" },
-  proofPoints: [
-    { icon: "target", label: "Strategy Consultation" },
-    { icon: "sliders", label: "Custom Solutions" },
-    { icon: "shieldCheck", label: "Ongoing Support" },
+    "CRM, AI automation and websites that capture every lead, follow up in seconds and fill your calendar - built and run by one team.",
+  primary: { label: "Book a free consultation", to: "/book" },
+  secondary: { label: "See what we build", to: "/platform" },
+
+  /* Trust cluster. The faces are real photographs now (requested), and an
+     initial renders in place of one until its file exists - see Face in
+     Hero.jsx, which falls back on a failed load rather than leaving a
+     broken image. They are decorative (the list is aria-hidden, alt is
+     empty): a stock portrait standing next to a company name would be a
+     claim about a real person, so the photos must be swapped for real
+     customers before this reads as anything other than illustration. */
+  faces: [
+    { name: "Amara", image: "/img/home/review-1.jpg", imageWebp: "/img/home/review-1.webp" },
+    { name: "Daniel", image: "/img/home/review-2.jpg", imageWebp: "/img/home/review-2.webp" },
+    { name: "Priya", image: "/img/home/review-3.jpg", imageWebp: "/img/home/review-3.webp" },
+    { name: "Marcus", image: "/img/home/review-4.jpg", imageWebp: "/img/home/review-4.webp" },
+    { name: "Elena", image: "/img/home/review-5.jpg", imageWebp: "/img/home/review-5.webp" },
   ],
-  /* The floating constellation around the central cloud mark. `emphasis`
-     marks the three that survive into the condensed mobile layout. */
-  cards: [
-    { icon: "users", title: "CRM", sub: "Manage Leads & Customers", emphasis: true },
-    { icon: "brain", title: "AI Automation", sub: "Save Time, Work Smarter", emphasis: true },
-    { icon: "bolt", title: "Automation", sub: "Connect Apps & Workflows" },
-    { icon: "megaphone", title: "Social Media", sub: "Build Your Brand" },
-    { icon: "code", title: "Web Development", sub: "Modern Websites & Apps", emphasis: true },
-    { icon: "palette", title: "Creative Design", sub: "Graphics & Branding" },
-    { icon: "play", title: "Video Editing", sub: "Engage Your Audience" },
+  trustLabel: "Working with teams across the US",
+  trustSub: "Albany, New York - remote nationwide",
+  footNote: "Based in Albany, New York. Working with businesses nationwide.",
+
+  /* The rotating capability list on the right. One is highlighted at a
+     time and the highlight advances on a timer. */
+  /* 12 items, not 7 - the reel window only ever shows about 7-8 of them
+     at once (see --hv-cap-h / .hv-hero__reel in home-sections.css), so a
+     longer list is what keeps a full lap feeling like a real scroll
+     instead of an obvious 7-item loop. Every label here is a service the
+     page actually sells further down (Stack, Solutions) - nothing is
+     invented just to pad the count. */
+  marquee: [
+    { icon: "target", label: "CRM & GoHighLevel" },
+    { icon: "bolt", label: "Workflow Automation" },
+    { icon: "brain", label: "AI Agents" },
+    { icon: "code", label: "Web Development" },
+    { icon: "megaphone", label: "Marketing Campaigns" },
+    { icon: "palette", label: "Creative & Content" },
+    { icon: "sparkle", label: "Branding" },
+    { icon: "search", label: "SEO & Content" },
+    { icon: "layers", label: "Sales Funnels" },
+    { icon: "shieldCheck", label: "Client Support" },
+    { icon: "play", label: "Video Editing" },
+    { icon: "barChart", label: "Reporting & Analytics" },
   ],
-  stat: { value: "+248%", label: "Business Growth" },
 };
 
 /* -- 2. Trust bar --------------------------------------------------------- */
@@ -177,7 +214,62 @@ export const SOLUTIONS = {
   ],
 };
 
-/* -- 6. Selected projects -------------------------------------------------- */
+/* -- 6. Why choose us ------------------------------------------------------ */
+
+/* The eyebrow is deliberately split in two rather than written with an
+   em dash: the separator is a middot, because em dashes are out
+   site-wide. The second half sets in the script face for the same reason
+   the hero does - it is the one decorative note in an otherwise plain
+   section head. */
+export const WHY = {
+  /* Single plain eyebrow, matching every other section on the page
+     (SOLUTIONS.eyebrow, STACK.eyebrow, ...) - this section previously had
+     its own bespoke two-part "Why choose us · Core strengths." eyebrow
+     with a middot and an italic accent, which was the only section on
+     the page not using the shared SectionHead style. */
+  eyebrow: "Why Choose Us",
+  title: "We combine expertise, automation and a genuinely hands-on approach.",
+  /* Each item owns the photo shown beside it. All four are cropped to the
+     same 1040x875 so the crossfade never resizes the frame. `titleLines`
+     rather than one string: the reference breaks each title onto two lines
+     deliberately, and a <br> in a data file is markup hiding in content. */
+  items: [
+    {
+      id: "team",
+      icon: "megaphone",
+      titleLines: ["One Team, One Point", "of Contact"],
+      body: "You get one strategist who knows your account, not a ticket queue. The same people who plan the work are the ones who build and run it.",
+      image: "/img/home/why-1.jpg",
+      imageWebp: "/img/home/why-1.webp",
+    },
+    {
+      id: "channels",
+      icon: "growth",
+      titleLines: ["Campaigns Across", "Every Channel"],
+      body: "Email, SMS, social and paid all run from the same CRM, so a lead is followed up once and properly rather than four times by four tools.",
+      image: "/img/home/why-2.jpg",
+      imageWebp: "/img/home/why-2.webp",
+    },
+    {
+      id: "results",
+      icon: "target",
+      titleLines: ["Results You Can", "Actually Measure"],
+      body: "Every build ships with reporting wired in from day one: where leads came from, what they cost, and which ones turned into revenue.",
+      image: "/img/home/why-3.jpg",
+      imageWebp: "/img/home/why-3.webp",
+    },
+    {
+      id: "automation",
+      icon: "rocket",
+      titleLines: ["Automation That", "Keeps Working"],
+      body: "Workflows are documented and handed over, not locked in our heads. They keep running whether or not you are paying us this month.",
+      image: "/img/home/why-4.jpg",
+      imageWebp: "/img/home/why-4.webp",
+    },
+  ],
+};
+
+/* -- 7. Selected projects -------------------------------------------------- */
 
 export const WORK = {
   eyebrow: "Our work",
@@ -200,7 +292,7 @@ export const WORK = {
   ],
 };
 
-/* -- 7. Impact ------------------------------------------------------------- */
+/* -- 8. Impact ------------------------------------------------------------- */
 
 export const IMPACT = {
   eyebrow: "Our impact",
@@ -223,7 +315,7 @@ export const IMPACT = {
   ],
 };
 
-/* -- 8. Testimonials ------------------------------------------------------- */
+/* -- 9. Testimonials ------------------------------------------------------- */
 
 export const TESTIMONIALS = {
   eyebrow: "Testimonials",
@@ -254,7 +346,7 @@ export const TESTIMONIALS = {
   ],
 };
 
-/* -- 9. FAQ ---------------------------------------------------------------- */
+/* -- 10. FAQ ---------------------------------------------------------------- */
 
 export const FAQ = {
   eyebrow: "FAQ",
@@ -305,7 +397,60 @@ export const FAQ = {
   ],
 };
 
-/* -- 10. Closing CTA ------------------------------------------------------- */
+/* -- 11. Latest insights --------------------------------------------------- */
+
+/* DESTINATIONS: there is no /blog route yet, so every link here is a dead
+   end until one exists - see the note in src/data/navMenus.js. `base` plus
+   a per-post `slug` is all that has to change. */
+export const BLOG = {
+  badge: "Blog & resources",
+  /* Two-tone heading: the accent half is split out rather than marked up
+     inline so the copy stays plain text. */
+  titleLead: "Latest",
+  titleAccent: "Insights",
+  cta: { label: "View All Posts", to: "/blog" },
+  base: "/blog",
+  posts: [
+    {
+      slug: "lead-pipeline-follow-up",
+      category: "GoHighLevel",
+      title: "How to build a lead pipeline that actually follows up",
+      excerpt:
+        "Most pipelines stall because the follow-up lives in someone's head. Here is the stage-by-stage setup we use so nothing goes quiet after day three.",
+      date: "2026-09-02",
+      dateLabel: "Sep 2, 2026",
+      readMins: 6,
+      image: "/img/home/post-pipeline.jpg",
+      imageWebp: "/img/home/post-pipeline.webp",
+    },
+    {
+      slug: "where-ai-agents-actually-save-time",
+      category: "AI Automation",
+      title: "Where AI agents genuinely save time, and where they do not",
+      excerpt:
+        "Intake, qualifying and booking are worth automating today. Judgement calls and anything with a refund attached are not. A practical dividing line.",
+      date: "2026-08-21",
+      dateLabel: "Aug 21, 2026",
+      readMins: 8,
+      image: "/img/home/post-ai.jpg",
+      imageWebp: "/img/home/post-ai.webp",
+    },
+    {
+      slug: "landing-page-conversion-checklist",
+      category: "Web & Conversion",
+      title: "Why your landing page converts worse than your competitor's",
+      excerpt:
+        "It is rarely the headline. Nine times out of ten it is load time, an unclear next step, or a form asking for things you do not need yet.",
+      date: "2026-08-07",
+      dateLabel: "Aug 7, 2026",
+      readMins: 5,
+      image: "/img/home/post-landing.jpg",
+      imageWebp: "/img/home/post-landing.webp",
+    },
+  ],
+};
+
+/* -- 12. Closing CTA ------------------------------------------------------- */
 
 export const CLOSING = {
   eyebrow: "Let's build together",
@@ -317,7 +462,7 @@ export const CLOSING = {
   note: "Let's create something amazing together!",
 };
 
-/* -- 11. Footer ------------------------------------------------------------ */
+/* -- 13. Footer ------------------------------------------------------------ */
 
 export const FOOTER_COLUMNS = [
   {

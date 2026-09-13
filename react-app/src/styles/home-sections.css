@@ -6,7 +6,7 @@
    imported by src/pages/Home.jsx and both only apply inside `.home-v2`.
 
    Contents
-     10. Hero + constellation
+     10. Hero
      11. Trust bar
      12. Growth stack
      13. Journey flow
@@ -16,137 +16,411 @@
      17. Testimonials
      18. FAQ
      19. Closing CTA
+     20. Why choose us
+     21. Latest insights
    ========================================================================== */
 
 
 /* 10. Hero ================================================================ */
 
+/* The hero is the page's darkest surface. It runs up under the header
+   (see home-chrome.css section 20) so the bar sits on it with no seam. */
 .home-v2 .hv-hero {
-  padding-block: clamp(40px, 5vw, 72px) clamp(56px, 7vw, 100px);
-  background: linear-gradient(180deg, var(--hv-bg-mint) 0%, rgba(234, 247, 241, .35) 62%, var(--hv-bg) 100%);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  /* One-off exception to the emerald design tokens, confirmed with the
+     client: the capability reel's active item uses a blue -> yellow
+     gradient instead of the brand accent. Scoped as local variables here
+     rather than added to :root in home-redesign.css, precisely because it
+     is NOT a brand colour and must not leak into anything else. */
+  --hv-hero-active-grad: linear-gradient(90deg, #3E8EF7 0%, #7FD1F5 46%, #FBCB4A 100%);
+  --hv-hero-active-icon: #FBCB4A;
+  /* Teal rather than the green used by the other dark bands, and a shade
+     darker, so the headline and the reel carry more weight against it. */
+  background:
+    radial-gradient(90% 70% at 74% 2%, rgba(45, 212, 191, .15), transparent 58%),
+    radial-gradient(74% 62% at 4% 98%, rgba(13, 148, 136, .12), transparent 62%),
+    linear-gradient(168deg, #01181B 0%, #042E31 48%, #053F42 100%);
+  color: var(--hv-on-dark);
+  padding-block: clamp(36px, 4vw, 60px) clamp(48px, 5.5vw, 84px);
 }
+
+/* One soft accent bloom behind the capability column, so the right side
+   has some depth instead of being flat text on flat colour. */
+.hv-hero__glow {
+  position: absolute;
+  z-index: -1;
+  top: -12%;
+  right: -8%;
+  width: 58%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(45, 212, 191, .20) 0%, transparent 66%);
+  filter: blur(18px);
+  pointer-events: none;
+}
+
 .hv-hero__inner {
   display: grid;
-  /* Copy column slightly wider than the visual so the headline holds
-     three lines rather than breaking to four. */
-  grid-template-columns: minmax(0, 1.06fr) minmax(0, 1fr);
-  gap: clamp(28px, 4vw, 60px);
+  /* The reel column is the wider one on purpose. Its rows are single-line
+     labels set at display size, and at an even 1fr/1fr split the longest
+     of them ("Workflow Automation") ran past the reel's clip edge and was
+     cut off mid-word at every desktop width - measured, not assumed: 66px
+     at 1440, 25px at 1280, 36px at 1100. The copy column only ever fills
+     its 36rem measure, so the extra width costs it nothing. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: clamp(32px, 5vw, 80px);
   align-items: center;
 }
-@media (max-width: 1080px) {
-  .hv-hero__inner { grid-template-columns: 1fr; }
+
+/* -- Copy ----------------------------------------------------------------- */
+
+.hv-hero__copy { max-width: 36rem; }
+
+.hv-hero__eyebrow {
+  margin: 0 0 var(--hv-s4);
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--hv-on-dark-muted);
 }
 
-.hv-hero__title { margin-top: var(--hv-s1); }
-.hv-hero__actions { margin-top: var(--hv-s7); }
+.hv-hero__title {
+  margin: 0;
+  font-size: clamp(2.5rem, 1.2rem + 4.4vw, 4.4rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -.035em;
+  color: #fff;
+}
+.hv-hero__line { display: block; }
+.hv-hero__line + .hv-hero__line { margin-top: .08em; }
 
-/* Three across on one line, as in the reference. The badge and label
-   shrink slightly so all three fit the copy column at 1280-1440 without
-   wrapping the last one onto a lonely second row. */
-.hv-hero__proof {
-  list-style: none;
-  margin: var(--hv-s8) 0 0;
-  padding: 0;
+/* The accent word sets in the script face, as the hero has done since the
+   first pass - it is the one place the decorative type is used. */
+.hv-hero__accent {
+  position: relative;
+  display: inline-block;
+  font-family: var(--hv-font-script);
+  font-weight: 700;
+  font-style: normal;
+  font-size: 1.12em;
+  line-height: .9;
+  padding-inline: .04em;
+  color: var(--hv-accent-bright);
+}
+.hv-hero__swoosh {
+  position: absolute;
+  left: -4%;
+  bottom: -.16em;
+  width: 108%;
+  height: .28em;
+  color: #fff;
+  opacity: .92;
+  /* Drawn on first paint rather than on scroll: it sits above the fold,
+     so an IntersectionObserver would never fire for it. */
+  stroke-dasharray: 240;
+  stroke-dashoffset: 240;
+  animation: hv-draw 900ms var(--hv-ease) 420ms forwards;
+}
+@keyframes hv-draw { to { stroke-dashoffset: 0; } }
+
+.hv-hero__lede {
+  margin: var(--hv-s6) 0 0;
+  max-width: 44ch;
+  font-size: var(--hv-fs-lede);
+  line-height: 1.62;
+  color: var(--hv-on-dark-muted);
+}
+
+/* -- Actions -------------------------------------------------------------- */
+
+.hv-hero__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--hv-s4) clamp(14px, 1.6vw, 24px);
+  align-items: center;
+  gap: var(--hv-s4) var(--hv-s7);
+  margin-top: var(--hv-s8);
 }
-.hv-hero__proof li {
-  display: flex;
+
+.hv-hero__cta {
+  display: inline-flex;
   align-items: center;
   gap: var(--hv-s2);
-  font-size: .8rem;
-  font-weight: 600;
-  white-space: nowrap;
-  color: var(--hv-text-muted);
+  min-height: 56px;
+  padding: 0 30px;
+  border-radius: var(--hv-r-pill);
+  /* White label, so the fill has to be dark enough to carry it: this
+     gradient runs 5.04:1 to 7.4:1 against white, where the lighter mint
+     it replaced measured about 2.2:1 and failed. */
+  background: var(--hv-grad-accent);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 14px 34px rgba(10, 127, 82, .34);
+  transition: transform var(--hv-dur) var(--hv-ease),
+              box-shadow var(--hv-dur) var(--hv-ease),
+              filter var(--hv-dur) var(--hv-ease);
 }
-.hv-hero__proof .hv-badge { width: 32px; height: 32px; border-radius: var(--hv-r-sm); }
-.hv-hero__proof .hv-badge svg { width: 16px; height: 16px; }
-
-/* -- Constellation -------------------------------------------------------- */
-
-.hv-constellation { position: relative; width: 100%; aspect-ratio: 1 / 0.92; }
-.hv-constellation__wires {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  color: rgba(10, 127, 82, .25);
+.hv-hero__cta svg { width: 17px; height: 17px; transition: transform var(--hv-dur) var(--hv-ease); }
+.hv-hero__cta:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+  box-shadow: 0 20px 44px rgba(10, 127, 82, .44);
 }
-.hv-constellation__core {
+.hv-hero__cta:hover svg { transform: translate(3px, -3px); }
+
+/* Underlined text link, per the reference. The rule is a pseudo-element
+   rather than text-decoration so it can sit further from the baseline and
+   slide on hover. */
+.hv-hero__link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hv-s2);
+  min-height: 44px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+}
+.hv-hero__link svg { width: 16px; height: 16px; transition: transform var(--hv-dur) var(--hv-ease); }
+.hv-hero__link::after {
+  content: "";
   position: absolute;
-  left: 48%; top: 46%;
-  transform: translate(-50%, -50%);
-  width: clamp(76px, 9vw, 100px);
-  aspect-ratio: 1;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--hv-accent-bright);
+  transform-origin: left;
+  transition: transform var(--hv-dur) var(--hv-ease);
+}
+.hv-hero__link:hover::after { transform: scaleX(1.06); }
+.hv-hero__link:hover svg { transform: translate(3px, -3px); }
+
+/* -- Trust cluster -------------------------------------------------------- */
+
+.hv-hero__trust {
+  display: flex;
+  align-items: center;
+  gap: var(--hv-s4);
+  margin-top: clamp(28px, 3.2vw, 44px);
+}
+
+.hv-hero__faces { display: flex; list-style: none; margin: 0; padding: 0; }
+/* Photographs (see Face in Hero.jsx) with an initial as the fallback on
+   the same circle, so the two states are pixel-identical in size.
+   The ring is a light hairline rather than the hero's own dark teal: it
+   has to separate each avatar from the one it overlaps, and a ring the
+   same colour as the background does not - which also left the initials
+   version reading as one merged blob. */
+.hv-hero__face {
   display: grid;
   place-items: center;
-  border-radius: var(--hv-r-xl);
-  background: var(--hv-bg-dark);
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, .38);
+  background: linear-gradient(150deg, #12806F 0%, #04393C 100%);
+  font-size: .85rem;
+  font-weight: 800;
   color: var(--hv-accent-bright);
-  box-shadow: var(--hv-sh-float);
+  transition: transform var(--hv-dur) var(--hv-ease-spring);
 }
-.hv-constellation__core svg { width: 48%; height: 48%; }
+/* object-fit crops the portrait to the circle instead of squashing it,
+   and object-position favours the top of the frame, which is where a
+   head-and-shoulders shot keeps the face. */
+.hv-hero__face img,
+.hv-hero__face picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.hv-hero__face img { object-fit: cover; object-position: 50% 22%; }
+.hv-hero__face + .hv-hero__face { margin-left: -12px; }
+.hv-hero__faces:hover .hv-hero__face { transform: translateY(-3px); }
 
-.hv-cnode {
-  position: absolute;
-  transform: translate(-50%, -50%);
+.hv-hero__trust-text { margin: 0; display: grid; gap: 2px; }
+.hv-hero__trust-text strong { font-size: var(--hv-fs-sm); font-weight: 700; color: #fff; }
+.hv-hero__trust-text span { font-size: var(--hv-fs-sm); color: var(--hv-on-dark-muted); }
+
+/* Sits below both columns rather than inside the copy one, so it stays the
+   last thing in the hero once the two columns stack - inside the copy it
+   ended up above the capability list on a phone. */
+.hv-hero__note {
+  margin: clamp(26px, 3vw, 40px) 0 0;
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-on-dark-muted);
+  opacity: .68;
+}
+
+/* -- Capability reel ------------------------------------------------------ */
+
+/* Stepped reel, scrolling bottom to top forever. The motion and the
+   highlight are both driven from one step counter in Hero.jsx - there is
+   deliberately NO keyframe animation here for either, because the lit row
+   has to be a fixed POSITION (the 4th of 7) rather than a property that
+   travels with an item on its own timer.
+   Row height is a fixed real-unit variable, not derived from font-size:
+   the track's travel is expressed in whole rows, so the row has to be a
+   number the JS and the CSS can both rely on. */
+.hv-hero__stack {
+  /* 7 rows at 64px = 448px, inside the 450px ceiling. */
+  --hv-cap-h: clamp(48px, 4.6vw, 64px);
+  min-width: 0;
+}
+
+/* Exactly 7 rows tall, derived from the row height so "7 visible" holds at
+   every width by construction rather than by two numbers that happen to
+   agree. The mask is the soft fade at the top and bottom edges.
+   The left padding is load-bearing: the active row's icon tile scales up
+   (and carries a glow), and with `overflow: hidden` on this box the first
+   column's tile is flush against the clip edge, so the scaled tile had
+   its LEFT border - and the left half of its glow - sliced off. The gutter
+   gives the tile room to grow into; the mask is vertical only, so nothing
+   is hidden by this. */
+.hv-hero__reel {
+  position: relative;
+  height: calc(var(--hv-cap-h) * 7);
+  padding-left: 10px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+}
+
+/* transform and transition are both set inline from the step counter. */
+.hv-hero__track {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  will-change: transform;
+}
+
+.hv-hero__cap {
+  height: var(--hv-cap-h);
   display: flex;
   align-items: center;
-  gap: var(--hv-s2);
-  padding: 9px 13px;
-  border-radius: var(--hv-r-md);
-  background: #fff;
-  box-shadow: var(--hv-sh-float);
-  white-space: nowrap;
+  gap: clamp(var(--hv-s3), 1.4vw, var(--hv-s5));
 }
-.hv-cnode__text strong { display: block; font-size: .78rem; font-weight: 800; line-height: 1.2; }
-.hv-cnode__text em {
-  display: block;
-  font-style: normal;
-  font-size: .66rem;
-  line-height: 1.3;
-  color: var(--hv-text-muted);
-  margin-top: 1px;
-}
-.hv-cnode--1 { left: 18%; top: 16%; }
-.hv-cnode--2 { left: 52%; top:  7%; }
-.hv-cnode--3 { left: 84%; top: 15%; }
-.hv-cnode--4 { left: 12%; top: 44%; }
-.hv-cnode--5 { left: 86%; top: 45%; }
-.hv-cnode--6 { left: 25%; top: 76%; }
-.hv-cnode--7 { left: 60%; top: 84%; }
 
-.hv-cstat {
-  position: absolute;
-  left: 86%; top: 70%;
-  transform: translate(-50%, -50%);
+/* Icon leads, badge-style, rather than a bare stroke floating in space -
+   the same rounded-tile language as .hv-badge elsewhere on the page, in a
+   glass finish that suits sitting on the dark hero. Sized off the row
+   height so it scales with the text instead of needing its own clamp. */
+.hv-hero__cap-icon {
   display: grid;
-  gap: 2px;
-  padding: 11px 15px;
-  border-radius: var(--hv-r-md);
-  background: #fff;
-  box-shadow: var(--hv-sh-float);
+  place-items: center;
+  width: calc(var(--hv-cap-h) * .64);
+  height: calc(var(--hv-cap-h) * .64);
+  flex-shrink: 0;
+  border-radius: calc(var(--hv-cap-h) * .2);
+  background: rgba(255, 255, 255, .06);
+  /* A real border, not a pair of stacked inset box-shadows - two inset
+     rings on an element that also gets transform:scale() left a visible
+     notch/seam in the corners at some zoom levels (subpixel rounding
+     between the two shadow layers). One border renders as a single clean
+     stroke at any scale. */
+  border: 1.5px solid rgba(255, 255, 255, .16);
+  color: #fff;
+  opacity: .4;
+  transition: opacity 320ms var(--hv-ease), background 320ms var(--hv-ease),
+              border-color 320ms var(--hv-ease), box-shadow 320ms var(--hv-ease),
+              color 320ms var(--hv-ease), transform 320ms var(--hv-ease);
 }
-.hv-cstat__value { font-size: .95rem; font-weight: 800; color: var(--hv-accent-strong); }
-.hv-cstat__label { font-size: .62rem; color: var(--hv-text-muted); }
-.hv-cstat__spark { width: 68px; height: 22px; color: var(--hv-accent); margin-top: 2px; }
+.hv-hero__cap-icon svg { width: 46%; height: 46%; }
+/* An SVG stroke can't take a background-clip fill, so the active icon
+   gets a soft fill in the gradient's warm end and a matching glow, rather
+   than trying to fake the text's gradient on it. The glow is a single
+   OUTER shadow (not inset), so it never competes with the border. */
+.hv-hero__cap.is-active .hv-hero__cap-icon {
+  opacity: 1;
+  background: rgba(251, 203, 74, .16);
+  border-color: rgba(251, 203, 74, .55);
+  box-shadow: 0 0 22px rgba(251, 203, 74, .22);
+  color: var(--hv-hero-active-icon);
+  transform: scale(1.06);
+}
 
-/* Phone: the scatter becomes a tidy grid of the three headline
-   capabilities plus the growth stat. Eight floating cards stacked in a
-   column is noise, not a diagram. */
-@media (max-width: 900px) {
-  .hv-constellation {
-    aspect-ratio: auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(146px, 1fr));
-    gap: var(--hv-s3);
+.hv-hero__cap-text {
+  /* Tuned DOWN from 3.6vw/3.5rem because the labels are single lines in a
+     clipped box: at the old size the longest one overran the reel's right
+     edge and was cut mid-word (see the note on .hv-hero__inner). Measured
+     for the longest label at 1081/1100/1200/1280/1366/1440px with room to
+     spare at each. */
+  font-size: clamp(2rem, .3rem + 3.4vw, 3.3rem);
+  font-weight: 800;
+  /* 1.02 rather than 1.08 - at the max size this keeps the line box inside
+     the 64px row with a little air; any looser and it would clip against
+     the mask on tall viewports. */
+  line-height: 1.02;
+  letter-spacing: -.025em;
+  white-space: nowrap;
+  /* Resting: plain white. The fade toward the top and bottom of the window
+     comes from the mask, not from dimming each row. */
+  color: #fff;
+  opacity: .42;
+  /* opacity only: transitioning `color` on a background-clip:text element
+     crossfades the transparent fill against white, so the gradient arrived
+     smeared before it settled. The colour swap is instant now, and the
+     opacity fade still carries the change. */
+  transition: opacity 320ms var(--hv-ease);
+}
+/* The active row is the same SIZE as the rest, exactly as in the reference
+   - only its colour changes. background-clip:text needs a transparent fill
+   for the gradient to show through the glyphs. The gradient is a
+   deliberate one-off, off the emerald palette, scoped to this element. */
+.hv-hero__cap.is-active .hv-hero__cap-text {
+  opacity: 1;
+  color: transparent;
+  background-image: var(--hv-hero-active-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* -- Responsive ----------------------------------------------------------- */
+
+@media (max-width: 1080px) {
+  .hv-hero__inner { grid-template-columns: 1fr; gap: clamp(32px, 5vw, 48px); }
+  .hv-hero__copy { max-width: 38rem; }
+  /* No capability-reel overrides needed here: --hv-cap-h is already a
+     vw-based clamp and .hv-hero__reel's height is derived from it
+     (7.5 rows, always), so the reel resizes itself at every breakpoint
+     without a second set of numbers to keep in sync. */
+  .hv-hero__note { margin-top: var(--hv-s7); }
+}
+
+@media (max-width: 560px) {
+  .hv-hero__actions { gap: var(--hv-s4); }
+  .hv-hero__cta { width: 100%; justify-content: center; }
+  .hv-hero__trust { flex-wrap: wrap; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hv-hero__swoosh { animation: none; stroke-dashoffset: 0; }
+  /* The step counter in Hero.jsx never starts, so the track stays at its
+     initial offset and the 4th row keeps the highlight permanently. All
+     that is needed here is to drop the mask and the fixed height so the
+     rows below the window are not clipped away. */
+  .hv-hero__reel {
+    height: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
-  .hv-constellation__wires,
-  .hv-constellation__core { display: none; }
-  .hv-cnode { position: static; transform: none; display: none; }
-  .hv-cnode.is-emphasis { display: flex; }
-  .hv-cstat { position: static; transform: none; }
+  .hv-hero__cap-text,
+  .hv-hero__cap-icon { transition: none; }
+  .hv-hero__cap:nth-child(n + 13) { display: none; }
+
+  .hv-hero__cta,
+  .hv-hero__cta svg,
+  .hv-hero__link::after,
+  .hv-hero__link svg,
+  .hv-hero__face { transition-duration: 1ms; }
+  .hv-hero__cta:hover { transform: none; }
 }
 
 
@@ -157,8 +431,9 @@
   background: var(--hv-bg);
   border-block: 1px solid var(--hv-border);
 }
+.hv-trust__head { margin-bottom: var(--hv-s5); }
 .hv-trust__label {
-  margin: 0 0 var(--hv-s5);
+  margin: 0;
   text-align: center;
   font-size: var(--hv-fs-eyebrow);
   font-weight: 800;
@@ -166,25 +441,34 @@
   text-transform: uppercase;
   color: var(--hv-text-muted);
 }
-.hv-trust__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--hv-s4) clamp(20px, 4vw, 44px);
+
+/* .hv-marquee / .hv-marquee__track (home-chrome.css) supply the full-bleed
+   scroll, duplicate-list loop and hover-pause - identical mechanism to the
+   testimonials strip. This only sizes the individual logo item within
+   that shared track. */
+.hv-trust__marquee {
+  /* The testimonials marquee runs a very long animation because its cards
+     are wide; this track is much shorter end-to-end (short text items),
+     so the same 46s default would crawl. A dedicated duration keeps the
+     logos moving at a comfortable, readable pace - and it is a second
+     longer than it used to be, because the logos are now larger and so
+     travel further in the same lap. */
+  --hv-marquee-duration: 34s;
 }
-.hv-trust__item {
+/* Lockup size: icon and wordmark both stepped up a size, so the strip reads
+   as a logo wall rather than a footnote under the hero. */
+.hv-marquee .hv-trust__item {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: var(--hv-s2);
-  font-size: .9rem;
+  gap: var(--hv-s3);
+  font-size: 1.2rem;
   font-weight: 700;
+  letter-spacing: -.01em;
+  white-space: nowrap;
   color: var(--hv-text);
-  opacity: .78;
 }
-.hv-trust__item svg { width: 20px; height: 20px; color: var(--hv-accent-strong); }
+.hv-trust__item svg { width: 27px; height: 27px; color: var(--hv-accent-strong); }
 
 
 /* 12. Growth stack ======================================================== */
@@ -369,6 +653,11 @@
   font-weight: 800;
   letter-spacing: -.03em;
   color: var(--hv-accent-bright);
+  /* The figure counts up (see useCountUp in Impact.jsx). Fixed-advance
+     digits stop the whole stat from twitching sideways while it counts -
+     proportional digits are all different widths, and "1" is much
+     narrower than "0". */
+  font-variant-numeric: tabular-nums;
 }
 .hv-stat__label { margin: var(--hv-s1) 0 0; font-size: var(--hv-fs-xs); color: var(--hv-on-dark-muted); }
 
@@ -503,3 +792,416 @@
 .hv-closing__note { display: flex; align-items: flex-start; gap: var(--hv-s2); flex-shrink: 0; }
 .hv-closing__plane { width: 34px; height: 34px; color: var(--hv-accent-bright); transform: rotate(8deg); }
 @media (max-width: 900px) { .hv-closing__note { display: none; } }
+
+
+/* 20. Why choose us ======================================================= */
+
+/* Sized in px, not ch: `ch` on this element resolves against its own
+   inherited 1rem font-size rather than the display-size h2 inside it, so
+   a ch-based measure came out roughly half as wide as intended and broke
+   the head across four lines. */
+.hv-why__head {
+  max-width: min(920px, 100%);
+  margin: 0 auto clamp(40px, 5vw, 72px);
+  text-align: center;
+}
+
+/* .hv-eyebrow (shared) already handles the type; this only needs to sit
+   centred with the rest of the head, which its own .hv-why__head parent
+   already does via text-align - display:inline-block on .hv-eyebrow means
+   that's all that's needed. */
+
+/* Lighter than --hv-fs-display and set at 500 rather than the display
+   weight: this head runs two lines, and at the hero's weight two lines of
+   it would out-shout the h1 further up the page. */
+.hv-why__title {
+  margin: 0;
+  font-size: clamp(1.85rem, 1.15rem + 2.3vw, 2.85rem);
+  font-weight: 500;
+  line-height: 1.16;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+  /* "hands-on" was auto-hyphenating across lines, which reads as a typo
+     at display size. */
+  hyphens: none;
+  color: var(--hv-text);
+}
+
+.hv-why__body {
+  display: grid;
+  /* Photo column widened (was 0.86fr, noticeably narrower than the text
+     column) to closer to even, giving the photo more presence. */
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.96fr);
+  gap: clamp(28px, 4vw, 64px);
+  align-items: center;
+}
+
+/* -- Photo frame ---------------------------------------------------------- */
+
+/* All four photos are stacked here and crossfaded. The frame holds the
+   aspect ratio so the column never resizes mid-transition. */
+.hv-why__media { min-width: 0; }
+.hv-why__frame {
+  position: relative;
+  aspect-ratio: 1040 / 875;
+  border-radius: var(--hv-r-md);
+  overflow: hidden;
+  background: var(--hv-bg-mint-deep);
+  box-shadow: var(--hv-sh-md);
+}
+.hv-why__shot {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  /* A touch of scale on the way in stops the crossfade reading as a
+     dissolve between two stills. */
+  transform: scale(1.04);
+  transition: opacity var(--hv-dur-slow) var(--hv-ease),
+              transform 900ms var(--hv-ease);
+}
+.hv-why__shot.is-active { opacity: 1; transform: scale(1); }
+.hv-why__shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* -- Accordion ------------------------------------------------------------ */
+
+/* The rule is this column's left border, so it is exactly as tall as the
+   list and needs no separate element or height maths. */
+.hv-why__list {
+  padding: var(--hv-s2) 0 var(--hv-s2) clamp(24px, 3.5vw, 52px);
+  border-left: 1px solid var(--hv-border);
+  min-width: 0;
+}
+
+.hv-why__item { position: relative; }
+.hv-why__item + .hv-why__item { margin-top: var(--hv-s2); }
+
+.hv-why__heading { margin: 0; font-size: inherit; font-weight: inherit; }
+
+.hv-why__trigger {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: clamp(16px, 2vw, 26px);
+  width: 100%;
+  padding: var(--hv-s4) var(--hv-s3);
+  border: 0;
+  border-radius: var(--hv-r-md);
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  /* Smoother, slower hover: --hv-dur (280ms) felt abrupt for a state you
+     linger in while reading the row; --hv-dur-slow settles in noticeably
+     more gently. transform added so the whole row eases toward the cursor
+     alongside the background, not just the icon inside it. */
+  transition: background var(--hv-dur-slow) var(--hv-ease),
+              transform var(--hv-dur-slow) var(--hv-ease);
+}
+.hv-why__trigger:hover,
+.hv-why__item.is-open .hv-why__trigger { background: var(--hv-bg-mint); }
+.hv-why__trigger:hover { transform: translateX(3px); }
+
+/* The reference uses a solid black disc. Ours is the darkest surface in
+   the palette carrying the bright accent - same figure, inside the brand. */
+.hv-why__icon {
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: var(--hv-bg-dark);
+  color: var(--hv-accent-bright);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .10), 0 6px 16px rgba(5, 46, 41, .18);
+  transition: background var(--hv-dur-slow) var(--hv-ease),
+              color var(--hv-dur-slow) var(--hv-ease),
+              transform var(--hv-dur-slow) var(--hv-ease-spring),
+              box-shadow var(--hv-dur-slow) var(--hv-ease);
+}
+.hv-why__icon svg { width: 27px; height: 27px; }
+.hv-why__trigger:hover .hv-why__icon,
+.hv-why__item.is-open .hv-why__icon {
+  background: var(--hv-grad-accent);
+  color: #fff;
+  transform: scale(1.07);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), var(--hv-sh-accent-sm);
+}
+
+.hv-why__label {
+  /* Noticeably bigger - was clamp(1rem..1.16rem), which read small next
+     to a 68px icon once that grew. */
+  font-size: clamp(1.2rem, 1.02rem + .8vw, 1.55rem);
+  font-weight: 700;
+  line-height: 1.28;
+  letter-spacing: -.015em;
+  color: var(--hv-text);
+}
+
+/* The chevron rotates a quarter turn to point down when the panel opens,
+   so the control shows its own state rather than needing a second glyph. */
+.hv-why__go {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--hv-border-strong);
+  color: var(--hv-text-muted);
+  transition: background var(--hv-dur-slow) var(--hv-ease),
+              border-color var(--hv-dur-slow) var(--hv-ease),
+              color var(--hv-dur-slow) var(--hv-ease),
+              transform var(--hv-dur-slow) var(--hv-ease);
+}
+.hv-why__go svg { width: 17px; height: 17px; }
+.hv-why__trigger:hover .hv-why__go { border-color: var(--hv-accent-strong); color: var(--hv-accent-strong); }
+.hv-why__item.is-open .hv-why__go {
+  background: var(--hv-grad-accent);
+  border-color: transparent;
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+/* 0fr -> 1fr animates the real height. max-height would need a guessed
+   ceiling, which makes the easing wrong for short panels and clips long
+   ones. */
+.hv-why__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--hv-dur-slow) var(--hv-ease);
+}
+.hv-why__item.is-open .hv-why__panel { grid-template-rows: 1fr; }
+
+/* overflow:hidden does the clipping; visibility is what actually takes the
+   collapsed copy out of the tab order and the accessibility tree, and it
+   is delayed on the way out so the text does not vanish before the panel
+   has finished closing. */
+.hv-why__panel-inner {
+  overflow: hidden;
+  visibility: hidden;
+  transition: visibility 0s linear var(--hv-dur-slow);
+}
+.hv-why__item.is-open .hv-why__panel-inner {
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.hv-why__text {
+  margin: 0;
+  /* 68px, matching the trigger's icon column above (was 60px, the old
+     icon size) so the body copy still lines up under the label rather
+     than drifting left of it once the icon grew. */
+  padding: var(--hv-s1) var(--hv-s3) var(--hv-s5) calc(68px + clamp(16px, 2vw, 26px) + var(--hv-s3));
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--hv-text-muted);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity var(--hv-dur-slow) var(--hv-ease) 80ms,
+              transform var(--hv-dur-slow) var(--hv-ease) 80ms;
+}
+.hv-why__item.is-open .hv-why__text { opacity: 1; transform: none; }
+
+@media (max-width: 900px) {
+  .hv-why__body { grid-template-columns: 1fr; }
+  /* Stacked, a left border would be a stray vertical line down the page. */
+  .hv-why__list { border-left: 0; padding-left: 0; }
+}
+@media (max-width: 640px) {
+  .hv-why__trigger { grid-template-columns: 52px minmax(0, 1fr) 36px; gap: var(--hv-s4); }
+  .hv-why__icon { width: 52px; height: 52px; }
+  .hv-why__icon svg { width: 21px; height: 21px; }
+  .hv-why__go { width: 36px; height: 36px; }
+  .hv-why__go svg { width: 15px; height: 15px; }
+  .hv-why__label { font-size: clamp(1.05rem, .9rem + 1.4vw, 1.3rem); }
+  .hv-why__text { padding-left: calc(52px + var(--hv-s4) + var(--hv-s3)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hv-why__shot,
+  .hv-why__trigger,
+  .hv-why__icon,
+  .hv-why__go,
+  .hv-why__panel,
+  .hv-why__text { transition-duration: 1ms; }
+  .hv-why__shot { transform: none; }
+  .hv-why__trigger:hover .hv-why__icon,
+  .hv-why__item.is-open .hv-why__icon { transform: none; }
+  .hv-why__text { transform: none; }
+}
+
+
+/* 21. Latest insights ===================================================== */
+
+/* A warm wash rather than white: on white it read as a continuation of the
+   FAQ instead of a section of its own. The gradient runs FROM the mint of
+   the testimonials band above it TO near-white, which is the FAQ below it
+   - the section was moved above the FAQ (see Home.jsx), so the wash has to
+   hand off in the other direction than it used to. */
+.home-v2 .hv-insights {
+  background: linear-gradient(180deg, var(--hv-bg-mint) 0%, #FAFCFB 100%);
+}
+
+.hv-insights__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--hv-s7);
+  margin-bottom: clamp(32px, 4vw, 56px);
+}
+
+/* The eyebrow here is the shared .hv-eyebrow (see Insights.jsx); it needs
+   no rules of its own, and its own margin-bottom spaces it from the title
+   exactly as it does in every SectionHead on the page. */
+
+/* Uppercase is fine on a two-word head: it is short, and the weight is
+   doing the work. It is deliberately NOT carried down to the card titles,
+   which are long enough that all-caps measurably slows reading. */
+.hv-insights__title {
+  margin: 0;
+  font-size: var(--hv-fs-h2);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -.015em;
+  text-transform: uppercase;
+  color: var(--hv-text);
+}
+.hv-insights__title span { color: var(--hv-accent-strong); }
+
+.hv-insights__cta { flex-shrink: 0; padding-bottom: 4px; }
+
+@media (max-width: 760px) {
+  .hv-insights__head { flex-direction: column; align-items: flex-start; gap: var(--hv-s5); }
+}
+
+/* -- Cards ---------------------------------------------------------------- */
+
+.hv-posts { list-style: none; margin: 0; padding: 0; }
+.hv-post { display: flex; }
+
+.hv-post__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: var(--hv-bg);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  overflow: hidden;
+  transition: transform var(--hv-dur) var(--hv-ease),
+              box-shadow var(--hv-dur) var(--hv-ease),
+              border-color var(--hv-dur) var(--hv-ease);
+}
+.hv-post__card:hover,
+.hv-post__card:focus-within {
+  transform: translateY(-6px);
+  box-shadow: var(--hv-sh-accent);
+  border-color: rgba(10, 127, 82, .26);
+}
+
+.hv-post__media {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--hv-bg-mint-deep);
+}
+.hv-post__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--hv-dur-slow) var(--hv-ease);
+}
+.hv-post__card:hover .hv-post__media img { transform: scale(1.05); }
+
+.hv-post__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--hv-s3);
+  padding: var(--hv-s5);
+  flex: 1;
+}
+
+.hv-post__cat {
+  padding: 5px 11px;
+  border-radius: var(--hv-r-pill);
+  background: var(--hv-bg-mint);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--hv-accent-strong);
+}
+
+.hv-post__title {
+  margin: 0;
+  font-size: 1.075rem;
+  font-weight: 800;
+  line-height: 1.32;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+}
+.hv-post__link { color: inherit; text-decoration: none; }
+/* Stretches the title's link over the whole card, so the card is one
+   click target and one tab stop. z-index 1 keeps it under nothing else -
+   there is no other interactive content in the card to block. */
+.hv-post__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+.hv-post__link:focus-visible { outline: none; }
+.hv-post__card:focus-within { outline: 2px solid var(--hv-accent-strong); outline-offset: 3px; }
+
+.hv-post__excerpt {
+  margin: 0;
+  font-size: var(--hv-fs-sm);
+  line-height: 1.6;
+  color: var(--hv-text-muted);
+}
+
+/* margin-top:auto here rather than on .hv-post__more, so the meta row and
+   the Read Article row BOTH sit on a common baseline across the three
+   cards - excerpts of different lengths absorb the difference above them
+   instead of pushing the meta row out of alignment. */
+.hv-post__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hv-s2) var(--hv-s4);
+  margin: var(--hv-s2) 0 0;
+  margin-top: auto;
+  padding-top: var(--hv-s3);
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--hv-text-muted);
+}
+.hv-post__meta span { display: inline-flex; align-items: center; gap: 6px; }
+.hv-post__meta svg { width: 14px; height: 14px; color: var(--hv-accent-strong); }
+
+/* Decoration duplicating the title link, so it is aria-hidden in the
+   markup and only needs to look like an affordance here. */
+.hv-post__more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hv-s2);
+  padding-top: var(--hv-s2);
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  color: var(--hv-accent-strong);
+}
+.hv-post__more svg {
+  width: 15px;
+  height: 15px;
+  transition: transform var(--hv-dur) var(--hv-ease);
+}
+.hv-post__card:hover .hv-post__more svg { transform: translateX(4px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hv-post__card,
+  .hv-post__media img,
+  .hv-post__more svg { transition-duration: 1ms; }
+  .hv-post__card:hover,
+  .hv-post__card:focus-within { transform: none; }
+  .hv-post__card:hover .hv-post__media img,
+  .hv-post__card:hover .hv-post__more svg { transform: none; }
+}

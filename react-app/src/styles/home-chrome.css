@@ -107,6 +107,59 @@
   padding-top: calc(var(--header-h, 80px) + clamp(40px, 5vw, 72px));
 }
 
+/* The hero is now the page's darkest surface, and the bar is transparent
+   on top of it, so at rest the header has to be a light-on-dark bar and
+   only becomes dark-on-glass once it has scrolled away from the hero.
+   Keying off :not(.is-stuck):not(:has(.nav__links.is-open)) rather than a page-level modifier means this
+   stays correct automatically - the bar is only ever over the hero when
+   it is not stuck.
+
+   The second condition, :not(:has(.nav__links.is-open)), is what keeps
+   this off the MOBILE menu. That panel is an opaque white sheet that
+   drops down from the bar, so while it is open the bar is no longer
+   sitting on the hero - and the light-on-dark treatment was being applied
+   to the links inside the white panel: muted teal on white measured about
+   2.2:1, and the toggle's white bars vanished into it completely. With the
+   panel open these rules stand down and the normal light-background
+   header colours apply (dark links, dark bars), which is what the panel
+   actually needs. */
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .brand__name-levelup,
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__phone { color: #fff; }
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .brand__name-gh { color: var(--hv-accent-bright); }
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__phone svg { color: var(--hv-accent-bright); }
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__link,
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__link--mega { color: var(--hv-on-dark-muted); }
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__link:hover,
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__link.is-active,
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__link--mega:hover,
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__link--mega[aria-expanded="true"] { color: #fff; }
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__link::after { background: var(--hv-accent-bright); }
+/* The toggle's base style is a white pill built for a light bar; left as
+   it is, it reads as a floating white box on the dark hero. */
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__toggle {
+  background: rgba(255, 255, 255, .07);
+  border-color: rgba(255, 255, 255, .26);
+  color: #fff;
+}
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__toggle:hover {
+  background: rgba(255, 255, 255, .14);
+  border-color: rgba(255, 255, 255, .4);
+}
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__toggle-bars,
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__toggle-bars::before,
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__toggle-bars::after { background: #fff; }
+/* The logo mark is a dark badge built for light backgrounds; on the dark
+   hero it needs its own edge or it reads as a hole in the bar. */
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .brand__logo {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .16);
+}
+.home-v2 .brand__name-gh,
+.home-v2 .brand__name-levelup,
+.home-v2 .nav__phone,
+.home-v2 .nav__phone svg,
+.home-v2 .nav__toggle,
+.home-v2 .brand__logo { transition: color var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease), border-color var(--hv-dur) var(--hv-ease); }
+
 /* Firefox until recently, and any browser with backdrop-filter disabled,
    would render the header as a 62% white wash with no blur - legible, but
    the text behind it shows through. Opaque fallback in that case. */
@@ -201,19 +254,45 @@
 .hv-marquee::-webkit-scrollbar { display: none; }
 
 .hv-marquee__track {
+  /* --hv-marquee-copies is NOT set here: each marquee passes the number of
+     times it repeated its own list (see TrustBar.jsx / Testimonials.jsx),
+     because the keyframe divides the track by it to find the width of one
+     copy. The 2 below is only a fallback for a track that forgets to pass
+     one. */
+  /* The loop offset is derived from these three, so they are variables
+     rather than literals repeated in the keyframe. All of them matter:
+       - the flex `gap` means one copy is (track/copies - half a gap),
+       - the horizontal padding is INSIDE the track's border box, which is
+         what a percentage transform resolves against, and
+       - the copy count is what turns the whole track into one lap.
+     Net: (100% + gap - 2*pad) / copies = exactly one copy, which is the
+     distance the first item's replacement has to travel. Derived from the
+     geometry and then measured against the real distance between the
+     first item and its duplicate. */
+  --hv-marquee-gap: var(--hv-s5);
+  --hv-marquee-pad: var(--hv-s5);
   display: flex;
-  gap: var(--hv-s5);
+  gap: var(--hv-marquee-gap);
   list-style: none;
   margin: 0;
-  padding: var(--hv-s2) var(--hv-s5);
+  padding: var(--hv-s2) var(--hv-marquee-pad);
   width: max-content;
-  animation: hv-marquee 46s linear infinite;
+  /* Default duration is right for the wide testimonial cards; a track of
+     shorter items (the trust-bar logos) overrides --hv-marquee-duration
+     on an ancestor rather than needing a second keyframe/animation. */
+  animation: hv-marquee var(--hv-marquee-duration, 46s) linear infinite;
 }
-/* Travels exactly half the track, which is where the duplicated set has
-   moved into the original's position - so the restart is invisible. */
+/* Travels exactly one copy of the list - the point where the next copy has
+   moved into the first one's position - so the restart is invisible and
+   the strip reads as endless rather than as a slider with an end. See the
+   derivation on .hv-marquee__track above. */
 @keyframes hv-marquee {
   from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  to   {
+    transform: translateX(
+      calc((100% + var(--hv-marquee-gap) - 2 * var(--hv-marquee-pad)) / -1 / var(--hv-marquee-copies, 2))
+    );
+  }
 }
 
 /* Pause on hover, and on focus so a keyboard user can read a card

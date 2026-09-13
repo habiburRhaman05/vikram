@@ -7,10 +7,12 @@ import TrustBar from "@/components/home/sections/TrustBar.jsx";
 import GrowthStack from "@/components/home/sections/GrowthStack.jsx";
 import Journey from "@/components/home/sections/Journey.jsx";
 import Solutions from "@/components/home/sections/Solutions.jsx";
+import WhyChooseUs from "@/components/home/sections/WhyChooseUs.jsx";
 import Work from "@/components/home/sections/Work.jsx";
 import Impact from "@/components/home/sections/Impact.jsx";
 import Testimonials from "@/components/home/sections/Testimonials.jsx";
 import Faq from "@/components/home/sections/Faq.jsx";
+import Insights from "@/components/home/sections/Insights.jsx";
 import ClosingCta from "@/components/home/sections/ClosingCta.jsx";
 
 import "@/styles/home-redesign.css";
@@ -54,9 +56,13 @@ export default function Home() {
       <GrowthStack />
       <Journey />
       <Solutions />
+      <WhyChooseUs />
       <Work />
       <Impact />
       <Testimonials />
+      {/* Insights sits directly above the FAQ, so the page ends with the
+          two "reading" sections together before the dark closing band. */}
+      <Insights />
       <Faq />
       <ClosingCta />
     </Layout>

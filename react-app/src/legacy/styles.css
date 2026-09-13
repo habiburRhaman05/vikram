@@ -87,12 +87,21 @@
   --grad-ink:    linear-gradient(165deg, var(--ink-900) 0%, var(--ink-800) 55%, var(--ink-700) 100%);
 
   /* Type */
-  --font-display: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --font-body:    "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Headings, buttons, nav - everything that is UI rather than prose. */
+  --font-display: "DM Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  /* Body copy. The fallback stack is monospace on purpose: Space Mono is
+     a monospace face, so a monospace fallback keeps the line lengths
+     close if the webfont has not arrived (display:optional can decide not
+     to wait), instead of re-flowing every paragraph. */
+  --font-body:    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-mono:    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Space */
-  --container: 1200px;
+  /* THE page width. The navbar's .container reads this, and so does the
+     Home page's .hv-container (home-redesign.css), which is what keeps the
+     bar, every section and the footer on one left edge - the sections used
+     to carry their own 1200px and visibly disagreed with the header. */
+  --container: 1340px;
   --container-narrow: 860px;
   --gutter: 24px;
   --section-y: 108px;
