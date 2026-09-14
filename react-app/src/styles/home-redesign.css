@@ -346,6 +346,24 @@
   color: #fff;
 }
 
+/* Ghost: the lowest-emphasis of the three closing-CTA buttons - a plain
+   label with no fill or border, so "Book" (primary) still wins the eye
+   and "Explore" (outline) reads as the middle option. Light-surface color
+   by default; dark sections (where it is actually used today) swap in
+   the on-dark tone below. */
+.hv-btn--ghost {
+  background: transparent;
+  color: var(--hv-text-muted);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+}
+.hv-btn--ghost:hover { color: var(--hv-text); text-decoration-color: currentColor; transform: none; }
+.hv-section--dark .hv-btn--ghost,
+.hv-card--dark .hv-btn--ghost { color: var(--hv-on-dark-muted); }
+.hv-section--dark .hv-btn--ghost:hover,
+.hv-card--dark .hv-btn--ghost:hover { color: #fff; }
+
 .hv-btn--lg { padding: 16px 28px; font-size: 0.95rem; min-height: 52px; }
 
 .hv-btn-row { display: flex; flex-wrap: wrap; gap: var(--hv-s3); align-items: center; }

@@ -6,9 +6,8 @@
    imported by src/pages/Home.jsx and both only apply inside `.home-v2`.
 
    Contents
-     10. Hero
-     11. Trust bar
-     12. Growth stack
+     10. Hero + trust bar
+     (12. Growth stack - removed, replaced by home-services.css)
      13. Journey flow
      14. Solutions grid
      15. Selected work
@@ -18,569 +17,605 @@
      19. Closing CTA
      20. Why choose us
      21. Latest insights
+     22. Pricing
    ========================================================================== */
 
 
-/* 10. Hero ================================================================ */
+/* 10. Hero + trust bar ===================================================== */
 
-/* The hero is the page's darkest surface. It runs up under the header
-   (see home-chrome.css section 20) so the bar sits on it with no seam. */
+/* One dark-teal field for both. It runs up under the header (see
+   home-chrome.css section 20, the margin-top/padding-top pair keyed off
+   .hv-hero) so the bar sits on it with no seam.
+
+   --hv-tile is the tile row's tile size. Three rules depend on it (the
+   tile itself, the row's height, and the half-tile overlap into the trust
+   strip), so it is one variable rather than a number repeated. */
 .home-v2 .hv-hero {
+  --hv-tile: clamp(48px, 5.2vw, 75px);
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  /* One-off exception to the emerald design tokens, confirmed with the
-     client: the capability reel's active item uses a blue -> yellow
-     gradient instead of the brand accent. Scoped as local variables here
-     rather than added to :root in home-redesign.css, precisely because it
-     is NOT a brand colour and must not leak into anything else. */
-  --hv-hero-active-grad: linear-gradient(90deg, #3E8EF7 0%, #7FD1F5 46%, #FBCB4A 100%);
-  --hv-hero-active-icon: #FBCB4A;
-  /* Teal rather than the green used by the other dark bands, and a shade
-     darker, so the headline and the reel carry more weight against it. */
   background:
-    radial-gradient(90% 70% at 74% 2%, rgba(45, 212, 191, .15), transparent 58%),
-    radial-gradient(74% 62% at 4% 98%, rgba(13, 148, 136, .12), transparent 62%),
-    linear-gradient(168deg, #01181B 0%, #042E31 48%, #053F42 100%);
+    radial-gradient(85% 55% at 50% 0%, rgba(45, 212, 191, .14), transparent 62%),
+    linear-gradient(180deg, #011618 0%, #032A26 58%, #03302B 100%);
   color: var(--hv-on-dark);
-  padding-block: clamp(36px, 4vw, 60px) clamp(48px, 5.5vw, 84px);
 }
 
-/* One soft accent bloom behind the capability column, so the right side
-   has some depth instead of being flat text on flat colour. */
 .hv-hero__glow {
   position: absolute;
   z-index: -1;
-  top: -12%;
-  right: -8%;
-  width: 58%;
+  top: -22%;
+  left: 50%;
+  width: 72%;
   aspect-ratio: 1;
+  transform: translateX(-50%);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(45, 212, 191, .20) 0%, transparent 66%);
-  filter: blur(18px);
+  background: radial-gradient(circle, rgba(45, 212, 191, .15) 0%, transparent 66%);
+  filter: blur(20px);
   pointer-events: none;
 }
 
+/* -- Main ------------------------------------------------------------------ */
+
+/* 80vh from the top of the content to the seam line: this block plus the
+   upper half of the tile row below it. min-height, so long copy on a
+   narrow phone is never clipped. */
+.hv-hero__main {
+  display: flex;
+  align-items: center;
+  min-height: calc(80vh - var(--hv-tile) / 2);
+  padding-block: clamp(20px, 3vh, 40px) clamp(40px, 6vh, 72px);
+}
 .hv-hero__inner {
-  display: grid;
-  /* The reel column is the wider one on purpose. Its rows are single-line
-     labels set at display size, and at an even 1fr/1fr split the longest
-     of them ("Workflow Automation") ran past the reel's clip edge and was
-     cut off mid-word at every desktop width - measured, not assumed: 66px
-     at 1440, 25px at 1280, 36px at 1100. The copy column only ever fills
-     its 36rem measure, so the extra width costs it nothing. */
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-  gap: clamp(32px, 5vw, 80px);
-  align-items: center;
-}
-
-/* -- Copy ----------------------------------------------------------------- */
-
-.hv-hero__copy { max-width: 36rem; }
-
-.hv-hero__eyebrow {
-  margin: 0 0 var(--hv-s4);
-  font-size: var(--hv-fs-sm);
-  font-weight: 700;
-  letter-spacing: -.01em;
-  color: var(--hv-on-dark-muted);
-}
-
-.hv-hero__title {
-  margin: 0;
-  font-size: clamp(2.5rem, 1.2rem + 4.4vw, 4.4rem);
-  font-weight: 800;
-  line-height: 1.02;
-  letter-spacing: -.035em;
-  color: #fff;
-}
-.hv-hero__line { display: block; }
-.hv-hero__line + .hv-hero__line { margin-top: .08em; }
-
-/* The accent word sets in the script face, as the hero has done since the
-   first pass - it is the one place the decorative type is used. */
-.hv-hero__accent {
-  position: relative;
-  display: inline-block;
-  font-family: var(--hv-font-script);
-  font-weight: 700;
-  font-style: normal;
-  font-size: 1.12em;
-  line-height: .9;
-  padding-inline: .04em;
-  color: var(--hv-accent-bright);
-}
-.hv-hero__swoosh {
-  position: absolute;
-  left: -4%;
-  bottom: -.16em;
-  width: 108%;
-  height: .28em;
-  color: #fff;
-  opacity: .92;
-  /* Drawn on first paint rather than on scroll: it sits above the fold,
-     so an IntersectionObserver would never fire for it. */
-  stroke-dasharray: 240;
-  stroke-dashoffset: 240;
-  animation: hv-draw 900ms var(--hv-ease) 420ms forwards;
-}
-@keyframes hv-draw { to { stroke-dashoffset: 0; } }
-
-.hv-hero__lede {
-  margin: var(--hv-s6) 0 0;
-  max-width: 44ch;
-  font-size: var(--hv-fs-lede);
-  line-height: 1.62;
-  color: var(--hv-on-dark-muted);
-}
-
-/* -- Actions -------------------------------------------------------------- */
-
-.hv-hero__actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--hv-s4) var(--hv-s7);
-  margin-top: var(--hv-s8);
-}
-
-.hv-hero__cta {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--hv-s2);
-  min-height: 56px;
-  padding: 0 30px;
-  border-radius: var(--hv-r-pill);
-  /* White label, so the fill has to be dark enough to carry it: this
-     gradient runs 5.04:1 to 7.4:1 against white, where the lighter mint
-     it replaced measured about 2.2:1 and failed. */
-  background: var(--hv-grad-accent);
-  font-size: 1rem;
-  font-weight: 700;
-  color: #fff;
-  text-decoration: none;
-  box-shadow: 0 14px 34px rgba(10, 127, 82, .34);
-  transition: transform var(--hv-dur) var(--hv-ease),
-              box-shadow var(--hv-dur) var(--hv-ease),
-              filter var(--hv-dur) var(--hv-ease);
-}
-.hv-hero__cta svg { width: 17px; height: 17px; transition: transform var(--hv-dur) var(--hv-ease); }
-.hv-hero__cta:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.06);
-  box-shadow: 0 20px 44px rgba(10, 127, 82, .44);
-}
-.hv-hero__cta:hover svg { transform: translate(3px, -3px); }
-
-/* Underlined text link, per the reference. The rule is a pseudo-element
-   rather than text-decoration so it can sit further from the baseline and
-   slide on hover. */
-.hv-hero__link {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--hv-s2);
-  min-height: 44px;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #fff;
-  text-decoration: none;
-}
-.hv-hero__link svg { width: 16px; height: 16px; transition: transform var(--hv-dur) var(--hv-ease); }
-.hv-hero__link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 8px;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--hv-accent-bright);
-  transform-origin: left;
-  transition: transform var(--hv-dur) var(--hv-ease);
-}
-.hv-hero__link:hover::after { transform: scaleX(1.06); }
-.hv-hero__link:hover svg { transform: translate(3px, -3px); }
-
-/* -- Trust cluster -------------------------------------------------------- */
-
-.hv-hero__trust {
-  display: flex;
-  align-items: center;
-  gap: var(--hv-s4);
-  margin-top: clamp(28px, 3.2vw, 44px);
-}
-
-.hv-hero__faces { display: flex; list-style: none; margin: 0; padding: 0; }
-/* Photographs (see Face in Hero.jsx) with an initial as the fallback on
-   the same circle, so the two states are pixel-identical in size.
-   The ring is a light hairline rather than the hero's own dark teal: it
-   has to separate each avatar from the one it overlaps, and a ring the
-   same colour as the background does not - which also left the initials
-   version reading as one merged blob. */
-.hv-hero__face {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  overflow: hidden;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, .38);
-  background: linear-gradient(150deg, #12806F 0%, #04393C 100%);
-  font-size: .85rem;
-  font-weight: 800;
-  color: var(--hv-accent-bright);
-  transition: transform var(--hv-dur) var(--hv-ease-spring);
-}
-/* object-fit crops the portrait to the circle instead of squashing it,
-   and object-position favours the top of the frame, which is where a
-   head-and-shoulders shot keeps the face. */
-.hv-hero__face img,
-.hv-hero__face picture {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-.hv-hero__face img { object-fit: cover; object-position: 50% 22%; }
-.hv-hero__face + .hv-hero__face { margin-left: -12px; }
-.hv-hero__faces:hover .hv-hero__face { transform: translateY(-3px); }
-
-.hv-hero__trust-text { margin: 0; display: grid; gap: 2px; }
-.hv-hero__trust-text strong { font-size: var(--hv-fs-sm); font-weight: 700; color: #fff; }
-.hv-hero__trust-text span { font-size: var(--hv-fs-sm); color: var(--hv-on-dark-muted); }
-
-/* Sits below both columns rather than inside the copy one, so it stays the
-   last thing in the hero once the two columns stack - inside the copy it
-   ended up above the capability list on a phone. */
-.hv-hero__note {
-  margin: clamp(26px, 3vw, 40px) 0 0;
-  font-size: var(--hv-fs-sm);
-  color: var(--hv-on-dark-muted);
-  opacity: .68;
-}
-
-/* -- Capability reel ------------------------------------------------------ */
-
-/* Stepped reel, scrolling bottom to top forever. The motion and the
-   highlight are both driven from one step counter in Hero.jsx - there is
-   deliberately NO keyframe animation here for either, because the lit row
-   has to be a fixed POSITION (the 4th of 7) rather than a property that
-   travels with an item on its own timer.
-   Row height is a fixed real-unit variable, not derived from font-size:
-   the track's travel is expressed in whole rows, so the row has to be a
-   number the JS and the CSS can both rely on. */
-.hv-hero__stack {
-  /* 7 rows at 64px = 448px, inside the 450px ceiling. */
-  --hv-cap-h: clamp(48px, 4.6vw, 64px);
-  min-width: 0;
-}
-
-/* Exactly 7 rows tall, derived from the row height so "7 visible" holds at
-   every width by construction rather than by two numbers that happen to
-   agree. The mask is the soft fade at the top and bottom edges.
-   The left padding is load-bearing: the active row's icon tile scales up
-   (and carries a glow), and with `overflow: hidden` on this box the first
-   column's tile is flush against the clip edge, so the scaled tile had
-   its LEFT border - and the left half of its glow - sliced off. The gutter
-   gives the tile room to grow into; the mask is vertical only, so nothing
-   is hidden by this. */
-.hv-hero__reel {
-  position: relative;
-  height: calc(var(--hv-cap-h) * 7);
-  padding-left: 10px;
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
-  mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
-}
-
-/* transform and transition are both set inline from the step counter. */
-.hv-hero__track {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  will-change: transform;
-}
-
-.hv-hero__cap {
-  height: var(--hv-cap-h);
-  display: flex;
-  align-items: center;
-  gap: clamp(var(--hv-s3), 1.4vw, var(--hv-s5));
-}
-
-/* Icon leads, badge-style, rather than a bare stroke floating in space -
-   the same rounded-tile language as .hv-badge elsewhere on the page, in a
-   glass finish that suits sitting on the dark hero. Sized off the row
-   height so it scales with the text instead of needing its own clamp. */
-.hv-hero__cap-icon {
-  display: grid;
-  place-items: center;
-  width: calc(var(--hv-cap-h) * .64);
-  height: calc(var(--hv-cap-h) * .64);
-  flex-shrink: 0;
-  border-radius: calc(var(--hv-cap-h) * .2);
-  background: rgba(255, 255, 255, .06);
-  /* A real border, not a pair of stacked inset box-shadows - two inset
-     rings on an element that also gets transform:scale() left a visible
-     notch/seam in the corners at some zoom levels (subpixel rounding
-     between the two shadow layers). One border renders as a single clean
-     stroke at any scale. */
-  border: 1.5px solid rgba(255, 255, 255, .16);
-  color: #fff;
-  opacity: .4;
-  transition: opacity 320ms var(--hv-ease), background 320ms var(--hv-ease),
-              border-color 320ms var(--hv-ease), box-shadow 320ms var(--hv-ease),
-              color 320ms var(--hv-ease), transform 320ms var(--hv-ease);
-}
-.hv-hero__cap-icon svg { width: 46%; height: 46%; }
-/* An SVG stroke can't take a background-clip fill, so the active icon
-   gets a soft fill in the gradient's warm end and a matching glow, rather
-   than trying to fake the text's gradient on it. The glow is a single
-   OUTER shadow (not inset), so it never competes with the border. */
-.hv-hero__cap.is-active .hv-hero__cap-icon {
-  opacity: 1;
-  background: rgba(251, 203, 74, .16);
-  border-color: rgba(251, 203, 74, .55);
-  box-shadow: 0 0 22px rgba(251, 203, 74, .22);
-  color: var(--hv-hero-active-icon);
-  transform: scale(1.06);
-}
-
-.hv-hero__cap-text {
-  /* Tuned DOWN from 3.6vw/3.5rem because the labels are single lines in a
-     clipped box: at the old size the longest one overran the reel's right
-     edge and was cut mid-word (see the note on .hv-hero__inner). Measured
-     for the longest label at 1081/1100/1200/1280/1366/1440px with room to
-     spare at each. */
-  font-size: clamp(2rem, .3rem + 3.4vw, 3.3rem);
-  font-weight: 800;
-  /* 1.02 rather than 1.08 - at the max size this keeps the line box inside
-     the 64px row with a little air; any looser and it would clip against
-     the mask on tall viewports. */
-  line-height: 1.02;
-  letter-spacing: -.025em;
-  white-space: nowrap;
-  /* Resting: plain white. The fade toward the top and bottom of the window
-     comes from the mask, not from dimming each row. */
-  color: #fff;
-  opacity: .42;
-  /* opacity only: transitioning `color` on a background-clip:text element
-     crossfades the transparent fill against white, so the gradient arrived
-     smeared before it settled. The colour swap is instant now, and the
-     opacity fade still carries the change. */
-  transition: opacity 320ms var(--hv-ease);
-}
-/* The active row is the same SIZE as the rest, exactly as in the reference
-   - only its colour changes. background-clip:text needs a transparent fill
-   for the gradient to show through the glyphs. The gradient is a
-   deliberate one-off, off the emerald palette, scoped to this element. */
-.hv-hero__cap.is-active .hv-hero__cap-text {
-  opacity: 1;
-  color: transparent;
-  background-image: var(--hv-hero-active-grad);
-  -webkit-background-clip: text;
-  background-clip: text;
-}
-
-/* -- Responsive ----------------------------------------------------------- */
-
-@media (max-width: 1080px) {
-  .hv-hero__inner { grid-template-columns: 1fr; gap: clamp(32px, 5vw, 48px); }
-  .hv-hero__copy { max-width: 38rem; }
-  /* No capability-reel overrides needed here: --hv-cap-h is already a
-     vw-based clamp and .hv-hero__reel's height is derived from it
-     (7.5 rows, always), so the reel resizes itself at every breakpoint
-     without a second set of numbers to keep in sync. */
-  .hv-hero__note { margin-top: var(--hv-s7); }
-}
-
-@media (max-width: 560px) {
-  .hv-hero__actions { gap: var(--hv-s4); }
-  .hv-hero__cta { width: 100%; justify-content: center; }
-  .hv-hero__trust { flex-wrap: wrap; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hv-hero__swoosh { animation: none; stroke-dashoffset: 0; }
-  /* The step counter in Hero.jsx never starts, so the track stays at its
-     initial offset and the 4th row keeps the highlight permanently. All
-     that is needed here is to drop the mask and the fixed height so the
-     rows below the window are not clipped away. */
-  .hv-hero__reel {
-    height: auto;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-  .hv-hero__cap-text,
-  .hv-hero__cap-icon { transition: none; }
-  .hv-hero__cap:nth-child(n + 13) { display: none; }
-
-  .hv-hero__cta,
-  .hv-hero__cta svg,
-  .hv-hero__link::after,
-  .hv-hero__link svg,
-  .hv-hero__face { transition-duration: 1ms; }
-  .hv-hero__cta:hover { transform: none; }
-}
-
-
-/* 11. Trust bar =========================================================== */
-
-.hv-trust {
-  padding-block: clamp(26px, 3vw, 38px);
-  background: var(--hv-bg);
-  border-block: 1px solid var(--hv-border);
-}
-.hv-trust__head { margin-bottom: var(--hv-s5); }
-.hv-trust__label {
-  margin: 0;
-  text-align: center;
-  font-size: var(--hv-fs-eyebrow);
-  font-weight: 800;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--hv-text-muted);
-}
-
-/* .hv-marquee / .hv-marquee__track (home-chrome.css) supply the full-bleed
-   scroll, duplicate-list loop and hover-pause - identical mechanism to the
-   testimonials strip. This only sizes the individual logo item within
-   that shared track. */
-.hv-trust__marquee {
-  /* The testimonials marquee runs a very long animation because its cards
-     are wide; this track is much shorter end-to-end (short text items),
-     so the same 46s default would crawl. A dedicated duration keeps the
-     logos moving at a comfortable, readable pace - and it is a second
-     longer than it used to be, because the logos are now larger and so
-     travel further in the same lap. */
-  --hv-marquee-duration: 34s;
-}
-/* Lockup size: icon and wordmark both stepped up a size, so the strip reads
-   as a logo wall rather than a footnote under the hero. */
-.hv-marquee .hv-trust__item {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: var(--hv-s3);
-  font-size: 1.2rem;
-  font-weight: 700;
-  letter-spacing: -.01em;
-  white-space: nowrap;
-  color: var(--hv-text);
-}
-.hv-trust__item svg { width: 27px; height: 27px; color: var(--hv-accent-strong); }
-
-
-/* 12. Growth stack ======================================================== */
-
-.hv-stack__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--hv-s7);
-  margin-bottom: var(--hv-s9);
-}
-.hv-stack__intro { max-width: 58ch; }
-.hv-stack__intro .hv-h2 { margin-top: var(--hv-s1); }
-.hv-stack__cta { margin-top: var(--hv-s6); }
-.hv-stack__note { padding-top: var(--hv-s5); }
-
-.hv-stack-card { display: flex; flex-direction: column; gap: var(--hv-s4); padding: var(--hv-s4); }
-.hv-stack-card__body { display: flex; flex-direction: column; gap: var(--hv-s2); padding-inline: var(--hv-s2); }
-.hv-stack-card__icon { margin-bottom: var(--hv-s1); }
-.hv-stack-card__checks { margin-top: var(--hv-s2); }
-.hv-stack-card__link {
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--hv-s3);
-  padding-inline: var(--hv-s2);
-  min-height: 44px;
-  font-size: var(--hv-fs-sm);
-  font-weight: 700;
-  color: var(--hv-accent-strong);
-  text-decoration: none;
-}
-.hv-card--dark .hv-stack-card__link { color: var(--hv-accent-bright); }
-.hv-stack-card__arrow {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--hv-r-pill);
-  border: 1.5px solid currentColor;
-  opacity: .55;
-  transition: opacity var(--hv-dur-fast) var(--hv-ease), transform var(--hv-dur-fast) var(--hv-ease);
-}
-.hv-stack-card__arrow svg { width: 15px; height: 15px; }
-.hv-stack-card__link:hover .hv-stack-card__arrow { opacity: 1; transform: translateX(3px); }
-
-@media (max-width: 900px) {
-  .hv-stack__head { flex-direction: column; gap: var(--hv-s5); margin-bottom: var(--hv-s7); }
-}
-
-
-/* 13. Journey flow ======================================================== */
-
-.hv-journey__cta { margin-top: var(--hv-s6); }
-
-.hv-flow {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--hv-s8) var(--hv-s3);
-}
-.hv-flow__step {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 1120px;
   text-align: center;
-  gap: var(--hv-s1);
 }
-.hv-flow__title { font-size: var(--hv-fs-sm); font-weight: 800; margin-top: var(--hv-s2); }
-.hv-flow__sub { font-size: .72rem; line-height: 1.35; color: var(--hv-text-muted); }
 
-.hv-flow__arrow {
+.hv-hero__pill {
+  margin-bottom: 24px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: rgba(53, 217, 160, .1);
+  font-size: .875rem;
+  letter-spacing: -.01em;
+  color: var(--hv-accent-bright);
+  text-decoration: none;
+  transition: background 220ms var(--hv-ease);
+}
+.hv-hero__pill strong { font-weight: 700; }
+.hv-hero__pill:hover { background: rgba(53, 217, 160, .18); }
+
+/* .home-v2-scoped: the reset `.home-v2 h1, h2, h3 { margin: 0 }` in
+   home-redesign.css outranks a lone class and was zeroing this margin. */
+.home-v2 .hv-hero__title {
+  margin: 0 0 24px;
+  /* Balanced lines, so a phone gets "That Drive Growth / at Scale"
+     rather than a lone "Scale" on its own last line. */
+  text-wrap: balance;
+  font-size: clamp(2.5rem, 1.2rem + 4.6vw, 4.85rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -.03em;
+  color: #fff;
+}
+.hv-hero__accent {
+  background: linear-gradient(120deg, var(--hv-accent-bright) 0%, #1FC7AC 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hv-hero__lede {
+  margin: 0;
+  max-width: 580px;
+  font-size: clamp(.9rem, .84rem + .25vw, 1rem);
+  line-height: 1.6;
+  color: var(--hv-on-dark-muted);
+}
+
+.hv-hero__stats {
+  list-style: none;
+  margin: 28px 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px 32px;
+}
+.hv-hero__stats li {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: clamp(.82rem, .78rem + .2vw, 1rem);
+  font-weight: 500;
+  letter-spacing: -.01em;
+  color: var(--hv-on-dark);
+}
+.hv-hero__stats svg { width: 19px; height: 18px; flex-shrink: 0; color: var(--hv-accent-bright); }
+
+/* -- Tile row (the seam) ----------------------------------------------------
+   Half a tile of negative bottom margin: the trust strip therefore starts
+   at the row's vertical centre, so its top border lands exactly on the two
+   lines and the tiles straddle the join. z-index keeps the tiles above
+   the trust strip's background. */
+.hv-hero__rail {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: var(--hv-tile);
+  margin-bottom: calc(var(--hv-tile) / -2);
+}
+.hv-hero__rail-line { position: relative; flex: 1; height: 1px; }
+.hv-hero__rail-line--l { background: linear-gradient(90deg, rgba(255, 255, 255, .06), var(--hv-accent-bright)); }
+.hv-hero__rail-line--r { background: linear-gradient(90deg, var(--hv-accent-bright), rgba(255, 255, 255, .06)); }
+/* The dot at each line's inner end, beside the tiles. */
+.hv-hero__rail-line::after {
+  content: "";
   position: absolute;
-  top: 14px;
-  right: -18%;
-  color: var(--hv-accent-strong);
-  opacity: .45;
+  top: -2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--hv-accent-bright);
+  box-shadow: 0 0 8px rgba(53, 217, 160, .8);
 }
-.hv-flow__arrow svg { width: 18px; height: 18px; }
+.hv-hero__rail-line--l::after { right: 0; }
+.hv-hero__rail-line--r::after { left: 0; }
 
-/* Row two runs right-to-left so the sequence snakes, as in the
-   reference. DOM order stays 1..7 - the reversal is placement only, so
-   a screen reader still hears the steps in order. */
-.hv-flow__step:nth-child(5) { grid-area: 2 / 3; }
-.hv-flow__step:nth-child(6) { grid-area: 2 / 2; }
-.hv-flow__step:nth-child(7) { grid-area: 2 / 1; }
+.hv-hero__tiles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: clamp(8px, 1.2vw, 16px);
+}
+.hv-hero__tile {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  transform: rotate(var(--tilt));
+  transition: transform 220ms var(--hv-ease);
+}
+.hv-hero__tile:hover,
+.hv-hero__tile:focus-visible { transform: rotate(0) scale(1.05); }
+.hv-hero__tile:focus-visible { outline: none; }
+.hv-hero__tile:focus-visible .hv-ptile { box-shadow: 0 0 0 2px var(--hv-accent-bright); }
 
-/* step 4 (top right) hands down and back into step 5 */
-.hv-flow__step:nth-child(4) .hv-flow__arrow {
-  right: 10%;
-  top: auto;
-  bottom: -38px;
-  transform: rotate(115deg);
+/* Tooltip with a caret, growing out of the tile on hover or focus. */
+.hv-hero__tip {
+  position: absolute;
+  z-index: 10;
+  top: 100%;
+  left: 50%;
+  margin-top: 14px;
+  padding: 6px 16px;
+  border: 1px solid #E6ECEA;
+  border-radius: 8px;
+  background: #F9F9F9;
+  font-size: .875rem;
+  font-weight: 500;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+  color: var(--hv-text);
+  opacity: 0;
+  transform: translateX(-50%) scale(.5);
+  transform-origin: 50% 0;
+  pointer-events: none;
+  transition: opacity 300ms var(--hv-ease), transform 300ms var(--hv-ease);
 }
-/* steps 5 and 6 point back to the left */
-.hv-flow__step:nth-child(5) .hv-flow__arrow,
-.hv-flow__step:nth-child(6) .hv-flow__arrow {
-  right: auto;
-  left: -18%;
-  transform: rotate(180deg);
+.hv-hero__tip-caret {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translateX(-50%) rotate(45deg);
+  border-top: 1px solid #E6ECEA;
+  border-left: 1px solid #E6ECEA;
+  background: #F9F9F9;
 }
+.hv-hero__tile:hover .hv-hero__tip,
+.hv-hero__tile:focus-visible .hv-hero__tip { opacity: 1; transform: translateX(-50%) scale(1); }
+
+/* -- Trust strip ------------------------------------------------------------- */
+
+.hv-hero__trust {
+  position: relative;
+  padding-block: calc(var(--hv-tile) / 2 + clamp(56px, 7vw, 96px)) clamp(44px, 5vw, 64px);
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .035) 0%, transparent 72%);
+}
+.hv-hero__trust-inner { display: flex; flex-direction: column; align-items: center; }
+.hv-hero__trust-label {
+  margin: 0 0 28px;
+  font-size: .875rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--hv-on-dark);
+}
+
+.hv-hero__trust-marquee { --hv-marquee-duration: 40s; }
+.hv-hero__trust-marquee .hv-marquee__track { --hv-marquee-gap: clamp(32px, 3.4vw, 48px); }
+.hv-marquee .hv-hero__trust-item {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+  color: var(--hv-on-dark);
+}
+.hv-hero__trust-item svg { width: 22px; height: 22px; color: var(--hv-accent-bright); }
+/* The divider after every logo. Inside the item rather than between
+   items, so each item in the loop is the same shape. */
+.hv-hero__trust-item::after {
+  content: "";
+  width: 1px;
+  height: 15px;
+  margin-left: clamp(32px, 3.4vw, 48px);
+  background: rgba(255, 255, 255, .25);
+}
+
+.hv-hero__learn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 32px;
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: var(--hv-r-pill);
+  font-size: .875rem;
+  letter-spacing: -.01em;
+  text-align: center;
+  color: var(--hv-on-dark);
+  text-decoration: none;
+  transition: border-color 220ms var(--hv-ease), color 220ms var(--hv-ease);
+}
+.hv-hero__learn svg { width: 13px; height: 13px; flex-shrink: 0; transition: transform 220ms var(--hv-ease); }
+.hv-hero__learn:hover { border-color: var(--hv-accent-bright); color: #fff; }
+.hv-hero__learn:hover svg { transform: translateX(3px); }
+
+@media (max-width: 640px) {
+  .hv-hero__main { min-height: auto; padding-block: 36px 48px; }
+  .hv-hero__rail { gap: 10px; }
+  .hv-hero__stats { gap: 12px 22px; }
+  .hv-hero__learn { font-size: .75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hv-hero__tile,
+  .hv-hero__tip,
+  .hv-hero__pill,
+  .hv-hero__learn,
+  .hv-hero__learn svg { transition-duration: 1ms; }
+}
+
+
+/* 13. How we work (live pipeline) ========================================== */
+
+.home-v2 .hv-flowx {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(180deg, #021A1B 0%, #04302C 100%);
+  color: var(--hv-on-dark);
+}
+/* A faint grid with a soft bloom behind the track - depth without noise. */
+.hv-flowx__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(60% 45% at 50% 58%, rgba(53, 217, 160, .14), transparent 70%),
+    linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px) 0 0 / 56px 56px,
+    linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px) 0 0 / 56px 56px;
+  -webkit-mask-image: radial-gradient(80% 70% at 50% 50%, #000 40%, transparent 100%);
+  mask-image: radial-gradient(80% 70% at 50% 50%, #000 40%, transparent 100%);
+}
+.hv-flowx .hv-eyebrow { color: var(--hv-accent-bright); }
+
+.hv-flowx__head { max-width: 760px; margin: 0 auto clamp(48px, 6vw, 72px); text-align: center; }
+.home-v2 .hv-flowx__title {
+  margin: 0;
+  font-size: clamp(1.9rem, 1.1rem + 2.6vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -.025em;
+  color: #fff;
+  text-wrap: balance;
+}
+.hv-flowx__lede { margin: 16px auto 0; max-width: 60ch; font-size: var(--hv-fs-lede); line-height: 1.6; color: var(--hv-on-dark-muted); }
+
+/* -- Stage: track + nodes --------------------------------------------------- */
+
+.hv-flowx__stage { --node: 68px; position: relative; }
+
+/* The track runs from the centre of the first node to the centre of the
+   last, at node height. The fill's width is the fraction of the way to the
+   active stage (--p), so it always ends exactly under that node. */
+.hv-flowx__track {
+  position: absolute;
+  top: calc(var(--node) / 2 - 1px);
+  left: calc(100% / var(--n) / 2);
+  right: calc(100% / var(--n) / 2);
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, .1);
+}
+.hv-flowx__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--p) * 100%);
+  overflow: hidden;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(53, 217, 160, .35), var(--hv-accent-bright));
+  box-shadow: 0 0 14px rgba(53, 217, 160, .55);
+  transition: width 720ms var(--hv-ease);
+}
+/* A streak of light running along the completed part of the track. */
+.hv-flowx__pulse {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  left: 0;
+  width: 90px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .9), transparent);
+  animation: hv-flowx-pulse 2.2s linear infinite;
+}
+@keyframes hv-flowx-pulse {
+  from { transform: translateX(-100px); }
+  to   { transform: translateX(1400px); }
+}
+
+.hv-flowx__steps {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+}
+.hv-flowx__btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 0 6px;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: center;
+  color: inherit;
+  cursor: pointer;
+}
+.hv-flowx__btn:focus-visible { outline: none; }
+.hv-flowx__btn:focus-visible .hv-flowx__node { box-shadow: 0 0 0 3px var(--hv-accent-bright); }
+
+.hv-flowx__node {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--node);
+  height: var(--node);
+  margin-bottom: 12px;
+  border-radius: 50%;
+  background: #062E2A;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14);
+  color: var(--hv-on-dark-muted);
+  transition: background 420ms var(--hv-ease), color 420ms var(--hv-ease),
+              box-shadow 420ms var(--hv-ease), transform 420ms var(--hv-ease-spring);
+}
+.hv-flowx__node svg:not(.hv-flowx__timer) { width: 26px; height: 26px; }
+.hv-flowx__btn:hover .hv-flowx__node { color: #fff; transform: translateY(-3px); }
+
+.hv-flowx__step.is-done .hv-flowx__node {
+  color: var(--hv-accent-bright);
+  box-shadow: inset 0 0 0 1.5px rgba(53, 217, 160, .55);
+}
+.hv-flowx__step.is-active .hv-flowx__node {
+  background: var(--hv-grad-accent);
+  color: #fff;
+  transform: scale(1.1);
+  box-shadow: 0 0 0 8px rgba(53, 217, 160, .12), 0 14px 32px -8px rgba(53, 217, 160, .55);
+}
+
+/* Countdown ring round the active node, emptying over the dwell. Paused
+   with the flow, so it never lies about how long is left. */
+.hv-flowx__timer {
+  position: absolute;
+  inset: -7px;
+  width: calc(100% + 14px);
+  height: calc(100% + 14px);
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+.hv-flowx__timer circle {
+  fill: none;
+  stroke: var(--hv-accent-bright);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 0;
+  animation: hv-flowx-timer var(--dwell) linear forwards;
+}
+.hv-flowx__stage.is-paused .hv-flowx__timer circle { animation-play-state: paused; }
+@keyframes hv-flowx-timer { to { stroke-dashoffset: 100; } }
+
+.hv-flowx__num {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: rgba(53, 217, 160, .7);
+}
+.hv-flowx__name {
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--hv-on-dark-muted);
+  transition: color 320ms var(--hv-ease);
+}
+.hv-flowx__sub { font-size: .8rem; line-height: 1.35; color: rgba(146, 179, 170, .8); }
+.hv-flowx__step.is-active .hv-flowx__name,
+.hv-flowx__step.is-done .hv-flowx__name,
+.hv-flowx__btn:hover .hv-flowx__name { color: #fff; }
+
+/* Phone-only inline text; the detail panel does this job on desktop. */
+.hv-flowx__inline { display: none; }
+
+/* -- Detail panel ------------------------------------------------------------ */
+
+.hv-flowx__panel {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 32px;
+  margin-top: clamp(40px, 5vw, 60px);
+  padding: clamp(26px, 3vw, 38px) clamp(26px, 3.4vw, 44px);
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .02));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1), 0 30px 60px -30px rgba(0, 0, 0, .6);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  animation: hv-flowx-in 560ms var(--hv-ease) both;
+}
+@keyframes hv-flowx-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+/* Oversized stage number bleeding off the panel's right edge. */
+.hv-flowx__ghost {
+  position: absolute;
+  right: 26%;
+  bottom: -.28em;
+  font-size: clamp(6rem, 11vw, 10rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.05em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(53, 217, 160, .16);
+  pointer-events: none;
+}
+.hv-flowx__panel-copy { position: relative; }
+.hv-flowx__count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(53, 217, 160, .12);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+.hv-flowx__count i { font-style: normal; opacity: .6; }
+.home-v2 .hv-flowx__panel-title {
+  margin: 14px 0 0;
+  font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: #fff;
+}
+.hv-flowx__panel-body { margin: 10px 0 0; max-width: 62ch; font-size: 1.02rem; line-height: 1.6; color: var(--hv-on-dark-muted); }
+
+.hv-flowx__controls { position: relative; display: flex; align-items: center; gap: 18px; }
+.hv-flowx__arrows { display: flex; gap: 8px; }
+.hv-flowx__arrow {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16);
+  color: #fff;
+  cursor: pointer;
+  transition: background 220ms var(--hv-ease), box-shadow 220ms var(--hv-ease), transform 150ms var(--hv-ease);
+}
+.hv-flowx__arrow svg { width: 18px; height: 18px; }
+.hv-flowx__arrow:hover { background: var(--hv-grad-accent); box-shadow: none; }
+.hv-flowx__arrow:active { transform: scale(.94); }
+.hv-flowx__arrow:focus-visible { outline: 2px solid var(--hv-accent-bright); outline-offset: 2px; }
+
+/* -- Phone: vertical timeline -------------------------------------------------- */
 
 @media (max-width: 900px) {
-  .hv-flow { grid-template-columns: repeat(2, 1fr); gap: var(--hv-s7) var(--hv-s4); }
-  .hv-flow__step:nth-child(5),
-  .hv-flow__step:nth-child(6),
-  .hv-flow__step:nth-child(7) { grid-area: auto; }
-  .hv-flow__arrow { display: none; }
+  .hv-flowx__stage { --node: 56px; }
+  .hv-flowx__track {
+    top: calc(var(--node) / 2);
+    bottom: calc(var(--node) / 2);
+    left: calc(var(--node) / 2 - 1px);
+    right: auto;
+    width: 2px;
+    height: auto;
+  }
+  .hv-flowx__fill { inset: 0 0 auto 0; width: 100%; height: calc(var(--p) * 100%); transition: height 720ms var(--hv-ease); }
+  .hv-flowx__pulse { display: none; }
+
+  .hv-flowx__steps { grid-template-columns: 1fr; gap: 14px; }
+  .hv-flowx__btn {
+    display: grid;
+    grid-template-columns: var(--node) minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    column-gap: 16px;
+    row-gap: 0;
+    align-items: center;
+    padding: 0;
+    text-align: left;
+  }
+  .hv-flowx__node { grid-row: 1 / span 3; margin: 0; }
+  .hv-flowx__step.is-active .hv-flowx__node { transform: scale(1.04); }
+  .hv-flowx__num { grid-column: 2; }
+  .hv-flowx__name { grid-column: 2; }
+  .hv-flowx__sub { grid-column: 2; }
+
+  .hv-flowx__inline {
+    display: grid;
+    grid-template-rows: 0fr;
+    padding-left: calc(var(--node) + 16px);
+    transition: grid-template-rows 480ms var(--hv-ease);
+  }
+  .hv-flowx__inline p {
+    overflow: hidden;
+    margin: 0;
+    font-size: .92rem;
+    line-height: 1.55;
+    color: var(--hv-on-dark-muted);
+  }
+  .hv-flowx__step.is-active .hv-flowx__inline { grid-template-rows: 1fr; }
+  .hv-flowx__step.is-active .hv-flowx__inline p { padding-top: 8px; }
+
+  .hv-flowx__panel { grid-template-columns: 1fr; margin-top: 28px; }
+  .hv-flowx__panel-copy { display: none; }
+  .hv-flowx__ghost { display: none; }
+  .hv-flowx__controls { justify-content: space-between; }
+}
+
+/* The pipeline is this section's whole point, and the countdown ring and
+   fill are feedback, not decoration - so they keep running even where the
+   OS asks for reduced motion (the global rule in home-redesign.css would
+   otherwise collapse them to 1ms). Only the travelling light is dropped. */
+@media (prefers-reduced-motion: reduce) {
+  .home-v2 .hv-flowx__timer circle { animation-duration: var(--dwell) !important; }
+  .home-v2 .hv-flowx__fill { transition-duration: 720ms !important; }
+  .home-v2 .hv-flowx__node { transition-duration: 420ms !important; }
+  .home-v2 .hv-flowx__panel { animation-duration: 560ms !important; }
+  .home-v2 .hv-flowx__inline { transition-duration: 480ms !important; }
+  .hv-flowx__pulse { animation: none; opacity: 0; }
 }
 
 
@@ -591,56 +626,278 @@
 .hv-solution .hv-h3 { margin-bottom: var(--hv-s1); }
 
 
-/* 15. Selected work ======================================================= */
+/* 15. Our work (bento) ==================================================== */
 
-.hv-work__head {
+.hv-works { overflow: hidden; }
+
+.hv-works__head {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: var(--hv-s6);
-  margin-bottom: var(--hv-s9);
+  gap: var(--hv-s6) var(--hv-s8);
+  margin-bottom: clamp(32px, 4vw, 52px);
 }
-.hv-work__head .hv-h2 { margin-top: var(--hv-s1); }
-.hv-work__headcta { flex-shrink: 0; }
+.hv-works__intro { max-width: 620px; }
+.home-v2 .hv-works__title {
+  margin: 0;
+  font-size: clamp(1.9rem, 1.1rem + 2.6vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -.025em;
+  color: var(--hv-text);
+}
+.hv-works__lede {
+  margin: 14px 0 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.7;
+  color: var(--hv-text-muted);
+}
 
-.hv-work { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: var(--hv-s6); }
-@media (max-width: 1080px) { .hv-work { grid-template-columns: 1fr; } }
+/* Filter pills sit in one tray; the active pill is a dark fill. */
+.hv-works__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 5px;
+  border-radius: var(--hv-r-pill);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--hv-border), var(--hv-sh-sm);
+}
+.hv-works__filter {
+  padding: 9px 16px;
+  border: 0;
+  border-radius: var(--hv-r-pill);
+  background: transparent;
+  font: 600 .88rem/1 var(--hv-font);
+  color: var(--hv-text-muted);
+  cursor: pointer;
+  transition: background 240ms var(--hv-ease), color 240ms var(--hv-ease);
+}
+.hv-works__filter:hover { color: var(--hv-text); background: rgba(10, 127, 82, .07); }
+.hv-works__filter.is-on { background: #062E2A; color: #fff; }
+.hv-works__filter:focus-visible { outline: 2px solid var(--hv-accent-strong); outline-offset: 2px; }
 
-.hv-feature {
+/* -- Grid ------------------------------------------------------------------ */
+
+.hv-works__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-  gap: var(--hv-s7);
-  align-items: center;
-  padding: var(--hv-s7);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  grid-auto-rows: 360px;
+  gap: 20px;
 }
-@media (max-width: 760px) { .hv-feature { grid-template-columns: 1fr; padding: var(--hv-s5); } }
-.hv-feature__copy { display: flex; flex-direction: column; align-items: flex-start; gap: var(--hv-s3); }
-.hv-feature__title { font-size: clamp(1.4rem, 1.1rem + 1vw, 1.9rem); }
-.hv-feature__checks { margin-block: var(--hv-s2) var(--hv-s3); }
+/* Bento for "All work": one tall feature card, two stacked beside it,
+   then two wide cards underneath. Written for the five projects in WORK. */
+.hv-works__grid.is-bento {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: 270px;
+}
+.hv-works__grid.is-bento .hv-works__cell { grid-column: span 6; }
+.hv-works__grid.is-bento .hv-works__cell:nth-child(1) { grid-column: span 7; grid-row: span 2; }
+.hv-works__grid.is-bento .hv-works__cell:nth-child(2),
+.hv-works__grid.is-bento .hv-works__cell:nth-child(3) { grid-column: span 5; }
+.hv-works__grid.is-bento .hv-works__cell:nth-child(4),
+.hv-works__grid.is-bento .hv-works__cell:nth-child(5) { grid-row: span 1; }
 
-.hv-work__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--hv-s4); align-content: start; }
-.hv-project {
-  display: grid;
-  grid-template-columns: 88px minmax(0, 1fr) auto;
+.hv-works__cell {
+  min-width: 0;
+  animation: hv-works-in 640ms var(--hv-ease) var(--d, 0ms) both;
+}
+@keyframes hv-works-in {
+  from { opacity: 0; transform: translateY(22px) scale(.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* -- Card ------------------------------------------------------------------ */
+
+.hv-works__card {
+  --tone: var(--hv-accent-bright);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: clamp(18px, 2vw, 26px);
+  border-radius: var(--hv-r-xl);
+  background: #062E2A;
+  color: #fff;
+  box-shadow: var(--hv-sh-md);
+  transition: transform 520ms var(--hv-ease), box-shadow 520ms var(--hv-ease);
+}
+.hv-works__card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 30px 60px -24px color-mix(in srgb, var(--tone) 55%, rgba(6, 40, 34, .5));
+}
+/* Tone-coloured rim that lights up on hover. */
+.hv-works__card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08);
+  pointer-events: none;
+  transition: box-shadow 520ms var(--hv-ease);
+}
+.hv-works__card:hover::before { box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--tone) 70%, transparent); }
+
+.hv-works__img,
+.hv-works__img img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+}
+.hv-works__img img {
+  object-fit: cover;
+  transform: scale(1.02);
+  transition: transform 1100ms var(--hv-ease);
+}
+.hv-works__card:hover .hv-works__img img { transform: scale(1.09); }
+
+/* Dark wash from the bottom so the copy always reads, tinted by the project tone. */
+.hv-works__shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(2, 20, 20, .35) 0%, rgba(2, 20, 20, 0) 30%, rgba(2, 22, 21, .55) 58%, rgba(2, 22, 21, .94) 100%),
+    linear-gradient(0deg, color-mix(in srgb, var(--tone) 22%, transparent), transparent 55%);
+  transition: opacity 520ms var(--hv-ease);
+}
+
+.hv-works__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.hv-works__chip {
+  display: inline-flex;
   align-items: center;
-  gap: var(--hv-s4);
-  padding: var(--hv-s3);
-  text-decoration: none;
-  color: inherit;
+  gap: 8px;
+  padding: 7px 13px;
+  border-radius: var(--hv-r-pill);
+  background: rgba(4, 30, 28, .45);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .02em;
 }
-.hv-project__media { border-radius: var(--hv-r-sm); }
-.hv-project__text { display: grid; gap: 2px; }
-.hv-project__text .hv-h3 { font-size: .95rem; }
-.hv-project__text .hv-body { font-size: var(--hv-fs-xs); }
-.hv-project__arrow {
-  width: 18px;
-  height: 18px;
-  color: var(--hv-accent-strong);
-  opacity: .5;
-  transition: transform var(--hv-dur-fast) var(--hv-ease), opacity var(--hv-dur-fast) var(--hv-ease);
+.hv-works__chip i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--tone);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tone) 30%, transparent);
 }
-.hv-project:hover .hv-project__arrow { opacity: 1; transform: translateX(3px); }
+.hv-works__go {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: background 420ms var(--hv-ease), color 420ms var(--hv-ease), transform 520ms var(--hv-ease-spring);
+}
+.hv-works__go svg { width: 18px; height: 18px; }
+.hv-works__card:hover .hv-works__go { background: #fff; color: #062E2A; transform: rotate(45deg) scale(1.06); }
+
+.hv-works__body { position: relative; }
+.home-v2 .hv-works__name {
+  margin: 0;
+  max-width: 22ch;
+  font-size: clamp(1.2rem, 1rem + .6vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+}
+.hv-works__grid.is-bento .hv-works__cell:nth-child(1) .hv-works__name { font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.2rem); }
+
+/* Stretched link: the whole card is the title's link. */
+.hv-works__link { color: inherit; text-decoration: none; }
+.hv-works__link::after { content: ""; position: absolute; inset: 0; z-index: 4; }
+.hv-works__card:has(.hv-works__link:focus-visible) { outline: 3px solid var(--hv-accent-strong); outline-offset: 3px; }
+.hv-works__link:focus-visible { outline: none; }
+
+/* Description + tags slide open on hover (always open on the feature card
+   and on touch screens, which have no hover). */
+.hv-works__more {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 520ms var(--hv-ease), opacity 420ms var(--hv-ease);
+}
+.hv-works__more > div { overflow: hidden; }
+.hv-works__card:hover .hv-works__more,
+.hv-works__card:focus-within .hv-works__more,
+.hv-works__grid.is-bento .hv-works__cell:nth-child(1) .hv-works__more { grid-template-rows: 1fr; opacity: 1; }
+@media (hover: none) { .hv-works__more { grid-template-rows: 1fr; opacity: 1; } }
+
+.hv-works__desc {
+  margin: 10px 0 0;
+  max-width: 46ch;
+  font-family: var(--hv-font-body);
+  font-size: .84rem;
+  line-height: 1.65;
+  color: rgba(226, 240, 235, .86);
+}
+.hv-works__tags { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; padding: 0; }
+.hv-works__tags li {
+  padding: 5px 11px;
+  border-radius: var(--hv-r-pill);
+  background: rgba(255, 255, 255, .1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16);
+  font-size: .74rem;
+  font-weight: 600;
+}
+
+/* -- Foot ------------------------------------------------------------------ */
+
+.hv-works__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--hv-s5);
+  margin-top: clamp(28px, 3.4vw, 44px);
+  padding: 18px 18px 18px clamp(20px, 2.4vw, 32px);
+  border-radius: var(--hv-r-pill);
+  background: var(--hv-bg-mint);
+  box-shadow: inset 0 0 0 1px var(--hv-border);
+}
+.hv-works__foot p { margin: 0; font-size: 1.05rem; font-weight: 600; color: var(--hv-text); }
+
+@media (max-width: 1080px) {
+  .hv-works__grid.is-bento { grid-auto-rows: 250px; }
+  .hv-works__grid.is-bento .hv-works__cell,
+  .hv-works__grid.is-bento .hv-works__cell:nth-child(n) { grid-column: span 6; grid-row: span 1; }
+  .hv-works__grid.is-bento .hv-works__cell:nth-child(1) { grid-column: span 12; grid-row: span 2; }
+  .hv-works__grid.is-bento .hv-works__cell:nth-child(5) { grid-column: span 12; }
+}
+@media (max-width: 640px) {
+  .hv-works__filters { border-radius: var(--hv-r-lg); }
+  .hv-works__grid,
+  .hv-works__grid.is-bento { grid-template-columns: 1fr; grid-auto-rows: auto; gap: 16px; }
+  .hv-works__grid.is-bento .hv-works__cell:nth-child(n) { grid-column: auto; grid-row: auto; }
+  .hv-works__card { min-height: 360px; }
+  .hv-works__foot { border-radius: var(--hv-r-lg); justify-content: center; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-v2 .hv-works__cell { animation-duration: 640ms !important; }
+  .home-v2 .hv-works__card,
+  .home-v2 .hv-works__more,
+  .home-v2 .hv-works__go { transition-duration: 480ms !important; }
+}
 
 
 /* 16. Impact ============================================================== */
@@ -788,7 +1045,28 @@
 }
 .hv-closing__copy { max-width: 62ch; }
 .hv-closing__copy .hv-h2 { margin-top: var(--hv-s1); }
-.hv-closing__actions { margin-top: var(--hv-s7); }
+.hv-closing__actions { margin-top: var(--hv-s7); row-gap: var(--hv-s3); }
+
+/* Quick reassurances under the CTA row - small, muted, not competing
+   with the buttons above them. */
+.hv-closing__quick {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hv-s2) var(--hv-s6);
+  margin: var(--hv-s6) 0 0;
+  padding: 0;
+}
+.hv-closing__quick li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: var(--hv-fs-xs);
+  font-weight: 600;
+  color: var(--hv-on-dark-muted);
+}
+.hv-closing__quick svg { width: 15px; height: 15px; flex-shrink: 0; color: var(--hv-accent-bright); }
+
 .hv-closing__note { display: flex; align-items: flex-start; gap: var(--hv-s2); flex-shrink: 0; }
 .hv-closing__plane { width: 34px; height: 34px; color: var(--hv-accent-bright); transform: rotate(8deg); }
 @media (max-width: 900px) { .hv-closing__note { display: none; } }
@@ -989,7 +1267,9 @@
   /* 68px, matching the trigger's icon column above (was 60px, the old
      icon size) so the body copy still lines up under the label rather
      than drifting left of it once the icon grew. */
-  padding: var(--hv-s1) var(--hv-s3) var(--hv-s5) calc(68px + clamp(16px, 2vw, 26px) + var(--hv-s3));
+  /* Starts at the left edge of the row, in line with the icon, rather
+     than indented under the title. */
+  padding: var(--hv-s2) var(--hv-s3) var(--hv-s5);
   font-size: 1rem;
   line-height: 1.65;
   color: var(--hv-text-muted);
@@ -1012,7 +1292,7 @@
   .hv-why__go { width: 36px; height: 36px; }
   .hv-why__go svg { width: 15px; height: 15px; }
   .hv-why__label { font-size: clamp(1.05rem, .9rem + 1.4vw, 1.3rem); }
-  .hv-why__text { padding-left: calc(52px + var(--hv-s4) + var(--hv-s3)); }
+  .hv-why__text { padding-left: var(--hv-s3); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1204,4 +1484,151 @@
   .hv-post__card:focus-within { transform: none; }
   .hv-post__card:hover .hv-post__media img,
   .hv-post__card:hover .hv-post__more svg { transform: none; }
+}
+
+
+/* 22. Pricing ============================================================== */
+
+.hv-pricing__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--hv-s5);
+  align-items: stretch;
+}
+.hv-pricing__cell { display: flex; }
+
+.hv-pricing__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--hv-s6);
+  border-radius: var(--hv-r-lg);
+  background: rgba(255, 255, 255, .03);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .09);
+  transition: transform 380ms var(--hv-ease), box-shadow 380ms var(--hv-ease), background 380ms var(--hv-ease);
+}
+.hv-pricing__card:hover {
+  transform: translateY(-6px);
+  background: rgba(255, 255, 255, .05);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16), 0 24px 48px -20px rgba(0, 0, 0, .5);
+}
+/* The featured tier is lifted and outlined in the accent from the start,
+   so it reads as "recommended" even before anyone hovers anything. */
+.hv-pricing__cell.is-featured { transform: translateY(-10px); }
+.hv-pricing__cell.is-featured .hv-pricing__card {
+  background: linear-gradient(180deg, rgba(53, 217, 160, .10) 0%, rgba(255, 255, 255, .03) 100%);
+  box-shadow: inset 0 0 0 1.5px var(--hv-accent-bright), 0 30px 60px -24px rgba(10, 127, 82, .35);
+}
+.hv-pricing__cell.is-featured .hv-pricing__card:hover { transform: translateY(-6px); }
+
+.hv-pricing__ribbon {
+  position: absolute;
+  top: 0;
+  left: var(--hv-s6);
+  transform: translateY(-50%);
+  padding: 5px 14px;
+  border-radius: var(--hv-r-pill);
+  background: var(--hv-grad-accent);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #fff;
+  box-shadow: 0 8px 18px -6px rgba(10, 127, 82, .6);
+}
+
+/* .home-v2-scoped: the reset `.home-v2 h1, h2, h3 { margin: 0 }` in
+   home-redesign.css outranks a lone class and was zeroing this margin. */
+.home-v2 .hv-pricing__name {
+  margin: var(--hv-s2) 0 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: #fff;
+}
+.hv-pricing__for {
+  margin: var(--hv-s2) 0 0;
+  font-size: .85rem;
+  line-height: 1.5;
+  color: var(--hv-on-dark-muted);
+}
+.hv-pricing__for span {
+  display: block;
+  margin-bottom: 2px;
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+
+.hv-pricing__price { display: flex; align-items: baseline; gap: 4px; margin-top: var(--hv-s6); }
+.hv-pricing__amount { font-size: 2.4rem; font-weight: 800; letter-spacing: -.02em; color: #fff; }
+.hv-pricing__period { font-size: .95rem; color: var(--hv-on-dark-muted); }
+.hv-pricing__custom { font-size: 2.1rem; font-weight: 800; color: #fff; }
+.hv-pricing__setup { margin: 4px 0 0; font-size: .8rem; color: var(--hv-on-dark-muted); }
+
+.hv-pricing__cta { width: 100%; justify-content: center; margin-top: var(--hv-s6); }
+
+.hv-pricing__features {
+  list-style: none;
+  margin: var(--hv-s6) 0 0;
+  padding-top: var(--hv-s6);
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.hv-pricing__features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: .875rem;
+  line-height: 1.45;
+  color: var(--hv-on-dark);
+}
+.hv-pricing__features svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--hv-accent-bright);
+}
+
+.hv-pricing__reassurance {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px clamp(20px, 3vw, 40px);
+  margin: var(--hv-s10) 0 0;
+  padding-top: var(--hv-s7);
+  border-top: 1px solid rgba(255, 255, 255, .08);
+}
+.hv-pricing__reassurance span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--hv-on-dark-muted);
+}
+.hv-pricing__reassurance svg { width: 16px; height: 16px; color: var(--hv-accent-bright); }
+
+@media (max-width: 1080px) {
+  .hv-pricing__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hv-pricing__cell.is-featured { transform: none; }
+}
+@media (max-width: 640px) {
+  .hv-pricing__grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hv-pricing__card { transition-duration: 1ms; }
+  .hv-pricing__card:hover,
+  .hv-pricing__cell.is-featured .hv-pricing__card:hover { transform: none; }
 }

@@ -1,46 +1,174 @@
+import { useEffect, useRef, useState } from "react";
 import Icon from "@/components/common/Icon.jsx";
-import { HvSection, Reveal, Btn, IconBadge } from "../primitives.jsx";
+import HaloButton from "../HaloButton.jsx";
+import { Reveal } from "../primitives.jsx";
 import { JOURNEY } from "@/data/homeV2";
 
+/** How long each stage stays active before the flow moves on. */
+const DWELL = 3200;
+
 /**
- * "From Clicks to Customers" - the seven-stage journey.
+ * "How We Work" - the seven stages as a live pipeline.
  *
- * The reference draws this as an S: four across, then wrapping back
- * right-to-left underneath. Reproduced with a 4-column grid where the
- * second row is reversed, so the reading order still matches the DOM
- * order (an ordered list) - the visual snake is presentation only, and
- * a screen reader gets a clean 1..7 sequence.
+ * A track runs through the stage nodes and fills up to the active one, with
+ * a light pulse travelling along the filled part. The active stage advances
+ * on its own - a ring round its node counts down the dwell - and a detail
+ * panel below explains it.
+ *
+ * It only starts once the section is on screen, so a visitor arriving at it
+ * sees stage 1 rather than whatever stage the timer had reached while they
+ * were further up the page. It pauses while the pointer is over the flow or
+ * focus is inside it, so nothing moves under someone reading or tabbing.
+ *
+ * ARIA tabs: the stages are tabs, the detail panel is the tab panel. Arrow
+ * keys move between stages (Left/Right, and Up/Down for the vertical phone
+ * layout). On a phone the panel is replaced by each stage's text opening
+ * inline under it.
  */
 export default function Journey() {
+  const steps = JOURNEY.steps;
+  const N = steps.length;
+  const [active, setActive] = useState(0);
+  const [hovering, setHovering] = useState(false);
+  const [focusInside, setFocusInside] = useState(false);
+  const [inView, setInView] = useState(false);
+  const sectionRef = useRef(null);
+  const tabRefs = useRef([]);
+  const paused = hovering || focusInside;
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || !("IntersectionObserver" in window)) {
+      setInView(true);
+      return;
+    }
+    const io = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: 0.35 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!inView || paused) return;
+    const id = setTimeout(() => setActive((a) => (a + 1) % N), DWELL);
+    return () => clearTimeout(id);
+  }, [active, inView, paused, N]);
+
+  const go = (i, focus = false) => {
+    const next = (i + N) % N;
+    setActive(next);
+    if (focus) tabRefs.current[next]?.focus();
+  };
+
+  const onKeyDown = (e) => {
+    const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+    if (e.key in keys) {
+      e.preventDefault();
+      go(active + keys[e.key], true);
+    } else if (e.key === "Home" || e.key === "End") {
+      e.preventDefault();
+      go(e.key === "Home" ? 0 : N - 1, true);
+    }
+  };
+
+  const step = steps[active];
+  const pad = (n) => String(n).padStart(2, "0");
+
   return (
-    <HvSection mint wash>
-      <div className="hv-split hv-journey">
-        <Reveal className="hv-journey__copy">
+    <section ref={sectionRef} id="how-we-work" className="hv-section hv-flowx">
+      <div className="hv-flowx__bg" aria-hidden="true" />
+      <div className="hv-container">
+        <Reveal className="hv-flowx__head">
           <span className="hv-eyebrow">{JOURNEY.eyebrow}</span>
-          <h2 className="hv-h2">{JOURNEY.title}</h2>
-          <p className="hv-lede">{JOURNEY.lede}</p>
-          <Btn to={JOURNEY.cta.to} variant="primary" iconAfter={JOURNEY.cta.icon} className="hv-journey__cta">
-            {JOURNEY.cta.label}
-          </Btn>
+          <h2 className="hv-flowx__title">{JOURNEY.title}</h2>
+          <p className="hv-flowx__lede">{JOURNEY.lede}</p>
         </Reveal>
 
-        <Reveal className="hv-journey__flow">
-          <ol className="hv-flow">
-            {JOURNEY.steps.map((step, i) => (
-              <li className="hv-flow__step" key={step.title}>
-                <IconBadge icon={step.icon} round />
-                <span className="hv-flow__title">{step.title}</span>
-                <span className="hv-flow__sub">{step.sub}</span>
-                {i < JOURNEY.steps.length - 1 && (
-                  <span className="hv-flow__arrow" aria-hidden="true">
-                    <Icon name="arrowRight" strokeWidth={2.5} />
-                  </span>
-                )}
-              </li>
-            ))}
+        <Reveal
+          className={`hv-flowx__stage${paused ? " is-paused" : ""}`}
+          style={{ "--p": active / (N - 1), "--n": N, "--dwell": `${DWELL}ms` }}
+          onMouseEnter={() => setHovering(true)}
+          onMouseLeave={() => setHovering(false)}
+          onFocus={() => setFocusInside(true)}
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget)) setFocusInside(false);
+          }}
+        >
+          <div className="hv-flowx__track" aria-hidden="true">
+            <span className="hv-flowx__fill">
+              <span className="hv-flowx__pulse" />
+            </span>
+          </div>
+
+          <ol className="hv-flowx__steps" role="tablist" aria-label="Stages">
+            {steps.map((s, i) => {
+              const state = i === active ? " is-active" : i < active ? " is-done" : "";
+              return (
+                <li key={s.title} className={`hv-flowx__step${state}`} role="presentation">
+                  <button
+                    ref={(el) => (tabRefs.current[i] = el)}
+                    type="button"
+                    role="tab"
+                    id={`flowx-tab-${i}`}
+                    aria-selected={i === active}
+                    aria-controls="flowx-panel"
+                    tabIndex={i === active ? 0 : -1}
+                    className="hv-flowx__btn"
+                    onClick={() => go(i)}
+                    onKeyDown={onKeyDown}
+                  >
+                    <span className="hv-flowx__node">
+                      <Icon name={s.icon} strokeWidth={1.9} aria-hidden="true" />
+                      {i === active && (
+                        /* Keyed on the stage so the countdown restarts from
+                           full every time the active stage changes. */
+                        <svg key={active} className="hv-flowx__timer" viewBox="0 0 72 72" aria-hidden="true">
+                          <circle cx="36" cy="36" r="34" pathLength="100" />
+                        </svg>
+                      )}
+                    </span>
+                    <span className="hv-flowx__num">{pad(i + 1)}</span>
+                    <span className="hv-flowx__name">{s.title}</span>
+                    <span className="hv-flowx__sub">{s.sub}</span>
+                  </button>
+                  <div className="hv-flowx__inline">
+                    <p>{s.body}</p>
+                  </div>
+                </li>
+              );
+            })}
           </ol>
+
+          <div
+            key={active}
+            id="flowx-panel"
+            role="tabpanel"
+            aria-labelledby={`flowx-tab-${active}`}
+            className="hv-flowx__panel"
+          >
+            <span className="hv-flowx__ghost" aria-hidden="true">
+              {pad(active + 1)}
+            </span>
+            <div className="hv-flowx__panel-copy">
+              <span className="hv-flowx__count">
+                Stage {pad(active + 1)} <i>/ {pad(N)}</i>
+              </span>
+              <h3 className="hv-flowx__panel-title">{step.title}</h3>
+              <p className="hv-flowx__panel-body">{step.body}</p>
+            </div>
+            <div className="hv-flowx__controls">
+              <div className="hv-flowx__arrows">
+                <button type="button" className="hv-flowx__arrow" onClick={() => go(active - 1)} aria-label="Previous stage">
+                  <Icon name="chevronLeft" aria-hidden="true" />
+                </button>
+                <button type="button" className="hv-flowx__arrow" onClick={() => go(active + 1)} aria-label="Next stage">
+                  <Icon name="chevronRight" aria-hidden="true" />
+                </button>
+              </div>
+              <HaloButton to={JOURNEY.cta.to}>{JOURNEY.cta.label}</HaloButton>
+            </div>
+          </div>
         </Reveal>
       </div>
-    </HvSection>
+    </section>
   );
 }

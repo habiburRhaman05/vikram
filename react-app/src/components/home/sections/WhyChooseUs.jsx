@@ -28,7 +28,7 @@ export default function WhyChooseUs() {
      on hover instead would reflow the list under the cursor as you swept
      down it, which is the kind of "animation" that just feels broken. */
   const [preview, setPreview] = useState(null);
-  const shown = preview ?? (open === -1 ? 0 : open);
+  const shown = preview ?? open;
 
   return (
     <HvSection id="why">
@@ -80,9 +80,11 @@ export default function WhyChooseUs() {
                     aria-expanded={isOpen}
                     aria-controls={`why-panel-${item.id}`}
                     id={`why-trigger-${item.id}`}
-                    /* Clicking the open one closes it; the photo keeps the
-                       last selection rather than blanking the frame. */
-                    onClick={() => setOpen(isOpen ? -1 : i)}
+                    /* Exactly one item is always open. Clicking another
+                       opens it and closes the current one; clicking the one
+                       already open does nothing, so the list can never end
+                       up with every item collapsed. */
+                    onClick={() => setOpen(i)}
                     onMouseEnter={() => setPreview(i)}
                     onMouseLeave={() => setPreview(null)}
                     onFocus={() => setPreview(i)}

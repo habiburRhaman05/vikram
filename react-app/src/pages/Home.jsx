@@ -3,8 +3,8 @@ import PageMeta from "@/components/common/PageMeta.jsx";
 import StructuredData from "@/components/common/StructuredData.jsx";
 
 import Hero from "@/components/home/sections/Hero.jsx";
-import TrustBar from "@/components/home/sections/TrustBar.jsx";
-import GrowthStack from "@/components/home/sections/GrowthStack.jsx";
+import WhatWeDo from "@/components/home/sections/WhatWeDo.jsx";
+import Services from "@/components/home/sections/Services.jsx";
 import Journey from "@/components/home/sections/Journey.jsx";
 import Solutions from "@/components/home/sections/Solutions.jsx";
 import WhyChooseUs from "@/components/home/sections/WhyChooseUs.jsx";
@@ -13,11 +13,14 @@ import Impact from "@/components/home/sections/Impact.jsx";
 import Testimonials from "@/components/home/sections/Testimonials.jsx";
 import Faq from "@/components/home/sections/Faq.jsx";
 import Insights from "@/components/home/sections/Insights.jsx";
+import Pricing from "@/components/home/sections/Pricing.jsx";
 import ClosingCta from "@/components/home/sections/ClosingCta.jsx";
 
 import "@/styles/home-redesign.css";
 import "@/styles/home-sections.css";
 import "@/styles/home-chrome.css";
+import "@/styles/home-whatwedo.css";
+import "@/styles/home-services.css";
 
 /**
  * Home.
@@ -34,10 +37,14 @@ export default function Home() {
   return (
     <Layout
       variant="v2"
+      /* Distinct from the hero's own badge just below it (which now
+         carries the "book a consultation" announcement) - this stays
+         short and general so the two don't repeat the same line twice in
+         a row. */
       topbar={
         <>
-          Now booking free consultations for the coming quarter.{" "}
-          <a href="/book">Grab a 30 minute slot</a>
+          Based in Albany, NY - working with businesses nationwide.{" "}
+          <a href="/contact">Get in touch</a>
         </>
       }
     >
@@ -52,8 +59,8 @@ export default function Home() {
           so it also covers the header and footer, which this redesign
           restyles. */}
       <Hero />
-      <TrustBar />
-      <GrowthStack />
+      <WhatWeDo />
+      <Services />
       <Journey />
       <Solutions />
       <WhyChooseUs />
@@ -64,6 +71,7 @@ export default function Home() {
           two "reading" sections together before the dark closing band. */}
       <Insights />
       <Faq />
+      <Pricing />
       <ClosingCta />
     </Layout>
   );

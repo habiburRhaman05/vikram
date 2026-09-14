@@ -1,0 +1,835 @@
+/* ==========================================================================
+   Home - "What We Do" service cards + device mockups
+   --------------------------------------------------------------------------
+   Imported by src/pages/Home.jsx alongside the other home stylesheets, and
+   like them only meaningful inside `.home-v2`.
+
+   Contents
+     1. Grid + card
+     2. Hover action bar
+     3. Device frames
+     4. Mockup primitives
+     5. Screens: software / ai / marketing / website / creative / video
+     6. Responsive + motion preferences
+   ========================================================================== */
+
+
+/* 1. Grid + card ========================================================== */
+
+.hv-wwd__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 24px);
+}
+.hv-wwd__cell { display: flex; }
+
+.hv-wwd__card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 20px;
+  /* The reference's flat #f4f4f4, pulled toward the brand: a near-neutral
+     with just enough green in it to belong to the page. */
+  background: linear-gradient(180deg, #F4F9F6 0%, #EAF4EE 100%);
+  box-shadow: inset 0 0 0 1px rgba(10, 127, 82, .06);
+  transition: transform 560ms var(--hv-ease),
+              box-shadow 560ms var(--hv-ease);
+}
+
+/* Spotlight that tracks the pointer. --mx/--my are written by
+   WhatWeDo.jsx on pointermove; the fallbacks put it top-centre for
+   keyboard focus, where there is no pointer. */
+.hv-wwd__card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 20%),
+              rgba(53, 217, 160, .24), transparent 62%);
+  opacity: 0;
+  transition: opacity 420ms var(--hv-ease);
+  pointer-events: none;
+}
+
+.hv-wwd__card:hover,
+.hv-wwd__card:focus-within {
+  transform: translateY(-6px);
+  box-shadow: 0 30px 60px -24px rgba(6, 40, 34, .34),
+              inset 0 0 0 1px rgba(10, 127, 82, .16);
+}
+.hv-wwd__card:hover::before,
+.hv-wwd__card:focus-within::before { opacity: 1; }
+
+.hv-wwd__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: clamp(28px, 3vw, 40px) 24px clamp(18px, 2vw, 26px);
+  text-align: center;
+}
+.hv-wwd__title {
+  margin: 0;
+  font-size: clamp(1.2rem, 1rem + .7vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  color: var(--hv-text);
+  transition: color 320ms var(--hv-ease);
+}
+.hv-wwd__card:hover .hv-wwd__title,
+.hv-wwd__card:focus-within .hv-wwd__title { color: var(--hv-accent-strong); }
+.hv-wwd__body {
+  margin: 0;
+  max-width: 320px;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--hv-text-muted);
+}
+
+/* The mockup stage. A size container, so everything inside is sized in
+   cqw and scales with the card - see ServiceMockups.jsx. Clipped, so the
+   devices can run off the bottom edge the way the reference's do. */
+.hv-wwd__art {
+  position: relative;
+  margin-top: auto;
+  width: 100%;
+  aspect-ratio: 528 / 316;
+  container-type: inline-size;
+  overflow: hidden;
+}
+/* Darkens the lower edge while the action bar is up, so the glass bar
+   reads against busy screen content. */
+.hv-wwd__art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: linear-gradient(180deg, transparent 40%, rgba(5, 46, 41, .26) 100%);
+  opacity: 0;
+  transition: opacity 420ms var(--hv-ease);
+  pointer-events: none;
+}
+.hv-wwd__card:hover .hv-wwd__art::after,
+.hv-wwd__card:focus-within .hv-wwd__art::after { opacity: 1; }
+
+.hv-mk-scene {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 100%;
+  transition: transform 760ms var(--hv-ease);
+}
+/* The device rises into the card on hover. */
+.hv-wwd__card:hover .hv-mk-scene,
+.hv-wwd__card:focus-within .hv-mk-scene { transform: translateY(-2.6cqw) scale(1.035); }
+
+
+/* 2. Hover action bar ===================================================== */
+
+.hv-wwd__actions {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(14px, 1.6vw, 20px);
+  z-index: 6;
+  display: flex;
+  gap: 6px;
+  padding: 6px;
+  border-radius: var(--hv-r-pill);
+  white-space: nowrap;
+  background: rgba(255, 255, 255, .7);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  backdrop-filter: blur(16px) saturate(170%);
+  box-shadow: 0 18px 40px -14px rgba(6, 40, 34, .42),
+              inset 0 0 0 1px rgba(255, 255, 255, .75);
+  opacity: 0;
+  transform: translate(-50%, 24px) scale(.94);
+  pointer-events: none;
+  transition: opacity 360ms var(--hv-ease),
+              transform 600ms var(--hv-ease-spring);
+}
+.hv-wwd__card:hover .hv-wwd__actions,
+.hv-wwd__card:focus-within .hv-wwd__actions {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+  pointer-events: auto;
+}
+
+.hv-wwd__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: var(--hv-r-pill);
+  font-family: var(--hv-font);
+  font-size: .875rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  /* The two buttons arrive a beat after the bar, one after the other. */
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 320ms var(--hv-ease) 90ms,
+              transform 480ms var(--hv-ease-spring) 90ms,
+              background 220ms var(--hv-ease),
+              box-shadow 220ms var(--hv-ease),
+              color 220ms var(--hv-ease),
+              filter 220ms var(--hv-ease);
+}
+.hv-wwd__btn + .hv-wwd__btn { transition-delay: 160ms, 160ms, 0s, 0s, 0s, 0s; }
+.hv-wwd__card:hover .hv-wwd__btn,
+.hv-wwd__card:focus-within .hv-wwd__btn { opacity: 1; transform: none; }
+.hv-wwd__btn svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  transition: transform 260ms var(--hv-ease);
+}
+.hv-wwd__btn:focus-visible { outline: 2px solid var(--hv-accent-strong); outline-offset: 2px; }
+
+.hv-wwd__btn--ghost {
+  background: #fff;
+  color: var(--hv-text);
+  box-shadow: inset 0 0 0 1px rgba(10, 127, 82, .16);
+}
+.hv-wwd__btn--ghost:hover { color: var(--hv-accent-strong); box-shadow: inset 0 0 0 1px rgba(10, 127, 82, .38); }
+.hv-wwd__btn--ghost:hover svg { transform: translateX(3px); }
+
+.hv-wwd__btn--solid {
+  background: var(--hv-grad-accent);
+  color: #fff;
+  box-shadow: 0 8px 18px -6px rgba(10, 127, 82, .6);
+}
+.hv-wwd__btn--solid:hover { filter: brightness(1.1); box-shadow: 0 12px 24px -8px rgba(10, 127, 82, .7); }
+
+
+/* 3. Device frames ======================================================== */
+
+.hv-mk-laptop {
+  position: absolute;
+  left: 50%;
+  bottom: -1cqw;
+  width: 74cqw;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 2.2cqw 3cqw rgba(6, 40, 34, .18));
+}
+.hv-mk-laptop--raised { width: 64cqw; bottom: 8cqw; }
+.hv-mk-laptop--shifted { left: 44%; width: 70cqw; }
+.hv-mk-laptop__screen {
+  position: relative;
+  box-sizing: border-box;
+  aspect-ratio: 16 / 10.2;
+  overflow: hidden;
+  background: #fff;
+  border: 1.3cqw solid #16181C;
+  border-bottom-width: 1.7cqw;
+  border-radius: 2.6cqw 2.6cqw .6cqw .6cqw;
+}
+.hv-mk-laptop__notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 5;
+  width: 11cqw;
+  height: 1.3cqw;
+  transform: translateX(-50%);
+  border-radius: 0 0 1cqw 1cqw;
+  background: #16181C;
+}
+.hv-mk-laptop__base {
+  position: relative;
+  width: 112%;
+  height: 1.9cqw;
+  margin-left: -6%;
+  border-radius: .3cqw .3cqw 1.6cqw 1.6cqw;
+  background: linear-gradient(180deg, #EEF1F3 0%, #C7CCD0 58%, #9CA3A8 100%);
+}
+.hv-mk-laptop__base::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 14cqw;
+  height: .7cqw;
+  transform: translateX(-50%);
+  border-radius: 0 0 .8cqw .8cqw;
+  background: #B3B9BE;
+}
+
+.hv-mk-phone {
+  position: absolute;
+  z-index: 3;
+  bottom: -4cqw;
+  width: 19cqw;
+  filter: drop-shadow(0 2cqw 3cqw rgba(6, 40, 34, .3));
+}
+.hv-mk-phone--left { left: 9cqw; }
+.hv-mk-phone--right { right: 5cqw; }
+.hv-mk-phone__screen {
+  position: relative;
+  box-sizing: border-box;
+  aspect-ratio: 9 / 19;
+  overflow: hidden;
+  background: #fff;
+  border: 1cqw solid #16181C;
+  border-radius: 3.4cqw;
+}
+.hv-mk-phone__island {
+  position: absolute;
+  top: 1cqw;
+  left: 50%;
+  z-index: 5;
+  width: 6cqw;
+  height: 1.6cqw;
+  transform: translateX(-50%);
+  border-radius: 1cqw;
+  background: #16181C;
+}
+
+.hv-mk-tablet {
+  position: absolute;
+  top: 8cqw;
+  left: 50%;
+  width: 84cqw;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 2cqw 3cqw rgba(6, 40, 34, .16));
+}
+.hv-mk-tablet__screen {
+  position: relative;
+  box-sizing: border-box;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #F3F8F5;
+  border: 1.8cqw solid #16181C;
+  border-radius: 3.4cqw;
+}
+
+
+/* 4. Mockup primitives ==================================================== */
+
+.hv-mk-bar {
+  display: block;
+  flex-shrink: 0;
+  height: .9cqw;
+  border-radius: 1cqw;
+  background: #D6E5DE;
+}
+.hv-mk-bar.is-strong { height: 1.1cqw; background: #9DB6AC; }
+.hv-mk-bar.is-display { height: 2.1cqw; background: #0B1F1A; border-radius: .6cqw; }
+.hv-mk-bar.is-accent,
+.hv-mk-bar.is-on { background: var(--hv-accent); }
+
+.hv-mk-dot {
+  display: block;
+  flex-shrink: 0;
+  width: 2cqw;
+  height: 2cqw;
+  border-radius: 50%;
+  background: var(--hv-grad-accent);
+}
+.hv-mk-pill {
+  display: block;
+  width: 42%;
+  height: 3cqw;
+  border-radius: 3cqw;
+  background: var(--hv-grad-accent);
+  font-size: 0;
+}
+.hv-mk-pill--sm { width: 9cqw; height: 2cqw; margin-left: auto; }
+
+.hv-mk-photo { display: block; overflow: hidden; }
+.hv-mk-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+
+/* 5. Screens ============================================================== */
+
+/* -- Software: code editor + app -------------------------------------------- */
+
+.hv-mk-code {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 22% 1fr;
+  background: #0F1720;
+}
+.hv-mk-code__side {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4cqw;
+  padding: 3.4cqw 1.6cqw;
+  background: #0A1118;
+}
+.hv-mk-code__side .hv-mk-bar { height: .8cqw; background: #1F2B37; }
+.hv-mk-code__side .hv-mk-bar.is-on { background: var(--hv-accent-bright); }
+.hv-mk-code__main { display: flex; flex-direction: column; gap: 1cqw; min-width: 0; }
+.hv-mk-code__tabs {
+  display: flex;
+  gap: .6cqw;
+  height: 3cqw;
+  margin-bottom: .6cqw;
+  padding: .6cqw 1cqw 0;
+  background: #0A1118;
+}
+.hv-mk-code__tabs span { width: 10cqw; border-radius: .6cqw .6cqw 0 0; background: #131D27; }
+.hv-mk-code__tabs .is-on { background: #0F1720; box-shadow: inset 0 .25cqw 0 var(--hv-accent-bright); }
+.hv-mk-code__ln {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: .9cqw;
+  height: 1.05cqw;
+}
+/* Line-number gutter, pinned left regardless of the line's indent. */
+.hv-mk-code__ln em {
+  position: absolute;
+  left: 1.2cqw;
+  width: 1.4cqw;
+  height: .6cqw;
+  border-radius: .3cqw;
+  background: #243242;
+  font-size: 0;
+}
+.hv-mk-code__ln .hv-mk-bar { height: .8cqw; }
+.hv-mk-code__ln .c-k { background: #C792EA; }
+.hv-mk-code__ln .c-f { background: #82AAFF; }
+.hv-mk-code__ln .c-t { background: #5B6B7B; }
+.hv-mk-code__ln .c-s { background: #A9DC76; }
+.hv-mk-code__ln .c-n { background: #F78C6C; }
+.hv-mk-code__ln .c-a { background: var(--hv-accent-bright); }
+.hv-mk-caret {
+  display: block;
+  width: .3cqw;
+  height: 1.7cqw;
+  background: var(--hv-accent-bright);
+  animation: hv-mk-blink 1.1s steps(1) infinite;
+}
+@keyframes hv-mk-blink { 50% { opacity: 0; } }
+
+.hv-mk-app {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1cqw;
+  padding: 4.2cqw 1.6cqw 1.6cqw;
+  background: #fff;
+}
+.hv-mk-app__top { display: flex; align-items: center; gap: 1cqw; }
+.hv-mk-app__top .hv-mk-dot { width: 1.8cqw; height: 1.8cqw; }
+.hv-mk-app__hero { height: 12cqw; border-radius: 1.6cqw; }
+.hv-mk-app .hv-mk-pill { width: 64%; height: 2.6cqw; }
+.hv-mk-app__row { display: flex; gap: .8cqw; margin-top: auto; }
+.hv-mk-app__row span { flex: 1; height: 5cqw; border-radius: 1.2cqw; background: #EAF5EF; }
+
+/* -- AI: workflow canvas ----------------------------------------------------- */
+
+.hv-mk-flow {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 7% 1fr 24%;
+  background: #fff;
+}
+.hv-mk-flow__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6cqw;
+  padding-top: 3.4cqw;
+  background: #F3F8F5;
+  box-shadow: inset -.2cqw 0 0 #E3EEE8;
+}
+.hv-mk-flow__rail span { width: 2.4cqw; height: 2.4cqw; border-radius: .7cqw; background: #D9E8E1; }
+.hv-mk-flow__rail .is-on { background: var(--hv-grad-accent); }
+.hv-mk-flow__canvas {
+  position: relative;
+  background-color: #FBFDFC;
+  background-image: radial-gradient(#D3E4DC .2cqw, transparent .24cqw);
+  background-size: 2.4cqw 2.4cqw;
+}
+.hv-mk-flow__edges { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.hv-mk-flow__edges path {
+  fill: none;
+  stroke: #8FCBB2;
+  stroke-width: 1.4;
+  stroke-dasharray: 4 3;
+  vector-effect: non-scaling-stroke;
+  animation: hv-mk-flow 1.1s linear infinite;
+  animation-play-state: paused;
+}
+/* Data "flows" along the connectors while the card is hovered. */
+.hv-wwd__card:hover .hv-mk-flow__edges path,
+.hv-wwd__card:focus-within .hv-mk-flow__edges path { animation-play-state: running; }
+@keyframes hv-mk-flow { to { stroke-dashoffset: -14; } }
+
+.hv-mk-node {
+  position: absolute;
+  box-sizing: border-box;
+  width: 18%;
+  height: 14%;
+  display: flex;
+  align-items: center;
+  gap: .8cqw;
+  padding: 0 .9cqw;
+  border-radius: 1cqw;
+  background: #fff;
+  box-shadow: inset 0 0 0 .2cqw #DCEAE3, 0 .6cqw 1.4cqw rgba(6, 40, 34, .08);
+}
+.hv-mk-node__ic { flex-shrink: 0; width: 2.3cqw; height: 2.3cqw; border-radius: .6cqw; background: #D9E8E1; }
+.hv-mk-node__txt { display: flex; flex: 1; flex-direction: column; gap: .6cqw; min-width: 0; }
+.hv-mk-node__txt .hv-mk-bar { height: .7cqw; }
+.hv-mk-node.is-trigger .hv-mk-node__ic { background: #FBCB4A; }
+.hv-mk-node.is-ai { box-shadow: inset 0 0 0 .25cqw var(--hv-accent-bright), 0 .8cqw 2cqw rgba(53, 217, 160, .28); }
+.hv-mk-node.is-ai .hv-mk-node__ic { background: var(--hv-grad-accent); }
+.hv-mk-node.is-done .hv-mk-node__ic { background: var(--hv-accent-bright); }
+
+.hv-mk-flow__chat {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2cqw;
+  padding: 3.2cqw 1.4cqw;
+  background: #F6FAF8;
+  box-shadow: inset .2cqw 0 0 #E3EEE8;
+}
+.hv-mk-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: .6cqw;
+  padding: 1.2cqw;
+  border-radius: 1.2cqw 1.2cqw 1.2cqw .3cqw;
+  background: #fff;
+  box-shadow: 0 .3cqw .9cqw rgba(6, 40, 34, .07);
+}
+.hv-mk-bubble .hv-mk-bar { height: .7cqw; }
+.hv-mk-bubble.is-me {
+  align-self: flex-end;
+  width: 72%;
+  border-radius: 1.2cqw 1.2cqw .3cqw 1.2cqw;
+  background: var(--hv-grad-accent);
+}
+.hv-mk-bubble.is-me .hv-mk-bar { background: rgba(255, 255, 255, .6); }
+
+/* -- Marketing: dashboard ---------------------------------------------------- */
+
+.hv-mk-dash {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5cqw;
+  padding: 2.4cqw;
+  background: #F3F8F5;
+}
+.hv-mk-dash__stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.4cqw; }
+.hv-mk-card {
+  display: flex;
+  flex-direction: column;
+  gap: .8cqw;
+  min-width: 0;
+  padding: 1.4cqw;
+  border-radius: 1.4cqw;
+  background: #fff;
+  box-shadow: 0 .3cqw 1cqw rgba(6, 40, 34, .06);
+}
+.hv-mk-card b {
+  font-family: var(--hv-font);
+  font-size: 2.2cqw;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+  color: var(--hv-text);
+}
+.hv-mk-card b.is-up { color: var(--hv-accent-strong); }
+.hv-mk-card--center { align-items: center; justify-content: center; }
+.hv-mk-dash__row { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 1.4cqw; height: 15cqw; }
+.hv-mk-dash__row--wide { grid-template-columns: 2fr 1fr; height: 14cqw; }
+
+.hv-mk-bars { flex-direction: row; align-items: flex-end; gap: .8cqw; padding-bottom: 1.6cqw; }
+.hv-mk-bars span {
+  flex: 1;
+  height: var(--h);
+  border-radius: .5cqw .5cqw .2cqw .2cqw;
+  background: linear-gradient(180deg, var(--hv-accent-bright), var(--hv-accent-strong));
+  transform-origin: 50% 100%;
+  transform: scaleY(.7);
+  transition: transform 720ms var(--hv-ease-spring) var(--d);
+}
+/* The bars grow into their real values on hover. */
+.hv-wwd__card:hover .hv-mk-bars span,
+.hv-wwd__card:focus-within .hv-mk-bars span { transform: none; }
+
+.hv-mk-gauge { width: 72%; }
+.hv-mk-gauge path { fill: none; stroke-width: 4.5; stroke-linecap: round; }
+.hv-mk-gauge__track { stroke: #E1ECE6; }
+.hv-mk-gauge__val { stroke: var(--hv-accent); }
+
+.hv-mk-line { padding: 1.4cqw 1.4cqw .6cqw; }
+.hv-mk-line svg { width: 100%; height: 100%; }
+.hv-mk-line__fill { fill: rgba(53, 217, 160, .18); }
+.hv-mk-line__stroke {
+  fill: none;
+  stroke: var(--hv-accent-strong);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.hv-mk-donut {
+  width: 9.5cqw;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: conic-gradient(#0A7F52 0 38%, #35D9A0 0 64%, #FBCB4A 0 80%, #3E8EF7 0 100%);
+  -webkit-mask: radial-gradient(circle, transparent 44%, #000 46%);
+  mask: radial-gradient(circle, transparent 44%, #000 46%);
+  transition: transform 900ms var(--hv-ease);
+}
+.hv-wwd__card:hover .hv-mk-donut,
+.hv-wwd__card:focus-within .hv-mk-donut { transform: rotate(60deg); }
+
+/* -- Website: landing page on a pedestal ------------------------------------ */
+
+.hv-mk-pedestal {
+  position: absolute;
+  left: 50%;
+  bottom: -7cqw;
+  width: 80cqw;
+  height: 17cqw;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 28%, #FFFFFF 0%, #DCEBE3 56%, #C2D8CD 100%);
+  box-shadow: inset 0 -2cqw 3cqw rgba(6, 40, 34, .10);
+}
+.hv-mk-site { position: absolute; inset: 0; display: flex; flex-direction: column; background: #fff; }
+.hv-mk-site__nav { display: flex; align-items: center; gap: 1.8cqw; padding: 2.2cqw 2.4cqw 1.4cqw; }
+.hv-mk-site__nav .hv-mk-bar { height: .7cqw; }
+.hv-mk-site__hero {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 2cqw;
+  min-height: 0;
+  padding: .6cqw 2.4cqw;
+  align-items: center;
+}
+.hv-mk-site__copy { display: flex; flex-direction: column; gap: 1cqw; }
+.hv-mk-site__copy .hv-mk-pill { margin-top: .6cqw; }
+.hv-mk-site__photo { height: 100%; max-height: 22cqw; border-radius: 1.4cqw; }
+.hv-mk-site__tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2cqw; padding: 1.4cqw 2.4cqw 2cqw; }
+.hv-mk-site__tiles span { height: 5cqw; border-radius: 1cqw; background: #EEF6F2; }
+
+/* -- Creative: design tool ----------------------------------------------------- */
+
+.hv-mk-design {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 17% 1fr 19%;
+  background: #fff;
+}
+.hv-mk-design__layers,
+.hv-mk-design__props {
+  display: flex;
+  flex-direction: column;
+  gap: 1.3cqw;
+  padding: 3.2cqw 1.2cqw;
+  background: #FAFCFB;
+}
+.hv-mk-design__layers { box-shadow: inset -.2cqw 0 0 #E6EFEA; }
+.hv-mk-design__props { box-shadow: inset .2cqw 0 0 #E6EFEA; }
+.hv-mk-design__layers .hv-mk-bar,
+.hv-mk-design__props .hv-mk-bar { height: .8cqw; }
+.hv-mk-design__canvas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.6cqw;
+  padding: 3cqw 1.6cqw;
+  background: linear-gradient(135deg, #E4F6EC, #D2EFE0);
+}
+.hv-mk-board {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: .7cqw;
+  width: 30%;
+  aspect-ratio: 9 / 16;
+  padding: .8cqw;
+  overflow: hidden;
+  border-radius: 1cqw;
+  background: #fff;
+  box-shadow: 0 .8cqw 2cqw rgba(6, 40, 34, .14);
+  transition: transform 640ms var(--hv-ease);
+}
+.hv-mk-board .hv-mk-photo { height: 56%; border-radius: .7cqw; }
+.hv-mk-board .hv-mk-bar { height: .8cqw; }
+.hv-mk-board--dark { background: #0B1F1A; }
+.hv-mk-board--dark .hv-mk-photo { height: 78%; }
+.hv-mk-board__cap {
+  display: block;
+  width: 70%;
+  height: 1.6cqw;
+  margin: auto auto 0;
+  border-radius: .4cqw;
+  background: #FBCB4A;
+  font-size: 0;
+}
+.hv-mk-board.is-selected { outline: .3cqw solid var(--hv-accent-bright); outline-offset: .4cqw; }
+/* The artboards fan out slightly on hover. */
+.hv-wwd__card:hover .hv-mk-board:first-child,
+.hv-wwd__card:focus-within .hv-mk-board:first-child { transform: translateY(1.2cqw) rotate(-3deg); }
+.hv-wwd__card:hover .hv-mk-board:last-child,
+.hv-wwd__card:focus-within .hv-mk-board:last-child { transform: translateY(1.2cqw) rotate(3deg); }
+
+.hv-mk-swatches { display: flex; gap: .5cqw; }
+.hv-mk-swatches i { display: block; width: 1.9cqw; height: 1.9cqw; border-radius: 50%; }
+.hv-mk-swatches i:nth-child(1) { background: #0A7F52; }
+.hv-mk-swatches i:nth-child(2) { background: #35D9A0; }
+.hv-mk-swatches i:nth-child(3) { background: #FBCB4A; }
+.hv-mk-swatches i:nth-child(4) { background: #0B1F1A; }
+
+/* -- Video: editor + vertical reel -------------------------------------------- */
+
+.hv-mk-edit {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 26% 1fr;
+  grid-template-rows: 1fr 34%;
+  background: #11161B;
+}
+.hv-mk-edit__bin {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: start;
+  gap: .8cqw;
+  padding: 3cqw 1.2cqw 1.2cqw;
+}
+.hv-mk-edit__bin span { aspect-ratio: 16 / 10; border-radius: .5cqw; background: #1F2A33; }
+.hv-mk-edit__bin .is-on { background: var(--hv-grad-accent); }
+.hv-mk-edit__preview {
+  position: relative;
+  margin: 2.6cqw 2cqw 1.2cqw 1cqw;
+  overflow: hidden;
+  border-radius: .8cqw;
+  background: #000;
+}
+.hv-mk-edit__preview .hv-mk-photo { position: absolute; inset: 0; }
+.hv-mk-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5cqw;
+  height: 5cqw;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .88);
+  transition: transform 420ms var(--hv-ease-spring);
+}
+.hv-mk-play::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 54%;
+  width: 1.8cqw;
+  height: 2cqw;
+  transform: translate(-50%, -50%);
+  background: #0B1F1A;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+.hv-wwd__card:hover .hv-mk-play,
+.hv-wwd__card:focus-within .hv-mk-play { transform: translate(-50%, -50%) scale(1.15); }
+.hv-mk-edit__timeline {
+  position: relative;
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: .8cqw;
+  padding: 1.4cqw 1.6cqw;
+  background: #0B1014;
+}
+.hv-mk-track { position: relative; height: 2.1cqw; border-radius: .4cqw; background: #161D23; }
+.hv-mk-track span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: .4cqw;
+  background: linear-gradient(90deg, var(--hv-accent-strong), var(--hv-accent-bright));
+}
+.hv-mk-track.is-alt span { background: linear-gradient(90deg, #3E8EF7, #7FD1F5); }
+.hv-mk-track.is-audio span {
+  background: repeating-linear-gradient(90deg, #FBCB4A 0 .3cqw, transparent .3cqw .6cqw);
+  opacity: .8;
+}
+/* Scrubs across the timeline on hover. */
+.hv-mk-playhead {
+  position: absolute;
+  top: .6cqw;
+  bottom: .6cqw;
+  left: 38%;
+  width: .25cqw;
+  background: #fff;
+  box-shadow: 0 0 .7cqw rgba(255, 255, 255, .7);
+  transition: left 1400ms var(--hv-ease);
+}
+.hv-wwd__card:hover .hv-mk-playhead,
+.hv-wwd__card:focus-within .hv-mk-playhead { left: 74%; }
+
+.hv-mk-reel { position: absolute; inset: 0; background: #000; }
+.hv-mk-reel .hv-mk-photo { position: absolute; inset: 0; }
+.hv-mk-reel__caption {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 14%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1cqw;
+}
+.hv-mk-reel__caption b {
+  display: block;
+  width: 84%;
+  height: 2.4cqw;
+  border-radius: .5cqw;
+  background: #FBCB4A;
+  box-shadow: 0 0 0 .5cqw #0B1F1A;
+  font-size: 0;
+}
+.hv-mk-reel__caption b + b { width: 58%; background: var(--hv-accent-bright); }
+
+
+/* 6. Responsive + motion preferences ====================================== */
+
+@media (max-width: 1024px) {
+  .hv-wwd__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .hv-wwd__grid { grid-template-columns: 1fr; }
+}
+
+/* No hover on touch screens, so the actions would be unreachable if they
+   only appeared on hover. They are shown, statically, all the time. */
+@media (hover: none) {
+  .hv-wwd__actions {
+    opacity: 1;
+    transform: translate(-50%, 0);
+    pointer-events: auto;
+  }
+  .hv-wwd__btn { opacity: 1; transform: none; }
+  .hv-wwd__art::after { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hv-mk-caret,
+  .hv-mk-flow__edges path { animation: none; }
+  .hv-wwd__card:hover,
+  .hv-wwd__card:focus-within { transform: none; }
+  .hv-wwd__card:hover .hv-mk-scene,
+  .hv-wwd__card:focus-within .hv-mk-scene { transform: none; }
+}

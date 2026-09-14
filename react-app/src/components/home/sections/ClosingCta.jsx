@@ -20,10 +20,22 @@ export default function ClosingCta() {
             <Btn to={CLOSING.primary.to} variant="primary" size="lg" iconAfter={CLOSING.primary.icon}>
               {CLOSING.primary.label}
             </Btn>
-            <Btn to={CLOSING.secondary.to} variant="outline" size="lg">
+            <Btn href={CLOSING.explore.href} variant="outline" size="lg" iconAfter={CLOSING.explore.icon}>
+              {CLOSING.explore.label}
+            </Btn>
+            <Btn to={CLOSING.secondary.to} variant="ghost" size="lg">
               {CLOSING.secondary.label}
             </Btn>
           </BtnRow>
+
+          <ul className="hv-closing__quick">
+            {CLOSING.quick.map((line) => (
+              <li key={line}>
+                <Icon name="check" aria-hidden="true" />
+                {line}
+              </li>
+            ))}
+          </ul>
         </Reveal>
 
         <div className="hv-closing__note" aria-hidden="true">

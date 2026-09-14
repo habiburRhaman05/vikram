@@ -104,7 +104,7 @@
    hero does not move when the bar shrinks on scroll. */
 .home-v2 .hv-hero {
   margin-top: calc(-1 * var(--header-h, 80px));
-  padding-top: calc(var(--header-h, 80px) + clamp(40px, 5vw, 72px));
+  padding-top: calc(var(--header-h, 80px) + clamp(8px, 1.5vw, 20px));
 }
 
 /* The hero is now the page's darkest surface, and the bar is transparent
@@ -495,14 +495,10 @@
 
 /* Cards lift and their media eases in slightly. */
 .hv-stack-card,
-.hv-solution,
-.hv-project { transition: transform var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease), border-color var(--hv-dur) var(--hv-ease); }
-.hv-stack-card .hv-imgslot,
-.hv-project__media { overflow: hidden; }
-.hv-stack-card .hv-imgslot img,
-.hv-project__media img { transition: transform 600ms var(--hv-ease); }
-.hv-stack-card:hover .hv-imgslot img,
-.hv-project:hover .hv-project__media img { transform: scale(1.05); }
+.hv-solution { transition: transform var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease), border-color var(--hv-dur) var(--hv-ease); }
+.hv-stack-card .hv-imgslot { overflow: hidden; }
+.hv-stack-card .hv-imgslot img { transition: transform 600ms var(--hv-ease); }
+.hv-stack-card:hover .hv-imgslot img { transform: scale(1.05); }
 
 /* Constellation cards drift gently, each offset so they never move as
    one block. Purely decorative, so it is fully disabled below. */
@@ -536,8 +532,7 @@
 .hv-btn--primary:hover::after { left: 120%; }
 
 /* Badges warm up when their row is hovered. */
-.hv-solution:hover .hv-badge,
-.hv-flow__step:hover .hv-badge {
+.hv-solution:hover .hv-badge {
   background: var(--hv-accent-strong);
   color: #fff;
   transition: background var(--hv-dur-fast) var(--hv-ease), color var(--hv-dur-fast) var(--hv-ease);
@@ -643,33 +638,6 @@
   box-shadow: 0 24px 50px rgba(3, 33, 30, .38);
 }
 
-/* --- Service card media ------------------------------------------------- */
-
-/* The photo gets a slow push-in on hover. Scaling the image inside a
-   clipped box rather than scaling the card keeps the card edges crisp and
-   costs nothing in layout. */
-.home-v2 .hv-stack-card__media { overflow: hidden; }
-.home-v2 .hv-stack-card__media img {
-  transition: transform var(--hv-dur-slow) var(--hv-ease);
-}
-.home-v2 .hv-stack-card:hover .hv-stack-card__media img { transform: scale(1.06); }
-
-/* The circular arrow fills in and the whole link shifts toward it, so the
-   affordance reads before you get to the words. */
-.home-v2 .hv-stack-card__arrow {
-  transition: background var(--hv-dur) var(--hv-ease),
-              border-color var(--hv-dur) var(--hv-ease),
-              color var(--hv-dur) var(--hv-ease),
-              transform var(--hv-dur) var(--hv-ease-spring);
-}
-.home-v2 .hv-stack-card__link:hover .hv-stack-card__arrow,
-.home-v2 .hv-stack-card__link:focus-visible .hv-stack-card__arrow {
-  background: var(--hv-grad-accent);
-  border-color: transparent;
-  color: #fff;
-  transform: translateX(4px) scale(1.08);
-}
-
 /* --- Solutions grid ----------------------------------------------------- */
 
 /* Nine identical boxes was the most generic thing on the page. An accent
@@ -701,25 +669,6 @@
 .home-v2 .hv-solution .hv-h3 { transition: color var(--hv-dur-fast) var(--hv-ease); }
 .home-v2 .hv-solution:hover .hv-h3 { color: var(--hv-accent-strong); }
 
-/* --- Client logo strip -------------------------------------------------- */
-
-/* Icon-plus-wordmark lockups at full strength read as unfinished
-   placeholder art. Muted by default and resolving individually on hover is
-   how a real logo wall behaves, and it stops the strip competing with the
-   hero directly above it. */
-.home-v2 .hv-trust__item {
-  opacity: .62;
-  transition: opacity var(--hv-dur) var(--hv-ease),
-              color var(--hv-dur) var(--hv-ease),
-              transform var(--hv-dur) var(--hv-ease);
-}
-.home-v2 .hv-trust__item svg { color: var(--hv-accent-strong); }
-.home-v2 .hv-trust__item:hover {
-  opacity: 1;
-  color: var(--hv-text);
-  transform: translateY(-2px);
-}
-
 /* --- Pending-asset placeholders ----------------------------------------- */
 
 /* The diagonal hatch read as a broken image. This reads as a deliberate
@@ -747,14 +696,9 @@
   .home-v2 .hv-badge,
   .home-v2 .hv-card--hover,
   .home-v2 .hv-solution > div,
-  .home-v2 .hv-stack-card__media img,
-  .home-v2 .hv-stack-card__arrow,
-  .home-v2 .hv-trust__item,
   .home-v2 .site-header::before,
   .home-v2 .site-header::after,
   .home-v2 .nav { transition-duration: 1ms; }
   .home-v2 .hv-card--hover:hover,
-  .home-v2 .hv-card--hover:focus-within,
-  .home-v2 .hv-trust__item:hover { transform: none; }
-  .home-v2 .hv-stack-card:hover .hv-stack-card__media img { transform: none; }
+  .home-v2 .hv-card--hover:focus-within { transform: none; }
 }

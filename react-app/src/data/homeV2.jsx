@@ -29,76 +29,57 @@
  * real logo files by adding an `image` key to each entry.
  */
 
-/* -- 1. Hero -------------------------------------------------------------- */
+/* -- 0. Service lineup ------------------------------------------------------ */
+
+/* The five services, defined ONCE. The hero's tile row and the Services
+   tabs both read from this list, so the two can never disagree about what
+   the five things are, which order they come in, or which colour each one
+   is. `tone` is the glow colour inside each service's tile - a per-service
+   colour code, the way the reference gives each product its own hue. */
+export const SERVICE_LINEUP = [
+  { id: "crm", icon: "target", label: "CRM & GoHighLevel", tone: "#3E8EF7", to: "/platform" },
+  { id: "ai", icon: "brain", label: "AI Automation", tone: "#35D9A0", to: "/platform" },
+  { id: "marketing", icon: "megaphone", label: "Marketing", tone: "#F59E0B", to: "/platform" },
+  { id: "development", icon: "code", label: "Development", tone: "#A855F7", to: "/platform" },
+  { id: "creative", icon: "palette", label: "Creative Design", tone: "#2DD4BF", to: "/platform" },
+];
+
+/* -- 1. Hero (+ trust bar, one combined dark-teal section) ----------------- */
 
 export const HERO = {
-  eyebrow: "CRM. Automation. AI. Web. Creative.",
-  /* Two short lines with the accent word in the script face, which is the
-     shape the reference uses.
+  /* Plain text pill with the action phrase in a heavier weight - the
+     reference's "...now available. Earn Rewards" - rather than a button
+     inside a pill. */
+  pill: { text: "Now booking free consultations for Q4.", strong: "Grab a slot", to: "/book" },
 
-     HARD LIMIT, measured: the copy column is capped at 36rem (576px) and
-     the display size reaches 4.4rem at desktop, so a line fits roughly 15
-     characters. "Turn traffic into" is 17 and wrapped onto a third line.
-     Keep each line at two words plus punctuation, and check the rendered
-     height before changing either one.
+  /* One plain line, one part-accent line: titleAccent gets the colour,
+     titleTail carries on in white on the same line. */
+  titleLead: "We Build Digital Systems",
+  titleAccent: "That Drive Growth",
+  titleTail: "at Scale",
 
-     The promise is the outcome rather than the activity, because the list
-     of services is already on the right of this same screen. */
-  lineOne: "Less admin,",
-  lineTwoLead: "more",
-  lineTwoScript: "revenue.",
-  /* Short on purpose: three promises in one sentence, no pile-up of clauses
-     to read through before the buttons. */
-  lede:
-    "CRM, AI automation and websites that capture every lead, follow up in seconds and fill your calendar - built and run by one team.",
-  primary: { label: "Book a free consultation", to: "/book" },
-  secondary: { label: "See what we build", to: "/platform" },
+  lede: "CRM, AI automation, marketing and websites that capture every lead, follow up in seconds and fill your calendar - designed, built and run by one team.",
 
-  /* Trust cluster. The faces are real photographs now (requested), and an
-     initial renders in place of one until its file exists - see Face in
-     Hero.jsx, which falls back on a failed load rather than leaving a
-     broken image. They are decorative (the list is aria-hidden, alt is
-     empty): a stock portrait standing next to a company name would be a
-     claim about a real person, so the photos must be swapped for real
-     customers before this reads as anything other than illustration. */
-  faces: [
-    { name: "Amara", image: "/img/home/review-1.jpg", imageWebp: "/img/home/review-1.webp" },
-    { name: "Daniel", image: "/img/home/review-2.jpg", imageWebp: "/img/home/review-2.webp" },
-    { name: "Priya", image: "/img/home/review-3.jpg", imageWebp: "/img/home/review-3.webp" },
-    { name: "Marcus", image: "/img/home/review-4.jpg", imageWebp: "/img/home/review-4.webp" },
-    { name: "Elena", image: "/img/home/review-5.jpg", imageWebp: "/img/home/review-5.webp" },
+  /* Icons are the reference's own (star / database / tag, see heroIcons.jsx).
+     No invented metrics - each of these is true regardless of client count. */
+  stats: [
+    { icon: "star", label: "US-based expert team" },
+    { icon: "database", label: "Every lead in one CRM" },
+    { icon: "tag", label: "Free strategy consultation" },
   ],
-  trustLabel: "Working with teams across the US",
-  trustSub: "Albany, New York - remote nationwide",
-  footNote: "Based in Albany, New York. Working with businesses nationwide.",
 
-  /* The rotating capability list on the right. One is highlighted at a
-     time and the highlight advances on a timer. */
-  /* 12 items, not 7 - the reel window only ever shows about 7-8 of them
-     at once (see --hv-cap-h / .hv-hero__reel in home-sections.css), so a
-     longer list is what keeps a full lap feeling like a real scroll
-     instead of an obvious 7-item loop. Every label here is a service the
-     page actually sells further down (Stack, Solutions) - nothing is
-     invented just to pad the count. */
-  marquee: [
-    { icon: "target", label: "CRM & GoHighLevel" },
-    { icon: "bolt", label: "Workflow Automation" },
-    { icon: "brain", label: "AI Agents" },
-    { icon: "code", label: "Web Development" },
-    { icon: "megaphone", label: "Marketing Campaigns" },
-    { icon: "palette", label: "Creative & Content" },
-    { icon: "sparkle", label: "Branding" },
-    { icon: "search", label: "SEO & Content" },
-    { icon: "layers", label: "Sales Funnels" },
-    { icon: "shieldCheck", label: "Client Support" },
-    { icon: "play", label: "Video Editing" },
-    { icon: "barChart", label: "Reporting & Analytics" },
-  ],
+  primary: { label: "Get Started", to: "/book" },
 };
 
 /* -- 2. Trust bar --------------------------------------------------------- */
 
-export const TRUST_LABEL = "Trusted by 100+ businesses worldwide";
+export const TRUST_LEARN = {
+  label: "See how GHLevelUp is helping businesses grow across the US",
+  to: "/about",
+};
+
+export const TRUST_LABEL = "Trusted by growing businesses nationwide";
+export const TRUST_NOTE = "Based in Albany, New York - working with businesses across the US.";
 
 export const TRUST_LOGOS = [
   { name: "TechNova", icon: "sparkle" },
@@ -111,87 +92,162 @@ export const TRUST_LOGOS = [
   { name: "PixelForge", icon: "palette" },
 ];
 
-/* -- 3. The Digital Growth Stack ------------------------------------------ */
+/* -- 2b. What we do -------------------------------------------------------- */
 
-export const STACK = {
-  eyebrow: "Our services",
-  title: "The Digital Growth Stack",
-  lede:
-    "Everything you need, in one place. We combine strategy, technology and creativity to build digital systems that bring real business results.",
-  cta: { label: "View All Services", to: "/platform", icon: "arrowRight" },
-  note: "Custom solutions for your unique goals",
-  cards: [
+/* Six service cards, each with a device mockup rising out of the bottom
+   of the card. `mock` picks the illustration in ServiceMockups.jsx - the
+   mockups are drawn as components rather than image files, so they stay
+   sharp at any size and use the brand palette. `to` is where "Explore"
+   goes; there are no per-service pages yet, so all six point at the
+   services hub (same note as navMenus.js). */
+export const WHAT_WE_DO = {
+  eyebrow: "What We Do",
+  title: "Building Businesses Through Design & Technology",
+  lede: "We combine strategy, automation and creative craft to build systems that attract, convert and keep your customers.",
+  exploreLabel: "Explore",
+  demoLabel: "Book a demo",
+  demoTo: "/book",
+  items: [
     {
-      dark: true,
-      icon: "target",
-      title: "CRM & Marketing",
-      body: "Capture leads, manage customers, and run high-converting campaigns across multiple channels.",
-      image: "/img/home/service-crm.jpg",
-      imageWebp: "/img/home/service-crm.webp",
-      imageLabel: "CRM dashboard",
-      checks: [
-        "GoHighLevel (GHL)",
-        "Email & SMS Campaigns",
-        "Social Media Marketing",
-        "Sales Funnel & Automation",
-      ],
+      id: "software",
+      title: "Software Development",
+      body: "Custom software built around how your business runs, and built to scale with it.",
+      mock: "software",
       to: "/platform",
     },
     {
-      icon: "brain",
-      title: "AI Automation",
-      body: "Let AI handle repetitive work, so you can focus on what actually matters.",
-      image: "/img/home/service-ai.jpg",
-      imageWebp: "/img/home/service-ai.webp",
-      imageLabel: "AI assistant",
-      checks: ["AI Agents & Chatbots", "Workflow Automation", "API Integrations", "AI Content & Strategy"],
+      id: "ai",
+      title: "AI & Automation",
+      body: "AI agents and workflows that take the repetitive work off your team.",
+      mock: "ai",
       to: "/platform",
     },
     {
-      dark: true,
-      icon: "code",
-      title: "Web & Software Dev",
-      body: "Modern, scalable and high-performance web and mobile solutions.",
-      image: "/img/home/service-web.jpg",
-      imageWebp: "/img/home/service-web.webp",
-      imageLabel: "Web & app mockups",
-      checks: [
-        "Full Stack Web Apps",
-        "Next.js / React / Node.js",
-        "Mobile Apps (React Native)",
-        "Custom Software Development",
-      ],
+      id: "marketing",
+      title: "Marketing & Growth",
+      body: "CRM, campaigns and reporting that turn more of your leads into customers.",
+      mock: "marketing",
       to: "/platform",
     },
     {
-      icon: "palette",
-      title: "Creative & Content",
-      body: "Stand out with stunning visuals and engaging content.",
-      image: "/img/home/service-creative.jpg",
-      imageWebp: "/img/home/service-creative.webp",
-      imageLabel: "Creative work",
-      checks: ["Graphic Design & Branding", "Video Editing & Motion", "Content Creation", "UI/UX Design"],
+      id: "website",
+      title: "Website Development",
+      body: "Fast, responsive websites that showcase your brand and convert visitors.",
+      mock: "website",
+      to: "/platform",
+    },
+    {
+      id: "creative",
+      title: "Creative & Branding",
+      body: "Identity and design that tell your story and build a brand people trust.",
+      mock: "creative",
+      to: "/platform",
+    },
+    {
+      id: "video",
+      title: "Video & Content",
+      body: "Short-form video and content that stops the scroll and drives results.",
+      mock: "video",
       to: "/platform",
     },
   ],
 };
 
+/* -- 3. Services (tabbed) ---------------------------------------------------- */
+
+/* The floating chip on each visual is an app-style status notification,
+   not a metric - no performance numbers are claimed anywhere here.
+
+   One tab per entry in SERVICE_LINEUP, joined by `id`, so the tab's tile,
+   label and colour come from the lineup and only the panel copy lives here.
+
+   PLACEHOLDER PRICES: every `from` is a dummy figure in the same spirit as
+   PRICING below - replace with real starting prices before launch. */
+export const SERVICES = {
+  eyebrow: "Services",
+  titleLines: ["Choose the right system", "for every stage of your growth"],
+  panels: {
+    crm: {
+      from: "Starting from $497/mo",
+      badge: { icon: "bolt", text: "Done-for-you setup" },
+      titleLines: ["Complete CRM &", "GoHighLevel Systems"],
+      body: "Pipelines, calendars and follow-up configured end to end, so every lead is captured and worked.",
+      features: [
+        { icon: "layers", text: "Custom pipelines, forms and booking flows mapped to how you actually sell." },
+        { icon: "message", text: "Email and SMS sequences that follow up on every lead automatically." },
+      ],
+      image: "/img/home/svc-crm",
+      chip: { icon: "check", value: "New lead captured", label: "Added to pipeline - just now" },
+    },
+    ai: {
+      from: "Starting from $997/mo",
+      badge: { icon: "clock", text: "Always on, 24/7" },
+      titleLines: ["AI Agents That Work", "Around the Clock"],
+      body: "Answer, qualify and book leads instantly with AI trained on your own business.",
+      features: [
+        { icon: "brain", text: "AI chat and voice agents that qualify and book in your tone of voice." },
+        { icon: "bolt", text: "Workflow automations that hand work between your tools with no manual steps." },
+      ],
+      image: "/img/home/svc-ai",
+      chip: { icon: "calendar", value: "Call booked by AI", label: "Tomorrow, 10:30 AM" },
+    },
+    marketing: {
+      from: "Starting from $797/mo",
+      badge: { icon: "trendUp", text: "Measurable growth" },
+      titleLines: ["Marketing That Turns", "Leads Into Customers"],
+      body: "Multi-channel campaigns and reporting that show exactly what is driving your revenue.",
+      features: [
+        { icon: "megaphone", text: "Campaigns across email, SMS, social and paid, all run from one CRM." },
+        { icon: "barChart", text: "Dashboards tracking source, conversion and revenue in real time." },
+      ],
+      image: "/img/home/svc-marketing",
+      chip: { icon: "megaphone", value: "Campaign sent", label: "Email + SMS - scheduled" },
+    },
+    development: {
+      from: "Starting from $2,500/project",
+      badge: { icon: "shieldCheck", text: "Built to scale" },
+      titleLines: ["Websites & Apps", "Built to Convert"],
+      body: "Fast, modern websites, web apps and mobile apps engineered for speed and conversion.",
+      features: [
+        { icon: "code", text: "Responsive websites and landing pages optimised for speed and conversion." },
+        { icon: "layers", text: "Custom web and mobile apps for the workflows off-the-shelf tools miss." },
+      ],
+      image: "/img/home/svc-development",
+      chip: { icon: "code", value: "Site deployed", label: "Live in production" },
+    },
+    creative: {
+      from: "Starting from $450/project",
+      badge: { icon: "sparkle", text: "Brand-first design" },
+      titleLines: ["Creative That Makes", "Your Brand Stand Out"],
+      body: "Identity, interfaces and content that tell your story and build trust at first glance.",
+      features: [
+        { icon: "palette", text: "Brand identity, logos and design systems that stay consistent everywhere." },
+        { icon: "play", text: "Video, motion and social content produced on a repeatable schedule." },
+      ],
+      image: "/img/home/svc-creative",
+      chip: { icon: "palette", value: "Brand kit approved", label: "Logo, colours and type" },
+    },
+  },
+  cta: { label: "Get Started", to: "/book" },
+};
+
 /* -- 4. How it works ------------------------------------------------------ */
 
 export const JOURNEY = {
-  eyebrow: "How it works",
-  title: "From Clicks to Customers - We Build the Full Journey",
-  lede:
-    "Our integrated digital ecosystem works together to bring more leads, automate your processes and grow your revenue.",
-  cta: { label: "Get Started", to: "/book", icon: "arrowRight" },
+  eyebrow: "How We Work",
+  title: "From First Click to Loyal Customer",
+  lede: "Seven connected stages, built and run as one system - so every lead that finds you is captured, followed up and turned into revenue.",
+  cta: { label: "Map out my system", to: "/book" },
+  /* Each stage's `body` is shown in the detail panel when that stage is
+     active (and inline under the stage on a phone). */
   steps: [
-    { icon: "target", title: "Traffic", sub: "Awareness & Reach" },
-    { icon: "filePlus", title: "Lead Capture", sub: "Website / Social" },
-    { icon: "users", title: "CRM", sub: "Manage & Nurture" },
-    { icon: "brain", title: "AI", sub: "Automate & Engage" },
-    { icon: "chatWindow", title: "Website / App", sub: "Your Digital Home" },
-    { icon: "megaphone", title: "Marketing", sub: "Retarget & Convert" },
-    { icon: "trendUp", title: "Growth", sub: "More Sales & Revenue" },
+    { icon: "target", title: "Traffic", sub: "Awareness & reach", body: "Paid, organic and social campaigns that put your business in front of the people most likely to buy." },
+    { icon: "filePlus", title: "Lead Capture", sub: "Website & social", body: "Forms, chat and landing pages that turn a visitor into a contact the moment they show interest." },
+    { icon: "users", title: "CRM", sub: "Manage & nurture", body: "Every lead lands in one pipeline - tagged, tracked and ready for follow-up, with nothing living in someone's inbox." },
+    { icon: "brain", title: "AI", sub: "Automate & engage", body: "AI agents reply in seconds, qualify the enquiry and book the appointment, day or night." },
+    { icon: "chatWindow", title: "Website & App", sub: "Your digital home", body: "A fast site or app that gives every visitor one clear next step, and loads before they lose interest." },
+    { icon: "megaphone", title: "Marketing", sub: "Retarget & convert", body: "Retargeting, email and SMS bring back the people who were interested but did not convert the first time." },
+    { icon: "trendUp", title: "Growth", sub: "More sales & revenue", body: "Reporting shows exactly what is working, so each month builds on the last instead of starting over." },
   ],
 };
 
@@ -223,7 +279,7 @@ export const SOLUTIONS = {
    section head. */
 export const WHY = {
   /* Single plain eyebrow, matching every other section on the page
-     (SOLUTIONS.eyebrow, STACK.eyebrow, ...) - this section previously had
+     (SOLUTIONS.eyebrow, SERVICES.eyebrow, ...) - this section previously had
      its own bespoke two-part "Why choose us · Core strengths." eyebrow
      with a middot and an italic accent, which was the only section on
      the page not using the shared SectionHead style. */
@@ -272,23 +328,74 @@ export const WHY = {
 /* -- 7. Selected projects -------------------------------------------------- */
 
 export const WORK = {
-  eyebrow: "Our work",
-  title: "Selected Projects",
-  lede: "Real solutions. Real results. Explore some of our recent work across different industries and platforms.",
-  cta: { label: "View All Projects", to: "/contact", icon: "arrowRight" },
-  featured: {
-    chip: "Featured Project",
-    title: "Elevated Core Health",
-    sub: "Healthcare Dashboard & Patient Management",
-    checks: ["Patient Management", "Role-based Access", "Real-time WebSocket", "SOP & Eligibility Check"],
-    cta: { label: "View Case Study", to: "/contact" },
-    image: "/img/home/project-featured.webp",
-    imageLabel: "Healthcare dashboard",
-  },
+  eyebrow: "Our Work",
+  title: "Systems We've Built",
+  lede: "A look at the kind of work we deliver - CRM, automation, websites and brand, built to fit how each business actually runs.",
+  cta: { label: "Talk about your project", to: "/contact" },
+  /* ILLUSTRATIVE PROJECTS. The earlier names here (Elevated Core Health,
+     Savannah Skin Med, AgeManagement Med, JLLPrime) came from the reference
+     site - another agency's clients - so they are replaced with anonymised
+     project types, and no results or metrics are claimed. The photos are
+     Pexels stock standing in for real screenshots. Swap in real, approved
+     case studies before launch. */
+  filters: [
+    { id: "all", label: "All work" },
+    { id: "crm", label: "CRM & Automation" },
+    { id: "web", label: "Websites" },
+    { id: "ai", label: "AI" },
+    { id: "creative", label: "Brand & Creative" },
+  ],
   projects: [
-    { title: "Savannah Skin Med", category: "Website Redesign", image: "/img/home/project-1.webp" },
-    { title: "AgeManagement Med", category: "Website Migration", image: "/img/home/project-2.webp" },
-    { title: "JLLPrime", category: "Automation & Integration", image: "/img/home/project-3.webp" },
+    {
+      id: "clinic",
+      filter: "crm",
+      industry: "Healthcare",
+      title: "Multi-Location Clinic Group",
+      body: "Patient intake, booking and follow-up unified across every location in one GoHighLevel system.",
+      tags: ["GoHighLevel", "AI receptionist", "Reporting"],
+      image: "/img/home/svc-crm",
+      tone: "#3E8EF7",
+    },
+    {
+      id: "home-services",
+      filter: "web",
+      industry: "Home Services",
+      title: "Booking-First Website",
+      body: "A fast new site and quote funnel that drops every request straight into the pipeline.",
+      tags: ["Website", "Funnels", "SMS"],
+      image: "/img/home/svc-development",
+      tone: "#A855F7",
+    },
+    {
+      id: "real-estate",
+      filter: "ai",
+      industry: "Real Estate",
+      title: "24/7 AI Lead Qualifier",
+      body: "AI agents that answer enquiries, qualify buyers and book viewings around the clock.",
+      tags: ["AI agents", "Workflows"],
+      image: "/img/home/svc-ai",
+      tone: "#35D9A0",
+    },
+    {
+      id: "med-spa",
+      filter: "creative",
+      industry: "Beauty & Wellness",
+      title: "Med Spa Brand Refresh",
+      body: "New identity, social templates and a content rhythm the in-house team can keep up.",
+      tags: ["Brand identity", "Social content"],
+      image: "/img/home/svc-creative",
+      tone: "#2DD4BF",
+    },
+    {
+      id: "agency-reporting",
+      filter: "crm",
+      industry: "Professional Services",
+      title: "Campaign & Reporting Hub",
+      body: "Email, SMS and paid campaigns run from one CRM, with a dashboard the owner actually opens.",
+      tags: ["Campaigns", "Dashboards"],
+      image: "/img/home/svc-marketing",
+      tone: "#F59E0B",
+    },
   ],
 };
 
@@ -450,6 +557,98 @@ export const BLOG = {
   ],
 };
 
+/* -- 11b. Pricing ----------------------------------------------------------- */
+
+/* PLACEHOLDER NUMBERS - tier names, prices and every figure below are
+   dummy values modelled on typical GoHighLevel/AI-agency pricing, not
+   your real rates. Confirm and replace every `price`/`setup` before this
+   goes live; nothing here should be read as a live quote. */
+export const PRICING = {
+  eyebrow: "Pricing",
+  title: "Simple Plans That Scale With You",
+  lede: "Pick the plan that fits where your business is today - every tier is month-to-month, no long contracts.",
+  billingNote: "+ one-time setup - cancel any time",
+  tiers: [
+    {
+      id: "starter",
+      name: "Starter",
+      badge: null,
+      bestFor: "Solo operators and small teams losing leads to slow follow-up",
+      price: 497,
+      setup: 497,
+      cta: { label: "Get Started", to: "/book" },
+      features: [
+        "GoHighLevel sub-account setup",
+        "Lead capture forms & booking calendar",
+        "Missed-call text-back",
+        "Email & SMS follow-up sequences",
+        "Single pipeline & CRM",
+        "Ready in 5 business days",
+      ],
+    },
+    {
+      id: "growth",
+      name: "Growth",
+      badge: "Most Popular",
+      bestFor: "Growing businesses running paid, organic and referral leads at once",
+      price: 997,
+      setup: 1500,
+      cta: { label: "Get Started", to: "/book" },
+      features: [
+        "Everything in Starter",
+        "AI chat & voice receptionist",
+        "Multi-channel campaigns (SMS, email, social)",
+        "Review request automation",
+        "Multi-stage pipelines & reporting dashboard",
+        "Monthly strategy call",
+      ],
+    },
+    {
+      id: "command",
+      name: "Command",
+      badge: null,
+      bestFor: "Established businesses ready to unify every tool into one system",
+      price: 1997,
+      setup: 3500,
+      cta: { label: "Schedule a Call", to: "/book" },
+      features: [
+        "Everything in Growth",
+        "Custom AI workflow automation",
+        "Full website or app build",
+        "Invoicing & payment collection",
+        "Team roles, permissions & reporting",
+        "Priority support",
+      ],
+    },
+    {
+      id: "enterprise",
+      name: "Enterprise",
+      badge: null,
+      bestFor: "Multi-location or franchise operators needing centralised control",
+      price: null,
+      setup: null,
+      cta: { label: "Contact Us", to: "/contact" },
+      features: [
+        "Everything in Command",
+        "Multi-location management",
+        "API & custom integrations",
+        "Dedicated account manager",
+        "Custom onboarding & training",
+        "Volume-based pricing",
+      ],
+    },
+  ],
+  /* The reference's "no long contracts / no gotchas" reassurance row -
+     genuinely true regardless of price, so it stays even with dummy
+     numbers above it. */
+  reassurance: [
+    { icon: "shieldCheck", label: "No long contracts" },
+    { icon: "check", label: "No feature gates" },
+    { icon: "sliders", label: "Built around your usage" },
+    { icon: "bolt", label: "Done-for-you setup" },
+  ],
+};
+
 /* -- 12. Closing CTA ------------------------------------------------------- */
 
 export const CLOSING = {
@@ -457,9 +656,22 @@ export const CLOSING = {
   title: "Your Next Digital System Starts Here.",
   lede:
     "Book a free consultation and let's discuss how we can help your business grow with the right strategy, technology and creativity.",
-  primary: { label: "Get a Free Consultation", to: "/book", icon: "arrowRight" },
-  secondary: { label: "View Our Services", to: "/platform" },
+  primary: { label: "Book My Free Consultation", to: "/book", icon: "arrowRight" },
+  /* Anchors back up to the "How We Work" pipeline section (id="how-we-work")
+     on this same page, so someone not ready to book yet can see the process
+     first. A plain hash href, not a router Link - it never leaves "/". */
+  explore: { label: "Explore the Onboarding Journey", href: "#how-we-work", icon: "trendUp" },
+  secondary: { label: "Browse Our Services", to: "/platform" },
   note: "Let's create something amazing together!",
+  /* Short reassurances shown under the CTA row - the kind of quick,
+     low-commitment facts that remove hesitation right at the decision
+     point, without repeating the lede above. */
+  quick: [
+    "No long-term contracts",
+    "Free 30-minute strategy call",
+    "Reply within one business day",
+    "US-based team, every step",
+  ],
 };
 
 /* -- 13. Footer ------------------------------------------------------------ */

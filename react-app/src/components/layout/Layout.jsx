@@ -2,6 +2,7 @@ import Header from "./Header.jsx";
 import Footer from "./Footer.jsx";
 import SiteFooterV2 from "@/components/home/SiteFooterV2.jsx";
 import ScrollToTop from "@/components/common/ScrollToTop.jsx";
+import CookieConsent from "@/components/common/CookieConsent.jsx";
 
 /**
  * Skip-link + header + <main> landmark + footer.
@@ -24,6 +25,7 @@ export default function Layout({ topbar, variant, children }) {
       <main id="main">{children}</main>
       {isV2 ? <SiteFooterV2 /> : <Footer />}
       <ScrollToTop />
+      <CookieConsent />
     </div>
   );
 }
