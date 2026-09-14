@@ -1,0 +1,230 @@
+/* ==========================================================================
+   Nav dropdowns
+   --------------------------------------------------------------------------
+   Three single-category dropdowns in the primary nav (AI Automation,
+   Marketing, Funnels Websites & GHL), each its own trigger with its
+   own panel - see NavDropdown.jsx. This used to be one "Platform" trigger
+   holding all four behind a tab switcher; with each category now living in
+   the bar on its own, a tab switcher inside a single-category panel would
+   be one tab holding one thing, so this is a plain list, not a mega-menu
+   grid.
+   Written against the site-wide tokens (navy ink + aqua accent); the Home
+   redesign restates the colours at the bottom via .home-v2, exactly as the
+   rest of that redesign does - no duplicated layout, only the palette.
+   ========================================================================== */
+
+/* --- Trigger ------------------------------------------------------------- */
+
+/* A <button>, not a link, because it owns an expanding panel - the
+   category's hub page stays reachable through the panel's "All ... "
+   link, which is also where a keyboard user expects to find it. */
+.nav__link--mega {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: .95rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.nav__caret {
+  width: 14px;
+  height: 14px;
+  transition: transform .22s var(--ease);
+}
+.nav__link--mega[aria-expanded="true"] .nav__caret { transform: rotate(180deg); }
+
+/* Each dropdown is positioned against its OWN trigger, not the whole bar -
+   there are three of these at three different widths ("Marketing" vs
+   "Funnels, Websites & GHL"), so anchoring to the header the way the old
+   single "Platform" mega menu did would put a fixed-width panel at the
+   wrong spot under two of the three triggers. */
+.nav__item--drop { position: relative; }
+
+/* --- Panel shell --------------------------------------------------------- */
+
+.navdrop {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 90;
+  width: min(360px, calc(100vw - 2 * var(--gutter)));
+  padding-top: 10px;          /* the gap the cursor crosses; see below */
+  transform: translateY(-6px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .2s var(--ease), transform .24s var(--ease), visibility .24s;
+}
+.navdrop.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+/* That 10px gap between the bar and the sheet is padding on .navdrop, not
+   margin, so it is still inside the element the pointer-leave timer is
+   watching. As margin it would be dead space that closes the menu halfway
+   to the thing you are reaching for. */
+
+.navdrop__sheet {
+  background: var(--mist);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-lg);
+  overflow: hidden;
+  padding: 10px;
+}
+
+.navdrop__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+
+.navdrop__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 30px;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-md);
+  background: var(--paper);
+  text-decoration: none;
+  transition: box-shadow .18s var(--ease), border-color .18s var(--ease),
+              transform .18s var(--ease);
+}
+.navdrop__item:hover,
+.navdrop__item:focus-visible {
+  border-color: var(--line);
+  box-shadow: var(--sh-md);
+  transform: translateX(3px);
+}
+.navdrop__item-text { display: block; min-width: 0; }
+.navdrop__item-title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+.navdrop__item-body {
+  display: block;
+  margin-top: 3px;
+  font-size: .78rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.navdrop__item-go {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  transition: background .18s var(--ease), border-color .18s var(--ease),
+              color .18s var(--ease);
+}
+.navdrop__item-go svg { width: 13px; height: 13px; }
+.navdrop__item:hover .navdrop__item-go,
+.navdrop__item:focus-visible .navdrop__item-go {
+  background: var(--grad-accent);
+  border-color: transparent;
+  color: #fff;
+}
+
+/* --- "All ... services" footer link --------------------------------------- */
+
+.navdrop__all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--aqua-650);
+  text-decoration: none;
+  transition: background .18s var(--ease);
+}
+.navdrop__all svg { width: 13px; height: 13px; transition: transform .18s var(--ease); }
+.navdrop__all:hover { background: var(--paper); }
+.navdrop__all:hover svg { transform: translateX(3px); }
+
+/* --- Mobile: stacked inside the nav dropdown ------------------------------ */
+
+@media (max-width: 1150px) {
+  /* No longer a floating panel - it becomes part of the vertical nav list,
+     so it sits in flow and scrolls with it. */
+  .navdrop {
+    position: static;
+    width: auto;
+    padding-top: 0;
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+    display: none;
+    transition: none;
+  }
+  .navdrop.is-open { display: block; transform: none; }
+
+  .navdrop__sheet {
+    border: 0;
+    border-radius: var(--r-md);
+    box-shadow: none;
+    background: var(--mist);
+    margin: 4px 0 6px;
+  }
+  .navdrop__item { background: var(--paper); }
+  .navdrop__item:hover { transform: none; }
+
+  .nav__link--mega { justify-content: space-between; width: 100%; }
+}
+
+/* --- Home redesign palette ------------------------------------------------ */
+
+/* Layout above is shared; only the colours are restated, using the scoped
+   tokens the Home redesign defines on .home-v2. */
+.home-v2 .navdrop__sheet {
+  background: linear-gradient(180deg, #F6FCF9 0%, #EDF8F3 100%);
+  border-color: var(--hv-border);
+  box-shadow: var(--hv-sh-lg);
+}
+.home-v2 .navdrop__item {
+  background: var(--hv-bg);
+  border-color: var(--hv-border);
+}
+.home-v2 .navdrop__item:hover,
+.home-v2 .navdrop__item:focus-visible {
+  border-color: rgba(10, 127, 82, .26);
+  box-shadow: var(--hv-sh-accent);
+}
+.home-v2 .navdrop__item-title { font-family: var(--hv-font); color: var(--hv-text); }
+.home-v2 .navdrop__item-body { color: var(--hv-text-muted); }
+.home-v2 .navdrop__item-go { border-color: var(--hv-border-strong); color: var(--hv-accent-strong); }
+.home-v2 .navdrop__item:hover .navdrop__item-go,
+.home-v2 .navdrop__item:focus-visible .navdrop__item-go {
+  background: var(--hv-grad-accent);
+  border-color: transparent;
+  color: #fff;
+}
+.home-v2 .navdrop__all { color: var(--hv-accent-strong); }
+.home-v2 .navdrop__all:hover { background: var(--hv-bg); }
+
+/* The trigger sits on the transparent header, so it follows the same
+   underline language as the real nav links rather than keeping the
+   site-wide hover colour. */
+.home-v2 .nav__link--mega { color: var(--hv-text-muted); }
+.home-v2 .nav__link--mega:hover,
+.home-v2 .nav__link--mega[aria-expanded="true"] { color: var(--hv-accent-strong); }
+
+@media (prefers-reduced-motion: reduce) {
+  .navdrop,
+  .nav__caret,
+  .navdrop__item,
+  .navdrop__item-go,
+  .navdrop__all svg { transition-duration: 1ms; }
+  .navdrop__item:hover,
+  .navdrop__item:focus-visible { transform: none; }
+}

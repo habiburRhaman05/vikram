@@ -1,99 +1,135 @@
+import { Link } from "react-router-dom";
 import Icon from "@/components/common/Icon.jsx";
-import { Btn, BtnRow, IconBadge } from "../primitives.jsx";
-import { HERO } from "@/data/homeV2";
+import ProductTile from "../ProductTile.jsx";
+import { HERO_ICONS } from "../heroIcons.jsx";
+import { HERO, SERVICE_LINEUP, TRUST_LABEL, TRUST_LEARN, TRUST_LOGOS } from "@/data/homeV2";
+
+/* Resting tilt per tile, straight from the reference (-5, 2, 3, -6, 6
+   degrees). They straighten on hover. */
+const TILTS = [-5, 2, 3, -6, 6];
 
 /**
- * Hero: copy on the left, a "constellation" of capability cards orbiting
- * a central cloud mark on the right.
+ * Hero + trust strip, one dark-teal section, built to the reference's
+ * structure:
  *
- * The constellation is absolutely positioned by percentage inside an
- * aspect-ratio box (the same technique the existing CallFlowDiagram uses
- * for its node anchors), so it scales with the column instead of needing
- * a breakpoint per card.
+ *   pill -> two-line headline -> subhead -> stat row -> ringed CTA
+ *   -> tile row -> trust strip (label, logo marquee, learn-more link)
  *
- * Below 900px it is NOT just stacked - eight floating cards in a column
- * is a wall of noise on a phone. The layout swaps to a compact grid of
- * the three `emphasis` cards plus the growth stat, which keeps the idea
- * ("these capabilities connect into one system") without the clutter.
+ * THE TILE ROW IS THE SEAM. Its two lines run out to the page edges and
+ * sit exactly on the top border of the trust strip, so the five tiles
+ * straddle the join between the two areas, half above and half below.
+ * That is done with a negative bottom margin of half a tile on the row -
+ * see .hv-hero__rail in home-sections.css.
+ *
+ * SIZING: everything from the top of the content down to that seam is 80vh
+ * (the main block plus the upper half of the tile row). The header sits
+ * above it and the trust strip below, outside that budget.
  */
 export default function Hero() {
-  return (
-    <section className="hv-hero hv-wash">
-      <div className="hv-container hv-hero__inner">
-        <div className="hv-hero__copy">
-          <span className="hv-eyebrow">{HERO.eyebrow}</span>
+  const logos = [...TRUST_LOGOS, ...TRUST_LOGOS];
 
-          <h1 className="hv-display hv-hero__title">
-            {HERO.titleLead} <span className="hv-scrip">{HERO.titleScript}</span> {HERO.titleTail}
+  return (
+    <section className="hv-hero">
+      <div className="hv-hero__glow" aria-hidden="true" />
+
+      <div className="hv-hero__main">
+        <div className="hv-container hv-hero__inner">
+          <Link to={HERO.pill.to} className="hv-hero__pill">
+            {HERO.pill.text} <strong>{HERO.pill.strong}</strong>
+          </Link>
+
+          <h1 className="hv-hero__title">
+            {HERO.titleLead}
+            <br />
+            <span className="hv-hero__accent">{HERO.titleAccent}</span> {HERO.titleTail}
           </h1>
 
-          <p className="hv-lede">{HERO.lede}</p>
+          <p className="hv-hero__lede">{HERO.lede}</p>
 
-          <BtnRow className="hv-hero__actions">
-            <Btn to={HERO.primary.to} variant="primary" size="lg" iconAfter={HERO.primary.icon}>
-              {HERO.primary.label}
-            </Btn>
-            <Btn to={HERO.secondary.to} variant="outline" size="lg">
-              {HERO.secondary.label}
-            </Btn>
-          </BtnRow>
-
-          <ul className="hv-hero__proof">
-            {HERO.proofPoints.map((p) => (
-              <li key={p.label}>
-                <IconBadge icon={p.icon} size="sm" />
-                <span>{p.label}</span>
+          <ul className="hv-hero__stats">
+            {HERO.stats.map((s) => (
+              <li key={s.label}>
+                {HERO_ICONS[s.icon]}
+                {s.label}
               </li>
             ))}
           </ul>
-        </div>
 
-        <div className="hv-hero__visual">
-          {/* Decorative as a whole: every capability named here is also
-              stated in the Services sections below, so nothing is lost
-              to a screen reader by hiding the diagram. */}
-          {/* <div className="hv-constellation" role="img" aria-label="GHLevelUp connects CRM, AI automation, web development, social media, creative design and video into one system.">
-            <svg className="hv-constellation__wires" viewBox="0 0 100 95" aria-hidden="true" preserveAspectRatio="none">
-              {[
-                "M18,18 L46,44", "M50,10 L48,40", "M82,17 L54,42",
-                "M10,46 L42,46", "M86,46 L56,48",
-                "M24,76 L44,52", "M58,82 L52,54",
-              ].map((d, i) => (
-                <path key={i} d={d} stroke="currentColor" strokeWidth=".4" fill="none" />
-              ))}
-            </svg>
+          {/* Both CTAs go through this one branch-free path, sharing the
+              `.hv-btn` base - that is what keeps them the same size and
+              shape. They differ only by the colour modifier: solid for
+              the commitment, outline-on-transparent for the quiet one.
 
-            <div className="hv-constellation__core" aria-hidden="true">
-              <Icon name="cloud" strokeWidth={1.6} />
-            </div>
-
-            {HERO.cards.map((card, i) => (
-              <div
-                key={card.title}
-                className={`hv-cnode hv-cnode--${i + 1}${card.emphasis ? " is-emphasis" : ""}`}
+              Each is a real <a>: one to an external site, one a fragment
+              link to #what-we-do (the next section down). The fragment
+              gets the browser's own smooth scroll, offset by the
+              `html { scroll-padding-top }` in legacy/styles.css so the
+              section heading doesn't land under the fixed header. */}
+          <div className="hv-hero__ctas">
+            {HERO.ctas.map((c) => (
+              <a
+                key={c.label}
+                href={c.href}
+                className={`hv-btn ${c.solid ? "hv-btn--primary" : "hv-hero__cta-ghost"}`}
               >
-                <IconBadge icon={card.icon} size="sm" />
-                <span className="hv-cnode__text">
-                  <strong>{card.title}</strong>
-                  <em>{card.sub}</em>
-                </span>
-              </div>
+                {c.label}
+                <Icon name={c.icon} aria-hidden="true" />
+              </a>
             ))}
+          </div>
+        </div>
+      </div>
 
-            <div className="hv-cstat">
-              <span className="hv-cstat__value">{HERO.stat.value}</span>
-              <span className="hv-cstat__label">{HERO.stat.label}</span>
-              <svg className="hv-cstat__spark" viewBox="0 0 80 26" aria-hidden="true" fill="none">
-                <path
-                  d="M2 22 L16 16 L28 19 L42 10 L56 12 L78 3"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-          </div> */}
+      {/* Real links: each tile goes to its service, and its name is shown
+          as a tooltip on hover/focus. The name is ALSO the link's
+          accessible name (the tooltip text is in the link), so the tiles
+          aren't anonymous to a screen reader. */}
+      <nav className="hv-hero__rail" aria-label="Our services">
+        <span className="hv-hero__rail-line hv-hero__rail-line--l" aria-hidden="true" />
+        <ul className="hv-hero__tiles">
+          {SERVICE_LINEUP.map((s, i) => (
+            <li key={s.id}>
+              <Link to={s.to} className="hv-hero__tile" style={{ "--tilt": `${TILTS[i % TILTS.length]}deg` }}>
+                <ProductTile icon={s.icon} img={s.img} tone={s.tone} size="lg" />
+                <span className="hv-hero__tip">
+                  <span className="hv-hero__tip-caret" aria-hidden="true" />
+                  {s.label}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <span className="hv-hero__rail-line hv-hero__rail-line--r" aria-hidden="true" />
+      </nav>
+
+      <div className="hv-hero__trust">
+        <div className="hv-container hv-hero__trust-inner">
+          <p className="hv-hero__trust-label" id="trust-label">
+            {TRUST_LABEL}
+          </p>
+
+          {/* Container width, with the reference's dividers between logos.
+              Each divider is part of its logo item (::after), so every
+              item is the same shape and the loop maths still holds. */}
+          <div className="hv-marquee hv-hero__trust-marquee">
+            <ul className="hv-marquee__track" aria-labelledby="trust-label" style={{ "--hv-marquee-copies": 2 }}>
+              {logos.map((logo, i) => (
+                <li
+                  key={`${logo.name}-${i}`}
+                  className="hv-hero__trust-item"
+                  aria-hidden={i >= TRUST_LOGOS.length ? "true" : undefined}
+                >
+                  <Icon name={logo.icon} strokeWidth={1.8} aria-hidden="true" />
+                  <span>{logo.name}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <Link to={TRUST_LEARN.to} className="hv-hero__learn">
+            {TRUST_LEARN.label}
+            <Icon name="arrowRight" aria-hidden="true" />
+          </Link>
         </div>
       </div>
     </section>

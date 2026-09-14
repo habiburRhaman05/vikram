@@ -60,7 +60,12 @@
   --hv-border-dark:   rgba(255, 255, 255, .12);
 
   /* -- Type -------------------------------------------------------------- */
-  --hv-font:          "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  /* Headings, buttons, nav, labels - the UI. */
+  --hv-font:          "DM Sans", "Segoe UI", system-ui, sans-serif;
+  /* Reading copy. Roboto is the main body face - Space Mono read as too
+     technical for prose. DM Sans above for headings/UI, Roboto here for
+     everything you read. */
+  --hv-font-body:     "Roboto", "Segoe UI", system-ui, sans-serif;
   --hv-font-script:   "Caveat", "Segoe Script", cursive;
 
   /* Fluid scale - each clamp is (min, preferred, max) so type scales with
@@ -140,11 +145,20 @@
 .hv-section--tight { padding-block: calc(var(--hv-section-y) * .62); }
 .hv-section--flush-top { padding-top: 0; }
 
+/* ONE width for the whole page - the header's, not a second value of its
+   own. This used to be a hard-coded 1200px here while the header and the
+   hero ran at 1340px, so the logo and every section's first column sat on
+   different left edges and the mismatch was visible on every scroll.
+
+   --container / --gutter are the site-wide tokens the header's .container
+   already uses (legacy/styles.css), so reading them here is what
+   guarantees the two can never drift apart again: change the token once
+   and the bar, the sections and the footer all move together. */
 .hv-container {
   width: 100%;
-  max-width: 1200px;
+  max-width: var(--container, 1340px);
   margin-inline: auto;
-  padding-inline: clamp(20px, 4vw, 32px);
+  padding-inline: var(--gutter, 24px);
 }
 
 /* Visible to assistive tech, not to the eye. Used to give repeated
@@ -195,6 +209,25 @@
 .hv-h2      { font-size: var(--hv-fs-h2); font-weight: 800; }
 .hv-h3      { font-size: var(--hv-fs-h3); font-weight: 700; letter-spacing: -0.015em; }
 
+/**
+ * Reading copy is the one bucket set in Roboto (see --hv-font-body).
+ * Headings (above), buttons, the nav, eyebrows and every uppercase label
+ * stay in DM Sans.
+ *
+ * The prose classes are listed explicitly so the split stays deliberate:
+ * add new prose classes to this list, or they will quietly inherit
+ * DM Sans.
+ */
+.home-v2 .hv-body,
+.home-v2 .hv-lede,
+.home-v2 .hv-hero__lede,
+.home-v2 .hv-why__text,
+.home-v2 .hv-post__excerpt,
+.home-v2 .hv-testimonial__quote,
+.home-v2 .hv-footer__pitch {
+  font-family: var(--hv-font-body);
+}
+
 .hv-lede {
   font-size: var(--hv-fs-lede);
   line-height: 1.65;
@@ -234,6 +267,11 @@
 
 .hv-section-head { max-width: 60ch; margin-bottom: var(--hv-s9); }
 .hv-section-head--center { margin-inline: auto; text-align: center; }
+/* In a centered head, the lede's 56ch box must centre itself too - as a
+   plain block it hugged the left edge of the 60ch head while the title
+   spanned the full box, so the lede's text sat visibly left of the
+   title's centreline (the "misaligned testimonial heading"). */
+.hv-section-head--center .hv-lede { margin-inline: auto; }
 
 
 /* 04. Buttons & links ===================================================== */
@@ -311,6 +349,24 @@
   border-color: rgba(255, 255, 255, .3);
   color: #fff;
 }
+
+/* Ghost: the lowest-emphasis of the three closing-CTA buttons - a plain
+   label with no fill or border, so "Book" (primary) still wins the eye
+   and "Explore" (outline) reads as the middle option. Light-surface color
+   by default; dark sections (where it is actually used today) swap in
+   the on-dark tone below. */
+.hv-btn--ghost {
+  background: transparent;
+  color: var(--hv-text-muted);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+}
+.hv-btn--ghost:hover { color: var(--hv-text); text-decoration-color: currentColor; transform: none; }
+.hv-section--dark .hv-btn--ghost,
+.hv-card--dark .hv-btn--ghost { color: var(--hv-on-dark-muted); }
+.hv-section--dark .hv-btn--ghost:hover,
+.hv-card--dark .hv-btn--ghost:hover { color: #fff; }
 
 .hv-btn--lg { padding: 16px 28px; font-size: 0.95rem; min-height: 52px; }
 

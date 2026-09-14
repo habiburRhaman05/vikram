@@ -14,7 +14,7 @@
    and "@fontsource-variable/geist") reference packages that were never
    actually installed - dropped rather than left broken. Whoever starts
    using Tailwind for real should also point --font-sans at this project's
-   own brand fonts (Inter / Plus Jakarta Sans, loaded in index.html) instead
+   own brand fonts (DM Sans / Roboto, loaded in index.html) instead
    of reintroducing Geist. */
 @theme inline {
     --color-sidebar-ring: var(--sidebar-ring);

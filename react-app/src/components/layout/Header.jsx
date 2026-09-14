@@ -1,23 +1,33 @@
-import { NavLink, Link } from "react-router-dom";
-import Icon from "@/components/common/Icon.jsx";
+import { NavLink, Link, useLocation } from "react-router-dom";
 import Button from "@/components/common/Button.jsx";
 import Container from "@/components/common/Container.jsx";
+import NavDropdown from "./NavDropdown.jsx";
 import useStickyHeader from "@/hooks/useStickyHeader";
 import useMobileNav from "@/hooks/useMobileNav";
+import { openLeadPopup } from "@/components/common/LeadPopup.jsx";
 import { NAV_LINKS } from "@/data/nav";
-import { SITE } from "@/data/site";
+import { NAV_MENUS } from "@/data/navMenus";
+import "@/styles/mega-menu.css";
 
 /**
  * Topbar + header, identical across every page except the topbar's own
  * message - each page passes its own `topbar` node (an announcement, an
  * office-hours note, etc.) exactly like each .html file hard-coded its own
  * <div class="topbar"> text.
+ *
+ * Nav order: three service dropdowns (NAV_MENUS - AI Automation, Marketing,
+ * Funnels/Websites & GHL), then the plain links (NAV_LINKS, which
+ * is now just Contact - Plans and About were taken out of the bar). Each
+ * dropdown owns its own open/close state (see NavDropdown.jsx) so they
+ * don't interfere with one another.
  */
 export default function Header({ topbar }) {
   const headerRef = useStickyHeader();
-  const { open, toggle } = useMobileNav();
+  const { open, toggle, close } = useMobileNav();
+  const { pathname } = useLocation();
 
   const navLinkClass = ({ isActive }) => `nav__link${isActive ? " is-active" : ""}`;
+  const menuActive = (menu) => pathname === menu.to || pathname.startsWith(`${menu.to}/`);
 
   return (
     <>
@@ -59,23 +69,30 @@ export default function Header({ topbar }) {
             </Link>
 
             <div className={`nav__links${open ? " is-open" : ""}`} id="nav-links">
+              {NAV_MENUS.map((menu) => (
+                <NavDropdown key={menu.id} menu={menu} active={menuActive(menu)} />
+              ))}
               {NAV_LINKS.map((link) => (
                 <NavLink key={link.to} className={navLinkClass} to={link.to}>
                   {link.label}
                 </NavLink>
               ))}
-              <Button to="/book" variant="accent" icon="calendar" className="nav__cta-mobile">
-                Book a Demo
+              <Button
+                onClick={() => {
+                  close();
+                  openLeadPopup();
+                }}
+                variant="accent"
+                icon="calendar"
+                className="nav__cta-mobile"
+              >
+                Get Free Consultation
               </Button>
             </div>
 
             <div className="nav__actions">
-              <a className="nav__phone" href={SITE.phoneHref}>
-                <Icon name="phone" />
-                {SITE.phone}
-              </a>
-              <Button to="/book" variant="accent" size="sm" icon="calendar" className="nav__cta-desktop">
-                Book a Demo
+              <Button onClick={openLeadPopup} variant="accent" size="sm" icon="calendar" className="nav__cta-desktop">
+                Get Free Consultation
               </Button>
               <button
                 className="nav__toggle"

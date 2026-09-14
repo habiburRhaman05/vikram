@@ -4,34 +4,21 @@ import ImageSlot from "../ImageSlot.jsx";
 import { Reveal, IconButton } from "../primitives.jsx";
 import { TESTIMONIALS } from "@/data/homeV2";
 
-// Kept in sync with the `animation-duration` on .hv-marquee__track in
-// home-chrome.css - the nudge math below converts a pixel distance into a
-// slice of this duration, so it has to match the real animation or a nudge
-// would jump the wrong amount.
-const MARQUEE_DURATION_S = 46;
+/** Copies of the card list on the track - see the note above. */
+const COPIES = 4;
 
 /**
  * Full-bleed testimonial marquee.
  *
- * The track scrolls continuously via a CSS animation on a track holding
- * several back-to-back copies of the list, wrapping at -100%/copies - the
- * point where one copy's width has scrolled past and the next copy has
- * moved into the position the previous one started at, so the reset is
- * invisible. .hv-marquee is overflow:hidden, not scrollable - the track's
- * position is driven entirely by that transform, never by a native scroll
- * offset (see the CSS for why mixing the two breaks the seamless wrap).
- *
- * `copies` is NOT a fixed 2. With few testimonials (there are 3) and a
- * wide viewport, one copy of the list can be narrower than the screen
- * itself - the marquee is full-bleed, so it has to fill however wide the
- * viewport actually is. Two copies only tile seamlessly if a single copy
- * is already at least as wide as the viewport; short of that, the track
- * runs out of cards before the next copy scrolls into view, and the gap
- * shows up right at the point it's supposed to loop - which is exactly
- * the bug this was rewritten to fix. The effect below measures the real
- * rendered width of one copy and renders however many copies are needed
- * to comfortably outrun the viewport, and recomputes on resize since both
- * the viewport and the responsive card width (clamp() in CSS) can change.
+ * The track scrolls continuously via a CSS animation on a repeated list,
+ * so the loop is seamless: each lap travels exactly one copy, at which
+ * point the next copy has moved into the first one's position and the
+ * reset is invisible. It is repeated COPIES times (not just twice)
+ * because one copy of three cards is narrower than a desktop window -
+ * with only a duplicate, the tail of every lap left bare background at
+ * the right edge. The count is passed to CSS as --hv-marquee-copies,
+ * which is what the keyframe divides the track by; see TrustBar.jsx and
+ * home-chrome.css section 21.
  *
  * It pauses on hover, and on focus-within so a keyboard user can read a
  * card without it sliding away. Every copy after the first is aria-hidden
@@ -48,6 +35,7 @@ const MARQUEE_DURATION_S = 46;
  */
 export default function Testimonials() {
   const trackRef = useRef(null);
+  const viewportRef = useRef(null);
   const [paused, setPaused] = useState(false);
   const resumeTimer = useRef(null);
   // Cumulative animation-delay applied by nudging, in seconds. Negative
@@ -55,52 +43,49 @@ export default function Testimonials() {
   // that long ago); this just keeps adding to that as the user clicks,
   // rather than resetting it, so repeated nudges compound correctly.
   const delayRef = useRef(0);
-  // How many back-to-back copies of the list the track renders. Starts at
-  // the bare minimum for the wrap math to be valid; the effect below
-  // grows it to however many are actually needed once it can measure.
-  const [copies, setCopies] = useState(2);
 
   useEffect(() => () => clearTimeout(resumeTimer.current), []);
-
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-
-    const recompute = () => {
-      // scrollWidth reflects the CURRENTLY rendered number of copies
-      // (data-copies), never the transform applied to the track - dividing
-      // it back out gives the width of one copy regardless of how many are
-      // on screen right now.
-      const renderedCopies = Number(track.dataset.copies) || 1;
-      const oneSetWidth = track.scrollWidth / renderedCopies;
-      if (!oneSetWidth) return;
-
-      const viewportWidth = track.parentElement?.clientWidth || window.innerWidth;
-      // Worst case is the instant just before the track wraps: only
-      // (copies - 1) full sets remain ahead of the current view, and that
-      // has to be enough to cover the viewport on its own, or the tail end
-      // of the track runs out before the wrap point arrives. +1 copy of
-      // headroom on top of the minimum so a mid-resize measurement doesn't
-      // leave it running exactly on the edge.
-      const needed = Math.max(2, Math.ceil(viewportWidth / oneSetWidth) + 1);
-      setCopies((prev) => (prev === needed ? prev : needed));
-    };
-
-    recompute();
-
-    const ro = new ResizeObserver(recompute);
-    ro.observe(track);
-    if (track.parentElement) ro.observe(track.parentElement);
-    return () => ro.disconnect();
-  }, []);
 
   const nudge = (dir) => {
     const track = trackRef.current;
     if (!track) return;
-    const oneLoopWidth = track.scrollWidth / copies;
+
+    /* Phone: the track is a scroll-snap carousel there (the auto-scroll
+       animation is off), so shifting the animation delay does nothing -
+       the buttons scroll one card instead. */
+    const viewport = viewportRef.current;
+    if (viewport && window.matchMedia("(max-width: 640px)").matches) {
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      const card = track.querySelector(".hv-testimonial:not(.is-clone)");
+      const step = (card ? card.getBoundingClientRect().width : viewport.clientWidth) + gap;
+      viewport.scrollBy({ left: dir * step, behavior: "smooth" });
+      return;
+    }
+
+    // Desktop/tablet: measured straight from the DOM rather than
+    // recomputed from the CSS calc() formula in a second place. The first
+    // real card and its duplicate one copy later are always exactly one
+    // lap apart on screen - getBoundingClientRect() already reflects the
+    // current transform, and since that transform shifts the whole track
+    // uniformly, the DIFFERENCE between the two rects stays the true lap
+    // width regardless of where in the loop the animation currently is.
+    const cardEls = track.querySelectorAll(".hv-testimonial");
+    const first = cardEls[0];
+    const nextLap = cardEls[TESTIMONIALS.items.length];
+    const oneLoopWidth = first && nextLap
+      ? nextLap.getBoundingClientRect().left - first.getBoundingClientRect().left
+      : track.scrollWidth / COPIES; // fallback if the DOM isn't ready yet
     if (!oneLoopWidth) return;
 
-    const deltaSeconds = ((dir * 340) / oneLoopWidth) * MARQUEE_DURATION_S;
+    // Read the animation's real duration rather than hard-coding it, so
+    // this can't silently drift out of sync with home-chrome.css's
+    // --hv-marquee-duration again.
+    const durationStr = getComputedStyle(track).animationDuration || "46s";
+    const duration = durationStr.endsWith("ms")
+      ? parseFloat(durationStr) / 1000
+      : parseFloat(durationStr);
+
+    const deltaSeconds = ((dir * 340) / oneLoopWidth) * duration;
     delayRef.current -= deltaSeconds;
     track.style.animationDelay = `${delayRef.current}s`;
 
@@ -109,9 +94,8 @@ export default function Testimonials() {
     resumeTimer.current = setTimeout(() => setPaused(false), 4000);
   };
 
-  const cards = Array.from({ length: copies }, (_, set) =>
-    TESTIMONIALS.items.map((t) => ({ ...t, isClone: set > 0 }))
-  ).flat();
+  // Every pass after the first is a seamless-loop duplicate.
+  const cards = Array.from({ length: COPIES }, () => TESTIMONIALS.items).flat();
 
   return (
     <section className="hv-section hv-section--mint hv-testi" aria-labelledby="testi-title">
@@ -128,33 +112,32 @@ export default function Testimonials() {
       {/* Full width: deliberately outside .hv-container so the track can
           bleed to both edges and the loop has room to breathe. */}
       <div
+        ref={viewportRef}
         className={`hv-marquee${paused ? " is-paused" : ""}`}
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
-        <ul
-          className="hv-marquee__track"
-          ref={trackRef}
-          data-copies={copies}
-          style={{ "--hv-marquee-copies": copies }}
-        >
-          {cards.map((t, i) => (
-            <li
-              className="hv-card hv-testimonial"
-              key={`${t.name}-${i}`}
-              aria-hidden={t.isClone ? "true" : undefined}
-            >
-              <Icon name="quote" className="hv-testimonial__mark" aria-hidden="true" strokeWidth={1.6} />
-              <blockquote className="hv-testimonial__quote">{t.quote}</blockquote>
-              <figcaption className="hv-testimonial__person">
-                <ImageSlot src={t.image} alt="" ratio="1/1" label=" " className="hv-testimonial__avatar" />
-                <span>
-                  <strong>{t.name}</strong>
-                  <em>{t.role}</em>
-                </span>
-              </figcaption>
-            </li>
-          ))}
+        <ul className="hv-marquee__track" ref={trackRef} style={{ "--hv-marquee-copies": COPIES }}>
+          {cards.map((t, i) => {
+            const isClone = i >= TESTIMONIALS.items.length;
+            return (
+              <li
+                className={`hv-card hv-testimonial${isClone ? " is-clone" : ""}`}
+                key={`${t.name}-${i}`}
+                aria-hidden={isClone ? "true" : undefined}
+              >
+                <Icon name="quote" className="hv-testimonial__mark" aria-hidden="true" strokeWidth={1.6} />
+                <blockquote className="hv-testimonial__quote">{t.quote}</blockquote>
+                <figcaption className="hv-testimonial__person">
+                  <ImageSlot src={t.image} alt="" ratio="1/1" label=" " className="hv-testimonial__avatar" />
+                  <span>
+                    <strong>{t.name}</strong>
+                    <em>{t.role}</em>
+                  </span>
+                </figcaption>
+              </li>
+            );
+          })}
         </ul>
       </div>
 

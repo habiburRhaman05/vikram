@@ -1,0 +1,491 @@
+/* ==========================================================================
+   Home - service tiles, ringed CTA, and the tabbed Services section
+   --------------------------------------------------------------------------
+   Imported by src/pages/Home.jsx with the other home stylesheets, and only
+   meaningful inside `.home-v2`.
+
+   Contents
+     1. Product tile      (ProductTile.jsx - hero tile row + service tabs)
+     2. Ringed CTA        (HaloButton.jsx  - hero + service panel)
+     3. Services section  (Services.jsx)
+     4. Responsive + motion preferences
+   ========================================================================== */
+
+
+/* 1. Product tile ========================================================= */
+
+/* A light ring tinted by the service's colour, around a dark face with a
+   coloured glow, a faint network grid and a white glyph - the reference's
+   product icons, drawn in CSS so each service takes its own --tone. */
+.hv-ptile {
+  --s: 52px;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: var(--s);
+  height: var(--s);
+  padding: calc(var(--s) * .07);
+  border-radius: 27%;
+  background: color-mix(in srgb, var(--tone) 32%, rgba(255, 255, 255, .78));
+  box-shadow: 0 0 0 1px rgba(11, 31, 26, .06), 0 10px 22px -10px rgba(0, 0, 0, .45);
+  transition: box-shadow 220ms var(--hv-ease);
+}
+.hv-ptile--sm { --s: 44px; }
+.hv-ptile--lg { --s: var(--hv-tile, 72px); }
+
+.hv-ptile__face {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 22%;
+  color: #fff;
+  background:
+    radial-gradient(circle at 50% 55%, color-mix(in srgb, var(--tone) 78%, transparent) 0%, transparent 56%),
+    linear-gradient(color-mix(in srgb, var(--tone) 30%, transparent) 1px, transparent 1px) 0 0 / 25% 25%,
+    linear-gradient(90deg, color-mix(in srgb, var(--tone) 30%, transparent) 1px, transparent 1px) 0 0 / 25% 25%,
+    repeating-linear-gradient(45deg, transparent 0 7px, rgba(255, 255, 255, .05) 7px 8px),
+    radial-gradient(circle at 50% 40%, #16202E 0%, #070B12 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12), inset 0 -10px 18px rgba(0, 0, 0, .45);
+}
+.hv-ptile__face svg {
+  width: 42%;
+  height: 42%;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--tone) 80%, transparent));
+}
+
+/* Icon art: each service's PNG (public/services-icons) sits in the SAME
+   grid cell as the stroke glyph. In art mode (image present) the tile's
+   own chrome - ring, dark face, grid, glow - is stripped and ONLY the
+   icon art shows, because the PNGs carry their own background/border
+   design. If the image is missing or 404s, the art class is removed and
+   the tile falls back to the drawn glyph version. */
+.hv-ptile__face > svg,
+.hv-ptile__face > img { grid-area: 1 / 1; }
+.hv-ptile__img {
+  width: 64%;
+  height: 64%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--tone) 80%, transparent));
+}
+.hv-ptile--art,
+.hv-ptile--art .hv-ptile__face {
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+.hv-ptile--art .hv-ptile__glyph { display: none; }
+.hv-ptile--art .hv-ptile__img {
+  width: 100%;
+  height: 100%;
+  filter: none;
+}
+
+
+/* 2. Primary CTA =========================================================== */
+
+/* Same pattern as .hv-btn--primary (home-redesign.css): pill, gradient
+   fill, green-tinted shadow, 2px lift on hover. The halo/ring/inset-ring
+   treatment this used to carry made it the odd button out on the page.
+   The chevron-to-arrow morph on hover is kept as the one flourish. */
+.hv-halo {
+  display: inline-block;
+  border-radius: var(--hv-r-pill);
+  text-decoration: none;
+  transition: transform var(--hv-dur-fast) var(--hv-ease), box-shadow var(--hv-dur-fast) var(--hv-ease);
+}
+.hv-halo:active { transform: translateY(0); }
+
+.hv-halo__ring,
+.hv-halo__sheen { display: none; }
+
+.hv-halo__btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--hv-s2);
+  min-height: 44px;
+  padding: 13px 26px;
+  border-radius: var(--hv-r-pill);
+  background: var(--hv-grad-accent);
+  box-shadow: 0 6px 18px rgba(10, 127, 82, .25);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: #fff;
+}
+.hv-halo:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(10, 127, 82, .32); }
+.hv-halo__label {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  white-space: nowrap;
+}
+.hv-halo__arrow { position: relative; display: inline-block; width: 9px; height: 10px; }
+.hv-halo__chev {
+  position: relative;
+  left: -4px;
+  display: block;
+  color: rgba(255, 255, 255, .75);
+  transition: left 200ms var(--hv-ease), color 200ms var(--hv-ease);
+}
+.hv-halo__shaft {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 200ms var(--hv-ease);
+}
+.hv-halo:hover .hv-halo__chev { left: 0; color: #fff; }
+.hv-halo:hover .hv-halo__shaft { opacity: 1; }
+
+
+/* 3. Services section ===================================================== */
+
+.hv-svc__head {
+  max-width: 780px;
+  margin: 0 auto clamp(36px, 4.5vw, 56px);
+  text-align: center;
+}
+.hv-svc__title {
+  margin: 0;
+  font-size: clamp(1.85rem, 1.1rem + 2.4vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.14;
+  letter-spacing: -.025em;
+  color: var(--hv-text);
+}
+
+.hv-svc__box {
+  overflow: hidden;
+  border: 1px solid var(--hv-border);
+  border-radius: 16px;
+  background: #fff;
+}
+
+/* -- Tabs ----------------------------------------------------------------- */
+
+/* The tab row scrolls sideways on narrow screens rather than squeezing
+   five tabs into a phone's width. */
+.hv-svc__tabs-scroll {
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--hv-border);
+}
+.hv-svc__tabs-scroll::-webkit-scrollbar { display: none; }
+
+.hv-svc__tabs {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(168px, 1fr));
+}
+.hv-svc__tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 24px 12px 26px;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition: background 220ms var(--hv-ease);
+}
+.hv-svc__tab .hv-ptile { margin-bottom: 12px; transition: transform 260ms var(--hv-ease-spring); }
+.hv-svc__tab:hover { background: rgba(10, 127, 82, .03); }
+.hv-svc__tab:hover .hv-ptile,
+.hv-svc__tab.is-active .hv-ptile { transform: translateY(-2px) scale(1.06); }
+.hv-svc__tab:focus-visible { outline: 2px solid var(--hv-accent-strong); outline-offset: -4px; }
+.hv-svc__tab-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+  transition: color 220ms var(--hv-ease);
+}
+.hv-svc__tab.is-active .hv-svc__tab-name { color: var(--hv-accent-strong); }
+.hv-svc__tab-from { font-size: .82rem; color: var(--hv-text-muted); }
+
+/* One underline that slides between tabs. Its width is one column, and a
+   percentage translate is relative to the element's own width, so --i
+   whole widths lands it under tab i. */
+.hv-svc__ink {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: calc(100% / var(--n));
+  height: 3px;
+  transform: translateX(calc(var(--i) * 100%));
+  transition: transform 440ms var(--hv-ease);
+  pointer-events: none;
+}
+.hv-svc__ink::before {
+  content: "";
+  position: absolute;
+  inset: 0 12%;
+  border-radius: 3px 3px 0 0;
+  background: var(--hv-grad-accent);
+}
+
+/* -- Panel ---------------------------------------------------------------- */
+
+.hv-svc__panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: clamp(28px, 4.5vw, 72px);
+  align-items: center;
+  padding: clamp(28px, 4vw, 52px);
+  background: linear-gradient(180deg, #FFFFFF 0%, #F6FBF9 100%);
+}
+
+.hv-svc__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  animation: hv-svc-in 520ms var(--hv-ease) both;
+}
+@keyframes hv-svc-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.hv-svc__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(10, 127, 82, .08);
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--hv-accent-strong);
+}
+.hv-svc__badge svg { width: 15px; height: 15px; }
+
+/* .home-v2-scoped: the reset `.home-v2 h1, h2, h3 { margin: 0 }` in
+   home-redesign.css outranks a lone class and was zeroing this margin. */
+.home-v2 .hv-svc__panel-title {
+  margin: 18px 0 0;
+  font-size: clamp(1.6rem, 1.1rem + 1.4vw, 2.15rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  color: var(--hv-text);
+}
+.hv-svc__body {
+  margin: 16px 0 0;
+  max-width: 44ch;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--hv-text-muted);
+}
+.hv-svc__features {
+  list-style: none;
+  margin: 22px 0 30px;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+.hv-svc__features li {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  max-width: 46ch;
+  font-size: .95rem;
+  line-height: 1.5;
+  color: var(--hv-text);
+}
+.hv-svc__feature-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(10, 127, 82, .08);
+  color: var(--hv-accent-strong);
+}
+.hv-svc__feature-icon svg { width: 18px; height: 18px; }
+
+/* -- Visual ----------------------------------------------------------------
+   A dark stage holding the service's own interface, drawn in markup by
+   ServiceMockups.jsx (styles in home-whatwedo.css) - the pipeline board,
+   the automation canvas, the dashboard, the page builder.
+
+   Dark on purpose. Every mockup is a light-screened device, so a dark
+   stage makes it read as a lit screen; on the old pale-green slab the
+   white laptop was just another light rectangle on a light panel. The
+   service's --tone survives as the glow under the device rather than as
+   a full-bleed gradient, so the four panels still feel distinct without
+   any of them shouting. */
+.hv-svc__visual {
+  position: relative;
+  animation: hv-svc-in 620ms var(--hv-ease) 60ms both;
+}
+
+.hv-svc__stage {
+  position: relative;
+  overflow: hidden;
+  /* The mockups size everything in cqw - percent of this box's width - so
+     they scale with the panel at every breakpoint with no media queries
+     of their own. That requires an inline-size container with a fixed
+     ratio, which is what these two lines are. */
+  container-type: inline-size;
+  aspect-ratio: 528 / 344;
+  border-radius: 18px;
+  background:
+    radial-gradient(64% 54% at 50% 104%, color-mix(in srgb, var(--tone) 58%, transparent) 0%, transparent 70%),
+    radial-gradient(46% 40% at 84% 4%, rgba(255, 255, 255, .10) 0%, transparent 72%),
+    linear-gradient(168deg, #103029 0%, #0A211D 48%, #050F0E 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .10),
+    inset 0 0 0 1px rgba(255, 255, 255, .07),
+    0 30px 60px -28px rgba(4, 26, 22, .55);
+}
+
+/* Fine dot grid, masked to fade out towards the edges rather than
+   stopping at a hard line against the stage border. */
+.hv-svc__stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, .13) 1px, transparent 1px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(76% 62% at 50% 32%, #000 0%, transparent 78%);
+  mask-image: radial-gradient(76% 62% at 50% 32%, #000 0%, transparent 78%);
+  pointer-events: none;
+}
+
+/* A soft plinth the device appears to stand on - grounds it instead of
+   leaving it floating against the gradient. */
+.hv-svc__stage::after {
+  content: "";
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: 0;
+  height: 22%;
+  background: radial-gradient(60% 100% at 50% 100%, rgba(0, 0, 0, .45) 0%, transparent 72%);
+  pointer-events: none;
+}
+
+/* The mockups are laid out to hang off the bottom of the What We Do
+   cards, which crop them. Here the whole device should be visible, so
+   it sits up off the floor of the stage and a little smaller. */
+.hv-svc__stage .hv-mk-scene {
+  z-index: 2;
+  transition: transform 560ms var(--hv-ease);
+}
+/* Laptop and tablet share a box (see .hv-mk-tablet in home-whatwedo.css),
+   so one pair of values lifts either of them off the floor of the stage
+   by the same amount. */
+.hv-svc__stage .hv-mk-laptop,
+.hv-svc__stage .hv-mk-tablet { bottom: 9cqw; width: 70cqw; }
+.hv-svc__stage .hv-mk-phone { bottom: 5cqw; }
+.hv-svc__visual:hover .hv-mk-scene { transform: translateY(-1.6cqw) scale(1.025); }
+
+/* Live status, overlapping the stage's lower-left corner. No icon tile -
+   just a pulsing dot, which is how a real product surfaces this. */
+.hv-svc__chip {
+  position: absolute;
+  z-index: 5;
+  bottom: 26px;
+  left: -18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .96);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 18px 36px -14px rgba(6, 40, 34, .42), 0 0 0 1px rgba(10, 127, 82, .1);
+  animation: hv-svc-in 620ms var(--hv-ease) 220ms both;
+}
+.hv-svc__chip-dot {
+  position: relative;
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--hv-accent);
+}
+.hv-svc__chip-dot::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1.5px solid var(--hv-accent);
+  opacity: 0;
+  animation: hv-svc-ping 2.4s var(--hv-ease) infinite;
+}
+@keyframes hv-svc-ping {
+  0%      { opacity: .7; transform: scale(.6); }
+  70%,
+  100%    { opacity: 0;  transform: scale(1.25); }
+}
+.hv-svc__chip-text { display: grid; gap: 1px; }
+.hv-svc__chip-text strong { font-size: .85rem; font-weight: 700; color: var(--hv-text); }
+.hv-svc__chip-text span { font-size: .74rem; color: var(--hv-text-muted); }
+
+
+/* 4. Responsive + motion preferences ====================================== */
+
+@media (max-width: 1024px) {
+  .hv-svc__panel { grid-template-columns: 1fr; }
+  .hv-svc__visual { margin-top: 12px; }
+  /* Stacked, the visual is full-width, so the chip has no panel gutter to
+     hang into - bring it inside the stage. */
+  .hv-svc__chip { left: 14px; }
+}
+
+/* Phone: the tab strip keeps its sideways scroll (five tabs cannot fit),
+   but everything else stacks and breathes. */
+@media (max-width: 640px) {
+  .hv-svc__tabs { grid-template-columns: repeat(var(--n), minmax(132px, 1fr)); }
+  .hv-svc__tab { padding: 16px 10px 18px; }
+  .hv-svc__tab .hv-ptile { --s: 48px; margin-bottom: 8px; }
+  .hv-svc__tab-name { font-size: .92rem; }
+  .hv-svc__tab-from { font-size: .76rem; }
+  .hv-svc__panel { padding: 22px 18px 26px; gap: 22px; }
+  .hv-svc__body { margin-top: 12px; }
+  .hv-svc__features { gap: 10px; margin: 18px 0 24px; }
+  .hv-svc__features li { grid-template-columns: 30px minmax(0, 1fr); font-size: .9rem; }
+  .hv-svc__feature-icon { width: 30px; height: 30px; border-radius: 8px; }
+  .hv-svc__feature-icon svg { width: 15px; height: 15px; }
+  /* The stage goes a little squarer on a phone so the device inside it
+     doesn't shrink to a sliver, and the chip sits fully within it. */
+  .hv-svc__visual { margin-top: 0; }
+  .hv-svc__stage { aspect-ratio: 4 / 3; border-radius: 14px; }
+  .hv-svc__stage::before { background-size: 16px 16px; }
+  .hv-svc__chip { bottom: 12px; left: 12px; padding: 8px 12px; }
+  .hv-svc__chip-text strong { font-size: .78rem; }
+  .hv-svc__chip-text span { font-size: .68rem; }
+  /* CTA spans the card so the tap target is generous and the label never
+     crowds the arrow. */
+  .hv-halo { display: block; }
+  .hv-halo__btn { width: 100%; padding-inline: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hv-svc__copy,
+  .hv-svc__visual,
+  .hv-svc__chip,
+  .hv-svc__chip-dot::after { animation: none; }
+  .hv-svc__ink,
+  .hv-svc__stage .hv-mk-scene,
+  .hv-halo,
+  .hv-halo__chev,
+  .hv-halo__shaft,
+  .hv-halo__sheen { transition-duration: 1ms; }
+}

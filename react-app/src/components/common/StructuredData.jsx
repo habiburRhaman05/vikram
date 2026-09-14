@@ -22,7 +22,7 @@ export default function StructuredData({ organization = false, faq }) {
       logo: absoluteUrl("/img/logo@2x.png"),
       image: absoluteUrl("/og-image.png"),
       description:
-        "GoHighLevel, AI automation, web development and creative production for businesses that want one connected system instead of five disconnected tools.",
+        "GoHighLevel, AI automation, marketing, and funnel, website and GHL build services for businesses that want one connected system instead of five disconnected tools.",
       telephone: SITE.phone,
       email: SITE.email,
       address: {

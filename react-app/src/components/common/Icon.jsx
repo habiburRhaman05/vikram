@@ -238,6 +238,10 @@ const paths = {
   quote: <path d="M9 7H6a3 3 0 0 0-3 3v7h7v-7H6m15-3h-3a3 3 0 0 0-3 3v7h7v-7h-4" />,
   chevronLeft: <path d="m15 18-6-6 6-6" />,
   chevronRight: <path d="m9 6 6 6-6 6" />,
+  // Disclosure caret on the mega-menu trigger; rotates to point up when open.
+  chevronDown: <path d="m6 9 6 6 6-6" />,
+  // Outbound/"go" arrow on the hero CTAs.
+  arrowUpRight: <path d="M7 17 17 7M8 7h9v9" />,
   plane: <path d="M21 3 3 10.5l7 3 3 7L21 3Z" />,
   heart: <path d="M12 20.5 4.6 13a4.6 4.6 0 0 1 6.5-6.5l.9.9.9-.9A4.6 4.6 0 1 1 19.4 13Z" />,
   cart: (

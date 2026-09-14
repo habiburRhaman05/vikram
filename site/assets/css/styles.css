@@ -83,9 +83,12 @@
   --grad-ink:    linear-gradient(165deg, var(--ink-900) 0%, var(--ink-800) 55%, var(--ink-700) 100%);
 
   /* Type */
-  --font-display: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --font-body:    "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Headings, eyebrows, buttons, FAQ questions - the UI. Matches the React
+     app's --font-display so the static pages and the SPA never disagree. */
+  --font-display: "DM Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  /* Body copy: Roboto is the main reading face, matching the React app. */
+  --font-body:    "Roboto", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono:    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Space */
   --container: 1200px;

@@ -1,12 +1,18 @@
-/** Primary nav, identical on every page - only which link gets `.is-active`
- * changes, and that's now derived from the router location instead of the
- * string-matching main.js used to do against `location.pathname`. */
-export const NAV_LINKS = [
+/** The plain (non-dropdown) items in the primary nav, in bar order after
+ * the four service dropdowns from navMenus.js. Active state is derived
+ * from the router location, not string-matched against location.pathname
+ * the way the original main.js did it.
+ *
+ * Plans and About were removed from the bar on request; both still have
+ * their footer entries (FOOTER_LINKS below) so nothing is orphaned. */
+export const NAV_LINKS = [{ label: "Contact", to: "/contact" }];
+
+/** Footer's link column - flat by nature (a footer has no room for
+ * dropdowns), so it gets its own short list rather than trying to expand
+ * NAV_LINKS/NAV_MENUS into something a plain <Link> can render. */
+export const FOOTER_LINKS = [
   { label: "Services", to: "/platform" },
-  { label: "Case Studies", to: "/industries" },
-  { label: "Blogs", to: "/#plans" },
+  { label: "Plans", to: "/#plans" },
   { label: "About", to: "/about" },
   { label: "Contact", to: "/contact" },
 ];
-
-export const FOOTER_LINKS = NAV_LINKS;

@@ -17,6 +17,7 @@ const Contact = lazy(() => import("@/pages/Contact.jsx"));
 const Book = lazy(() => import("@/pages/Book.jsx"));
 const Privacy = lazy(() => import("@/pages/Privacy.jsx"));
 const Terms = lazy(() => import("@/pages/Terms.jsx"));
+const ServiceComingSoon = lazy(() => import("@/pages/ServiceComingSoon.jsx"));
 const NotFound = lazy(() => import("@/pages/NotFound.jsx"));
 
 /**
@@ -42,6 +43,15 @@ export default function App() {
         <Route path="/book" element={<Book />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        {/* Every service link in the nav and on the home page resolves
+            here until that specific service gets its own real page - see
+            the comment on ServiceComingSoon for why this exists instead
+            of every service quietly redirecting to /platform. Give a
+            specific slug its own route ABOVE this one later (e.g.
+            "/services/ai-agents-chatbots") and it takes over automatically -
+            React Router ranks a static path higher than a dynamic :slug
+            at the same position regardless of declaration order. */}
+        <Route path="/services/:slug" element={<ServiceComingSoon />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

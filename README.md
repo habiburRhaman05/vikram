@@ -156,7 +156,8 @@ quicktaxnbooks.com site.
 ## Design notes
 
 Navy + aqua/violet, deliberately not the generic SaaS blue that taxoffice.ai
-uses. Type is Plus Jakarta Sans (headings) + Inter (body) via Google Fonts.
+uses. Type is DM Sans (headings, eyebrows) + Space Mono (body, Roboto fallback)
+via Google Fonts.
 No stock photography - all visuals are CSS and inline SVG, so there are no
 broken images and nothing to license.
 

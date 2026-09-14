@@ -1,0 +1,99 @@
+/* ==========================================================================
+   Cookie & privacy notice (CookieConsent.jsx)
+   --------------------------------------------------------------------------
+   Shown on every route, including the ones outside the Home redesign's
+   `.home-v2` token scope - so the colours here are literal rather than
+   borrowed from either palette, and the notice looks the same everywhere.
+   ========================================================================== */
+
+.cc {
+  position: fixed;
+  z-index: 1000;
+  left: 50%;
+  bottom: 24px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  width: min(760px, calc(100vw - 32px));
+  padding: 18px 18px 18px 20px;
+  border-radius: 18px;
+  background: rgba(4, 38, 34, .96);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
+  box-shadow: 0 24px 60px -18px rgba(0, 0, 0, .55), inset 0 0 0 1px rgba(255, 255, 255, .1);
+  color: #DCEFE8;
+  font-family: "DM Sans", "Segoe UI", system-ui, sans-serif;
+  transform: translate(-50%, 0);
+  animation: cc-in 520ms cubic-bezier(.22, .61, .36, 1) both;
+}
+.cc.is-leaving { animation: cc-out 320ms cubic-bezier(.4, 0, 1, 1) both; }
+@keyframes cc-in {
+  from { opacity: 0; transform: translate(-50%, 24px) scale(.98); }
+  to   { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+@keyframes cc-out {
+  to { opacity: 0; transform: translate(-50%, 16px) scale(.98); }
+}
+
+.cc__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0A7F52, #06603E);
+  color: #fff;
+}
+.cc__icon svg { width: 22px; height: 22px; }
+
+.cc__title {
+  margin: 0 0 2px;
+  font-size: .98rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #fff;
+}
+.cc__text {
+  margin: 0;
+  font-size: .85rem;
+  line-height: 1.5;
+  color: #A9C6BD;
+}
+.cc__text a { color: #35D9A0; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.cc__text a:hover { color: #6FF0C2; }
+
+.cc__actions { display: flex; gap: 8px; }
+.cc__btn {
+  height: 42px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 11px;
+  font: inherit;
+  font-size: .88rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 200ms ease, box-shadow 200ms ease, transform 150ms ease, color 200ms ease;
+}
+.cc__btn:active { transform: scale(.97); }
+.cc__btn:focus-visible { outline: 2px solid #35D9A0; outline-offset: 2px; }
+.cc__btn--ghost { background: transparent; color: #DCEFE8; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .24); }
+.cc__btn--ghost:hover { background: rgba(255, 255, 255, .08); color: #fff; }
+.cc__btn--solid { background: linear-gradient(135deg, #0FA86C, #0A7F52); color: #fff; box-shadow: 0 8px 20px -8px rgba(15, 168, 108, .7); }
+.cc__btn--solid:hover { background: linear-gradient(135deg, #13BD7A, #0B8C5A); }
+
+@media (max-width: 640px) {
+  .cc {
+    bottom: 12px;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px 14px;
+    padding: 16px;
+  }
+  .cc__actions { grid-column: 1 / -1; }
+  .cc__btn { flex: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cc, .cc.is-leaving { animation-duration: 1ms; }
+}

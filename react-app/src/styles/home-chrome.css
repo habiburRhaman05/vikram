@@ -101,11 +101,121 @@
    same amount back as padding keeps the content where it was.
    --header-h is maintained by useStickyHeader and is measured before
    .is-stuck applies, so it holds the tall (un-condensed) height and the
-   hero does not move when the bar shrinks on scroll. */
-.home-v2 .hv-hero {
+   hero does not move when the bar shrinks on scroll.
+   .page-hero alongside .hv-hero: the same trick, for the other pages that
+   opt into the v2 header/footer (variant="v2" on Layout) but still use the
+   older page-hero component for their own opening section rather than a
+   bespoke hv- hero - ServiceComingSoon is the first of these. Both classes
+   share this one rule rather than each getting an identical copy, since
+   the fix is the same for the same reason regardless of which hero markup
+   sits underneath. */
+.home-v2 .hv-hero,
+.home-v2 .page-hero {
   margin-top: calc(-1 * var(--header-h, 80px));
-  padding-top: calc(var(--header-h, 80px) + clamp(40px, 5vw, 72px));
+  padding-top: calc(var(--header-h, 80px) + clamp(8px, 1.5vw, 20px));
 }
+
+/* -- Legacy palette remap ---------------------------------------------------
+   Pages that opt into the v2 chrome (variant="v2") still build their body
+   from the legacy components - Section, InfoCard, Button, CtaBand - and
+   those are painted from the aqua/ink tokens in legacy/styles.css: a
+   deep TEAL (#0E8C78 -> #07564A) over a navy ink. The redesign's brand is
+   an emerald GREEN (#0A7F52 -> #06603E) over a near-black green. Side by
+   side - a green header and footer wrapped around a teal page - they read
+   as two different companies.
+
+   Rather than restyle each legacy component, this repoints the legacy
+   tokens at the v2 palette for the duration of a `.home-v2` page. Every
+   legacy rule keeps working untouched and simply resolves to the brand
+   colour. Declared on `.home-v2` itself, the same element that defines
+   the --hv-* tokens, so the var() references below resolve regardless of
+   which block is written first.
+
+   The ramp is kept in the same order as the original (100 palest ->
+   900 darkest) so any legacy rule that leans on one being lighter than
+   another still holds. Contrast pairings are preserved too: --aqua-650
+   is the "teal as TEXT" token in legacy/styles.css, so it maps to
+   --hv-accent-strong (5.04:1 on white), not to --hv-accent (3.21:1).
+
+   Scoped to .home-v2, so the legacy pages that have not been moved over
+   keep their existing look and nothing changes underneath them. */
+.home-v2 {
+  --aqua-100: #D8F0E5;
+  --aqua-300: var(--hv-accent-bright);
+  --aqua-400: #5FE3B5;
+  --aqua-500: var(--hv-accent);
+  --aqua-600: var(--hv-accent);
+  --aqua-650: var(--hv-accent-strong);
+  --aqua-700: var(--hv-accent-strong);
+  --aqua-800: var(--hv-accent-deep);
+  --aqua-900: #04432C;
+
+  --grad-accent: var(--hv-grad-accent);
+  --grad-accent-vivid: linear-gradient(135deg, var(--hv-accent-bright) 0%, var(--hv-accent) 100%);
+  /* Matches the home hero's own gradient, so a .page-hero on a v2 page
+     and the hv- hero on Home read as the same surface. */
+  --grad-ink: linear-gradient(180deg, #011618 0%, #032A26 58%, #03302B 100%);
+  --sh-glow: 0 24px 70px rgba(14, 164, 107, .18);
+}
+
+/* Re-centres the headline on a centred page-hero inside `.home-v2`.
+   `.page-hero--center h1` in legacy/styles.css centres the h1 by capping
+   it at 18ch and setting `margin-inline: auto` - but it is one class plus
+   one element, exactly the same specificity as the `.home-v2 h1 { margin: 0 }`
+   reset in home-redesign.css. A tie is broken by source order, and
+   home-redesign.css loads last, so the reset was winning and collapsing
+   the auto margins: the crumb, lede and buttons centred while the
+   headline sat hard against the left of the container. Two classes plus
+   the element outranks both, whatever the load order. */
+.home-v2 .page-hero--center h1 { margin-inline: auto; }
+
+/* The hero is now the page's darkest surface, and the bar is transparent
+   on top of it, so at rest the header has to be a light-on-dark bar and
+   only becomes dark-on-glass once it has scrolled away from the hero.
+   Keying off :not(.is-stuck):not(:has(.nav__links.is-open)) rather than a page-level modifier means this
+   stays correct automatically - the bar is only ever over the hero when
+   it is not stuck.
+
+   The second condition, :not(:has(.nav__links.is-open)), is what keeps
+   this off the MOBILE menu. That panel is an opaque white sheet that
+   drops down from the bar, so while it is open the bar is no longer
+   sitting on the hero - and the light-on-dark treatment was being applied
+   to the links inside the white panel: muted teal on white measured about
+   2.2:1, and the toggle's white bars vanished into it completely. With the
+   panel open these rules stand down and the normal light-background
+   header colours apply (dark links, dark bars), which is what the panel
+   actually needs. */
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .brand__name-levelup,
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__phone { color: #fff; }
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .brand__name-gh { color: var(--hv-accent-bright); }
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__phone svg { color: var(--hv-accent-bright); }
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__link,
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__link--mega { color: var(--hv-on-dark-muted); }
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__link:hover,
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__link.is-active,
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__link--mega:hover,
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__link--mega[aria-expanded="true"] { color: #fff; }
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__link::after { background: var(--hv-accent-bright); }
+/* The toggle's base style is a white pill built for a light bar; left as
+   it is, it reads as a floating white box on the dark hero. */
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__toggle {
+  background: rgba(255, 255, 255, .07);
+  border-color: rgba(255, 255, 255, .26);
+  color: #fff;
+}
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__toggle:hover {
+  background: rgba(255, 255, 255, .14);
+  border-color: rgba(255, 255, 255, .4);
+}
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__toggle-bars,
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__toggle-bars::before,
+.home-v2 .site-header:not(.is-stuck):not(:has(.nav__links.is-open)) .nav__toggle-bars::after { background: #fff; }
+.home-v2 .brand__name-gh,
+.home-v2 .brand__name-levelup,
+.home-v2 .nav__phone,
+.home-v2 .nav__phone svg,
+.home-v2 .nav__toggle,
+.home-v2 .brand__logo { transition: color var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease), border-color var(--hv-dur) var(--hv-ease); }
 
 /* Firefox until recently, and any browser with backdrop-filter disabled,
    would render the header as a 62% white wash with no blur - legible, but
@@ -188,7 +298,12 @@
 
 /* 21. Testimonial marquee ================================================= */
 
-.hv-testi { overflow: hidden; }
+/* White ground: the section's mint modifier is a pale teal, which read as
+   a teal band. `home-v2 .` out-ranks `.hv-section--mint`'s background. */
+.home-v2 .hv-testi {
+  overflow: hidden;
+  background: var(--hv-bg);
+}
 
 .hv-marquee {
   /* Full-bleed: escapes the container so the track runs edge to edge.
@@ -209,26 +324,45 @@
 }
 
 .hv-marquee__track {
+  /* --hv-marquee-copies is NOT set here: each marquee passes the number of
+     times it repeated its own list (see TrustBar.jsx / Testimonials.jsx),
+     because the keyframe divides the track by it to find the width of one
+     copy. The 2 below is only a fallback for a track that forgets to pass
+     one. */
+  /* The loop offset is derived from these three, so they are variables
+     rather than literals repeated in the keyframe. All of them matter:
+       - the flex `gap` means one copy is (track/copies - half a gap),
+       - the horizontal padding is INSIDE the track's border box, which is
+         what a percentage transform resolves against, and
+       - the copy count is what turns the whole track into one lap.
+     Net: (100% + gap - 2*pad) / copies = exactly one copy, which is the
+     distance the first item's replacement has to travel. Derived from the
+     geometry and then measured against the real distance between the
+     first item and its duplicate. */
+  --hv-marquee-gap: var(--hv-s5);
+  --hv-marquee-pad: var(--hv-s5);
   display: flex;
-  gap: var(--hv-s5);
+  gap: var(--hv-marquee-gap);
   list-style: none;
   margin: 0;
-  padding: var(--hv-s2) var(--hv-s5);
+  padding: var(--hv-s2) var(--hv-marquee-pad);
   width: max-content;
-  animation: hv-marquee 46s linear infinite;
+  /* Default duration is right for the wide testimonial cards; a track of
+     shorter items (the trust-bar logos) overrides --hv-marquee-duration
+     on an ancestor rather than needing a second keyframe/animation. */
+  animation: hv-marquee var(--hv-marquee-duration, 46s) linear infinite;
 }
-/* Travels exactly one copy's width - -100% divided by however many
-   back-to-back copies the track actually renders (--hv-marquee-copies,
-   set inline by Testimonials.jsx) - which is where the next copy has
-   moved into the position the previous one started at, so the restart is
-   invisible. This is NOT a fixed -50%: that only tiles seamlessly if a
-   single copy of the list is already at least as wide as the viewport,
-   which fails whenever there are few items and/or the viewport is wide -
-   short of that, the track runs dry before the next copy scrolls in,
-   showing empty space right at the point it's supposed to loop. */
+/* Travels exactly one copy of the list - the point where the next copy has
+   moved into the first one's position - so the restart is invisible and
+   the strip reads as endless rather than as a slider with an end. See the
+   derivation on .hv-marquee__track above. */
 @keyframes hv-marquee {
   from { transform: translateX(0); }
-  to   { transform: translateX(calc(-100% / var(--hv-marquee-copies, 2))); }
+  to   {
+    transform: translateX(
+      calc((100% + var(--hv-marquee-gap) - 2 * var(--hv-marquee-pad)) / -1 / var(--hv-marquee-copies, 2))
+    );
+  }
 }
 
 /* Pause on hover, and on focus so a keyboard user can read a card
@@ -242,7 +376,11 @@
   display: flex;
   flex-direction: column;
   gap: var(--hv-s4);
-  background: var(--hv-bg);
+  background: #fff;
+  /* Even ambient shadow on all sides (not the bottom-heavy drop), plus a
+     hairline ring - on the white ground the cards need an edge, and an
+     all-round shadow keeps them defined whichever way they drift. */
+  box-shadow: inset 0 0 0 1px var(--hv-border), 0 2px 10px rgba(11, 31, 26, .05), 0 6px 22px rgba(11, 31, 26, .06);
 }
 .hv-testimonial__mark { width: 26px; height: 26px; color: var(--hv-accent); opacity: .55; }
 .hv-testimonial__quote {
@@ -272,6 +410,34 @@
 
 @media (prefers-reduced-motion: reduce) {
   .hv-marquee__track { animation: none; }
+}
+
+/* Phone: one card at a time, no auto-scroll. The marquee transform math
+   assumes wide tracks and desktop timing - at phone widths it rendered as
+   half-cut cards sliding endlessly, and the prev/next buttons (which drive
+   the animation delay) had nothing meaningful to move. So the track becomes
+   a plain scroll-snap carousel in the same full-bleed container, and the
+   buttons scroll it card by card (see nudge() in Testimonials.jsx). */
+@media (max-width: 640px) {
+  .hv-marquee {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    /* Keep the section's side padding so a card never touches the edge,
+       but let the strip itself scroll to the viewport edge. */
+    scrollbar-width: none;
+  }
+  .hv-marquee::-webkit-scrollbar { display: none; }
+  .hv-marquee__track {
+    animation: none;
+    width: auto;
+    padding: var(--hv-s2) clamp(16px, 5vw, 24px);
+  }
+  .hv-marquee .hv-testimonial {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+  }
+  .hv-marquee .hv-testimonial.is-clone { display: none; }
 }
 
 
@@ -422,15 +588,10 @@
 .hv-reveal.is-in { transform: none; }
 
 /* Cards lift and their media eases in slightly. */
-.hv-stack-card,
-.hv-solution,
-.hv-project { transition: transform var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease), border-color var(--hv-dur) var(--hv-ease); }
-.hv-stack-card .hv-imgslot,
-.hv-project__media { overflow: hidden; }
-.hv-stack-card .hv-imgslot img,
-.hv-project__media img { transition: transform 600ms var(--hv-ease); }
-.hv-stack-card:hover .hv-imgslot img,
-.hv-project:hover .hv-project__media img { transform: scale(1.05); }
+.hv-stack-card { transition: transform var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease), border-color var(--hv-dur) var(--hv-ease); }
+.hv-stack-card .hv-imgslot { overflow: hidden; }
+.hv-stack-card .hv-imgslot img { transition: transform 600ms var(--hv-ease); }
+.hv-stack-card:hover .hv-imgslot img { transform: scale(1.05); }
 
 /* Constellation cards drift gently, each offset so they never move as
    one block. Purely decorative, so it is fully disabled below. */
@@ -463,13 +624,7 @@
 }
 .hv-btn--primary:hover::after { left: 120%; }
 
-/* Badges warm up when their row is hovered. */
-.hv-solution:hover .hv-badge,
-.hv-flow__step:hover .hv-badge {
-  background: var(--hv-accent-strong);
-  color: #fff;
-  transition: background var(--hv-dur-fast) var(--hv-ease), color var(--hv-dur-fast) var(--hv-ease);
-}
+
 
 .home-v2 { scroll-behavior: smooth; }
 
@@ -571,83 +726,6 @@
   box-shadow: 0 24px 50px rgba(3, 33, 30, .38);
 }
 
-/* --- Service card media ------------------------------------------------- */
-
-/* The photo gets a slow push-in on hover. Scaling the image inside a
-   clipped box rather than scaling the card keeps the card edges crisp and
-   costs nothing in layout. */
-.home-v2 .hv-stack-card__media { overflow: hidden; }
-.home-v2 .hv-stack-card__media img {
-  transition: transform var(--hv-dur-slow) var(--hv-ease);
-}
-.home-v2 .hv-stack-card:hover .hv-stack-card__media img { transform: scale(1.06); }
-
-/* The circular arrow fills in and the whole link shifts toward it, so the
-   affordance reads before you get to the words. */
-.home-v2 .hv-stack-card__arrow {
-  transition: background var(--hv-dur) var(--hv-ease),
-              border-color var(--hv-dur) var(--hv-ease),
-              color var(--hv-dur) var(--hv-ease),
-              transform var(--hv-dur) var(--hv-ease-spring);
-}
-.home-v2 .hv-stack-card__link:hover .hv-stack-card__arrow,
-.home-v2 .hv-stack-card__link:focus-visible .hv-stack-card__arrow {
-  background: var(--hv-grad-accent);
-  border-color: transparent;
-  color: #fff;
-  transform: translateX(4px) scale(1.08);
-}
-
-/* --- Solutions grid ----------------------------------------------------- */
-
-/* Nine identical boxes was the most generic thing on the page. An accent
-   rail draws in from the left edge on hover and the content steps toward
-   it, which gives the grid a reading direction and makes each tile read as
-   an entry rather than filler. */
-.home-v2 .hv-solution {
-  overflow: hidden;
-  transition: transform var(--hv-dur) var(--hv-ease),
-              box-shadow var(--hv-dur) var(--hv-ease),
-              border-color var(--hv-dur) var(--hv-ease);
-}
-.home-v2 .hv-solution::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 3px;
-  height: 0;
-  border-radius: 0 3px 3px 0;
-  background: var(--hv-grad-accent);
-  transform: translateY(-50%);
-  transition: height var(--hv-dur) var(--hv-ease);
-}
-.home-v2 .hv-solution:hover::after,
-.home-v2 .hv-solution:focus-within::after { height: 64%; }
-.home-v2 .hv-solution > div { transition: transform var(--hv-dur) var(--hv-ease); }
-.home-v2 .hv-solution:hover > div { transform: translateX(3px); }
-.home-v2 .hv-solution .hv-h3 { transition: color var(--hv-dur-fast) var(--hv-ease); }
-.home-v2 .hv-solution:hover .hv-h3 { color: var(--hv-accent-strong); }
-
-/* --- Client logo strip -------------------------------------------------- */
-
-/* Icon-plus-wordmark lockups at full strength read as unfinished
-   placeholder art. Muted by default and resolving individually on hover is
-   how a real logo wall behaves, and it stops the strip competing with the
-   hero directly above it. */
-.home-v2 .hv-trust__item {
-  opacity: .62;
-  transition: opacity var(--hv-dur) var(--hv-ease),
-              color var(--hv-dur) var(--hv-ease),
-              transform var(--hv-dur) var(--hv-ease);
-}
-.home-v2 .hv-trust__item svg { color: var(--hv-accent-strong); }
-.home-v2 .hv-trust__item:hover {
-  opacity: 1;
-  color: var(--hv-text);
-  transform: translateY(-2px);
-}
-
 /* --- Pending-asset placeholders ----------------------------------------- */
 
 /* The diagonal hatch read as a broken image. This reads as a deliberate
@@ -674,15 +752,9 @@
 @media (prefers-reduced-motion: reduce) {
   .home-v2 .hv-badge,
   .home-v2 .hv-card--hover,
-  .home-v2 .hv-solution > div,
-  .home-v2 .hv-stack-card__media img,
-  .home-v2 .hv-stack-card__arrow,
-  .home-v2 .hv-trust__item,
   .home-v2 .site-header::before,
   .home-v2 .site-header::after,
   .home-v2 .nav { transition-duration: 1ms; }
   .home-v2 .hv-card--hover:hover,
-  .home-v2 .hv-card--hover:focus-within,
-  .home-v2 .hv-trust__item:hover { transform: none; }
-  .home-v2 .hv-stack-card:hover .hv-stack-card__media img { transform: none; }
+  .home-v2 .hv-card--hover:focus-within { transform: none; }
 }
