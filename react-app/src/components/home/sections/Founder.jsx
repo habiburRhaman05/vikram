@@ -37,8 +37,8 @@ export default function Founder() {
         <div className="hv-founder__portrait">
           {photo ? (
             <picture className="hv-founder__photo">
-              <source type="image/webp" srcSet={`${photo}.webp`} />
-              <img src={`${photo}.jpg`} alt={`${name}, ${role}`} width="560" height="640" decoding="async" />
+              
+              <img src={`${photo}`} alt={`${name}, ${role}`} width="560" height="640" decoding="async" />
             </picture>
           ) : (
             <span className="hv-founder__monogram" aria-hidden="true">
@@ -47,9 +47,7 @@ export default function Founder() {
           )}
           {/* Decorative: the quote mark that anchors the note to the
               portrait. The real quotation lives in the blockquote. */}
-          <span className="hv-founder__quote" aria-hidden="true">
-            <Icon name="quote" />
-          </span>
+         
         </div>
 
         <div className="hv-founder__body">
