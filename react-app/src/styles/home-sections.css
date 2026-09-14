@@ -431,12 +431,19 @@
 
 /* Countdown ring round the active node, emptying over the dwell. Paused
    with the flow, so it never lies about how long is left. */
+/* max-width/max-height: none matters - the legacy reset
+   `img, svg { max-width: 100% }` otherwise caps the ring at the node's own
+   width, so it is 14px too small and pinned to the top-left corner. */
 .hv-flowx__timer {
   position: absolute;
-  inset: -7px;
+  top: -7px;
+  left: -7px;
   width: calc(100% + 14px);
   height: calc(100% + 14px);
+  max-width: none;
+  max-height: none;
   transform: rotate(-90deg);
+  transform-origin: 50% 50%;
   pointer-events: none;
 }
 .hv-flowx__timer circle {
