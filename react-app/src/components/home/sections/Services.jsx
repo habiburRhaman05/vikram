@@ -1,7 +1,8 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Icon from "@/components/common/Icon.jsx";
 import HaloButton from "../HaloButton.jsx";
 import ProductTile from "../ProductTile.jsx";
+import ServiceMockup from "../ServiceMockups.jsx";
 import { HvSection, Reveal } from "../primitives.jsx";
 import { SERVICES, SERVICE_LINEUP } from "@/data/homeV2";
 
@@ -24,6 +25,7 @@ import { SERVICES, SERVICE_LINEUP } from "@/data/homeV2";
 export default function Services() {
   const [active, setActive] = useState(0);
   const tabRefs = useRef([]);
+  const tabsScrollRef = useRef(null);
   const service = SERVICE_LINEUP[active];
   const panel = SERVICES.panels[service.id];
 
@@ -41,6 +43,20 @@ export default function Services() {
     select(map[e.key]);
   };
 
+  /* The tab row scrolls sideways on phones, so the active tab can end up
+     outside the visible strip (especially after arrow-key or wrap-around
+     selection). Centre it whenever the selection changes; on desktop all
+     five tabs fit, so the scroll position is 0 and this is a no-op. */
+  useEffect(() => {
+    const scroller = tabsScrollRef.current;
+    const tab = tabRefs.current[active];
+    if (!scroller || !tab) return;
+    scroller.scrollTo({
+      left: tab.offsetLeft - (scroller.clientWidth - tab.clientWidth) / 2,
+      behavior: "smooth",
+    });
+  }, [active]);
+
   return (
     <HvSection id="services" className="hv-svc">
       <Reveal className="hv-svc__head">
@@ -53,7 +69,7 @@ export default function Services() {
       </Reveal>
 
       <Reveal className="hv-svc__box">
-        <div className="hv-svc__tabs-scroll">
+        <div className="hv-svc__tabs-scroll" ref={tabsScrollRef}>
           <div
             className="hv-svc__tabs"
             role="tablist"
@@ -74,7 +90,7 @@ export default function Services() {
                 onClick={() => setActive(i)}
                 onKeyDown={onKeyDown}
               >
-                <ProductTile icon={s.icon} tone={s.tone} size="sm" />
+                <ProductTile icon={s.icon} img={s.img} tone={s.tone} size="sm" />
                 <span className="hv-svc__tab-name">{s.label}</span>
                 <span className="hv-svc__tab-from">{SERVICES.panels[s.id].from}</span>
               </button>
@@ -115,33 +131,27 @@ export default function Services() {
             <HaloButton to={SERVICES.cta.to}>{SERVICES.cta.label}</HaloButton>
           </div>
 
-          {/* Decorative: a photo framed as an app window on a gridded
-              gradient card, with the service's tiles stacked on the
-              corner. The copy beside it carries all the meaning. */}
-          <div className="hv-svc__visual" aria-hidden="true">
-            <div className="hv-svc__window">
-              <div className="hv-svc__chrome">
-                <i />
-                <i />
-                <i />
-                <span className="hv-svc__chrome-bar" />
-              </div>
-              <picture className="hv-svc__shot">
-                <source type="image/webp" srcSet={`${panel.image}.webp`} />
-                <img src={`${panel.image}.jpg`} alt="" width="960" height="600" decoding="async" />
-              </picture>
-            </div>
-            <span className="hv-svc__sheet" />
+          {/* Decorative, and deliberately specific: each service gets the
+              interface it actually delivers, drawn in markup - the GHL
+              pipeline board for CRM, the automation canvas for AI, the
+              reporting dashboard for marketing, the page builder for
+              funnels (the same ServiceMockup set the What We Do cards
+              use). It replaces a stock photo in a fake browser window
+              plus two copies of the service's own icon floating on the
+              corner: decoration that was identical for all four services
+              and said nothing about any of them.
 
-            <div className="hv-svc__stack">
-              <ProductTile icon={service.icon} tone={service.tone} size="lg" className="hv-svc__stack-back" />
-              <ProductTile icon={service.icon} tone={service.tone} size="lg" className="hv-svc__stack-front" />
+              The dark stage is what makes it work - these mockups are
+              light-screened devices, so they read as lit objects against
+              it rather than as more pale boxes on a pale panel. The copy
+              beside it still carries all the meaning. */}
+          <div className="hv-svc__visual" aria-hidden="true">
+            <div className="hv-svc__stage">
+              <ServiceMockup kind={panel.mock} />
             </div>
 
             <div className="hv-svc__chip">
-              <span className="hv-svc__chip-icon">
-                <Icon name={panel.chip.icon} />
-              </span>
+              <span className="hv-svc__chip-dot" />
               <span className="hv-svc__chip-text">
                 <strong>{panel.chip.value}</strong>
                 <span>{panel.chip.label}</span>

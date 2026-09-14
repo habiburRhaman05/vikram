@@ -11,12 +11,17 @@ import CtaBand from "@/components/common/CtaBand.jsx";
 import Reveal from "@/components/common/Reveal.jsx";
 import { SITE } from "@/data/site";
 
+/* Same two stylesheets Home loads for the v2 header and footer. See
+   ServiceComingSoon.jsx for the full note on why both are needed. */
+import "@/styles/home-redesign.css";
+import "@/styles/home-chrome.css";
+
 const INFO_ITEMS = [
   {
     icon: "phone",
     label: "Call or text",
     value: <a href={SITE.phoneHref}>{SITE.phone}</a>,
-    note: "Text is often fastest during filing season",
+    note: "Text is usually the fastest way to reach us",
   },
   {
     icon: "mail",
@@ -47,6 +52,7 @@ const INFO_ITEMS = [
 export default function Contact() {
   return (
     <Layout
+      variant="v2"
       topbar={
         <>
           Office hours <strong>{SITE.hours}</strong> - the AI receptionist covers everything outside them
@@ -55,19 +61,19 @@ export default function Contact() {
     >
       <PageMeta
         title="Contact - GHLevelUp"
-        description="Talk to the team about running your tax practice on one system. Call, text, email, or send a message and we'll come back the same business day."
+        description="Talk to the team about running your CRM, automation and marketing on one system. Call, text, email, or send a message and we'll come back the same business day."
       />
 
       <PageHero
         crumb="Contact"
-        title="Let's talk about your practice"
+        title="Let's talk about your business"
         center
         lede="Whether you want a full walkthrough or just have one question about how something works, send it over. A person reads every message, and we come back the same business day."
       />
 
       <Section>
         <SectionHead eyebrow="Get in touch" title="Send us a message">
-          Tell us roughly how many returns you file a season and what's slowing you down - it makes the first
+          Tell us roughly where your leads come from today and what's slowing you down - it makes the first
           reply far more useful.
         </SectionHead>
 
@@ -98,7 +104,7 @@ export default function Contact() {
                 Skip the back-and-forth and take a live twenty-minute walkthrough.
               </p>
               <Button to="/book" variant="accent" size="sm" icon="calendar" block>
-                Book a demo
+                Get a free consultation
               </Button>
             </InfoCard>
           </Reveal>
@@ -146,7 +152,7 @@ export default function Contact() {
                 Call {SITE.phone}
               </Button>
               <Button to="/book" variant="ghost-light" size="lg" icon="calendar">
-                Book a demo instead
+                Book a call instead
               </Button>
             </>
           }

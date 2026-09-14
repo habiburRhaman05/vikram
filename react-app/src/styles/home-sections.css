@@ -9,7 +9,7 @@
      10. Hero + trust bar
      (12. Growth stack - removed, replaced by home-services.css)
      13. Journey flow
-     14. Solutions grid
+     (14. Solutions grid - removed, section dropped from the page)
      15. Selected work
      16. Impact
      17. Testimonials
@@ -57,13 +57,14 @@
 
 /* -- Main ------------------------------------------------------------------ */
 
-/* 80vh from the top of the content to the seam line: this block plus the
-   upper half of the tile row below it. min-height, so long copy on a
-   narrow phone is never clipped. */
+/* 74vh from the top of the content to the seam line: this block plus the
+   upper half of the tile row below it. Trimmed from 80vh per design
+   feedback so the hero is a little tighter. min-height, so long copy on
+   a narrow phone is never clipped. */
 .hv-hero__main {
   display: flex;
   align-items: center;
-  min-height: calc(80vh - var(--hv-tile) / 2);
+  min-height: calc(74vh - var(--hv-tile) / 2);
   padding-block: clamp(20px, 3vh, 40px) clamp(40px, 6vh, 72px);
 }
 .hv-hero__inner {
@@ -136,18 +137,59 @@
 }
 .hv-hero__stats svg { width: 19px; height: 18px; flex-shrink: 0; color: var(--hv-accent-bright); }
 
+/* -- CTA row -----------------------------------------------------------------
+   Primary (Become a Client) is the standard HaloButton treatment; the
+   secondary (Get a Free Consultation) is the quiet outline pill so the
+   pair reads as one row with a clear hierarchy. */
+.hv-hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+/* The hero's second CTA, always used as `.hv-btn .hv-hero__cta-ghost`.
+   Every dimension - 44px min-height, 13px/22px padding, 1.5px border,
+   pill radius, 16px icon, font and gap - comes from .hv-btn, the same
+   base the solid pill beside it uses, so the two are identical boxes.
+   This rule only changes colour.
+
+   It used to declare its own padding (26px vs the solid button's 22px),
+   its own 15px icon size, and an inset box-shadow ring in place of a
+   border - three separate reasons for the two pills to come out
+   different sizes next to each other. Hence: colour only, below.
+
+   Loaded after home-redesign.css, so these single-class declarations
+   win over .hv-btn's on the properties they name and inherit the rest. */
+.hv-hero__cta-ghost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, .38);
+  color: #fff;
+}
+.hv-hero__cta-ghost:hover {
+  background: rgba(255, 255, 255, .1);
+  border-color: rgba(255, 255, 255, .7);
+}
+.hv-hero__cta-ghost:focus-visible {
+  outline: 3px solid var(--hv-accent-bright);
+  outline-offset: 3px;
+}
+
 /* -- Tile row (the seam) ----------------------------------------------------
    Half a tile of negative bottom margin: the trust strip therefore starts
    at the row's vertical centre, so its top border lands exactly on the two
    lines and the tiles straddle the join. z-index keeps the tiles above
-   the trust strip's background. */
-.hv-hero__rail {
+   the trust strip's background. */ .hv-hero__rail {
   position: relative;
   z-index: 3;
   display: flex;
   align-items: center;
   gap: 20px;
   height: var(--hv-tile);
+  /* Exactly half a tile: the trust strip's top border then lands at the
+     rail's vertical centre - the same height as the two accent lines - so
+     all three coincide and the tiles sit dead-centre on the seam. Any
+     offset here shows as the lines and the border not matching. */
   margin-bottom: calc(var(--hv-tile) / -2);
 }
 .hv-hero__rail-line { position: relative; flex: 1; height: 1px; }
@@ -226,7 +268,9 @@
 
 .hv-hero__trust {
   position: relative;
-  padding-block: calc(var(--hv-tile) / 2 + clamp(56px, 7vw, 96px)) clamp(44px, 5vw, 64px);
+  /* Tightened: the below-tiles gap was 56-96px, which read as a large
+     empty band between the tile row and the trust label. */
+  padding-block: calc(var(--hv-tile) / 2 + clamp(30px, 4vw, 52px)) clamp(36px, 4.5vw, 56px);
   border-top: 1px solid rgba(255, 255, 255, .1);
   background: linear-gradient(180deg, rgba(255, 255, 255, .035) 0%, transparent 72%);
 }
@@ -289,6 +333,9 @@
   .hv-hero__rail { gap: 10px; }
   .hv-hero__stats { gap: 12px 22px; }
   .hv-hero__learn { font-size: .75rem; }
+  /* Stack the two CTAs full-width on a phone; same 44px target. */
+  .hv-hero__ctas { flex-direction: column; gap: 10px; }
+  .hv-hero__ctas .hv-btn { width: min(100%, 340px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -308,6 +355,11 @@
   overflow: hidden;
   background: linear-gradient(180deg, #021A1B 0%, #04302C 100%);
   color: var(--hv-on-dark);
+  /* This section is self-contained on a dark ground, so the font system is
+     pinned here rather than inherited: DM Sans for everything UI (titles,
+     labels, stage names), Roboto for reading copy (lede, panel body,
+     detail bullets). */
+  font-family: var(--hv-font);
 }
 /* A faint grid with a soft bloom behind the track - depth without noise. */
 .hv-flowx__bg {
@@ -333,7 +385,7 @@
   color: #fff;
   text-wrap: balance;
 }
-.hv-flowx__lede { margin: 16px auto 0; max-width: 60ch; font-size: var(--hv-fs-lede); line-height: 1.6; color: var(--hv-on-dark-muted); }
+.hv-flowx__lede { margin: 16px auto 0; max-width: 60ch; font-family: var(--hv-font-body); font-size: var(--hv-fs-lede); line-height: 1.6; color: var(--hv-on-dark-muted); }
 
 /* -- Stage: track + nodes --------------------------------------------------- */
 
@@ -471,7 +523,7 @@
   color: var(--hv-on-dark-muted);
   transition: color 320ms var(--hv-ease);
 }
-.hv-flowx__sub { font-size: .8rem; line-height: 1.35; color: rgba(146, 179, 170, .8); }
+.hv-flowx__sub { font-family: var(--hv-font-body); font-size: .8rem; line-height: 1.35; color: rgba(146, 179, 170, .8); }
 .hv-flowx__step.is-active .hv-flowx__name,
 .hv-flowx__step.is-done .hv-flowx__name,
 .hv-flowx__btn:hover .hv-flowx__name { color: #fff; }
@@ -489,7 +541,10 @@
   align-items: center;
   gap: 32px;
   margin-top: clamp(40px, 5vw, 60px);
-  padding: clamp(26px, 3vw, 38px) clamp(26px, 3.4vw, 44px);
+  /* Generous vertical padding: the panel carries the stage's full story
+     (body + detail bullets), so it needs height to breathe, not a tight
+     banner. */
+  padding: clamp(34px, 4vw, 52px) clamp(26px, 3.4vw, 44px);
   border-radius: 22px;
   background: linear-gradient(135deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .02));
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1), 0 30px 60px -30px rgba(0, 0, 0, .6);
@@ -500,19 +555,6 @@
 @keyframes hv-flowx-in {
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: none; }
-}
-/* Oversized stage number bleeding off the panel's right edge. */
-.hv-flowx__ghost {
-  position: absolute;
-  right: 26%;
-  bottom: -.28em;
-  font-size: clamp(6rem, 11vw, 10rem);
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -.05em;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(53, 217, 160, .16);
-  pointer-events: none;
 }
 .hv-flowx__panel-copy { position: relative; }
 .hv-flowx__count {
@@ -536,7 +578,39 @@
   letter-spacing: -.02em;
   color: #fff;
 }
-.hv-flowx__panel-body { margin: 10px 0 0; max-width: 62ch; font-size: 1.02rem; line-height: 1.6; color: var(--hv-on-dark-muted); }
+.hv-flowx__panel-body { margin: 10px 0 0; max-width: 62ch; font-family: var(--hv-font-body); font-size: 1.02rem; line-height: 1.6; color: var(--hv-on-dark-muted); }
+
+/* What the stage actually includes - the concrete deliverables. Two
+   columns so the taller panel reads as substance rather than one stretched
+   sentence; collapses to one under 1100px and inside the phone layout. */
+.hv-flowx__panel-details {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 20px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 32px;
+}
+.hv-flowx__panel-details li {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 10px;
+  align-items: start;
+  font-family: var(--hv-font-body);
+  font-size: .92rem;
+  line-height: 1.5;
+  color: var(--hv-on-dark);
+}
+.hv-flowx__panel-details svg {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  color: var(--hv-accent-bright);
+}
+@media (max-width: 1100px) {
+  .hv-flowx__panel-details { grid-template-columns: 1fr; }
+}
 
 .hv-flowx__controls { position: relative; display: flex; align-items: center; gap: 18px; }
 .hv-flowx__arrows { display: flex; gap: 8px; }
@@ -596,9 +670,16 @@
     padding-left: calc(var(--node) + 16px);
     transition: grid-template-rows 480ms var(--hv-ease);
   }
-  .hv-flowx__inline p {
+  /* The single collapsing child: everything the stage reveals lives here,
+     so body + details expand and collapse as one block. min-height:0 is
+     what allows the row to actually reach 0 when closed. */
+  .hv-flowx__inline-inner {
+    min-height: 0;
     overflow: hidden;
+  }
+  .hv-flowx__inline p {
     margin: 0;
+    font-family: var(--hv-font-body);
     font-size: .92rem;
     line-height: 1.55;
     color: var(--hv-on-dark-muted);
@@ -606,10 +687,47 @@
   .hv-flowx__step.is-active .hv-flowx__inline { grid-template-rows: 1fr; }
   .hv-flowx__step.is-active .hv-flowx__inline p { padding-top: 8px; }
 
+  /* Phone twin of the desktop panel's details grid - same bullets, one
+     column, under the stage body. */
+  .hv-flowx__inline-details {
+    list-style: none;
+    margin: 10px 0 12px;
+    padding: 12px 0 0;
+    border-top: 1px solid rgba(255, 255, 255, .1);
+    display: grid;
+    gap: 8px;
+  }
+  .hv-flowx__inline-details li {
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr);
+    gap: 8px;
+    align-items: start;
+    font-family: var(--hv-font-body);
+    font-size: .85rem;
+    line-height: 1.45;
+    color: var(--hv-on-dark);
+  }
+  .hv-flowx__inline-details svg {
+    width: 16px;
+    height: 16px;
+    margin-top: 1px;
+    color: var(--hv-accent-bright);
+  }
+
   .hv-flowx__panel { grid-template-columns: 1fr; margin-top: 28px; }
   .hv-flowx__panel-copy { display: none; }
-  .hv-flowx__ghost { display: none; }
-  .hv-flowx__controls { justify-content: space-between; }
+  /* On the phone the panel is a controls bar (copy shows inline under the
+     stages instead), so the desktop padding made it a tall empty box. */
+  .hv-flowx__panel { padding: 14px 14px; border-radius: 16px; }
+  .hv-flowx__controls { justify-content: space-between; gap: 10px; }
+  .hv-flowx__arrows { gap: 6px; flex-shrink: 0; }
+  /* The CTA label is long ("Map out my system"); at full size it and the
+     two arrows overflowed a 360px row and the panel's overflow:hidden cut
+     it off. Min-width 0 lets the label shrink within the row instead. */
+  .hv-flowx__controls .hv-halo { min-width: 0; flex: 1 1 auto; }
+  .hv-flowx__controls .hv-halo__btn { padding: 11px 14px; min-height: 44px; }
+  .hv-flowx__controls .hv-halo__label { gap: 8px; font-size: .85rem; }
+  .hv-flowx__controls .hv-halo__label svg { flex-shrink: 0; }
 }
 
 /* The pipeline is this section's whole point, and the countdown ring and
@@ -627,10 +745,9 @@
 
 
 /* 14. Solutions grid ====================================================== */
-
-.hv-solutions { list-style: none; margin: 0; padding: 0; }
-.hv-solution { display: flex; align-items: flex-start; gap: var(--hv-s4); }
-.hv-solution .hv-h3 { margin-bottom: var(--hv-s1); }
+/* Removed - the "Complete Digital Solutions" section was dropped from the
+   Home page; the number is kept so the remaining section comments stay
+   stable (same convention as 12 above). */
 
 
 /* 15. Our work (bento) ==================================================== */
@@ -869,19 +986,13 @@
 
 /* -- Foot ------------------------------------------------------------------ */
 
+/* The foot is now just the CTA (the "Have a project in mind?" line was
+   removed) - no more pill bar, just the button centred under the grid. */
 .hv-works__foot {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--hv-s5);
+  justify-content: center;
   margin-top: clamp(28px, 3.4vw, 44px);
-  padding: 18px 18px 18px clamp(20px, 2.4vw, 32px);
-  border-radius: var(--hv-r-pill);
-  background: var(--hv-bg-mint);
-  box-shadow: inset 0 0 0 1px var(--hv-border);
 }
-.hv-works__foot p { margin: 0; font-size: 1.05rem; font-weight: 600; color: var(--hv-text); }
 
 @media (max-width: 1080px) {
   .hv-works__grid.is-bento { grid-auto-rows: 250px; }
@@ -896,7 +1007,6 @@
   .hv-works__grid.is-bento { grid-template-columns: 1fr; grid-auto-rows: auto; gap: 16px; }
   .hv-works__grid.is-bento .hv-works__cell:nth-child(n) { grid-column: auto; grid-row: auto; }
   .hv-works__card { min-height: 360px; }
-  .hv-works__foot { border-radius: var(--hv-r-lg); justify-content: center; text-align: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1318,11 +1428,10 @@
 
 /* 21. Latest insights ===================================================== */
 
-/* A warm wash rather than white: on white it read as a continuation of the
-   FAQ instead of a section of its own. The gradient runs FROM the mint of
-   the testimonials band above it TO near-white, which is the FAQ below it
-   - the section was moved above the FAQ (see Home.jsx), so the wash has to
-   hand off in the other direction than it used to. */
+/* A warm wash rather than white, so it reads as a section of its own
+   against whatever sits above it. The gradient runs FROM the mint of the
+   dark Closing CTA above it TO near-white, which the FAQ below continues
+   (see Home.jsx for the current section order). */
 .home-v2 .hv-insights {
   background: linear-gradient(180deg, var(--hv-bg-mint) 0%, #FAFCFB 100%);
 }
@@ -1348,10 +1457,10 @@
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: -.015em;
-  text-transform: uppercase;
+  /* text-transform: capitalize; */
   color: var(--hv-text);
 }
-.hv-insights__title span { color: var(--hv-accent-strong); }
+/* .hv-insights__title span { color: var(--hv-accent-strong); } */
 
 .hv-insights__cta { flex-shrink: 0; padding-bottom: 4px; }
 
@@ -1496,6 +1605,12 @@
 
 /* 22. Pricing ============================================================== */
 
+/* Light section - the reference design's clean white pricing board. The
+   cards carry the surface; the section itself stays quiet so the teal
+   featured tier is the only loud thing on it. */
+.home-v2 .hv-pricing { background: var(--hv-bg); color: var(--hv-text); }
+.home-v2 .hv-pricing .hv-lede { color: var(--hv-text-muted); }
+
 .hv-pricing__grid {
   list-style: none;
   margin: 0;
@@ -1512,39 +1627,45 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: var(--hv-s6);
+  padding: var(--hv-s7) var(--hv-s6);
   border-radius: var(--hv-r-lg);
-  background: rgba(255, 255, 255, .03);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .09);
-  transition: transform 380ms var(--hv-ease), box-shadow 380ms var(--hv-ease), background 380ms var(--hv-ease);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--hv-border), var(--hv-sh-sm);
+  transition: transform 380ms var(--hv-ease), box-shadow 380ms var(--hv-ease);
 }
 .hv-pricing__card:hover {
   transform: translateY(-6px);
-  background: rgba(255, 255, 255, .05);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16), 0 24px 48px -20px rgba(0, 0, 0, .5);
+  box-shadow: inset 0 0 0 1px var(--hv-border-strong), var(--hv-sh-accent);
 }
 /* The featured tier is lifted and outlined in the accent from the start,
-   so it reads as "recommended" even before anyone hovers anything. */
-.hv-pricing__cell.is-featured { transform: translateY(-10px); }
+   so it reads as "recommended" even before anyone hovers anything. The
+   lift lives on the card (not the Reveal cell) - .hv-reveal.is-in sets
+   transform: none at a higher specificity, which used to cancel the lift
+   once the reveal finished. */
 .hv-pricing__cell.is-featured .hv-pricing__card {
-  background: linear-gradient(180deg, rgba(53, 217, 160, .10) 0%, rgba(255, 255, 255, .03) 100%);
-  box-shadow: inset 0 0 0 1.5px var(--hv-accent-bright), 0 30px 60px -24px rgba(10, 127, 82, .35);
+  transform: translateY(-10px);
+  background: #fff;
+  box-shadow: inset 0 0 0 2px var(--hv-accent-strong), var(--hv-sh-accent);
 }
-.hv-pricing__cell.is-featured .hv-pricing__card:hover { transform: translateY(-6px); }
+.hv-pricing__cell.is-featured .hv-pricing__card:hover {
+  transform: translateY(-6px);
+  box-shadow: inset 0 0 0 2px var(--hv-accent-strong), var(--hv-sh-accent);
+}
 
 .hv-pricing__ribbon {
   position: absolute;
   top: 0;
-  left: var(--hv-s6);
-  transform: translateY(-50%);
-  padding: 5px 14px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 6px 16px;
   border-radius: var(--hv-r-pill);
   background: var(--hv-grad-accent);
   font-size: .72rem;
   font-weight: 800;
-  letter-spacing: .06em;
+  letter-spacing: .07em;
   text-transform: uppercase;
   color: #fff;
+  white-space: nowrap;
   box-shadow: 0 8px 18px -6px rgba(10, 127, 82, .6);
 }
 
@@ -1555,13 +1676,13 @@
   font-size: 1.3rem;
   font-weight: 800;
   letter-spacing: -.01em;
-  color: #fff;
+  color: var(--hv-text);
 }
 .hv-pricing__for {
   margin: var(--hv-s2) 0 0;
   font-size: .85rem;
   line-height: 1.5;
-  color: var(--hv-on-dark-muted);
+  color: var(--hv-text-muted);
 }
 .hv-pricing__for span {
   display: block;
@@ -1570,14 +1691,14 @@
   font-weight: 800;
   letter-spacing: .08em;
   text-transform: uppercase;
-  color: var(--hv-accent-bright);
+  color: var(--hv-accent-strong);
 }
 
 .hv-pricing__price { display: flex; align-items: baseline; gap: 4px; margin-top: var(--hv-s6); }
-.hv-pricing__amount { font-size: 2.4rem; font-weight: 800; letter-spacing: -.02em; color: #fff; }
-.hv-pricing__period { font-size: .95rem; color: var(--hv-on-dark-muted); }
-.hv-pricing__custom { font-size: 2.1rem; font-weight: 800; color: #fff; }
-.hv-pricing__setup { margin: 4px 0 0; font-size: .8rem; color: var(--hv-on-dark-muted); }
+.hv-pricing__amount { font-size: 2.4rem; font-weight: 800; letter-spacing: -.02em; color: var(--hv-text); }
+.hv-pricing__period { font-size: .95rem; color: var(--hv-text-muted); }
+.hv-pricing__custom { font-size: 2.1rem; font-weight: 800; color: var(--hv-text); }
+.hv-pricing__setup { margin: 4px 0 0; font-size: .8rem; color: var(--hv-text-muted); }
 
 .hv-pricing__cta { width: 100%; justify-content: center; margin-top: var(--hv-s6); }
 
@@ -1585,7 +1706,7 @@
   list-style: none;
   margin: var(--hv-s6) 0 0;
   padding-top: var(--hv-s6);
-  border-top: 1px solid rgba(255, 255, 255, .1);
+  border-top: 1px solid var(--hv-border);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -1596,35 +1717,77 @@
   gap: 10px;
   font-size: .875rem;
   line-height: 1.45;
-  color: var(--hv-on-dark);
+  color: var(--hv-text);
 }
 .hv-pricing__features svg {
   width: 16px;
   height: 16px;
   flex-shrink: 0;
   margin-top: 2px;
-  color: var(--hv-accent-bright);
+  color: var(--hv-accent-strong);
 }
 
-.hv-pricing__reassurance {
+/* -- Trusted-by strip ----------------------------------------------------- */
+/* Closes the offer inside the pricing section: same white ground, one
+   quiet block under the tier grid rather than a section of its own. */
+.hv-pricing__trusted {
+  margin: var(--hv-s11) 0 0;
+  padding-top: var(--hv-s8);
+  border-top: 1px solid var(--hv-border);
+  text-align: center;
+}
+.home-v2 .hv-pricing__trusted-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+}
+.hv-pricing__trusted-lede {
+  margin: 8px auto 0;
+  max-width: 58ch;
+  font-family: var(--hv-font-body);
+  font-size: .9rem;
+  line-height: 1.6;
+  color: var(--hv-text-muted);
+}
+.hv-pricing__logos {
   list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px clamp(20px, 3vw, 40px);
-  margin: var(--hv-s10) 0 0;
-  padding-top: var(--hv-s7);
-  border-top: 1px solid rgba(255, 255, 255, .08);
-}
-.hv-pricing__reassurance span {
-  display: inline-flex;
+  margin: clamp(28px, 4vw, 40px) 0 0;
+  padding: clamp(24px, 3vw, 36px) clamp(20px, 3vw, 44px);
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: center;
-  gap: 8px;
-  font-size: .85rem;
-  font-weight: 600;
-  color: var(--hv-on-dark-muted);
+  gap: 24px 40px;
+  border-radius: var(--hv-r-xl);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--hv-border), var(--hv-sh-sm);
 }
-.hv-pricing__reassurance svg { width: 16px; height: 16px; color: var(--hv-accent-bright); }
+.hv-pricing__logo {
+  display: grid;
+  place-items: center;
+  color: #7d938c;               /* muted ink - logos whisper until hovered */
+  transition: color 260ms var(--hv-ease), transform 260ms var(--hv-ease);
+}
+.hv-pricing__logo:hover {
+  color: var(--hv-accent-strong);
+  transform: translateY(-2px);
+}
+.hv-pricing__logo svg {
+  height: clamp(24px, 3vw, 32px);
+  width: auto;
+  max-width: 100%;
+}
+@media (max-width: 900px) {
+  .hv-pricing__logos { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .hv-pricing__logos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hv-pricing__logo { transition-duration: 1ms; }
+  .hv-pricing__logo:hover { transform: none; }
+}
 
 @media (max-width: 1080px) {
   .hv-pricing__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1638,4 +1801,129 @@
   .hv-pricing__card { transition-duration: 1ms; }
   .hv-pricing__card:hover,
   .hv-pricing__cell.is-featured .hv-pricing__card:hover { transform: none; }
+}
+
+
+/* Founder's note ==========================================================
+   Portrait left, signed message right. The portrait column is fixed and
+   the copy takes the rest, so the photograph keeps one size regardless of
+   how long the note runs - a note two sentences longer should not shrink
+   the face. */
+
+.hv-founder__grid {
+  display: grid;
+  grid-template-columns: clamp(240px, 26vw, 340px) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 72px);
+  align-items: center;
+}
+
+.hv-founder__portrait {
+  position: relative;
+  aspect-ratio: 7 / 8;
+  border-radius: 22px;
+  overflow: visible;
+  background: var(--hv-grad-accent);
+  box-shadow: 0 30px 60px -28px rgba(4, 46, 41, .45);
+}
+.hv-founder__photo,
+.hv-founder__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 22px;
+  object-fit: cover;
+}
+
+/* Stand-in until a photograph exists. Sized in cqw-free terms because the
+   frame is already ratio-locked, so a percentage of font-size is enough. */
+.hv-founder__monogram {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 22px;
+  font-family: var(--hv-font);
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 800;
+  letter-spacing: .02em;
+  color: rgba(255, 255, 255, .9);
+  /* A faint grid over the gradient, so an empty slot still has texture
+     rather than reading as a flat unstyled block. */
+  background:
+    linear-gradient(rgba(255, 255, 255, .08) 1px, transparent 1px) 0 0 / 100% 14.28%,
+    linear-gradient(90deg, rgba(255, 255, 255, .08) 1px, transparent 1px) 0 0 / 14.28% 100%;
+}
+
+.hv-founder__quote {
+  position: absolute;
+  right: -18px;
+  bottom: 28px;
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--hv-accent-strong);
+  box-shadow: 0 16px 32px -14px rgba(6, 40, 34, .4);
+}
+.hv-founder__quote svg { width: 26px; height: 26px; }
+
+.hv-founder__body { min-width: 0; }
+
+/* .home-v2-scoped: the browser's own blockquote margin is wider than the
+   grid gap and would pull the copy out of line with the portrait. */
+.home-v2 .hv-founder__message { margin: 14px 0 0; }
+.hv-founder__message p {
+  margin: 0;
+  font-size: clamp(1.05rem, .95rem + .55vw, 1.35rem);
+  line-height: 1.62;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+  text-wrap: pretty;
+}
+
+.hv-founder__attrib {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: clamp(20px, 2.5vw, 30px);
+  padding-top: clamp(18px, 2.2vw, 26px);
+  border-top: 1px solid var(--hv-border-strong);
+}
+/* The signature is decoration, not a second reading of the name - it is
+   aria-hidden in the markup, and the <cite> below carries the real
+   attribution. */
+.hv-founder__sign {
+  font-family: var(--hv-font-script);
+  font-size: clamp(1.9rem, 1.4rem + 1.6vw, 2.6rem);
+  line-height: 1;
+  color: var(--hv-accent-strong);
+}
+.hv-founder__attrib cite {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-style: normal;
+}
+.hv-founder__attrib strong {
+  font-family: var(--hv-font);
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+}
+.hv-founder__attrib cite span { font-size: .9rem; color: var(--hv-text-muted); }
+
+.hv-founder__cta { margin-top: clamp(14px, 1.8vw, 22px); }
+
+@media (max-width: 860px) {
+  .hv-founder__grid { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  /* Capped rather than full-width: a portrait stretched across a phone
+     reads as a banner, not as a person. */
+  .hv-founder__portrait { width: min(100%, 280px); }
+  .hv-founder__quote { right: -10px; width: 52px; height: 52px; }
+  .hv-founder__quote svg { width: 22px; height: 22px; }
+  .hv-founder__attrib { align-items: center; }
+  .hv-founder__attrib cite { align-items: center; }
 }

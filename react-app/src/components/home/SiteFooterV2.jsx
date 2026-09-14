@@ -37,7 +37,7 @@ export default function SiteFooterV2() {
             </Link>
 
             <p className="hv-footer__pitch">
-              CRM, AI automation, web development and creative, built and supported by one team so
+              CRM, AI automation, marketing and funnel, website and GHL builds, all supported by one team so
               your systems actually talk to each other.
             </p>
 

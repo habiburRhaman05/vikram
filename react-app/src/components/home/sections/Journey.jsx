@@ -130,8 +130,24 @@ export default function Journey() {
                     <span className="hv-flowx__name">{s.title}</span>
                     <span className="hv-flowx__sub">{s.sub}</span>
                   </button>
+                  {/* Phone-only collapsible. ONE inner child carries all
+                      the content (body + detail bullets) so the 0fr->1fr
+                      grid collapse works as a unit - a second direct child
+                      would land in an implicit row the collapse can't
+                      reach. The detail bullets live in the desktop panel
+                      too; on the phone this is the only place they show. */}
                   <div className="hv-flowx__inline">
-                    <p>{s.body}</p>
+                    <div className="hv-flowx__inline-inner">
+                      <p>{s.body}</p>
+                      <ul className="hv-flowx__inline-details">
+                        {s.details.map((d) => (
+                          <li key={d}>
+                            <Icon name="check" aria-hidden="true" />
+                            <span>{d}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </li>
               );
@@ -145,15 +161,20 @@ export default function Journey() {
             aria-labelledby={`flowx-tab-${active}`}
             className="hv-flowx__panel"
           >
-            <span className="hv-flowx__ghost" aria-hidden="true">
-              {pad(active + 1)}
-            </span>
             <div className="hv-flowx__panel-copy">
               <span className="hv-flowx__count">
                 Stage {pad(active + 1)} <i>/ {pad(N)}</i>
               </span>
               <h3 className="hv-flowx__panel-title">{step.title}</h3>
               <p className="hv-flowx__panel-body">{step.body}</p>
+              <ul className="hv-flowx__panel-details">
+                {step.details.map((d) => (
+                  <li key={d}>
+                    <Icon name="check" aria-hidden="true" />
+                    <span>{d}</span> 
+                  </li>
+                ))}
+              </ul>
             </div>
             <div className="hv-flowx__controls">
               <div className="hv-flowx__arrows">

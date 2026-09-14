@@ -13,20 +13,21 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- display=optional rather than swap: with swap the fallback font
-         paints first and then the real face swaps in at a different
-         width, which measured as a CLS of 0.16 (a Core Web Vitals
-         failure). `optional` gives the font a short window to arrive and
-         otherwise keeps the fallback for that page view - so the text
-         never re-flows. Fonts are cached from the first visit onward. -->
-    <!-- DM Sans for headings and UI, Space Mono for body copy, Caveat for
-         the hand-drawn accent word in the h1. DM Sans ships as a variable
-         font, so the 400-1000 range covers every weight the stylesheets
-         ask for (400-800) in one file. Space Mono is static and has only
-         400/700 - the 500/600 weights some rules request resolve to the
-         nearest of those. -->
+    <!-- display=swap: the fallback font paints first and the real face
+         swaps in when ready. This previously ran with display=optional,
+         which SKIPS the webfont entirely whenever it does not arrive
+         within ~100ms (first visit, cold cache, dev) - the page then
+         rendered in Segoe UI for that whole session, which read as a
+         font mismatch. Re-layout on swap is the right trade here: brand
+         typography must always win. -->
+    <!-- DM Sans for headings and UI, Space Mono for body copy (Roboto as
+         the fallback), Caveat for the hand-drawn accent word in the h1.
+         DM Sans ships as a variable font, so the 400-1000 range covers
+         every weight the stylesheets ask for (400-800) in one file.
+         Space Mono is static and has only 400/700 - the 500/600 weights
+         some rules request resolve to the nearest of those. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..1000&family=Space+Mono:wght@400;700&family=Caveat:wght@600;700&display=optional"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..1000&family=Space+Mono:wght@400;700&family=Roboto:wght@400;500;700&family=Caveat:wght@600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />

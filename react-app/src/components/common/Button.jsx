@@ -11,7 +11,10 @@ import Icon from "./Icon.jsx";
  *
  * Internal routes use `to` (renders a router <Link>); external/tel/mailto
  * links use `href` (renders a plain <a>) - matching how the original
- * mixed internal .html links with tel:/mailto: anchors.
+ * mixed internal .html links with tel:/mailto: anchors. Passing NEITHER
+ * (only `onClick`) renders a real <button type="button"> instead - for a
+ * CTA that triggers something on the current page (opening the lead
+ * popup) rather than going anywhere.
  */
 export default function Button({
   to,
@@ -49,9 +52,17 @@ export default function Button({
     );
   }
 
+  if (href) {
+    return (
+      <a href={href} className={classes} {...rest}>
+        {content}
+      </a>
+    );
+  }
+
   return (
-    <a href={href} className={classes} {...rest}>
+    <button type="button" className={classes} {...rest}>
       {content}
-    </a>
+    </button>
   );
 }

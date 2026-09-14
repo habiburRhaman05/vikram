@@ -1,8 +1,8 @@
 /* ==========================================================================
    Nav dropdowns
    --------------------------------------------------------------------------
-   Four single-category dropdowns in the primary nav (AI Automation,
-   Creative Design, Marketing, Development), each its own trigger with its
+   Three single-category dropdowns in the primary nav (AI Automation,
+   Marketing, Funnels Websites & GHL), each its own trigger with its
    own panel - see NavDropdown.jsx. This used to be one "Platform" trigger
    holding all four behind a tab switcher; with each category now living in
    the bar on its own, a tab switcher inside a single-category panel would
@@ -37,10 +37,10 @@
 .nav__link--mega[aria-expanded="true"] .nav__caret { transform: rotate(180deg); }
 
 /* Each dropdown is positioned against its OWN trigger, not the whole bar -
-   there are four of these at four different widths ("Marketing" vs
-   "Creative Design"), so anchoring to the header the way the old single
-   "Platform" mega menu did would put a fixed-width panel at the wrong spot
-   under three of the four triggers. */
+   there are three of these at three different widths ("Marketing" vs
+   "Funnels, Websites & GHL"), so anchoring to the header the way the old
+   single "Platform" mega menu did would put a fixed-width panel at the
+   wrong spot under two of the three triggers. */
 .nav__item--drop { position: relative; }
 
 /* --- Panel shell --------------------------------------------------------- */

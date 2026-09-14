@@ -23,7 +23,7 @@
   backdrop-filter: blur(14px) saturate(160%);
   box-shadow: 0 24px 60px -18px rgba(0, 0, 0, .55), inset 0 0 0 1px rgba(255, 255, 255, .1);
   color: #DCEFE8;
-  font-family: "DM Sans", "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  font-family: "DM Sans", "Segoe UI", system-ui, sans-serif;
   transform: translate(-50%, 0);
   animation: cc-in 520ms cubic-bezier(.22, .61, .36, 1) both;
 }

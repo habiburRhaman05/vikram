@@ -4,6 +4,7 @@ import Container from "@/components/common/Container.jsx";
 import NavDropdown from "./NavDropdown.jsx";
 import useStickyHeader from "@/hooks/useStickyHeader";
 import useMobileNav from "@/hooks/useMobileNav";
+import { openLeadPopup } from "@/components/common/LeadPopup.jsx";
 import { NAV_LINKS } from "@/data/nav";
 import { NAV_MENUS } from "@/data/navMenus";
 import "@/styles/mega-menu.css";
@@ -14,15 +15,15 @@ import "@/styles/mega-menu.css";
  * office-hours note, etc.) exactly like each .html file hard-coded its own
  * <div class="topbar"> text.
  *
- * Nav order: four service dropdowns (NAV_MENUS - AI Automation, Creative
- * Design, Marketing, Development), then the plain links (NAV_LINKS, which
+ * Nav order: three service dropdowns (NAV_MENUS - AI Automation, Marketing,
+ * Funnels/Websites & GHL), then the plain links (NAV_LINKS, which
  * is now just Contact - Plans and About were taken out of the bar). Each
  * dropdown owns its own open/close state (see NavDropdown.jsx) so they
  * don't interfere with one another.
  */
 export default function Header({ topbar }) {
   const headerRef = useStickyHeader();
-  const { open, toggle } = useMobileNav();
+  const { open, toggle, close } = useMobileNav();
   const { pathname } = useLocation();
 
   const navLinkClass = ({ isActive }) => `nav__link${isActive ? " is-active" : ""}`;
@@ -76,14 +77,22 @@ export default function Header({ topbar }) {
                   {link.label}
                 </NavLink>
               ))}
-              <Button to="/book" variant="accent" icon="calendar" className="nav__cta-mobile">
-                Book a Demo
+              <Button
+                onClick={() => {
+                  close();
+                  openLeadPopup();
+                }}
+                variant="accent"
+                icon="calendar"
+                className="nav__cta-mobile"
+              >
+                Get Free Consultation
               </Button>
             </div>
 
             <div className="nav__actions">
-              <Button to="/book" variant="accent" size="sm" icon="calendar" className="nav__cta-desktop">
-                Book a Demo
+              <Button onClick={openLeadPopup} variant="accent" size="sm" icon="calendar" className="nav__cta-desktop">
+                Get Free Consultation
               </Button>
               <button
                 className="nav__toggle"

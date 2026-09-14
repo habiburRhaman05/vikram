@@ -22,12 +22,12 @@ export default function Insights() {
       <div className="hv-insights__head">
         <Reveal className="hv-insights__intro">
           {/* The shared .hv-eyebrow - the same class SectionHead puts on
-              every other section's head (Solutions, Stack, Work...). This
+              every other section's head (Services, Journey, Work...). This
               head had its own bespoke dot-in-a-pill badge, which was the
               only eyebrow on the page not matching the rest. */}
           <span className="hv-eyebrow">{BLOG.badge}</span>
           <h2 className="hv-insights__title">
-            {BLOG.titleLead} <span>{BLOG.titleAccent}</span>
+            {BLOG.titleLead} <span> {BLOG.titleAccent}</span>
           </h2>
         </Reveal>
 

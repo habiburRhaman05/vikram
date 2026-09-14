@@ -7,126 +7,69 @@
  * the bar, a tab switcher inside the panel would be one tab holding one
  * thing - so each dropdown here is just a plain list, not a mega-menu.
  *
- * DESTINATIONS: there are no per-service routes yet, so every item points
- * at /platform, the services hub (see the same note in the old megaMenu
- * data this replaces). Each item carries its own `to` so pointing one at a
- * real page later is a one-line change here and nowhere else.
+ * DESTINATIONS: every item now gets its own route, `/services/<slug>`,
+ * with the slug derived from its own title via slugify() rather than
+ * hand-written - one less place a URL and its title can drift apart.
+ * None of these have a dedicated page built yet (that's a separate,
+ * per-service content project), so /services/:slug currently always
+ * resolves to ServiceComingSoon, which looks the title back up from
+ * SERVICE_ROUTES below and shows a friendly "in progress" page instead of
+ * a dead link or a silent redirect to /platform (which is what every item
+ * here used to point at - genuinely indistinguishable from four separate
+ * things being the same page). Giving a specific service a real page
+ * later is just adding `<Route path="/services/that-slug" .../>` above
+ * the :slug catch-all in App.jsx - nothing here needs to change.
  */
+import { slugify } from "@/lib/slugify.js";
 
-const HUB = "/platform";
+const service = (title, body) => ({ title, body, to: `/services/${slugify(title)}` });
 
 export const NAV_MENUS = [
   {
     id: "ai",
     label: "AI Automation",
-    to: HUB,
+    to: `/services/${slugify("AI Automation")}`,
     items: [
-      {
-        title: "AI Agents & Chatbots",
-        body: "Answer, qualify and book around the clock, in your own tone of voice",
-        to: HUB,
-      },
-      {
-        title: "Workflow Automation",
-        body: "Hand-offs between your tools that keep running once they are configured",
-        to: HUB,
-      },
-      {
-        title: "API & Tool Integrations",
-        body: "CRM, calendar, billing and site all reading from one source of truth",
-        to: HUB,
-      },
-      {
-        title: "AI Content Systems",
-        body: "Briefs, drafts and repurposing on a cadence you set and control",
-        to: HUB,
-      },
-    ],
-  },
-  {
-    id: "creative",
-    label: "Creative Design",
-    to: HUB,
-    items: [
-      {
-        title: "Brand & Identity",
-        body: "Logo, palette and type system, with the rules that keep it consistent",
-        to: HUB,
-      },
-      {
-        title: "UI/UX Design",
-        body: "Interfaces designed around the one decision the visitor has to make",
-        to: HUB,
-      },
-      {
-        title: "Video & Motion",
-        body: "Short form, promos and motion cut for the feed and for the landing page",
-        to: HUB,
-      },
-      {
-        title: "Content Production",
-        body: "Copy, graphics and assets produced on a repeatable schedule",
-        to: HUB,
-      },
+      service("AI Agents & Chatbots", "Answer, qualify and book around the clock, in your own tone of voice"),
+      service("Workflow Automation", "Hand-offs between your tools that keep running once they are configured"),
+      service("API & Tool Integrations", "CRM, calendar, billing and site all reading from one source of truth"),
+      service("AI Content Systems", "Briefs, drafts and repurposing on a cadence you set and control"),
     ],
   },
   {
     id: "marketing",
     label: "Marketing",
-    to: HUB,
+    to: `/services/${slugify("Marketing")}`,
     items: [
-      {
-        title: "CRM & Sub-account Setup",
-        body: "Numbers, calendars, domains and A2P registration configured end to end",
-        to: HUB,
-      },
-      {
-        title: "Pipeline & Funnel Build",
-        body: "Stages, forms and booking flows mapped to how you actually sell",
-        to: HUB,
-      },
-      {
-        title: "Email & SMS Campaigns",
-        body: "Sequences that follow up on every lead without anyone having to remember",
-        to: HUB,
-      },
-      {
-        title: "Social Media Marketing",
-        body: "Grow your brand with strategic, scheduled social media campaigns",
-        to: HUB,
-      },
-      {
-        title: "Reporting Dashboards",
-        body: "Source, conversion and revenue visible without exporting a spreadsheet",
-        to: HUB,
-      },
+      service("CRM & Sub-account Setup", "Numbers, calendars, domains and A2P registration configured end to end"),
+      service("Pipeline & Funnel Build", "Stages, forms and booking flows mapped to how you actually sell"),
+      service("Email & SMS Campaigns", "Sequences that follow up on every lead without anyone having to remember"),
+      service("Social Media Marketing", "Grow your brand with strategic, scheduled social media campaigns"),
+      service("Reporting Dashboards", "Source, conversion and revenue visible without exporting a spreadsheet"),
     ],
   },
   {
     id: "development",
-    label: "Development",
-    to: HUB,
+    label: "Funnels, Websites & GHL",
+    to: `/services/${slugify("Funnels, Websites & GHL")}`,
     items: [
-      {
-        title: "Websites & Landing Pages",
-        body: "Built for speed and conversion, not just to look good in a screenshot",
-        to: HUB,
-      },
-      {
-        title: "Web Applications",
-        body: "React and Node systems for the parts off-the-shelf software will not cover",
-        to: HUB,
-      },
-      {
-        title: "Mobile Apps",
-        body: "A single React Native codebase shipped to both app stores",
-        to: HUB,
-      },
-      {
-        title: "eCommerce Builds",
-        body: "Catalogue, checkout and post-purchase automation wired together",
-        to: HUB,
-      },
+      service("Funnel Design & Builds", "Conversion-first funnels mapped to your offer and your pipeline stages"),
+      service("Websites & Landing Pages", "Built for speed and conversion, not just to look good in a screenshot"),
+      service("GoHighLevel Sub-accounts", "Domains, calendars, forms and automations configured end to end"),
+      service("eCommerce Builds", "Catalogue, checkout and post-purchase automation wired together"),
     ],
   },
 ];
+
+/** Every title that resolves under /services/:slug, keyed by its own slug -
+ *  built from NAV_MENUS itself (group labels + each item) so it can never
+ *  list a title that isn't actually linked from somewhere. ServiceComingSoon
+ *  merges this with its own derived map of SERVICE_LINEUP (homeV2.jsx) to
+ *  turn a bare slug back into a human title - each data file only describes
+ *  its own titles; nothing here reaches into home page data or vice versa. */
+export const SERVICE_ROUTES = Object.fromEntries(
+  NAV_MENUS.flatMap((menu) => [
+    [slugify(menu.label), menu.label],
+    ...menu.items.map((item) => [slugify(item.title), item.title]),
+  ])
+);

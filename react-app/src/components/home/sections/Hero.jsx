@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import Icon from "@/components/common/Icon.jsx";
-import HaloButton from "../HaloButton.jsx";
 import ProductTile from "../ProductTile.jsx";
 import { HERO_ICONS } from "../heroIcons.jsx";
 import { HERO, SERVICE_LINEUP, TRUST_LABEL, TRUST_LEARN, TRUST_LOGOS } from "@/data/homeV2";
@@ -56,7 +55,28 @@ export default function Hero() {
             ))}
           </ul>
 
-          <HaloButton to={HERO.primary.to}>{HERO.primary.label}</HaloButton>
+          {/* Both CTAs go through this one branch-free path, sharing the
+              `.hv-btn` base - that is what keeps them the same size and
+              shape. They differ only by the colour modifier: solid for
+              the commitment, outline-on-transparent for the quiet one.
+
+              Each is a real <a>: one to an external site, one a fragment
+              link to #what-we-do (the next section down). The fragment
+              gets the browser's own smooth scroll, offset by the
+              `html { scroll-padding-top }` in legacy/styles.css so the
+              section heading doesn't land under the fixed header. */}
+          <div className="hv-hero__ctas">
+            {HERO.ctas.map((c) => (
+              <a
+                key={c.label}
+                href={c.href}
+                className={`hv-btn ${c.solid ? "hv-btn--primary" : "hv-hero__cta-ghost"}`}
+              >
+                {c.label}
+                <Icon name={c.icon} aria-hidden="true" />
+              </a>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -70,7 +90,7 @@ export default function Hero() {
           {SERVICE_LINEUP.map((s, i) => (
             <li key={s.id}>
               <Link to={s.to} className="hv-hero__tile" style={{ "--tilt": `${TILTS[i % TILTS.length]}deg` }}>
-                <ProductTile icon={s.icon} tone={s.tone} size="lg" />
+                <ProductTile icon={s.icon} img={s.img} tone={s.tone} size="lg" />
                 <span className="hv-hero__tip">
                   <span className="hv-hero__tip-caret" aria-hidden="true" />
                   {s.label}

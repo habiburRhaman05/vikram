@@ -33,8 +33,8 @@ export default function WhyChooseUs() {
   return (
     <HvSection id="why">
       <Reveal className="hv-why__head">
-        {/* Standard .hv-eyebrow - every other section's eyebrow (Solutions,
-            Stack, Work...) uses this exact class via SectionHead. This
+        {/* Standard .hv-eyebrow - every other section's eyebrow (Services,
+            Journey, Work...) uses this exact class via SectionHead. This
             section used to have its own bespoke middot+italic eyebrow
             styling; the heading below stays custom (lighter weight, larger,
             centred) since that treatment was never the reported problem. */}

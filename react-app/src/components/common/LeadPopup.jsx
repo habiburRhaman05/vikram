@@ -16,6 +16,24 @@ let shownThisVisit = false;
    interrupting them there would cost leads, not win them. */
 const QUIET_ROUTES = ["/book", "/contact", "/privacy", "/terms"];
 
+/**
+ * A CTA elsewhere in the app (the navbar's "Get Free Consultation" button,
+ * the hero's ghost link) opens this SAME popup on demand, instead of each
+ * one navigating to its own page. LeadPopup is a singleton mounted once in
+ * Layout, so a plain window event is enough to reach it from anywhere in
+ * the tree without wiring a context provider through the whole app just
+ * for one on/off signal.
+ *
+ * openLeadPopup() bypasses the auto-play gating entirely (shownThisVisit,
+ * the snooze window, QUIET_ROUTES) - those exist to stop the TIMED popup
+ * from being pushy, not to stop a visitor who explicitly clicked a button
+ * asking to see this form.
+ */
+const OPEN_EVENT = "ghlu:open-lead-popup";
+export function openLeadPopup() {
+  window.dispatchEvent(new Event(OPEN_EVENT));
+}
+
 /* Where submissions go: a GoHighLevel "Inbound Webhook" workflow trigger
    (Automation > Workflows > Inbound Webhook). Set it in .env as
    VITE_LEAD_WEBHOOK_URL. Until it is set, the form does NOT pretend to
@@ -27,8 +45,7 @@ const SERVICES = [
   "CRM & GoHighLevel",
   "AI Automation",
   "Marketing",
-  "Website or App Development",
-  "Creative Design",
+  "Funnels, Website & GHL Services",
   "Not sure yet",
 ];
 
@@ -46,6 +63,11 @@ function readState() {
   }
 }
 function writeState(state) {
+  /* Dev never remembers a dismissal. Closing the popup once while working
+     on something else otherwise hides it for a week, which is impossible
+     to tell apart from the popup being broken. A real submission is still
+     recorded, so the "thanks" path can be tested end to end. */
+  if (import.meta.env.DEV && state === "dismissed") return;
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ state, at: Date.now() }));
   } catch {
@@ -57,6 +79,22 @@ function shouldShow() {
   if (!saved) return true;
   if (saved.state === "submitted") return false;
   return Date.now() - saved.at > SNOOZE_DAYS * 864e5;
+}
+
+/**
+ * `?leadpopup` on any URL shows the popup straight away and ignores every
+ * gate - the snooze window, the once-per-visit flag and QUIET_ROUTES.
+ *
+ * Without it there is no way to see the popup again on a built site once
+ * it has been dismissed, short of clearing localStorage by hand. That is
+ * what makes a working popup look like a broken one during review.
+ */
+function isForced() {
+  try {
+    return new URLSearchParams(window.location.search).has("leadpopup");
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -81,14 +119,30 @@ export default function LeadPopup() {
   const quiet = QUIET_ROUTES.includes(pathname);
 
   useEffect(() => {
-    if (quiet || shownThisVisit || !shouldShow()) return;
-    const id = setTimeout(() => {
+    const forced = isForced();
+    if (!forced && (quiet || shownThisVisit || !shouldShow())) return;
+    const id = setTimeout(
+      () => {
+        shownThisVisit = true;
+        returnFocus.current = document.activeElement;
+        setOpen(true);
+      },
+      forced ? 300 : DELAY
+    );
+    return () => clearTimeout(id);
+  }, [quiet]);
+
+  // A CTA button elsewhere in the app asked for this explicitly - open
+  // regardless of the timer, the snooze window or the current route.
+  useEffect(() => {
+    const onOpenRequest = () => {
       shownThisVisit = true;
       returnFocus.current = document.activeElement;
       setOpen(true);
-    }, DELAY);
-    return () => clearTimeout(id);
-  }, [quiet]);
+    };
+    window.addEventListener(OPEN_EVENT, onOpenRequest);
+    return () => window.removeEventListener(OPEN_EVENT, onOpenRequest);
+  }, []);
 
   const close = () => {
     if (status !== "done") writeState("dismissed");
@@ -137,9 +191,10 @@ export default function LeadPopup() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  // Leaving a page for a quiet route (e.g. clicking "Book") closes it.
+  // Leaving a page for a quiet route (e.g. clicking "Book") closes it -
+  // unless ?leadpopup is on the URL, which outranks every gate by design.
   useEffect(() => {
-    if (open && quiet) setOpen(false);
+    if (open && quiet && !isForced()) setOpen(false);
   }, [open, quiet]);
 
   const onSubmit = async (e) => {

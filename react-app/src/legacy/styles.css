@@ -89,11 +89,9 @@
   /* Type */
   /* Headings, buttons, nav - everything that is UI rather than prose. */
   --font-display: "DM Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
-  /* Body copy. The fallback stack is monospace on purpose: Space Mono is
-     a monospace face, so a monospace fallback keeps the line lengths
-     close if the webfont has not arrived (display:optional can decide not
-     to wait), instead of re-flowing every paragraph. */
-  --font-body:    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* Body copy. Roboto is the main reading face; Space Mono is no longer
+     used for prose - it stays only in --font-mono for code-style labels. */
+  --font-body:    "Roboto", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-mono:    "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Space */

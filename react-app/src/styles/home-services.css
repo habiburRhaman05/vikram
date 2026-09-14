@@ -55,40 +55,70 @@
   filter: drop-shadow(0 0 5px color-mix(in srgb, var(--tone) 80%, transparent));
 }
 
+/* Icon art: each service's PNG (public/services-icons) sits in the SAME
+   grid cell as the stroke glyph. In art mode (image present) the tile's
+   own chrome - ring, dark face, grid, glow - is stripped and ONLY the
+   icon art shows, because the PNGs carry their own background/border
+   design. If the image is missing or 404s, the art class is removed and
+   the tile falls back to the drawn glyph version. */
+.hv-ptile__face > svg,
+.hv-ptile__face > img { grid-area: 1 / 1; }
+.hv-ptile__img {
+  width: 64%;
+  height: 64%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--tone) 80%, transparent));
+}
+.hv-ptile--art,
+.hv-ptile--art .hv-ptile__face {
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+.hv-ptile--art .hv-ptile__glyph { display: none; }
+.hv-ptile--art .hv-ptile__img {
+  width: 100%;
+  height: 100%;
+  filter: none;
+}
 
-/* 2. Ringed CTA =========================================================== */
 
-/* Halo -> thin ring -> button, then a sheen and the chevron-to-arrow on
-   hover, as the reference builds it. The whole thing is one link. */
+/* 2. Primary CTA =========================================================== */
+
+/* Same pattern as .hv-btn--primary (home-redesign.css): pill, gradient
+   fill, green-tinted shadow, 2px lift on hover. The halo/ring/inset-ring
+   treatment this used to carry made it the odd button out on the page.
+   The chevron-to-arrow morph on hover is kept as the one flourish. */
 .hv-halo {
   display: inline-block;
-  border-radius: 16px;
+  border-radius: var(--hv-r-pill);
   text-decoration: none;
-  transition: transform 200ms var(--hv-ease);
+  transition: transform var(--hv-dur-fast) var(--hv-ease), box-shadow var(--hv-dur-fast) var(--hv-ease);
 }
-.hv-halo:active { transform: scale(.95); }
-.hv-halo:focus-visible { outline: 2px solid var(--hv-accent-bright); outline-offset: 3px; }
+.hv-halo:active { transform: translateY(0); }
 
-.hv-halo__ring {
-  display: block;
-  padding: 5px;
-  border-radius: 16px;
-  background: rgba(53, 217, 160, .16);
-  transition: background 200ms var(--hv-ease);
-}
+.hv-halo__ring,
+.hv-halo__sheen { display: none; }
+
 .hv-halo__btn {
   position: relative;
-  display: block;
-  overflow: hidden;
-  padding: 11px 48px;
-  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--hv-s2);
+  min-height: 44px;
+  padding: 13px 26px;
+  border-radius: var(--hv-r-pill);
   background: var(--hv-grad-accent);
-  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .14);
-  font-size: 1rem;
-  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(10, 127, 82, .25);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
   letter-spacing: -.01em;
   color: #fff;
 }
+.hv-halo:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(10, 127, 82, .32); }
 .hv-halo__label {
   position: relative;
   z-index: 1;
@@ -96,13 +126,7 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-}
-.hv-halo__sheen {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, .25), rgba(255, 255, 255, .05));
-  opacity: 0;
-  transition: opacity 200ms var(--hv-ease);
+  white-space: nowrap;
 }
 .hv-halo__arrow { position: relative; display: inline-block; width: 9px; height: 10px; }
 .hv-halo__chev {
@@ -121,14 +145,8 @@
   opacity: 0;
   transition: opacity 200ms var(--hv-ease);
 }
-.hv-halo:hover .hv-halo__ring { background: rgba(53, 217, 160, .26); }
-.hv-halo:hover .hv-halo__sheen { opacity: 1; }
 .hv-halo:hover .hv-halo__chev { left: 0; color: #fff; }
 .hv-halo:hover .hv-halo__shaft { opacity: 1; }
-
-/* On a light section the halo needs the deeper accent to read at all. */
-.hv-svc .hv-halo__ring { background: rgba(10, 127, 82, .14); }
-.hv-svc .hv-halo:hover .hv-halo__ring { background: rgba(10, 127, 82, .22); }
 
 
 /* 3. Services section ===================================================== */
@@ -300,110 +318,122 @@
 .hv-svc__feature-icon svg { width: 18px; height: 18px; }
 
 /* -- Visual ----------------------------------------------------------------
-   A gridded gradient card with a photo framed as an app window, a second
-   sheet peeking out beneath it, the service's tiles stacked on the corner
-   and a status chip. */
+   A dark stage holding the service's own interface, drawn in markup by
+   ServiceMockups.jsx (styles in home-whatwedo.css) - the pipeline board,
+   the automation canvas, the dashboard, the page builder.
+
+   Dark on purpose. Every mockup is a light-screened device, so a dark
+   stage makes it read as a lit screen; on the old pale-green slab the
+   white laptop was just another light rectangle on a light panel. The
+   service's --tone survives as the glow under the device rather than as
+   a full-bleed gradient, so the four panels still feel distinct without
+   any of them shouting. */
 .hv-svc__visual {
   position: relative;
-  padding: 8% 8% 38px;
-  border-radius: 16px;
-  background:
-    linear-gradient(rgba(255, 255, 255, .22) 1px, transparent 1px) 0 0 / 11.11% 14.28%,
-    linear-gradient(90deg, rgba(255, 255, 255, .22) 1px, transparent 1px) 0 0 / 11.11% 14.28%,
-    radial-gradient(90% 70% at 50% 100%, color-mix(in srgb, var(--tone) 40%, transparent) 0%, transparent 70%),
-    linear-gradient(180deg, #E9F7F1 0%, #5ED3A9 52%, #0A7F52 100%);
-  box-shadow: inset 0 0 0 1px rgba(10, 127, 82, .12);
   animation: hv-svc-in 620ms var(--hv-ease) 60ms both;
 }
 
-.hv-svc__window {
+.hv-svc__stage {
   position: relative;
-  z-index: 2;
   overflow: hidden;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 26px 50px -18px rgba(6, 40, 34, .5), 0 0 0 1px rgba(255, 255, 255, .7);
-  transition: transform 520ms var(--hv-ease);
+  /* The mockups size everything in cqw - percent of this box's width - so
+     they scale with the panel at every breakpoint with no media queries
+     of their own. That requires an inline-size container with a fixed
+     ratio, which is what these two lines are. */
+  container-type: inline-size;
+  aspect-ratio: 528 / 344;
+  border-radius: 18px;
+  background:
+    radial-gradient(64% 54% at 50% 104%, color-mix(in srgb, var(--tone) 58%, transparent) 0%, transparent 70%),
+    radial-gradient(46% 40% at 84% 4%, rgba(255, 255, 255, .10) 0%, transparent 72%),
+    linear-gradient(168deg, #103029 0%, #0A211D 48%, #050F0E 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .10),
+    inset 0 0 0 1px rgba(255, 255, 255, .07),
+    0 30px 60px -28px rgba(4, 26, 22, .55);
 }
-.hv-svc__visual:hover .hv-svc__window { transform: translateY(-5px); }
 
-.hv-svc__chrome {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  height: 30px;
-  padding: 0 12px;
-  border-bottom: 1px solid #EEF3F1;
-  background: #fff;
-}
-.hv-svc__chrome i { width: 9px; height: 9px; border-radius: 50%; }
-.hv-svc__chrome i:nth-child(1) { background: #FF5F57; }
-.hv-svc__chrome i:nth-child(2) { background: #FEBC2E; }
-.hv-svc__chrome i:nth-child(3) { background: #28C840; }
-.hv-svc__chrome-bar { width: 24px; height: 13px; margin-left: auto; border-radius: 7px; background: var(--hv-accent); }
-
-.hv-svc__shot { display: block; aspect-ratio: 16 / 10; }
-.hv-svc__shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
-
-.hv-svc__sheet {
+/* Fine dot grid, masked to fade out towards the edges rather than
+   stopping at a hard line against the stage border. */
+.hv-svc__stage::before {
+  content: "";
   position: absolute;
-  z-index: 1;
-  left: 13%;
-  right: 13%;
-  bottom: 20px;
-  height: 30px;
-  border-radius: 0 0 12px 12px;
-  background: rgba(255, 255, 255, .85);
-  box-shadow: 0 12px 24px -12px rgba(6, 40, 34, .4);
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, .13) 1px, transparent 1px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(76% 62% at 50% 32%, #000 0%, transparent 78%);
+  mask-image: radial-gradient(76% 62% at 50% 32%, #000 0%, transparent 78%);
+  pointer-events: none;
 }
 
-.hv-svc__stack {
+/* A soft plinth the device appears to stand on - grounds it instead of
+   leaving it floating against the gradient. */
+.hv-svc__stage::after {
+  content: "";
   position: absolute;
-  z-index: 4;
-  top: -24px;
-  right: -20px;
-  width: 100px;
-  height: 96px;
-  animation: hv-svc-pop 640ms var(--hv-ease-spring) 140ms both;
-}
-.hv-svc__stack .hv-ptile { --s: 72px; position: absolute; }
-.hv-svc__stack-back { top: 18px; left: 0; transform: rotate(-9deg); opacity: .85; }
-.hv-svc__stack-front { top: 0; left: 24px; animation: hv-svc-float 5s ease-in-out infinite; }
-@keyframes hv-svc-pop {
-  from { opacity: 0; transform: scale(.7) rotate(-10deg); }
-  to   { opacity: 1; transform: none; }
-}
-@keyframes hv-svc-float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-5px); }
+  left: 14%;
+  right: 14%;
+  bottom: 0;
+  height: 22%;
+  background: radial-gradient(60% 100% at 50% 100%, rgba(0, 0, 0, .45) 0%, transparent 72%);
+  pointer-events: none;
 }
 
+/* The mockups are laid out to hang off the bottom of the What We Do
+   cards, which crop them. Here the whole device should be visible, so
+   it sits up off the floor of the stage and a little smaller. */
+.hv-svc__stage .hv-mk-scene {
+  z-index: 2;
+  transition: transform 560ms var(--hv-ease);
+}
+/* Laptop and tablet share a box (see .hv-mk-tablet in home-whatwedo.css),
+   so one pair of values lifts either of them off the floor of the stage
+   by the same amount. */
+.hv-svc__stage .hv-mk-laptop,
+.hv-svc__stage .hv-mk-tablet { bottom: 9cqw; width: 70cqw; }
+.hv-svc__stage .hv-mk-phone { bottom: 5cqw; }
+.hv-svc__visual:hover .hv-mk-scene { transform: translateY(-1.6cqw) scale(1.025); }
+
+/* Live status, overlapping the stage's lower-left corner. No icon tile -
+   just a pulsing dot, which is how a real product surfaces this. */
 .hv-svc__chip {
   position: absolute;
   z-index: 5;
-  bottom: 62px;
-  left: -22px;
+  bottom: 26px;
+  left: -18px;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 16px 10px 10px;
+  padding: 10px 16px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, .94);
+  background: rgba(255, 255, 255, .96);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  box-shadow: 0 18px 36px -14px rgba(6, 40, 34, .42);
+  box-shadow: 0 18px 36px -14px rgba(6, 40, 34, .42), 0 0 0 1px rgba(10, 127, 82, .1);
   animation: hv-svc-in 620ms var(--hv-ease) 220ms both;
 }
-.hv-svc__chip-icon {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: var(--hv-grad-accent);
-  color: #fff;
+.hv-svc__chip-dot {
+  position: relative;
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--hv-accent);
 }
-.hv-svc__chip-icon svg { width: 17px; height: 17px; }
+.hv-svc__chip-dot::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1.5px solid var(--hv-accent);
+  opacity: 0;
+  animation: hv-svc-ping 2.4s var(--hv-ease) infinite;
+}
+@keyframes hv-svc-ping {
+  0%      { opacity: .7; transform: scale(.6); }
+  70%,
+  100%    { opacity: 0;  transform: scale(1.25); }
+}
 .hv-svc__chip-text { display: grid; gap: 1px; }
 .hv-svc__chip-text strong { font-size: .85rem; font-weight: 700; color: var(--hv-text); }
 .hv-svc__chip-text span { font-size: .74rem; color: var(--hv-text-muted); }
@@ -414,26 +444,46 @@
 @media (max-width: 1024px) {
   .hv-svc__panel { grid-template-columns: 1fr; }
   .hv-svc__visual { margin-top: 12px; }
-  .hv-svc__stack { right: -6px; }
-  .hv-svc__chip { left: 10px; }
+  /* Stacked, the visual is full-width, so the chip has no panel gutter to
+     hang into - bring it inside the stage. */
+  .hv-svc__chip { left: 14px; }
 }
+
+/* Phone: the tab strip keeps its sideways scroll (five tabs cannot fit),
+   but everything else stacks and breathes. */
 @media (max-width: 640px) {
-  .hv-svc__tabs { grid-template-columns: repeat(var(--n), minmax(150px, 1fr)); }
-  .hv-svc__panel { padding: 24px 18px 28px; }
-  .hv-svc__stack { top: -18px; width: 80px; height: 78px; }
-  .hv-svc__stack .hv-ptile { --s: 56px; }
-  .hv-svc__chip { bottom: 50px; }
-  .hv-halo__btn { padding-inline: 36px; }
+  .hv-svc__tabs { grid-template-columns: repeat(var(--n), minmax(132px, 1fr)); }
+  .hv-svc__tab { padding: 16px 10px 18px; }
+  .hv-svc__tab .hv-ptile { --s: 48px; margin-bottom: 8px; }
+  .hv-svc__tab-name { font-size: .92rem; }
+  .hv-svc__tab-from { font-size: .76rem; }
+  .hv-svc__panel { padding: 22px 18px 26px; gap: 22px; }
+  .hv-svc__body { margin-top: 12px; }
+  .hv-svc__features { gap: 10px; margin: 18px 0 24px; }
+  .hv-svc__features li { grid-template-columns: 30px minmax(0, 1fr); font-size: .9rem; }
+  .hv-svc__feature-icon { width: 30px; height: 30px; border-radius: 8px; }
+  .hv-svc__feature-icon svg { width: 15px; height: 15px; }
+  /* The stage goes a little squarer on a phone so the device inside it
+     doesn't shrink to a sliver, and the chip sits fully within it. */
+  .hv-svc__visual { margin-top: 0; }
+  .hv-svc__stage { aspect-ratio: 4 / 3; border-radius: 14px; }
+  .hv-svc__stage::before { background-size: 16px 16px; }
+  .hv-svc__chip { bottom: 12px; left: 12px; padding: 8px 12px; }
+  .hv-svc__chip-text strong { font-size: .78rem; }
+  .hv-svc__chip-text span { font-size: .68rem; }
+  /* CTA spans the card so the tap target is generous and the label never
+     crowds the arrow. */
+  .hv-halo { display: block; }
+  .hv-halo__btn { width: 100%; padding-inline: 20px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hv-svc__copy,
   .hv-svc__visual,
-  .hv-svc__stack,
-  .hv-svc__stack-front,
-  .hv-svc__chip { animation: none; }
+  .hv-svc__chip,
+  .hv-svc__chip-dot::after { animation: none; }
   .hv-svc__ink,
-  .hv-svc__window,
+  .hv-svc__stage .hv-mk-scene,
   .hv-halo,
   .hv-halo__chev,
   .hv-halo__shaft,

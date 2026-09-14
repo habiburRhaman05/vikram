@@ -62,10 +62,10 @@
   /* -- Type -------------------------------------------------------------- */
   /* Headings, buttons, nav, labels - the UI. */
   --hv-font:          "DM Sans", "Segoe UI", system-ui, sans-serif;
-  /* Reading copy. Monospace fallback for the same reason as legacy's
-     --font-body: if Space Mono has not arrived, a monospace stand-in keeps
-     the measure and the wrapping close to what the real face produces. */
-  --hv-font-body:     "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* Reading copy. Roboto is the main body face - Space Mono read as too
+     technical for prose. DM Sans above for headings/UI, Roboto here for
+     everything you read. */
+  --hv-font-body:     "Roboto", "Segoe UI", system-ui, sans-serif;
   --hv-font-script:   "Caveat", "Segoe Script", cursive;
 
   /* Fluid scale - each clamp is (min, preferred, max) so type scales with
@@ -210,14 +210,13 @@
 .hv-h3      { font-size: var(--hv-fs-h3); font-weight: 700; letter-spacing: -0.015em; }
 
 /**
- * Reading copy is the one bucket set in Space Mono. Headings (above),
- * buttons, the nav, eyebrows and every uppercase label stay in DM Sans.
+ * Reading copy is the one bucket set in Roboto (see --hv-font-body).
+ * Headings (above), buttons, the nav, eyebrows and every uppercase label
+ * stay in DM Sans.
  *
- * The prose classes are listed explicitly rather than making the whole
- * section monospace on purpose: mono paragraphs read as a decision, but a
- * mono nav, mono buttons and mono uppercase labels read as a rendering
- * mistake. Add new prose classes to this list, or they will quietly
- * inherit DM Sans.
+ * The prose classes are listed explicitly so the split stays deliberate:
+ * add new prose classes to this list, or they will quietly inherit
+ * DM Sans.
  */
 .home-v2 .hv-body,
 .home-v2 .hv-lede,
@@ -268,6 +267,11 @@
 
 .hv-section-head { max-width: 60ch; margin-bottom: var(--hv-s9); }
 .hv-section-head--center { margin-inline: auto; text-align: center; }
+/* In a centered head, the lede's 56ch box must centre itself too - as a
+   plain block it hugged the left edge of the 60ch head while the title
+   spanned the full box, so the lede's text sat visibly left of the
+   title's centreline (the "misaligned testimonial heading"). */
+.hv-section-head--center .hv-lede { margin-inline: auto; }
 
 
 /* 04. Buttons & links ===================================================== */

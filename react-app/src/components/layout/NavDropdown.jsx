@@ -5,11 +5,11 @@ import useMegaMenu from "@/hooks/useMegaMenu";
 /**
  * One nav item that owns a simple dropdown of services.
  *
- * There are four of these in the bar (AI Automation, Creative Design,
- * Marketing, Development) - each calls useMegaMenu() itself, so each has
+ * There are three of these in the bar (AI Automation, Marketing,
+ * Funnels, Websites & GHL) - each calls useMegaMenu() itself, so each has
  * its own independent open/close state, hover-intent timers and outside-
  * click handling. That hook was written generically (it takes no menu id
- * or config), specifically so instantiating it four times here needs no
+ * or config), specifically so instantiating it per menu here needs no
  * changes to it.
  *
  * This used to be one "Platform" trigger holding all four categories

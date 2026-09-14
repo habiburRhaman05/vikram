@@ -35,6 +35,7 @@ const COPIES = 4;
  */
 export default function Testimonials() {
   const trackRef = useRef(null);
+  const viewportRef = useRef(null);
   const [paused, setPaused] = useState(false);
   const resumeTimer = useRef(null);
   // Cumulative animation-delay applied by nudging, in seconds. Negative
@@ -42,52 +43,49 @@ export default function Testimonials() {
   // that long ago); this just keeps adding to that as the user clicks,
   // rather than resetting it, so repeated nudges compound correctly.
   const delayRef = useRef(0);
-  // How many back-to-back copies of the list the track renders. Starts at
-  // the bare minimum for the wrap math to be valid; the effect below
-  // grows it to however many are actually needed once it can measure.
-  const [copies, setCopies] = useState(2);
 
   useEffect(() => () => clearTimeout(resumeTimer.current), []);
-
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-
-    const recompute = () => {
-      // scrollWidth reflects the CURRENTLY rendered number of copies
-      // (data-copies), never the transform applied to the track - dividing
-      // it back out gives the width of one copy regardless of how many are
-      // on screen right now.
-      const renderedCopies = Number(track.dataset.copies) || 1;
-      const oneSetWidth = track.scrollWidth / renderedCopies;
-      if (!oneSetWidth) return;
-
-      const viewportWidth = track.parentElement?.clientWidth || window.innerWidth;
-      // Worst case is the instant just before the track wraps: only
-      // (copies - 1) full sets remain ahead of the current view, and that
-      // has to be enough to cover the viewport on its own, or the tail end
-      // of the track runs out before the wrap point arrives. +1 copy of
-      // headroom on top of the minimum so a mid-resize measurement doesn't
-      // leave it running exactly on the edge.
-      const needed = Math.max(2, Math.ceil(viewportWidth / oneSetWidth) + 1);
-      setCopies((prev) => (prev === needed ? prev : needed));
-    };
-
-    recompute();
-
-    const ro = new ResizeObserver(recompute);
-    ro.observe(track);
-    if (track.parentElement) ro.observe(track.parentElement);
-    return () => ro.disconnect();
-  }, []);
 
   const nudge = (dir) => {
     const track = trackRef.current;
     if (!track) return;
-    const oneLoopWidth = track.scrollWidth / copies;
+
+    /* Phone: the track is a scroll-snap carousel there (the auto-scroll
+       animation is off), so shifting the animation delay does nothing -
+       the buttons scroll one card instead. */
+    const viewport = viewportRef.current;
+    if (viewport && window.matchMedia("(max-width: 640px)").matches) {
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      const card = track.querySelector(".hv-testimonial:not(.is-clone)");
+      const step = (card ? card.getBoundingClientRect().width : viewport.clientWidth) + gap;
+      viewport.scrollBy({ left: dir * step, behavior: "smooth" });
+      return;
+    }
+
+    // Desktop/tablet: measured straight from the DOM rather than
+    // recomputed from the CSS calc() formula in a second place. The first
+    // real card and its duplicate one copy later are always exactly one
+    // lap apart on screen - getBoundingClientRect() already reflects the
+    // current transform, and since that transform shifts the whole track
+    // uniformly, the DIFFERENCE between the two rects stays the true lap
+    // width regardless of where in the loop the animation currently is.
+    const cardEls = track.querySelectorAll(".hv-testimonial");
+    const first = cardEls[0];
+    const nextLap = cardEls[TESTIMONIALS.items.length];
+    const oneLoopWidth = first && nextLap
+      ? nextLap.getBoundingClientRect().left - first.getBoundingClientRect().left
+      : track.scrollWidth / COPIES; // fallback if the DOM isn't ready yet
     if (!oneLoopWidth) return;
 
-    const deltaSeconds = ((dir * 340) / oneLoopWidth) * MARQUEE_DURATION_S;
+    // Read the animation's real duration rather than hard-coding it, so
+    // this can't silently drift out of sync with home-chrome.css's
+    // --hv-marquee-duration again.
+    const durationStr = getComputedStyle(track).animationDuration || "46s";
+    const duration = durationStr.endsWith("ms")
+      ? parseFloat(durationStr) / 1000
+      : parseFloat(durationStr);
+
+    const deltaSeconds = ((dir * 340) / oneLoopWidth) * duration;
     delayRef.current -= deltaSeconds;
     track.style.animationDelay = `${delayRef.current}s`;
 
@@ -114,16 +112,17 @@ export default function Testimonials() {
       {/* Full width: deliberately outside .hv-container so the track can
           bleed to both edges and the loop has room to breathe. */}
       <div
+        ref={viewportRef}
         className={`hv-marquee${paused ? " is-paused" : ""}`}
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
-        <ul className="hv-marquee__track" style={{ "--hv-marquee-copies": COPIES }}>
+        <ul className="hv-marquee__track" ref={trackRef} style={{ "--hv-marquee-copies": COPIES }}>
           {cards.map((t, i) => {
             const isClone = i >= TESTIMONIALS.items.length;
             return (
               <li
-                className="hv-card hv-testimonial"
+                className={`hv-card hv-testimonial${isClone ? " is-clone" : ""}`}
                 key={`${t.name}-${i}`}
                 aria-hidden={isClone ? "true" : undefined}
               >

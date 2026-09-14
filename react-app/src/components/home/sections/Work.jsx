@@ -93,7 +93,6 @@ export default function Work() {
       </ul>
 
       <Reveal className="hv-works__foot">
-        <p>Have a project in mind? Let's map out what it would take.</p>
         <HaloButton to={WORK.cta.to}>{WORK.cta.label}</HaloButton>
       </Reveal>
     </HvSection>
