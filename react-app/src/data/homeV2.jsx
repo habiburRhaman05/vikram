@@ -431,12 +431,12 @@ export const IMPACT = {
    instead of showing a broken image. */
 export const FOUNDER = {
   eyebrow: "From the founder",
-  name: "Founder Name",
+  name: "Vikram Angurala",
   role: "Founder, GHLevelUp",
   photo: null,
   message:
     "I started GHLevelUp because I kept meeting business owners who were losing good leads to slow follow-up - not to a bad product or a bad pitch. The fix is rarely more traffic. It is a system that answers in seconds, every time, whether or not anyone is at a desk. That is the whole of what we build, and we run it with you rather than handing it over and disappearing.",
-  signature: "Founder Name",
+  signature: "Vikram Angurala",
   cta: { label: "Book a call with the team", to: "/book" },
 };
 

@@ -214,7 +214,7 @@
 .hv-mk-laptop {
   position: absolute;
   left: 50%;
-  bottom: -1cqw;
+  bottom: 5cqw;
   width: 74cqw;
   transform: translateX(-50%);
   filter: drop-shadow(0 2.2cqw 3cqw rgba(6, 40, 34, .18));
@@ -260,12 +260,13 @@
   background: #B3B9BE;
 }
 
+
 .hv-mk-phone {
-  position: absolute;
-  z-index: 3;
-  bottom: -4cqw;
-  width: 19cqw;
-  filter: drop-shadow(0 2cqw 3cqw rgba(6, 40, 34, .3));
+    z-index: 3;
+    filter: drop-shadow(0 2cqw 3cqw #0628224d);
+    width: 19cqw;
+    position: absolute;
+    bottom: 4cqw;
 }
 .hv-mk-phone--left { left: 9cqw; }
 .hv-mk-phone--right { right: 5cqw; }
