@@ -1,0 +1,426 @@
+/* ==========================================================================
+   Service detail page (/services/ai-agents-chatbots)
+   --------------------------------------------------------------------------
+   Built entirely on the v2 design system's tokens (--hv-*) and primitives
+   (.hv-section, .hv-grid, .hv-badge, .hv-checks), so this file only
+   describes what the shared system doesn't already have: the hero's split
+   layout with its live-call mock, the connected step flow, the comparison
+   table and the channel tiles.
+
+   Loaded AFTER home-redesign.css and home-chrome.css - the tokens and
+   shared classes have to exist first.
+   ========================================================================== */
+
+/* 01. Hero ================================================================= */
+
+.sd-hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--hv-bg-dark);
+  color: var(--hv-on-dark);
+  padding-block: clamp(56px, 6vw, 96px) clamp(56px, 6vw, 88px);
+}
+
+/* Mesh wash + faint grid, so the dark panel reads as a lit surface rather
+   than a flat block of colour. */
+.sd-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(52% 44% at 82% 10%, rgba(53, 217, 160, .20) 0%, transparent 62%),
+    radial-gradient(46% 40% at 8% 88%, rgba(14, 164, 107, .16) 0%, transparent 60%);
+  pointer-events: none;
+}
+.sd-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(70% 60% at 50% 40%, #000 0%, transparent 78%);
+  pointer-events: none;
+}
+
+.sd-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(36px, 5vw, 72px);
+  align-items: center;
+}
+/* Below 940px the two columns can't both hold their content - the call
+   mock's chat bubbles start wrapping every three words - so the copy
+   takes the full width and the mock drops underneath it. */
+@media (max-width: 940px) {
+  .sd-hero__grid { grid-template-columns: 1fr; }
+}
+
+.sd-hero__crumbs { font-size: var(--hv-fs-xs); color: var(--hv-on-dark-muted); margin-bottom: var(--hv-s5); }
+.sd-hero__crumbs a { color: var(--hv-on-dark-muted); text-decoration: none; }
+.sd-hero__crumbs a:hover { color: var(--hv-accent-bright); }
+.sd-hero__crumbs span { opacity: .45; margin-inline: 8px; }
+
+.sd-hero h1 {
+  font-size: var(--hv-fs-display);
+  font-weight: 800;
+  letter-spacing: -.035em;
+  color: #fff;
+  margin: 0 0 var(--hv-s5);
+}
+.sd-hero h1 em {
+  font-style: normal;
+  color: var(--hv-accent-bright);
+}
+
+.sd-hero__lede {
+  font-size: var(--hv-fs-lede);
+  line-height: 1.65;
+  color: var(--hv-on-dark-muted);
+  max-width: 54ch;
+  margin: 0 0 var(--hv-s7);
+}
+
+/* Live pill with a pulsing dot - the page's one "this is running right now"
+   signal, so it sits above the headline rather than in the body. */
+.sd-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 15px 7px 12px;
+  margin-bottom: var(--hv-s5);
+  border-radius: var(--hv-r-pill);
+  background: rgba(53, 217, 160, .12);
+  border: 1px solid rgba(53, 217, 160, .32);
+  color: var(--hv-accent-bright);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-eyebrow);
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.sd-live__dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--hv-accent-bright);
+}
+.sd-live__dot::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1.5px solid var(--hv-accent-bright);
+  animation: sd-ping 2s var(--hv-ease) infinite;
+}
+@keyframes sd-ping {
+  0%   { transform: scale(.5); opacity: .9; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+
+/* 02. Hero call mock ======================================================= */
+
+.sd-call {
+  border-radius: var(--hv-r-xl);
+  background: rgba(255, 255, 255, .055);
+  border: 1px solid rgba(255, 255, 255, .13);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 28px 60px rgba(0, 0, 0, .35);
+  overflow: hidden;
+}
+
+.sd-call__head {
+  display: flex;
+  align-items: center;
+  gap: var(--hv-s3);
+  padding: var(--hv-s5) var(--hv-s6);
+  border-bottom: 1px solid rgba(255, 255, 255, .1);
+}
+.sd-call__avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--hv-grad-accent);
+  color: #fff;
+}
+.sd-call__avatar svg { width: 18px; height: 18px; }
+.sd-call__who { flex: 1; min-width: 0; }
+.sd-call__who strong { display: block; font-family: var(--hv-font); font-size: .92rem; color: #fff; font-weight: 700; }
+.sd-call__who span { font-size: var(--hv-fs-xs); color: var(--hv-on-dark-muted); }
+.sd-call__timer {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--hv-accent-bright);
+}
+
+/* Voice waveform - decorative, CSS-only. Each bar gets its own delay via
+   --d so the row reads as speech rather than a synchronised equaliser. */
+.sd-wave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 46px;
+  padding-inline: var(--hv-s6);
+  padding-top: var(--hv-s5);
+}
+.sd-wave i {
+  display: block;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--hv-accent-bright);
+  opacity: .75;
+  animation: sd-bar 1.1s var(--hv-ease) infinite;
+  animation-delay: var(--d);
+  height: 30%;
+}
+@keyframes sd-bar {
+  0%, 100% { height: 18%; opacity: .45; }
+  50%      { height: 100%; opacity: 1; }
+}
+
+.sd-call__body { padding: var(--hv-s5) var(--hv-s6) var(--hv-s6); display: grid; gap: var(--hv-s3); }
+
+.sd-bubble {
+  max-width: 88%;
+  padding: 11px 15px;
+  border-radius: 16px;
+  font-size: var(--hv-fs-sm);
+  line-height: 1.5;
+}
+.sd-bubble--them {
+  justify-self: start;
+  border-bottom-left-radius: 5px;
+  background: rgba(255, 255, 255, .09);
+  color: var(--hv-on-dark);
+}
+.sd-bubble--ai {
+  justify-self: end;
+  border-bottom-right-radius: 5px;
+  background: var(--hv-grad-accent);
+  color: #fff;
+}
+
+.sd-call__foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: var(--hv-s4) var(--hv-s6) var(--hv-s6);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-accent-bright);
+}
+.sd-call__foot svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+
+/* 03. Stat strip =========================================================== */
+
+.sd-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1px;
+  background: var(--hv-border);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  overflow: hidden;
+}
+.sd-stat { background: var(--hv-bg); padding: var(--hv-s6) var(--hv-s5); text-align: center; }
+.sd-stat__num {
+  font-family: var(--hv-font);
+  font-size: clamp(1.6rem, 1.1rem + 1.5vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  color: var(--hv-accent-strong);
+  line-height: 1;
+}
+.sd-stat__label { margin: 10px 0 0; font-size: var(--hv-fs-sm); color: var(--hv-text-muted); line-height: 1.45; }
+
+
+/* 04. Channel tiles ======================================================== */
+
+.sd-channels { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--hv-s4); }
+
+.sd-channel {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: var(--hv-s4);
+  align-items: start;
+  padding: var(--hv-s5);
+  border-radius: var(--hv-r-md);
+  border: 1px solid var(--hv-border);
+  background: var(--hv-bg);
+  transition: border-color var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease);
+}
+.sd-channel:hover { border-color: var(--hv-border-strong); box-shadow: var(--hv-sh-sm); }
+.sd-channel__icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--hv-r-sm);
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+}
+.sd-channel__icon svg { width: 19px; height: 19px; }
+.sd-channel h4 { font-family: var(--hv-font); font-size: .97rem; font-weight: 700; color: var(--hv-text); margin: 2px 0 5px; }
+.sd-channel p { margin: 0; font-size: var(--hv-fs-sm); line-height: 1.55; color: var(--hv-text-muted); }
+
+
+/* 05. Connected step flow ================================================== */
+
+.sd-flow {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: var(--hv-s6);
+  counter-reset: sd-step;
+}
+
+.sd-flow__item { position: relative; padding-top: var(--hv-s7); }
+
+/* The connector: a hairline running along the top of each card, gradient-
+   tinted so the row reads left-to-right as one path. The last item's line
+   stops at its own dot rather than trailing off the grid. */
+.sd-flow__item::before {
+  content: "";
+  position: absolute;
+  top: 13px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--hv-accent) 0%, var(--hv-border-strong) 100%);
+}
+.sd-flow__item:last-child::before { right: 50%; }
+.sd-flow__item:first-child::before { left: 0; }
+
+.sd-flow__dot {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--hv-accent-strong);
+  box-shadow: 0 0 0 4px rgba(10, 127, 82, .16);
+}
+.sd-flow__dot::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #fff; }
+
+.sd-flow__num {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 800;
+  letter-spacing: .1em;
+  color: var(--hv-accent-strong);
+  margin-bottom: 8px;
+}
+.sd-flow__item h4 { font-family: var(--hv-font); font-size: 1rem; font-weight: 700; color: var(--hv-text); margin: 0 0 7px; }
+.sd-flow__item p { margin: 0; font-size: var(--hv-fs-sm); line-height: 1.6; color: var(--hv-text-muted); }
+
+/* Dark-section treatment (the flow sits on --hv-bg-dark). */
+.hv-section--dark .sd-flow__item::before { background: linear-gradient(90deg, var(--hv-accent-bright) 0%, rgba(255, 255, 255, .14) 100%); }
+.hv-section--dark .sd-flow__dot { background: var(--hv-accent-bright); box-shadow: 0 0 0 4px rgba(53, 217, 160, .16); }
+.hv-section--dark .sd-flow__dot::after { background: var(--hv-bg-dark); }
+.hv-section--dark .sd-flow__num { color: var(--hv-accent-bright); }
+.hv-section--dark .sd-flow__item h4 { color: #fff; }
+.hv-section--dark .sd-flow__item p { color: var(--hv-on-dark-muted); }
+
+@media (max-width: 720px) {
+  /* Stacked: the horizontal connector would be meaningless in one column,
+     so it becomes a vertical rail down the left instead. */
+  .sd-flow { grid-template-columns: 1fr; gap: 0; }
+  .sd-flow__item { padding: 0 0 var(--hv-s7) var(--hv-s7); }
+  .sd-flow__item::before {
+    top: 8px;
+    bottom: 0;
+    left: 7px;
+    right: auto;
+    width: 2px;
+    height: auto;
+    background: linear-gradient(180deg, var(--hv-accent) 0%, var(--hv-border-strong) 100%);
+  }
+  .sd-flow__item:last-child::before { bottom: auto; height: 0; }
+  .sd-flow__dot { top: 2px; }
+}
+
+
+/* 06. Comparison table ===================================================== */
+
+.sd-compare-wrap { overflow-x: auto; border-radius: var(--hv-r-lg); border: 1px solid var(--hv-border); }
+
+/* Four columns cannot fit a phone, so the table scrolls sideways. The
+   highlighted "ours" column is the last one, which means on a narrow
+   screen the answer starts off-screen with nothing saying so - this note
+   is the affordance, and it hides itself once the table fits. */
+.sd-compare-hint {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 var(--hv-s3);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-text-muted);
+}
+.sd-compare-hint svg { width: 14px; height: 14px; color: var(--hv-accent-strong); }
+@media (max-width: 680px) {
+  .sd-compare-hint { display: flex; }
+}
+
+/* The min-width is deliberately generous: the wrapper scrolls, so giving
+   each column room to keep its label on one line reads far better than
+   squeezing four columns into a phone and letting every cell wrap to
+   four lines. */
+.sd-compare { width: 100%; border-collapse: collapse; min-width: 680px; background: var(--hv-bg); }
+
+.sd-compare th,
+.sd-compare td {
+  padding: var(--hv-s4) var(--hv-s5);
+  text-align: left;
+  font-size: var(--hv-fs-sm);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--hv-border);
+}
+.sd-compare tr:last-child th,
+.sd-compare tr:last-child td { border-bottom: 0; }
+
+.sd-compare thead th {
+  font-family: var(--hv-font);
+  font-weight: 700;
+  color: var(--hv-text);
+  background: var(--hv-bg-mint);
+  white-space: nowrap;
+}
+.sd-compare tbody th { font-weight: 600; color: var(--hv-text); }
+.sd-compare td { color: var(--hv-text-muted); }
+
+/* The "ours" column, highlighted end to end so the comparison has an
+   obvious answer rather than three equal-weight options. */
+.sd-compare .is-ours { background: rgba(53, 217, 160, .07); color: var(--hv-text); font-weight: 600; }
+.sd-compare thead .is-ours { background: var(--hv-bg-mint-deep); color: var(--hv-accent-deep); }
+
+.sd-compare__mark { display: inline-flex; align-items: center; gap: 7px; }
+.sd-compare__mark svg { width: 16px; height: 16px; flex-shrink: 0; }
+.sd-compare__mark--yes svg { color: var(--hv-accent-strong); }
+.sd-compare__mark--no svg { color: #C2603F; }
+
+
+/* 07. Reduced motion ======================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .sd-wave i,
+  .sd-live__dot::after { animation: none; }
+  .sd-wave i { height: 45%; opacity: .8; }
+}

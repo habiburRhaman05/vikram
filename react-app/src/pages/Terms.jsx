@@ -17,16 +17,7 @@ export default function Terms() {
 
       <PageHero crumb="Terms of Service" title="Terms of Service" lede="The terms that govern use of this website and the GHLevelUp platform." />
 
-      <Section narrow>
-        <div className="embed-slot" style={{ textAlign: "left", marginBottom: 48 }}>
-          <h4>⚠ Draft - needs legal review before launch</h4>
-          <p style={{ fontSize: ".94rem", margin: 0 }}>
-            Placeholder terms covering the basics. Commercial specifics - subscription length, fees, telephony
-            and AI usage billing, cancellation, refunds, service levels and liability limits - must be set by
-            the business and reviewed by an attorney before this page goes live.
-          </p>
-        </div>
-
+      <Section>
         <LegalBody sections={TERMS_SECTIONS} />
       </Section>
     </Layout>

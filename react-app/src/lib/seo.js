@@ -24,7 +24,7 @@ export function siteOrigin() {
   return FALLBACK_ORIGIN;
 }
 
-/** Absolute URL for a site-relative route path ("/", "/platform", ...). */
+/** Absolute URL for a site-relative route path ("/", "/about", ...). */
 export function absoluteUrl(path = "/") {
   const clean = path.startsWith("/") ? path : `/${path}`;
   return `${siteOrigin()}${clean === "/" ? "" : clean}` || siteOrigin();

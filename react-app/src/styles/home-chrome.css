@@ -105,12 +105,18 @@
    .page-hero alongside .hv-hero: the same trick, for the other pages that
    opt into the v2 header/footer (variant="v2" on Layout) but still use the
    older page-hero component for their own opening section rather than a
-   bespoke hv- hero - ServiceComingSoon is the first of these. Both classes
-   share this one rule rather than each getting an identical copy, since
-   the fix is the same for the same reason regardless of which hero markup
-   sits underneath. */
+   bespoke hv- hero - ServiceComingSoon is the first of these. .sd-hero is
+   the service-detail pages' own bespoke dark hero (styles/service-detail.css).
+   All three share this one rule rather than each getting an identical copy,
+   since the fix is the same for the same reason regardless of which hero
+   markup sits underneath.
+
+   ANY new page-opening hero that renders inside `.home-v2` has to be added
+   here too, or it renders with a white strip where the transparent bar is
+   and the light-on-dark nav text disappears into it. */
 .home-v2 .hv-hero,
-.home-v2 .page-hero {
+.home-v2 .page-hero,
+.home-v2 .sd-hero {
   margin-top: calc(-1 * var(--header-h, 80px));
   padding-top: calc(var(--header-h, 80px) + clamp(8px, 1.5vw, 20px));
 }

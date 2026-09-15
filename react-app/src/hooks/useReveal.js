@@ -34,26 +34,41 @@ export default function useReveal(index = 0) {
       return;
     }
 
-    /* An element that is ALREADY scrolled above the viewport the moment
-       this mounts - a page that loads mid-scroll, a browser restoring
-       scroll position, a fast wheel flick that jumps clean past a short
-       element between observer ticks - never fires "isIntersecting: true"
-       here: it went from "not yet visible" straight to "already passed"
-       without an observable crossing. A one-shot reveal has nothing left
-       to wait for, so it stays invisible forever. Checked once,
-       synchronously, on mount. */
+    const inViewport = () => {
+      const r = el.getBoundingClientRect();
+      return r.top < window.innerHeight && r.bottom > 0;
+    };
+
+    /* An element that is ALREADY on screen, or already scrolled above the
+       viewport, the moment this mounts - a page that loads mid-scroll, a
+       browser restoring scroll position, a fast wheel flick that jumps
+       clean past a short element between observer ticks - never fires
+       "isIntersecting: true" here: it went straight from "not yet
+       visible" to "already visible/passed" without an observable
+       crossing. A one-shot reveal has nothing left to wait for, so it
+       stays invisible forever. Checked once, synchronously, on mount. */
     const rect = el.getBoundingClientRect();
-    if (rect.bottom <= 0) {
+    if (rect.bottom <= 0 || inViewport()) {
       setShown(true);
       return;
     }
 
+    let settled = false;
+    const reveal = () => {
+      if (settled) return;
+      settled = true;
+      setShown(true);
+      observer.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      clearTimeout(fallbackId);
+      if (raf) cancelAnimationFrame(raf);
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          setShown(true);
-          observer.unobserve(entry.target);
+          if (entry.isIntersecting) reveal();
         });
       },
       {
@@ -69,9 +84,40 @@ export default function useReveal(index = 0) {
         rootMargin: "100000px 0px -40px 0px",
       }
     );
-
     observer.observe(el);
-    return () => observer.disconnect();
+
+    /* Safety net: IntersectionObserver can occasionally never deliver a
+       callback at all - a backgrounded/throttled tab, an embedded preview
+       pane that reports a zero-size viewport on first paint, or any other
+       host quirk outside this hook's control. Because the reveal is
+       one-shot, a single missed callback used to mean the element stayed
+       invisible forever with nothing left to retry it - large stretches
+       of a page silently blank while everything outside React (the chat
+       widget, etc.) rendered fine. A passive scroll/resize listener plus
+       a bounded timeout re-check geometry directly as a backstop; both
+       are no-ops once `settled` is true, so they cost nothing once the
+       observer has already done its job. */
+    let raf = null;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        if (inViewport()) reveal();
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    const fallbackId = setTimeout(() => {
+      if (inViewport()) reveal();
+    }, 1200);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      clearTimeout(fallbackId);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, [index]);
 
   return { ref, shown };

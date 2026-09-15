@@ -66,7 +66,7 @@ export default function ServiceComingSoon() {
           <Button to="/book" variant="accent" icon="calendar">
             Book a call
           </Button>
-          <Button to="/platform" variant="outline" icon="arrowRight">
+          <Button to="/industries" variant="outline" icon="arrowRight">
             See what's live now
           </Button>
         </BtnRow>

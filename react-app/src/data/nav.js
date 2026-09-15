@@ -11,8 +11,8 @@ export const NAV_LINKS = [{ label: "Contact", to: "/contact" }];
  * dropdowns), so it gets its own short list rather than trying to expand
  * NAV_LINKS/NAV_MENUS into something a plain <Link> can render. */
 export const FOOTER_LINKS = [
-  { label: "Services", to: "/platform" },
-  { label: "Plans", to: "/#plans" },
+  { label: "Services", to: "/#services" },
+  { label: "Plans", to: "/#pricing" },
   { label: "About", to: "/about" },
   { label: "Contact", to: "/contact" },
 ];

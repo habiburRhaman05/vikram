@@ -17,17 +17,7 @@ export default function Privacy() {
 
       <PageHero crumb="Privacy Policy" title="Privacy Policy" lede="How we collect, use and protect information you share with us." />
 
-      <Section narrow>
-        <div className="embed-slot" style={{ textAlign: "left", marginBottom: 48 }}>
-          <h4>⚠ Draft - needs legal review before launch</h4>
-          <p style={{ fontSize: ".94rem", margin: 0 }}>
-            The text below is a working draft covering the site's actual data flows. It is not legal advice and
-            has not been reviewed by an attorney. Have counsel confirm it against your obligations - including
-            IRS Publication 4557 safeguards, the FTC Safeguards Rule, and New York State requirements - before
-            publishing.
-          </p>
-        </div>
-
+      <Section>
         <LegalBody sections={PRIVACY_SECTIONS} />
       </Section>
     </Layout>

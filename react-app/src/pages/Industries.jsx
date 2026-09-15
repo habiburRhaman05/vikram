@@ -113,7 +113,7 @@ export default function Industries() {
               </p>
               <Checklist items={TAX_CHECKLIST} />
               <BtnRow>
-                <Button to="/platform" variant="accent" icon="arrowRight">
+                <Button to="/book" variant="accent" icon="arrowRight">
                   See the tax build
                 </Button>
               </BtnRow>
@@ -243,8 +243,8 @@ export default function Industries() {
               <Button to="/book" variant="accent" size="lg" icon="calendar">
                 Book a demo
               </Button>
-              <Button to="/platform" variant="ghost-light" size="lg" icon="arrowRight">
-                See the platform
+              <Button href="/#services" variant="ghost-light" size="lg" icon="arrowRight">
+                See our services
               </Button>
             </>
           }

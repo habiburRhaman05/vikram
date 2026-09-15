@@ -150,42 +150,42 @@ export const WHAT_WE_DO = {
       title: "CRM Setup & Management",
       body: "GoHighLevel CRM configured end to end - pipelines, contacts, calendars and follow-up, ready on day one.",
       mock: "crm",
-      to: "/platform",
+      to: `/services/${slugify("CRM & GoHighLevel")}`,
     },
     {
       id: "voice-ai",
       title: "AI Voice Agents",
       body: "AI voice agents that answer every call, qualify the caller and book straight into your calendar.",
       mock: "voice",
-      to: "/platform",
+      to: `/services/${slugify("AI Agents & Chatbots")}`,
     },
     {
       id: "automation",
       title: "AI Workflow Automation",
       body: "Workflows that connect your tools and move every lead through your pipeline without manual work.",
       mock: "ai",
-      to: "/platform",
+      to: `/services/${slugify("Workflow Automation")}`,
     },
     {
       id: "funnels",
       title: "Funnel Design & Builds",
       body: "High-converting funnels built in GoHighLevel, wired to forms, calendars and automations.",
       mock: "funnel",
-      to: "/platform",
+      to: `/services/${slugify("Funnel Design & Builds")}`,
     },
     {
       id: "whitelabel",
       title: "White-Label Platform",
       body: "Your logo, your domain, your colors - the full GoHighLevel system rebranded under your agency, ready to resell.",
       mock: "whitelabel",
-      to: "/platform",
+      to: `/services/${slugify("GoHighLevel Sub-accounts")}`,
     },
     {
       id: "reporting",
       title: "Reporting & Dashboards",
       body: "Live dashboards and attribution reports that show exactly where every lead and dollar came from.",
       mock: "marketing",
-      to: "/platform",
+      to: `/services/${slugify("Reporting Dashboards")}`,
     },
   ],
 };
@@ -716,7 +716,9 @@ export const CLOSING = {
      on this same page, so someone not ready to book yet can see the process
      first. A plain hash href, not a router Link - it never leaves "/". */
   explore: { label: "Explore the Onboarding Journey", href: "#how-we-work", icon: "trendUp" },
-  secondary: { label: "Browse Our Services", to: "/platform" },
+  /* Anchors to the Services tab section (id="services") on this same
+     page - same reasoning as `explore` above, just a different section. */
+  secondary: { label: "Browse Our Services", href: "#services" },
   note: "Let's create something amazing together!",
   /* Short reassurances shown under the CTA row - the kind of quick,
      low-commitment facts that remove hesitation right at the decision
@@ -734,12 +736,10 @@ export const CLOSING = {
 export const FOOTER_COLUMNS = [
   {
     title: "Services",
-    links: [
-      { label: "CRM & GoHighLevel", to: "/platform" },
-      { label: "AI Automation", to: "/platform" },
-      { label: "Funnels, Websites & GHL", to: "/platform" },
-      { label: "SEO & Content", to: "/platform" },
-    ],
+    /* Built from SERVICE_LINEUP itself rather than re-typed, so a footer
+       link can never drift from the real /services/:slug route the hero
+       tiles and the Services tab bar already use for the same service. */
+    links: SERVICE_LINEUP.map((s) => ({ label: s.label, to: s.to })),
   },
   {
     title: "Company",
@@ -754,9 +754,9 @@ export const FOOTER_COLUMNS = [
     title: "Resources",
     links: [
       { label: "Book a Consultation", to: "/book" },
-      { label: "Plans & Pricing", href: "/#plans" },
+      { label: "Plans & Pricing", href: "/#pricing" },
       { label: "FAQ", href: "/#faq" },
-      { label: "Platform Overview", to: "/platform" },
+      { label: "Our Services", href: "/#services" },
     ],
   },
   /* There was a fourth "Legal" column here, holding exactly the two links the

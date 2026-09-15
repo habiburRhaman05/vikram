@@ -879,18 +879,17 @@ p:last-child { margin-bottom: 0; }
   pointer-events: none;
 }
 .page-hero > * { position: relative; z-index: 1; }
-.page-hero h1 { color: #fff; max-width: 15ch; }
-.page-hero .lede { color: var(--on-dark-muted); margin-top: 20px; max-width: 620px; }
+.page-hero h1 { color: #fff; max-width: 22ch; }
+.page-hero .lede { color: var(--on-dark-muted); margin-top: 20px; max-width: 760px; }
 
-/* Centered, slightly quieter variant - used on About, Contact and Platform.
-   Tighter max-widths and a touch less vertical padding than the default
-   left-aligned hero, and the glow re-centers behind the headline instead
-   of sitting off in the top-right corner, which read fine against
-   left-aligned text but pulled the eye off-centre once the text itself
-   was centred. */
+/* Centered, slightly quieter variant - used on About, Contact and Book.
+   A touch less vertical padding than the default left-aligned hero, and
+   the glow re-centers behind the headline instead of sitting off in the
+   top-right corner, which read fine against left-aligned text but pulled
+   the eye off-centre once the text itself was centred. */
 .page-hero--center { text-align: center; padding-block: 72px 60px; }
-.page-hero--center h1 { max-width: 18ch; margin-inline: auto; }
-.page-hero--center .lede { max-width: 540px; margin-inline: auto; }
+.page-hero--center h1 { max-width: 28ch; margin-inline: auto; }
+.page-hero--center .lede { max-width: 720px; margin-inline: auto; }
 /* text-align only centers inline/text content - .btn-row is a flex
    container, so its items still default to flex-start without this. */
 .page-hero--center .btn-row { justify-content: center; }
