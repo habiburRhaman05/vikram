@@ -5,9 +5,14 @@ import Section from "@/components/common/Section.jsx";
 import LegalBody from "@/components/common/LegalBody.jsx";
 import { TERMS_SECTIONS } from "@/data/legal";
 
+// v2 chrome (glass header, SiteFooterV2) - matches the rest of the redesigned
+// site rather than the legacy header/footer.
+import "@/styles/home-redesign.css";
+import "@/styles/home-chrome.css";
+
 export default function Terms() {
   return (
-    <Layout topbar={<>Questions about these terms? <a href="/contact">Contact us</a></>}>
+    <Layout variant="v2" topbar={<>Questions about these terms? <a href="/contact">Contact us</a></>}>
       <PageMeta title="Terms of Service - GHLevelUp" description="The terms that govern use of the GHLevelUp website and platform." />
 
       <PageHero crumb="Terms of Service" title="Terms of Service" lede="The terms that govern use of this website and the GHLevelUp platform." />

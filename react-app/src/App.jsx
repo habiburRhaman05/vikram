@@ -17,6 +17,11 @@ const Contact = lazy(() => import("@/pages/Contact.jsx"));
 const Book = lazy(() => import("@/pages/Book.jsx"));
 const Privacy = lazy(() => import("@/pages/Privacy.jsx"));
 const Terms = lazy(() => import("@/pages/Terms.jsx"));
+const Sitemap = lazy(() => import("@/pages/Sitemap.jsx"));
+/* Not linked from anywhere in the public site (no nav item, no button, no
+   footer entry) - reached only by whoever is given the URL directly. See
+   the comment atop Onboarding.jsx for why. */
+const Onboarding = lazy(() => import("@/pages/Onboarding.jsx"));
 const ServiceComingSoon = lazy(() => import("@/pages/ServiceComingSoon.jsx"));
 const NotFound = lazy(() => import("@/pages/NotFound.jsx"));
 
@@ -43,6 +48,8 @@ export default function App() {
         <Route path="/book" element={<Book />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/sitemap" element={<Sitemap />} />
+        <Route path="/onboarding" element={<Onboarding />} />
         {/* Every service link in the nav and on the home page resolves
             here until that specific service gets its own real page - see
             the comment on ServiceComingSoon for why this exists instead

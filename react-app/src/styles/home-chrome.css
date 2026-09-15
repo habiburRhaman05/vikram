@@ -473,28 +473,104 @@
 .hv-footer {
   background: var(--hv-bg-dark-2);
   color: var(--hv-on-dark);
-  padding-block: clamp(48px, 5vw, 76px) var(--hv-s6);
+  padding-block: clamp(44px, 4.4vw, 68px) var(--hv-s5);
 }
 .hv-footer__top {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 2fr);
-  gap: clamp(32px, 5vw, 72px);
-  padding-bottom: var(--hv-s8);
+  gap: clamp(28px, 4.4vw, 64px);
+  padding-bottom: var(--hv-s6);
 }
 @media (max-width: 980px) { .hv-footer__top { grid-template-columns: 1fr; } }
 
-.hv-footer__logo { display: inline-block; }
-.hv-footer__logo img { display: block; height: 56px; width: auto; }
+/* Brand mark: the header's logo badge and live wordmark, not the older
+   wide footer lockup - same asset, same size, same gap as the bar at the
+   top of every page (see .brand in legacy/styles.css). Only the wordmark
+   colour differs, because "LevelUp" is near-black everywhere else and this
+   surface is the darkest one on the site. */
+.hv-footer__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+/* The badge is an opaque dark-navy square - identical to the header's - and
+   this footer is the darkest surface on the site, so it gets a hairline
+   ring to keep its edge from dissolving into the background. */
+.hv-footer__logo img {
+  display: block;
+  height: 44px;
+  width: auto;
+  border-radius: 10px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .16);
+}
+.hv-footer__logo .brand__name { font-family: var(--hv-font); font-size: 1.15rem; }
+.hv-footer__logo .brand__name-gh { color: #04BF56; }
+.hv-footer__logo .brand__name-levelup { color: #fff; }
 .hv-footer__pitch {
-  margin: var(--hv-s5) 0 var(--hv-s6);
+  margin: var(--hv-s4) 0 0;
   font-size: var(--hv-fs-sm);
   line-height: 1.7;
   color: var(--hv-on-dark-muted);
   max-width: 42ch;
 }
-.hv-footer__contact { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--hv-s3); }
-.hv-footer__contact li { display: flex; align-items: flex-start; gap: var(--hv-s3); font-size: var(--hv-fs-sm); }
-.hv-footer__contact svg { width: 17px; height: 17px; flex-shrink: 0; margin-top: 2px; color: var(--hv-accent-bright); }
+/* Contact is the footer's last column. Under 1100px it has no room to BE a
+   column - it drops out of the row and becomes a full-width band under both
+   columns, on its own hairline, wrapping four-across to two to one. */
+.hv-footer__contactcol {
+  grid-column: 1 / -1;
+  padding-top: var(--hv-s6);
+  border-top: 1px solid var(--hv-border-dark);
+}
+.hv-footer__contact {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+  gap: var(--hv-s3) var(--hv-s6);
+}
+
+/* Desktop: the top of the footer is brand | three link columns | contact,
+   all on one row, so the contact details stack and lose the band's hairline
+   (the column heading replaces it). The link columns are fixed at three
+   tracks rather than auto-fit, because auto-fit would happily open a fourth
+   empty one and squeeze the three that have content. */
+@media (min-width: 1100px) {
+  .hv-footer__top {
+    grid-template-columns: minmax(0, .95fr) minmax(0, 2.9fr) minmax(0, 1.05fr);
+  }
+  .hv-footer__contactcol {
+    grid-column: auto;
+    padding-top: 0;
+    border-top: 0;
+  }
+  .hv-footer__contact { grid-template-columns: minmax(0, 1fr); }
+  .hv-footer__nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+/* line-height is set here rather than inherited from anything, because the
+   icon's offset below is measured against it (1.5 x 14px = a 21px first
+   line, so an icon sitting on that line's centre is 7px down). */
+.hv-footer__contact li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--hv-s3);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.5;
+}
+/* Optically centred on the FIRST line of text, so the wrapping address keeps
+   its pin level with the top line instead of floating down to the middle of
+   a two-line block. The 5px is the contact links' own vertical padding (see
+   `.hv-footer__contact a` just below) - the anchor's text starts there, so
+   the line's centre is 5px + half a line down, and the icon needs half its
+   own height taken back off. */
+.hv-footer__contact svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  margin-top: calc(5px + (1.5em - 17px) / 2);
+  color: var(--hv-accent-bright);
+}
 .hv-footer__contact a, .hv-footer__contact span { color: var(--hv-on-dark-muted); text-decoration: none; }
 .hv-footer__contact a:hover { color: var(--hv-accent-bright); }
 
@@ -525,27 +601,17 @@
 .hv-footer__col a:hover { color: var(--hv-accent-bright); padding-left: 4px; }
 .hv-footer__contact a, .hv-footer__legal a { display: inline-block; padding-block: 5px; }
 
-.hv-footer__cta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--hv-s5);
-  padding: var(--hv-s6);
-  border: 1px solid var(--hv-border-dark);
-  border-radius: var(--hv-r-lg);
-  background: linear-gradient(120deg, rgba(53, 217, 160, .10), rgba(53, 217, 160, .02));
-}
-.hv-footer__ctatitle { margin: 0; font-size: 1.05rem; font-weight: 800; color: #fff; }
-.hv-footer__ctasub { margin: var(--hv-s1) 0 0; font-size: var(--hv-fs-sm); color: var(--hv-on-dark-muted); }
-
+/* The footer's own CTA band used to sit between the columns and this bar.
+   With it gone the bar follows straight on from the contact row, on its own
+   hairline - the footer reads as three stacked bands (links, contact,
+   legal) instead of ending in a hole where the CTA used to be. */
 .hv-footer__bottom {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: var(--hv-s4);
-  margin-top: var(--hv-s7);
+  margin-top: var(--hv-s6);
   padding-top: var(--hv-s6);
   border-top: 1px solid var(--hv-border-dark);
 }

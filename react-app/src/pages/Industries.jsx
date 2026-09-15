@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout.jsx";
 import PageMeta from "@/components/common/PageMeta.jsx";
 import PageHero from "@/components/common/PageHero.jsx";
@@ -12,14 +13,71 @@ import Spotlight from "@/components/common/Spotlight.jsx";
 import { Panel } from "@/components/common/Panel.jsx";
 import CtaBand from "@/components/common/CtaBand.jsx";
 import Reveal from "@/components/common/Reveal.jsx";
-import { TAX_TAGS, TAX_CHECKLIST, ROADMAP_CARDS, ROLLOUT_STEPS } from "@/data/industries";
+import Icon from "@/components/common/Icon.jsx";
+import { openLeadPopup } from "@/components/common/LeadPopup.jsx";
+import { TAX_TAGS, TAX_CHECKLIST, ROADMAP_CARDS, ROLLOUT_STEPS, PROFESSIONS } from "@/data/industries";
+
+/* The v2 chrome (same header and footer every other redesigned page uses - see
+   ServiceComingSoon.jsx for why both stylesheets are needed). The profession
+   picker below is built from that design system's own classes, so its styling
+   is the only thing this page adds on top: styles/industries.css. */
+import "@/styles/home-redesign.css";
+import "@/styles/home-chrome.css";
+import "@/styles/industries.css";
+
+/**
+ * One profession card.
+ *
+ * A real <button>, not a div with a click handler: it opens the lead popup
+ * with that trade already answered, and a button is what makes that
+ * keyboard-operable and announced as an action. The 13 trades carry an icon
+ * each; "Something else" is a Link to the contact page instead, because it
+ * isn't an answer either - it's a different question.
+ */
+function ProfessionCard({ icon, label, body, other = false, index = 0, to }) {
+  const inner = (
+    <>
+      {icon && (
+        <span className="hv-badge" aria-hidden="true">
+          <Icon name={icon} />
+        </span>
+      )}
+      <span className="hv-prof__name">{label}</span>
+      <span className="hv-prof__body">{body}</span>
+      <span className="hv-prof__go" aria-hidden="true">
+        <Icon name="arrowRight" />
+      </span>
+    </>
+  );
+
+  return (
+    <Reveal as="li" className="hv-prof__item" index={index}>
+      {other ? (
+        <Link className="hv-prof__card hv-prof__card--other" to={to}>
+          {inner}
+        </Link>
+      ) : (
+        <button
+          type="button"
+          className="hv-prof__card"
+          onClick={() => openLeadPopup({ profession: label })}
+        >
+          {inner}
+        </button>
+      )}
+    </Reveal>
+  );
+}
 
 export default function Industries() {
   return (
-    <Layout topbar={<>Tax practices are live today - <a href="/contact">tell us which industry you want next</a></>}>
+    <Layout
+      variant="v2"
+      topbar={<>Tax practices are live today - <a href="/contact">tell us which industry you want next</a></>}
+    >
       <PageMeta
         title="Industries - GHLevelUp"
-        description="Built for tax preparers first, then the offices around them - bookkeeping, real estate, medical practices and freight brokers."
+        description="Built for tax preparers first, then the trades around them - accounting, bookkeeping, notary, mortgage, real estate, insurance, financial advice and legal practices. Tell us your profession and we'll say what's live today."
       />
 
       {/* center: true - matches the page-hero--center fix applied earlier
@@ -106,6 +164,45 @@ export default function Industries() {
           </BtnRow>
         </Reveal>
       </Section>
+
+      {/* ── What is your Profession or Service? ──────────────────────── */}
+      {/* Directly after the roadmap: a visitor has just read which trades are
+          ready, next and further out, so this is the moment to ask the
+          question the whole page is answering. The section's own note below
+          the grid repeats that promise, so 14 cards can't read as "all of
+          this ships today". */}
+      <section id="professions" className="hv-section">
+        <div className="hv-container">
+          <Reveal className="hv-section-head hv-section-head--center">
+            <span className="hv-eyebrow">Who we build for</span>
+            <h2 className="hv-h2">What is your Profession or Service?</h2>
+            <p className="hv-lede">
+              Pick yours and tell us where the day actually goes - the calls you miss, the documents you
+              chase, the clients you can't track. We'll answer with what your build would look like, and how
+              far off it is.
+            </p>
+          </Reveal>
+
+          <ul className="hv-grid hv-grid--auto-3 hv-prof">
+            {PROFESSIONS.map((p, i) => (
+              <ProfessionCard icon={p.icon} label={p.label} body={p.body} index={i} key={p.label} />
+            ))}
+            <ProfessionCard
+              other
+              to="/contact"
+              index={PROFESSIONS.length}
+              label="Something else"
+              body="Running a different kind of practice? Tell us and we'll say honestly whether we're the right fit yet."
+            />
+          </ul>
+
+          <p className="hv-prof__note">
+            <Icon name="check" aria-hidden="true" />
+            Tax preparers are live today. Bookkeeping is next - you'll get a straight answer on your own trade
+            either way.
+          </p>
+        </div>
+      </section>
 
       {/* ── Why one at a time ────────────────────────────────────────── */}
       <Section ink>

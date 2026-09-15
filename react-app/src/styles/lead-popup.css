@@ -195,6 +195,42 @@
   box-shadow: 0 0 0 4px rgba(14, 164, 107, .14);
 }
 
+/* The visitor's own answer, echoed back: shown only when they arrived by
+   clicking a profession card on /industries (see LeadPopup.jsx). Reads as a
+   receipt for what they clicked, not as a field - so it sits on one line
+   above the honeypot and carries its own remove control. */
+.lp__preset {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: -2px 0 0;
+  padding: 10px 10px 10px 14px;
+  border: 1px solid #C3E2D6;
+  border-radius: 12px;
+  background: #EAF7F1;
+  font-size: .85rem;
+  color: #36524B;
+}
+.lp__preset strong { color: #0A7F52; }
+.lp__preset-x {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #5F7772;
+  cursor: pointer;
+  transition: background 200ms ease, color 200ms ease;
+}
+.lp__preset-x svg { width: 14px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+.lp__preset-x:hover { background: #D8F0E5; color: #0B1F1A; }
+.lp__preset-x:focus-visible { outline: 2px solid #0A7F52; outline-offset: 2px; }
+
 .lp__hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 
 .lp__consent { display: flex; align-items: flex-start; gap: 10px; font-size: .74rem; line-height: 1.5; color: #5F7772; cursor: pointer; }

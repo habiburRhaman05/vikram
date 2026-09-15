@@ -759,13 +759,12 @@ export const FOOTER_COLUMNS = [
       { label: "Platform Overview", to: "/platform" },
     ],
   },
-  {
-    title: "Legal",
-    links: [
-      { label: "Privacy Policy", to: "/privacy" },
-      { label: "Terms & Conditions", to: "/terms" },
-    ],
-  },
+  /* There was a fourth "Legal" column here, holding exactly the two links the
+     footer's bottom bar already shows (Privacy Policy, Terms & Conditions).
+     It was removed rather than kept as a duplicate: that space is what lets
+     the contact details sit as a column on the right without the three
+     remaining link columns wrapping, and the legal links are still one line
+     away at the bottom of every page. */
 ];
 
 export const FOOTER_SOCIAL = [

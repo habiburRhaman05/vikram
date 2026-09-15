@@ -1,0 +1,655 @@
+/* ==========================================================================
+   /onboarding - standalone client intake wizard
+   --------------------------------------------------------------------------
+   Not a normal site page: no header, no footer, no nav. It's rendered
+   inside `.home-v2` (Onboarding.jsx applies the class on its own root, the
+   same way Layout does for every other v2 page) purely to inherit that
+   scope's design tokens and fonts - every color below is a `--hv-*`
+   variable, so this file carries zero hex codes of its own and stays in
+   sync with the rest of the brand automatically.
+
+   The reference this was built from used a dark navy UI with a red accent.
+   The navy is kept (it reads as a focused, no-distractions intake flow,
+   and pairs with --hv-bg-dark, which the rest of the site already uses for
+   its own dark sections) - the accent is swapped for the brand's own mint.
+
+   Contents
+     01. Page shell & header
+     02. Progress bar + step tabs
+     03. Card
+     04. Form fields (shared shell, input, select, textarea, autosuggest combobox, phone)
+     05. Radio group
+     06. Pill picker
+     07. Checkbox
+     08. Credentials repeater
+     09. Info banner
+     10. Footer actions + buttons
+     11. Submit result screen
+     12. Responsive
+   ========================================================================== */
+
+
+/* 01. Page shell & header ================================================= */
+
+.ob-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(1100px 480px at 50% -10%, rgba(53, 217, 160, .10), transparent 60%),
+    var(--hv-bg-dark);
+  color: var(--hv-on-dark);
+  font-family: var(--hv-font-body);
+  padding: var(--hv-s8) var(--hv-s5) var(--hv-s11);
+}
+
+.ob-page :focus-visible { outline: 3px solid var(--hv-accent-bright); outline-offset: 3px; border-radius: var(--hv-r-sm); }
+
+/* The site-wide chat widget (a fixed-position custom element loaded in
+   index.html on every route) floats over the bottom-right corner of the
+   viewport - confirmed via elementFromPoint that its greeting bubble sits
+   directly on top of this page's Continue/Submit button on narrow
+   screens, silently eating the tap. This flow is already deliberately
+   chrome-free (no header, footer or lead popup), so the fix is to hide
+   the widget here too rather than pad around it and hope. */
+body:has(.ob-page) chat-widget { display: none !important; }
+
+.ob-shell { max-width: 760px; margin-inline: auto; }
+
+.ob-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--hv-s7);
+}
+.ob-logo a { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+.ob-logo img { width: 34px; height: auto; }
+.ob-logo span {
+  font-family: var(--hv-font);
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--hv-on-dark);
+  letter-spacing: -.01em;
+}
+.ob-logo span b { color: var(--hv-accent-bright); }
+
+.ob-header { text-align: center; margin-bottom: var(--hv-s8); }
+
+.ob-eyebrow {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: var(--hv-r-pill);
+  background: rgba(53, 217, 160, .12);
+  border: 1px solid rgba(53, 217, 160, .3);
+  color: var(--hv-accent-bright);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-eyebrow);
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: var(--hv-s5);
+}
+
+.ob-header h1 {
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-h2);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: #fff;
+  margin: 0 0 var(--hv-s4);
+}
+
+.ob-header p {
+  color: var(--hv-on-dark-muted);
+  font-size: var(--hv-fs-lede);
+  line-height: 1.6;
+  max-width: 52ch;
+  margin-inline: auto;
+}
+
+
+/* 02. Progress bar + step tabs ============================================ */
+
+.ob-progress { margin-bottom: var(--hv-s6); }
+
+.ob-progress__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: var(--hv-fs-sm);
+  font-weight: 600;
+  color: var(--hv-on-dark-muted);
+  margin-bottom: var(--hv-s3);
+}
+.ob-progress__pct { color: var(--hv-accent-bright); font-weight: 700; }
+
+.ob-progress__bar {
+  height: 6px;
+  border-radius: var(--hv-r-pill);
+  background: rgba(255, 255, 255, .1);
+  overflow: hidden;
+}
+.ob-progress__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--hv-accent-strong), var(--hv-accent-bright));
+  transition: width 320ms var(--hv-ease);
+}
+
+.ob-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin-top: var(--hv-s5);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ob-tabs::-webkit-scrollbar { display: none; }
+
+.ob-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: var(--hv-r-pill);
+  border: 1px solid var(--hv-border-dark);
+  background: rgba(255, 255, 255, .03);
+  color: var(--hv-on-dark-muted);
+  font-family: var(--hv-font);
+  font-size: .74rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background 160ms var(--hv-ease), border-color 160ms var(--hv-ease), color 160ms var(--hv-ease);
+}
+.ob-tab svg { width: 14px; height: 14px; flex-shrink: 0; }
+.ob-tab:not(:disabled):hover { border-color: var(--hv-border-strong); color: #fff; }
+.ob-tab:disabled { cursor: not-allowed; opacity: .45; }
+
+.ob-tab.is-done { color: var(--hv-accent-bright); border-color: rgba(53, 217, 160, .3); }
+.ob-tab.is-active {
+  background: var(--hv-grad-accent);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(10, 127, 82, .3);
+}
+
+
+/* 03. Card ================================================================= */
+
+.ob-card {
+  background: rgba(255, 255, 255, .035);
+  border: 1px solid var(--hv-border-dark);
+  border-radius: var(--hv-r-xl);
+  padding: var(--hv-s7);
+  backdrop-filter: blur(6px);
+}
+
+.ob-card__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--hv-s4);
+  margin-bottom: var(--hv-s7);
+  padding-bottom: var(--hv-s6);
+  border-bottom: 1px solid var(--hv-border-dark);
+}
+.ob-card__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: var(--hv-r-md);
+  background: rgba(53, 217, 160, .14);
+  color: var(--hv-accent-bright);
+}
+.ob-card__icon svg { width: 21px; height: 21px; }
+.ob-card__head h2 {
+  font-family: var(--hv-font);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 4px;
+}
+.ob-card__head p { color: var(--hv-on-dark-muted); font-size: var(--hv-fs-sm); margin: 0; }
+
+.ob-card__body { display: flex; flex-direction: column; gap: var(--hv-s6); }
+
+/* Two fields side by side - the default shape for this form (name/email
+   pairs, city/state pairs). `.ob-row--1` opts a row out for a single
+   full-width field (address, textarea) without a whole extra class. */
+.ob-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--hv-s5); }
+.ob-row--1 { grid-template-columns: 1fr; }
+
+.ob-divider { border: none; border-top: 1px solid var(--hv-border-dark); margin: var(--hv-s2) 0; }
+
+.ob-subhead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--hv-font);
+  font-weight: 700;
+  color: #fff;
+  font-size: .95rem;
+}
+.ob-subhead svg { width: 16px; height: 16px; color: var(--hv-accent-bright); }
+
+
+/* 04. Form fields =========================================================== */
+
+.ob-field { display: flex; flex-direction: column; gap: 7px; }
+
+.ob-field__label {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--hv-on-dark-muted);
+}
+.ob-field__req { color: var(--hv-accent-bright); margin-left: 2px; }
+
+.ob-field__msg { font-size: .78rem; color: var(--hv-on-dark-muted); margin: 0; }
+.ob-field__msg--error { color: #FF9B8A; font-weight: 600; }
+
+.ob-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--hv-r-sm);
+  border: 1px solid var(--hv-border-dark);
+  background: rgba(255, 255, 255, .04);
+  color: #fff;
+  font-family: var(--hv-font-body);
+  font-size: .92rem;
+  transition: border-color 160ms var(--hv-ease), background 160ms var(--hv-ease);
+}
+.ob-input::placeholder { color: rgba(220, 239, 232, .35); }
+.ob-input:hover { border-color: var(--hv-border-strong); }
+.ob-input:focus {
+  outline: none;
+  border-color: var(--hv-accent-bright);
+  background: rgba(255, 255, 255, .06);
+}
+
+.ob-field--error .ob-input { border-color: #FF9B8A; }
+
+.ob-input:disabled { opacity: .45; cursor: not-allowed; }
+
+.ob-textarea { resize: vertical; min-height: 96px; line-height: 1.55; }
+
+.ob-select { position: relative; }
+.ob-select select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 40px;
+}
+.ob-select select:invalid { color: rgba(220, 239, 232, .45); }
+.ob-select select option { background: #0A2620; color: #fff; }
+.ob-select__caret {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--hv-on-dark-muted);
+  pointer-events: none;
+}
+
+/* Autosuggest combobox (country, city, time zone, currency, language).
+   The list is absolutely positioned: a country dropdown that pushed the
+   card down would shove the Continue button off screen on every focus. */
+.ob-combobox { position: relative; }
+.ob-combobox__input { padding-right: 38px; }
+
+.ob-combobox__clear {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .08);
+  color: var(--hv-on-dark-muted);
+  cursor: pointer;
+}
+.ob-combobox__clear:hover { background: rgba(255, 255, 255, .18); color: #fff; }
+.ob-combobox__clear svg { width: 12px; height: 12px; }
+
+.ob-combobox__list {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 284px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border: 1px solid rgba(195, 226, 214, .35);
+  border-radius: var(--hv-r-md);
+  background: rgba(3, 33, 30, .985);
+  box-shadow: 0 24px 52px rgba(0, 0, 0, .5);
+}
+
+.ob-combobox__option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: var(--hv-r-sm);
+  font-size: .88rem;
+  color: var(--hv-on-dark);
+  cursor: pointer;
+}
+.ob-combobox__option.is-active { background: rgba(53, 217, 160, .14); }
+.ob-combobox__option.is-selected .ob-combobox__label { color: var(--hv-accent-bright); font-weight: 600; }
+
+.ob-combobox__flag { font-size: 1rem; line-height: 1; flex-shrink: 0; }
+.ob-combobox__label { flex-shrink: 0; }
+/* The country/dial-code hint can outrank the label on a narrow option row -
+   truncate it rather than wrap the row to two lines. */
+.ob-combobox__hint {
+  color: var(--hv-on-dark-muted);
+  font-size: .82rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ob-combobox__meta {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--hv-on-dark-muted);
+  font-size: .78rem;
+  font-variant-numeric: tabular-nums;
+}
+.ob-combobox__tick { width: 15px; height: 15px; flex-shrink: 0; color: var(--hv-accent-bright); }
+
+.ob-combobox__empty { padding: 10px; font-size: .82rem; color: var(--hv-on-dark-muted); }
+
+/* Phone: dial-code picker plus a national-number box, joined so they read as
+   one control. */
+.ob-phone { display: flex; gap: 8px; align-items: flex-start; }
+.ob-phone__dial { flex: 0 0 132px; }
+.ob-phone__dial .ob-combobox__input { padding-inline: 12px; }
+.ob-phone__input { flex: 1 1 auto; min-width: 0; }
+.ob-phone__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: .78rem;
+  color: var(--hv-on-dark-muted);
+}
+.ob-phone__meta span { color: rgba(146, 179, 170, .75); }
+
+
+/* 05. Radio group =========================================================== */
+
+.ob-radio-group { display: flex; flex-direction: column; gap: 10px; }
+
+.ob-radio {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: .9rem;
+  color: var(--hv-on-dark);
+  cursor: pointer;
+}
+.ob-radio input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.ob-radio__dot {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--hv-border-strong);
+  display: grid;
+  place-items: center;
+  transition: border-color 160ms var(--hv-ease);
+}
+.ob-radio__dot::after {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--hv-accent-bright);
+  transform: scale(0);
+  transition: transform 160ms var(--hv-ease);
+}
+.ob-radio input:checked + .ob-radio__dot { border-color: var(--hv-accent-bright); }
+.ob-radio input:checked + .ob-radio__dot::after { transform: scale(1); }
+.ob-radio input:focus-visible + .ob-radio__dot { outline: 3px solid var(--hv-accent-bright); outline-offset: 3px; }
+
+
+/* 06. Pill picker =========================================================== */
+
+.ob-pills { display: flex; flex-wrap: wrap; gap: 9px; }
+
+.ob-pill {
+  padding: 9px 16px;
+  border-radius: var(--hv-r-pill);
+  border: 1px solid var(--hv-border-dark);
+  background: rgba(255, 255, 255, .03);
+  color: var(--hv-on-dark);
+  font-family: var(--hv-font);
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 160ms var(--hv-ease), border-color 160ms var(--hv-ease), color 160ms var(--hv-ease), transform 160ms var(--hv-ease);
+}
+.ob-pill:hover { border-color: var(--hv-border-strong); transform: translateY(-1px); }
+.ob-pill.is-on {
+  background: var(--hv-grad-accent);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(10, 127, 82, .3);
+}
+
+
+/* 07. Checkbox ============================================================== */
+
+.ob-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: .88rem;
+  color: var(--hv-on-dark-muted);
+  cursor: pointer;
+}
+.ob-checkbox input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.ob-checkbox__box {
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  border: 1.5px solid var(--hv-border-strong);
+  color: transparent;
+  transition: background 160ms var(--hv-ease), border-color 160ms var(--hv-ease), color 160ms var(--hv-ease);
+}
+.ob-checkbox__box svg { width: 12px; height: 12px; }
+.ob-checkbox input:checked + .ob-checkbox__box { background: var(--hv-accent-strong); border-color: var(--hv-accent-strong); color: #fff; }
+.ob-checkbox input:focus-visible + .ob-checkbox__box { outline: 3px solid var(--hv-accent-bright); outline-offset: 3px; }
+
+
+/* 08. Credentials repeater ================================================== */
+
+.ob-creds { display: flex; flex-direction: column; gap: var(--hv-s5); }
+
+.ob-creds__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: var(--hv-s4);
+  align-items: start;
+  padding-bottom: var(--hv-s5);
+  border-bottom: 1px dashed var(--hv-border-dark);
+}
+.ob-creds__row:last-of-type { border-bottom: none; padding-bottom: 0; }
+
+.ob-creds__remove {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-top: 24px;
+  border-radius: var(--hv-r-sm);
+  border: 1px solid var(--hv-border-dark);
+  background: rgba(255, 91, 91, .08);
+  color: #FF9B8A;
+  cursor: pointer;
+  transition: background 160ms var(--hv-ease), border-color 160ms var(--hv-ease);
+}
+.ob-creds__remove:hover { background: rgba(255, 91, 91, .18); border-color: rgba(255, 91, 91, .4); }
+.ob-creds__remove svg { width: 17px; height: 17px; }
+
+.ob-creds__add {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 10px 18px;
+  border-radius: var(--hv-r-pill);
+  border: 1.5px dashed var(--hv-border-strong);
+  background: transparent;
+  color: var(--hv-accent-bright);
+  font-family: var(--hv-font);
+  font-size: .85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 160ms var(--hv-ease), border-color 160ms var(--hv-ease);
+}
+.ob-creds__add svg { width: 15px; height: 15px; }
+.ob-creds__add:hover { background: rgba(53, 217, 160, .1); border-color: var(--hv-accent-bright); }
+
+
+/* 09. Info banner =========================================================== */
+
+.ob-banner {
+  display: flex;
+  gap: 12px;
+  padding: var(--hv-s5);
+  border-radius: var(--hv-r-md);
+  background: rgba(53, 217, 160, .08);
+  border: 1px solid rgba(53, 217, 160, .22);
+  color: var(--hv-on-dark);
+  font-size: .87rem;
+  line-height: 1.6;
+}
+.ob-banner svg { width: 19px; height: 19px; flex-shrink: 0; color: var(--hv-accent-bright); margin-top: 1px; }
+
+
+/* 10. Footer actions + buttons ============================================== */
+
+.ob-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--hv-s4);
+  margin-top: var(--hv-s7);
+}
+
+.ob-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 26px;
+  border-radius: var(--hv-r-pill);
+  border: 1px solid transparent;
+  font-family: var(--hv-font);
+  font-weight: 700;
+  font-size: .9rem;
+  min-height: 46px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 160ms var(--hv-ease), box-shadow 160ms var(--hv-ease), background 160ms var(--hv-ease), border-color 160ms var(--hv-ease);
+}
+.ob-btn svg { width: 16px; height: 16px; }
+.ob-btn:hover { transform: translateY(-2px); }
+.ob-btn:active { transform: translateY(0); }
+.ob-btn:disabled { opacity: .55; cursor: progress; transform: none; }
+
+.ob-btn--primary {
+  background: var(--hv-grad-accent);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(10, 127, 82, .32);
+}
+.ob-btn--primary:hover { box-shadow: 0 14px 30px rgba(10, 127, 82, .4); }
+
+.ob-btn--ghost {
+  background: rgba(255, 255, 255, .04);
+  border-color: var(--hv-border-dark);
+  color: var(--hv-on-dark);
+}
+.ob-btn--ghost:hover { background: rgba(255, 255, 255, .08); border-color: var(--hv-border-strong); }
+.ob-btn--ghost:disabled:hover { background: rgba(255, 255, 255, .04); border-color: var(--hv-border-dark); transform: none; }
+
+
+/* 11. Submit result screen ================================================== */
+
+.ob-result {
+  text-align: center;
+  padding: var(--hv-s10) var(--hv-s6);
+}
+.ob-result__tick {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto var(--hv-s6);
+  border-radius: 50%;
+  background: rgba(53, 217, 160, .14);
+  color: var(--hv-accent-bright);
+}
+.ob-result__tick svg { width: 30px; height: 30px; }
+.ob-result__tick--warn { background: rgba(255, 155, 138, .14); color: #FF9B8A; }
+.ob-result h2 { font-family: var(--hv-font); color: #fff; font-size: 1.4rem; margin: 0 0 10px; }
+.ob-result p { color: var(--hv-on-dark-muted); max-width: 44ch; margin: 0 auto var(--hv-s6); line-height: 1.6; }
+.ob-result a { color: var(--hv-accent-bright); text-decoration: underline; text-underline-offset: 3px; }
+
+/* The three "what happens next" steps: a plain ordered list, numbered by the
+   marker itself - no counters or icons to keep in sync with the copy. */
+.ob-result__steps {
+  list-style: decimal;
+  text-align: left;
+  max-width: 46ch;
+  margin: 0 auto var(--hv-s6);
+  padding: var(--hv-s4) var(--hv-s5) var(--hv-s4) calc(var(--hv-s5) + 14px);
+  border: 1px solid var(--hv-border-dark);
+  border-radius: var(--hv-r-md);
+  background: rgba(255, 255, 255, .03);
+  color: var(--hv-on-dark-muted);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.55;
+}
+.ob-result__steps li { padding-left: 4px; }
+.ob-result__steps li + li { margin-top: 10px; }
+.ob-result__steps li::marker { color: var(--hv-accent-bright); font-weight: 700; }
+
+.ob-result__note { margin: 0 auto var(--hv-s6); font-size: var(--hv-fs-sm); max-width: 42ch; }
+
+
+/* 12. Responsive ============================================================ */
+
+@media (max-width: 720px) {
+  .ob-page { padding: var(--hv-s6) var(--hv-s4) var(--hv-s9); }
+  .ob-card { padding: var(--hv-s5); border-radius: var(--hv-r-lg); }
+  .ob-row { grid-template-columns: 1fr; gap: var(--hv-s5); }
+  /* The dial picker sits above the number instead of beside it - at 132px
+     wide on a 360px screen the two inputs leave neither enough room. */
+  .ob-phone { flex-direction: column; gap: 8px; }
+  .ob-phone__dial { flex: 1 1 auto; width: 100%; }
+  .ob-phone__input { width: 100%; }
+  .ob-creds__row { grid-template-columns: 1fr; gap: var(--hv-s3); }
+  .ob-creds__remove { margin-top: 0; justify-self: flex-end; }
+  .ob-header h1 { font-size: 1.7rem; }
+  .ob-actions { flex-direction: column-reverse; align-items: stretch; }
+  .ob-actions .ob-btn { justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-tab, .ob-pill, .ob-btn, .ob-input, .ob-progress__fill { transition: none; }
+  .ob-btn:hover, .ob-pill:hover { transform: none; }
+}

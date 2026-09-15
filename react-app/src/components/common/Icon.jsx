@@ -25,6 +25,9 @@ const paths = {
   ),
   // Bold standalone tick - "document received" rows.
   tick: <path d="m5 13 4 4L19 7" />,
+  // Dismiss / clear. Named close rather than "x", which is already the X
+  // (Twitter) brand mark further down this file.
+  close: <path d="M6 6l12 12M18 6 6 18" />,
   // "Book a demo" - calendar.
   calendar: (
     <>
@@ -267,6 +270,20 @@ const paths = {
     <>
       <rect x="3" y="6" width="18" height="13" rx="2.5" />
       <path d="M3 10h18M16.5 14.5h.01" />
+    </>
+  ),
+
+  /* -- Added for the onboarding wizard ---------------------------------- */
+  key: (
+    <>
+      <circle cx="7.5" cy="15.5" r="4.5" />
+      <path d="m10.6 12.4 7.9-7.9M15.5 7l2.5 2.5M18.5 4l2.5 2.5" />
+    </>
+  ),
+  trash: (
+    <>
+      <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6Z" />
+      <path d="M10 11v6M14 11v6" />
     </>
   ),
 
