@@ -1,0 +1,184 @@
+import Icon from "@/components/common/Icon.jsx";
+
+/**
+ * Every field in the /onboarding wizard, in one file - a text input, a
+ * select, a textarea, a radio group and a pill multi-select all share the
+ * same label/required-mark/error/helper layout, so they're thin wrappers
+ * around that shared shell (`FieldShell`) rather than five unrelated
+ * components that happen to look alike.
+ *
+ * Error text and aria-describedby/aria-invalid are wired the same way on
+ * every field: `.ob-field--error` on the wrapper, a `role="alert"` message
+ * under the control, and the control itself pointing at that message's id
+ * so a screen reader announces it the moment the field takes blame.
+ *
+ * Combobox/PhoneField (the autosuggest country, city and phone controls)
+ * live in Combobox.jsx next door - they need AsYouType and a few hundred
+ * lines of interaction code that would bury these five small wrappers.
+ * They wrap this same FieldShell, exported for that reason.
+ */
+export function FieldShell({ label, required, error, helper, htmlFor, hideLabel, children }) {
+  const msgId = htmlFor ? `${htmlFor}-msg` : undefined;
+  return (
+    <div className={`ob-field${error ? " ob-field--error" : ""}`}>
+      {label && (
+        <label className={`ob-field__label${hideLabel ? " hv-sr-only" : ""}`} htmlFor={htmlFor}>
+          {label}
+          {required && (
+            <span className="ob-field__req" aria-hidden="true">
+              *
+            </span>
+          )}
+        </label>
+      )}
+      {children}
+      {error ? (
+        <p className="ob-field__msg ob-field__msg--error" id={msgId} role="alert">
+          {error}
+        </p>
+      ) : helper ? (
+        <p className="ob-field__msg" id={msgId}>
+          {helper}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+export function TextField({ label, name, value, onChange, type = "text", placeholder, required, error, helper, autoComplete, inputMode, className = "", hideLabel = false, disabled = false }) {
+  const id = `ob-${name}`;
+  return (
+    <FieldShell label={label} required={required} error={error} helper={helper} htmlFor={id} hideLabel={hideLabel}>
+      <input
+        id={id}
+        name={name}
+        type={type}
+        value={value}
+        onChange={(e) => onChange(name, e.target.value)}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        inputMode={inputMode}
+        aria-invalid={!!error}
+        aria-describedby={error || helper ? `${id}-msg` : undefined}
+        disabled={disabled}
+        className={`ob-input ${className}`.trim()}
+      />
+    </FieldShell>
+  );
+}
+
+export function TextAreaField({ label, name, value, onChange, placeholder, helper, required, error, rows = 4 }) {
+  const id = `ob-${name}`;
+  return (
+    <FieldShell label={label} required={required} error={error} helper={helper} htmlFor={id}>
+      <textarea
+        id={id}
+        name={name}
+        value={value}
+        onChange={(e) => onChange(name, e.target.value)}
+        placeholder={placeholder}
+        rows={rows}
+        aria-invalid={!!error}
+        aria-describedby={error || helper ? `${id}-msg` : undefined}
+        className="ob-input ob-textarea"
+      />
+    </FieldShell>
+  );
+}
+
+export function SelectField({ label, name, value, onChange, options, required, error, helper, placeholder = "Select an option", disabled = false }) {
+  const id = `ob-${name}`;
+  return (
+    <FieldShell label={label} required={required} error={error} helper={helper} htmlFor={id}>
+      <div className="ob-select">
+        <select
+          id={id}
+          name={name}
+          value={value}
+          onChange={(e) => onChange(name, e.target.value)}
+          aria-invalid={!!error}
+          aria-describedby={error || helper ? `${id}-msg` : undefined}
+          disabled={disabled}
+          className="ob-input"
+        >
+          <option value="" disabled>
+            {placeholder}
+          </option>
+          {options.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
+        <Icon name="chevronDown" className="ob-select__caret" />
+      </div>
+    </FieldShell>
+  );
+}
+
+export function RadioGroup({ label, name, value, onChange, options, required, error }) {
+  return (
+    <FieldShell label={label} required={required} error={error}>
+      <div className="ob-radio-group" role="radiogroup" aria-label={label}>
+        {options.map((opt) => (
+          <label className="ob-radio" key={opt}>
+            <input type="radio" name={name} value={opt} checked={value === opt} onChange={() => onChange(name, opt)} />
+            <span className="ob-radio__dot" aria-hidden="true" />
+            {opt}
+          </label>
+        ))}
+      </div>
+    </FieldShell>
+  );
+}
+
+/**
+ * Toggle-pill picker. `multiple` (the default) keeps an array of selected
+ * values, like the reference's "Services Wanted" / "Regions" pickers;
+ * pass `multiple={false}` for a single-answer row like "Does the client
+ * need a new website?" (Yes/No), where picking one always replaces
+ * whatever was picked before instead of adding to it.
+ */
+export function PillGroup({ label, name, value, onChange, options, required, error, helper, multiple = true }) {
+  const selected = multiple ? value : value ? [value] : [];
+  const toggle = (opt) => {
+    if (!multiple) {
+      onChange(name, value === opt ? "" : opt);
+      return;
+    }
+    const next = selected.includes(opt) ? selected.filter((v) => v !== opt) : [...selected, opt];
+    onChange(name, next);
+  };
+  return (
+    <FieldShell label={label} required={required} error={error} helper={helper}>
+      <div className="ob-pills" role="group" aria-label={label}>
+        {options.map((opt) => {
+          const isOn = selected.includes(opt);
+          return (
+            <button
+              type="button"
+              key={opt}
+              className={`ob-pill${isOn ? " is-on" : ""}`}
+              aria-pressed={isOn}
+              onClick={() => toggle(opt)}
+            >
+              {opt}
+            </button>
+          );
+        })}
+      </div>
+    </FieldShell>
+  );
+}
+
+export function Checkbox({ label, name, checked, onChange }) {
+  return (
+    <label className="ob-checkbox">
+      <input type="checkbox" name={name} checked={checked} onChange={(e) => onChange(name, e.target.checked)} />
+      <span className="ob-checkbox__box" aria-hidden="true">
+        <Icon name="check" />
+      </span>
+      {label}
+    </label>
+  );
+}

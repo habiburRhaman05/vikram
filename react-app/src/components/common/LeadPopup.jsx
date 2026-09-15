@@ -28,10 +28,16 @@ const QUIET_ROUTES = ["/book", "/contact", "/privacy", "/terms"];
  * the snooze window, QUIET_ROUTES) - those exist to stop the TIMED popup
  * from being pushy, not to stop a visitor who explicitly clicked a button
  * asking to see this form.
+ *
+ * Pass `{ profession }` and the popup opens with that answer already made -
+ * the Industries page's profession cards use it, so clicking "Realtor"
+ * doesn't ask the visitor to type "Realtor" again. The optional payload is
+ * read defensively: `onClick={openLeadPopup}` passes the click event itself
+ * as the first argument, and an event has no `profession`.
  */
 const OPEN_EVENT = "ghlu:open-lead-popup";
-export function openLeadPopup() {
-  window.dispatchEvent(new Event(OPEN_EVENT));
+export function openLeadPopup(payload) {
+  window.dispatchEvent(new CustomEvent(OPEN_EVENT, { detail: payload || null }));
 }
 
 /* Where submissions go: a GoHighLevel "Inbound Webhook" workflow trigger
@@ -113,6 +119,10 @@ export default function LeadPopup() {
   const [leaving, setLeaving] = useState(false);
   const [status, setStatus] = useState("idle"); // idle | sending | done | fallback
   const [firstName, setFirstName] = useState("");
+  /* The trade the visitor clicked through from ("Realtor", "CPA"), if any.
+     Shown back to them as a removable chip and carried into the submitted
+     lead, so the answer survives the click and reaches the CRM. */
+  const [profession, setProfession] = useState("");
   const dialogRef = useRef(null);
   const returnFocus = useRef(null);
 
@@ -135,8 +145,9 @@ export default function LeadPopup() {
   // A CTA button elsewhere in the app asked for this explicitly - open
   // regardless of the timer, the snooze window or the current route.
   useEffect(() => {
-    const onOpenRequest = () => {
+    const onOpenRequest = (e) => {
       shownThisVisit = true;
+      setProfession((e.detail && e.detail.profession) || "");
       returnFocus.current = document.activeElement;
       setOpen(true);
     };
@@ -150,6 +161,9 @@ export default function LeadPopup() {
     setTimeout(() => {
       setOpen(false);
       setLeaving(false);
+      /* Cleared on the way out: the timed popup can open days later, and it
+         must not still be claiming a profession nobody asked about. */
+      setProfession("");
       returnFocus.current?.focus?.();
     }, 300);
   };
@@ -207,6 +221,9 @@ export default function LeadPopup() {
       email: String(form.get("email") || "").trim(),
       phone: String(form.get("phone") || "").trim(),
       service: form.get("service") || "",
+      /* Empty string rather than omitted, so a workflow in GoHighLevel sees
+         the same field on every submission. */
+      profession: profession || "",
       consent: form.get("consent") === "on",
       source: "Website lead popup",
       page: window.location.href,
@@ -367,6 +384,27 @@ export default function LeadPopup() {
                   ))}
                 </select>
               </label>
+
+              {/* Only rendered when the visitor arrived by answering a
+                  profession card on /industries - it is their own answer
+                  echoed back, not a field they have to fill in. */}
+              {profession && (
+                <p className="lp__preset">
+                  <span>
+                    You picked <strong>{profession}</strong>
+                  </span>
+                  <button
+                    type="button"
+                    className="lp__preset-x"
+                    onClick={() => setProfession("")}
+                    aria-label={`Remove ${profession}`}
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M6 6l12 12M18 6L6 18" />
+                    </svg>
+                  </button>
+                </p>
+              )}
 
               {/* Honeypot - hidden from people and screen readers, filled by bots. */}
               <input className="lp__hp" name="company_website" tabIndex={-1} autoComplete="off" aria-hidden="true" />

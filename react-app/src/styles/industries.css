@@ -1,0 +1,165 @@
+/* ==========================================================================
+   Industries - "What is your Profession or Service?" picker
+   --------------------------------------------------------------------------
+   The one section on this page that is built from the v2 design system
+   rather than the legacy `.card`/`.grid` pair: it reuses --hv-* tokens (and
+   the .hv-grid / .hv-badge / .hv-section-head classes from
+   styles/home-redesign.css), so everything here only has to describe the
+   card's own layout and its two states.
+
+   Loaded by pages/Industries.jsx AFTER home-redesign.css and
+   home-chrome.css - the tokens and the shared classes have to exist first.
+   ========================================================================== */
+
+/* 01. Section ============================================================= */
+
+/* Three columns on a desktop container, two on a tablet, one on a phone -
+   auto-fit means no breakpoint where the copy is squeezed narrower than it
+   can be read at. Slightly tighter than the default grid gap: 14 cards at
+   --hv-s6 read as one undifferentiated block. */
+.hv-prof {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: var(--hv-s5);
+}
+
+.hv-prof__item { display: flex; }
+
+
+/* 02. Card =============================================================== */
+
+.hv-prof__card {
+  /* A <button> on the real cards (they open the lead popup) and a <Link> on
+     the "Something else" card, so everything a button resets by default -
+     font, colour, text-align, width - is put back here rather than once per
+     element type. */
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "badge name go"
+    "body  body body";
+  align-items: center;
+  gap: var(--hv-s4);
+  width: 100%;
+  padding: var(--hv-s6);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: var(--hv-bg);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  color: var(--hv-text);
+  cursor: pointer;
+  transition: transform var(--hv-dur) var(--hv-ease),
+              box-shadow var(--hv-dur) var(--hv-ease),
+              border-color var(--hv-dur) var(--hv-ease);
+}
+
+.hv-prof__name {
+  grid-area: name;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-h3);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.2;
+}
+
+.hv-prof__body {
+  grid-area: body;
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.6;
+  color: var(--hv-text-muted);
+}
+
+/* The card's arrow, filled in on hover - see below. Starts on the deep mint
+   tile with the readable accent on it (--hv-accent-strong on
+   --hv-bg-mint-deep is 4.57:1) rather than a pale hairline green, so the
+   arrow reads as "this does something" before anyone hovers. */
+.hv-prof__go {
+  grid-area: go;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--hv-r-pill);
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+  transition: color var(--hv-dur) var(--hv-ease),
+              background var(--hv-dur) var(--hv-ease),
+              background var(--hv-dur) var(--hv-ease),
+              transform var(--hv-dur) var(--hv-ease-spring);
+}
+.hv-prof__go svg { width: 17px; height: 17px; }
+
+/* Hover/focus: the card lifts into the accent-tinted elevation (a neutral
+   grey shadow under a green card is what makes a layout read as a
+   template), the icon tile inverts to solid accent, and the arrow takes on
+   the accent so the card has an obvious "this does something" end. */
+.hv-prof__card:hover,
+.hv-prof__card:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: var(--hv-sh-accent);
+  border-color: var(--hv-border-strong);
+}
+.hv-prof__card:hover .hv-badge,
+.hv-prof__card:focus-visible .hv-badge {
+  background: var(--hv-accent-strong);
+  color: #fff;
+}
+.hv-prof__card:hover .hv-prof__go,
+.hv-prof__card:focus-visible .hv-prof__go {
+  color: #fff;
+  background: var(--hv-accent-strong);
+  transform: translateX(3px);
+}
+.hv-prof__card .hv-badge { transition: background var(--hv-dur) var(--hv-ease), color var(--hv-dur) var(--hv-ease); }
+
+/* Keyboard focus: the lift above is a hover cue first, so the outline is
+   what actually marks focus for anyone tabbing through. */
+.hv-prof__card:focus-visible {
+  outline: 3px solid var(--hv-accent);
+  outline-offset: 2px;
+}
+
+/* "Something else": the escape hatch out of the 13 trades above it. Softer
+   than the real cards - dashed edge, no icon tile inversion - because it is
+   a different kind of answer, not a 14th trade. */
+.hv-prof__card--other {
+  border-style: dashed;
+  border-color: var(--hv-border-strong);
+  background: transparent;
+}
+.hv-prof__card--other .hv-prof__name { color: var(--hv-accent-strong); }
+
+
+/* 03. Below the grid ====================================================== */
+
+/* Sits under the picker and repeats the page's promise in this section's
+   own words, so nobody reads 14 cards as "we do all of this today". */
+.hv-prof__note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--hv-s3);
+  flex-wrap: wrap;
+  margin: var(--hv-s9) 0 0;
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-text-muted);
+  text-align: center;
+}
+.hv-prof__note svg { width: 17px; height: 17px; color: var(--hv-accent-strong); }
+
+
+/* 04. Reduced motion ===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .hv-prof__card,
+  .hv-prof__card:hover,
+  .hv-prof__card:focus-visible { transform: none; }
+  .hv-prof__card:hover .hv-prof__go,
+  .hv-prof__card:focus-visible .hv-prof__go { transform: none; }
+}

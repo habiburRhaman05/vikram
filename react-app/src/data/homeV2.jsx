@@ -392,6 +392,17 @@ export const WORK = {
       image: "/img/home/svc-marketing",
       tone: "#F59E0B",
     },
+    {
+  id: "retail-automation",
+  filter: "ai",
+  industry: "E-commerce & Retail",
+  title: "Cart Recovery & Support Bot",
+  body: "Smart AI bots that rescue abandoned carts and handle post-purchase tracking support automatically.",
+  tags: ["AI agents", "E-commerce", "Automation"],
+  image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWWsYMkyUKeLFAUfE7lxW7u3dyP74IRP7NTDfoOUQslespOmodBE7bwkA&s=10",
+  tone: "#EC4899",
+}
+
   ],
 };
 
@@ -433,7 +444,7 @@ export const FOUNDER = {
   eyebrow: "From the founder",
   name: "Vikram Angurala",
   role: "Founder, GHLevelUp",
-  photo: null,
+  photo: "/vikrom-a.jpeg",
   message:
     "I started GHLevelUp because I kept meeting business owners who were losing good leads to slow follow-up - not to a bad product or a bad pitch. The fix is rarely more traffic. It is a system that answers in seconds, every time, whether or not anyone is at a desk. That is the whole of what we build, and we run it with you rather than handing it over and disappearing.",
   signature: "Vikram Angurala",
@@ -748,13 +759,12 @@ export const FOOTER_COLUMNS = [
       { label: "Platform Overview", to: "/platform" },
     ],
   },
-  {
-    title: "Legal",
-    links: [
-      { label: "Privacy Policy", to: "/privacy" },
-      { label: "Terms & Conditions", to: "/terms" },
-    ],
-  },
+  /* There was a fourth "Legal" column here, holding exactly the two links the
+     footer's bottom bar already shows (Privacy Policy, Terms & Conditions).
+     It was removed rather than kept as a duplicate: that space is what lets
+     the contact details sit as a column on the right without the three
+     remaining link columns wrapping, and the legal links are still one line
+     away at the bottom of every page. */
 ];
 
 export const FOOTER_SOCIAL = [

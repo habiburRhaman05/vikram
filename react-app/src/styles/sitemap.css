@@ -1,0 +1,69 @@
+/* ==========================================================================
+   Sitemap - grouped page directory
+   --------------------------------------------------------------------------
+   Built from the v2 design system's own tokens and classes (--hv-*, .hv-grid,
+   .hv-badge) the same way industries.css builds its profession picker, so
+   this page only has to describe the group card and its link list.
+
+   Loaded by pages/Sitemap.jsx AFTER home-redesign.css and home-chrome.css -
+   the tokens and shared classes have to exist first.
+   ========================================================================== */
+
+.sitemap-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hv-s5);
+  padding: var(--hv-s7);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: var(--hv-bg);
+}
+
+.sitemap-card__title {
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-h3);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--hv-text);
+}
+
+.sitemap-card__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--hv-s2);
+}
+
+.sitemap-card__links a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-text-muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--hv-border);
+  transition: color var(--hv-dur) var(--hv-ease), padding-left var(--hv-dur) var(--hv-ease);
+}
+
+.sitemap-card__links li:last-child a { border-bottom: none; }
+
+.sitemap-card__links a svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: var(--hv-accent-strong);
+}
+
+.sitemap-card__links a:hover,
+.sitemap-card__links a:focus-visible {
+  color: var(--hv-text);
+  padding-left: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sitemap-card__links a { transition: none; }
+}

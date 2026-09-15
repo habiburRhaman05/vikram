@@ -14,9 +14,15 @@ import Reveal from "@/components/common/Reveal.jsx";
 import { SITE } from "@/data/site";
 import { PRINCIPLES, CAPABILITIES } from "@/data/about";
 
+// v2 chrome (glass header, SiteFooterV2) - same two stylesheets Industries.jsx
+// and ServiceComingSoon.jsx import, so this page's header and footer match
+// the redesigned landing page instead of the legacy site shell.
+import "@/styles/home-redesign.css";
+import "@/styles/home-chrome.css";
+
 export default function About() {
   return (
-    <Layout topbar="Based in Albany, New York - working with practices across all 50 states">
+    <Layout variant="v2" topbar="Based in Albany, New York - working with practices across all 50 states">
       <PageMeta
         title="About - GHLevelUp"
         description="An engineering team that builds and runs the operating layer for tax practices - configuration where it fits, custom software where it doesn't."
