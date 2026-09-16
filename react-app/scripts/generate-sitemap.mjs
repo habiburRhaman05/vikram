@@ -16,7 +16,15 @@ const today = new Date().toISOString().slice(0, 10);
 /** Mirrors the <Route> list in src/App.jsx (excluding the 404). */
 const routes = [
   { path: "/", priority: "1.0", changefreq: "weekly" },
-  { path: "/platform", priority: "0.9", changefreq: "monthly" },
+  { path: "/services", priority: "0.9", changefreq: "monthly" },
+  /* The service detail pages. Every one of these is a real <Route> in
+     App.jsx; add the next one here as it ships, because a service page that
+     is not in this list is a page nobody links to from search. */
+  { path: "/services/ai-agents-chatbots", priority: "0.8", changefreq: "monthly" },
+  { path: "/services/workflow-automation", priority: "0.8", changefreq: "monthly" },
+  { path: "/services/api-tool-integrations", priority: "0.8", changefreq: "monthly" },
+  { path: "/services/funnel-design-builds", priority: "0.8", changefreq: "monthly" },
+  { path: "/services/gohighlevel-sub-accounts", priority: "0.8", changefreq: "monthly" },
   { path: "/industries", priority: "0.8", changefreq: "monthly" },
   { path: "/about", priority: "0.7", changefreq: "monthly" },
   { path: "/contact", priority: "0.7", changefreq: "monthly" },

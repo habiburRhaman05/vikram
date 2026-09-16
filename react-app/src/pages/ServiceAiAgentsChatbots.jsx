@@ -1,91 +1,429 @@
 import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout.jsx";
 import PageMeta from "@/components/common/PageMeta.jsx";
+import StructuredData from "@/components/common/StructuredData.jsx";
 import Icon from "@/components/common/Icon.jsx";
 import Faq from "@/components/common/Faq.jsx";
-import { HvSection, Reveal, SectionHead, Btn, BtnRow, IconBadge, Checks } from "@/components/home/primitives.jsx";
-import { openLeadPopup } from "@/components/common/LeadPopup.jsx";
+import { HvSection, Reveal, Btn } from "@/components/home/primitives.jsx";
+import ServiceContactCard from "@/components/services/ServiceContactCard.jsx";
+import ServiceEnquiryForm from "@/components/services/ServiceEnquiryForm.jsx";
+import RelatedServices from "@/components/services/RelatedServices.jsx";
 
+import {
+  AI_HERO,
+  AI_INTRO,
+  AI_OFFERINGS,
+  AI_FLOW,
+  AI_DETAILS,
+  AI_USECASES,
+  AI_WORK,
+  AI_BENEFITS,
+  AI_ENQUIRY,
+  AI_FAQ,
+} from "@/data/serviceAiAgents.jsx";
+
+/* v2 chrome (glass header, SiteFooterV2) - the same two stylesheets every
+   other redesigned page loads; see Industries.jsx for why both are needed.
+   service-detail.css only adds this page's own sections on top. */
 import "@/styles/home-redesign.css";
 import "@/styles/home-chrome.css";
 import "@/styles/service-detail.css";
 
-const STATS = [
-  { num: "24/7", label: "Calls, texts and chats answered" },
-  { num: "EN / ES", label: "Bilingual from day one" },
-  { num: "< 1 min", label: "Typical time to first reply" },
-  { num: "0", label: "Calls left on voicemail" },
-];
+/**
+ * /services/ai-agents-chatbots.
+ *
+ * Covers the whole conversational-AI offer - voice receptionist,
+ * conversational AI, the website widget and social/SMS DMs - as four named
+ * offerings on one page. See the note at the top of data/serviceAiAgents.jsx
+ * for why they are not four separate thin pages, and for the two content
+ * rules this page holds to (no invented client claims, no invented metrics).
+ *
+ * Section order is deliberately a narrative rather than a stack of card
+ * shelves: what it is, how it answers, how it works, what is included, who
+ * it suits, what a build looks like, what changes, then the ask.
+ *
+ * STRUCTURAL NOTE: the v2 header is transparent at rest with light-on-dark
+ * nav, achieved by pulling the opening hero up under it (the
+ * `.home-v2 .hv-hero, .home-v2 .page-hero, .home-v2 .sd-hero` rule in
+ * styles/home-chrome.css). `.sd-hero` is registered there - renaming this
+ * hero without updating that rule opens the page with a white strip behind
+ * the logo.
+ */
 
-/* Decorative waveform bar delays - staggered rather than uniform so the
-   row reads as speech. Kept here (not in CSS) so the bar count and the
-   rhythm live in one place. */
-const WAVE_BARS = [0, 0.12, 0.28, 0.06, 0.34, 0.18, 0.42, 0.1, 0.3, 0.02, 0.24, 0.38, 0.14, 0.32, 0.08, 0.2];
-
-const CHANNELS = [
-  { icon: "phone", title: "Phone calls", body: "A dedicated local number, answered live in your own tone of voice - no phone tree, no hold music." },
-  { icon: "message", title: "SMS & text", body: "If a call isn't picked up, the same conversation continues by text instead of going cold." },
-  { icon: "chatWindow", title: "Website chat", body: "A widget that actually answers questions and books, rather than collecting a form nobody reads." },
-  { icon: "instagram", title: "Social DMs", body: "Instagram, Facebook and WhatsApp messages land in the same inbox as everything else." },
-];
-
-const FLOW = [
-  { num: "Step 01", title: "Contact arrives", body: "A call, text, web chat or DM reaches your number or widget - at 9am or 9pm, it makes no difference." },
-  { num: "Step 02", title: "Intent is read", body: "New lead, existing client, a quick question or an emergency: it understands before it responds." },
-  { num: "Step 03", title: "Qualified or answered", body: "It asks what your front desk would ask, or answers directly from what it knows about your business." },
-  { num: "Step 04", title: "Booked or handed off", body: "A confirmed slot on your real calendar, or a clean transfer to a person. Never left hanging." },
-];
-
-const CAPABILITIES = [
-  { icon: "calendar", title: "Books into your real calendar", body: "It reads genuine availability and offers only open slots, then confirms by text so the client has it in writing." },
-  { icon: "globe", title: "Bilingual by default", body: "English and Spanish out of the box, switching mid-conversation if the caller does. More languages on request." },
-  { icon: "usersTwo", title: "Trained on your business", body: "Your services, hours, pricing answers and the exceptions that matter - configured before you ever log in." },
-  { icon: "shieldCheck", title: "Knows when to stop", body: "Anything it isn't confident about goes to a person instead of a guess. A safety net, not a wall." },
-  { icon: "layers", title: "Everything in one inbox", body: "Every channel writes to the same CRM thread, so your team sees one continuous history per client." },
-  { icon: "trendUp", title: "Follows up on its own", body: "No-shows, unanswered quotes and stalled leads get chased automatically on the cadence you set." },
-];
-
-const COMPARE_ROWS = [
-  { label: "Answers after hours", voicemail: "No", service: "Sometimes", ours: "Always" },
-  { label: "Books appointments", voicemail: "No", service: "Rarely", ours: "Directly on your calendar" },
-  { label: "Knows your services", voicemail: "No", service: "Reads a script", ours: "Trained on your business" },
-  { label: "Speaks Spanish", voicemail: "No", service: "Extra cost", ours: "Included" },
-  { label: "Monthly cost", voicemail: "Free, costs you leads", service: "Per-minute billing", ours: "Flat, usage at cost" },
-];
-
-const FAQS = [
-  {
-    question: "Does it sound robotic?",
-    answer: "No - it holds a real conversation, not a phone tree. It handles interruptions, follow-up questions and the caller changing their mind, and it hands off to a person the moment a conversation needs one.",
-  },
-  {
-    question: "Does this replace my front desk during business hours?",
-    answer: "Only if you want it to. The normal setup rings your team first and lets the AI step in when nobody picks up; after hours and at weekends it handles everything itself, so nothing reaches voicemail.",
-  },
-  {
-    question: "Can it actually book, or does it just take messages?",
-    answer: "It books in real time against your live calendar, offers only slots that are genuinely open, and sends a confirmation text - the same outcome as if your receptionist had answered.",
-  },
-  {
-    question: "What if someone asks something it doesn't know?",
-    answer: "It says so plainly and either takes a message or transfers to a person. It is configured not to guess, because a confident wrong answer costs more than an honest handoff.",
-  },
-  {
-    question: "How long until it's live?",
-    answer: "Most businesses are live inside one to two weeks. We configure your services, hours, call flow and handoff rules first, then walk you through it on a call before it takes a single real conversation.",
-  },
-  {
-    question: "What does it cost?",
-    answer: "A flat monthly fee for the build and support, with telephony and AI usage billed to your own payment method at cost - never pooled, never marked up. You get real numbers on the demo call.",
-  },
-];
-
-function CompareMark({ value, yes }) {
-  return (
-    <span className={`sd-compare__mark sd-compare__mark--${yes ? "yes" : "no"}`}>
-      <Icon name={yes ? "check" : "close"} aria-hidden="true" />
-      {value}
+/** Chat bubbles for the hero's call mock. Decorative - the card is
+ *  aria-hidden and the copy beside it carries the meaning. */
+function Bubbles({ lines }) {
+  return lines.map((line, i) => (
+    <span className={`sd-bubble sd-bubble--${line.from}`} key={i}>
+      {line.text}
     </span>
+  ));
+}
+
+/* Waveform bar delays. Kept here rather than in CSS so the bar count and
+   the rhythm live in one place; staggered rather than uniform so the row
+   reads as speech instead of a metronome. */
+const WAVE = [0, 0.14, 0.3, 0.08, 0.36, 0.2, 0.44, 0.12, 0.32, 0.04, 0.26, 0.4, 0.16, 0.34, 0.1, 0.22];
+
+function Hero() {
+  return (
+    <section className="sd-hero sd-hero--split">
+      <div className="hv-container sd-hero__inner">
+        <Reveal>
+          <p className="sd-hero__crumbs">
+            <Link to="/">Home</Link>
+            <span>/</span>
+            <Link to="/services">Services</Link>
+            <span>/</span>
+            {AI_HERO.crumb}
+          </p>
+
+          <span className="sd-hero__eyebrow">{AI_HERO.eyebrow}</span>
+
+          <h1 className="sd-hero__title">
+            {AI_HERO.titleLead}
+            <span>{AI_HERO.titleAccent}</span>
+          </h1>
+
+          <p className="sd-hero__lede">{AI_HERO.lede}</p>
+
+          <div className="sd-hero__ctas">
+            {/* Both are fragment links into this page, offset by
+                html { scroll-padding-top } in legacy/styles.css so the
+                target heading clears the sticky header. */}
+            <Btn href={AI_HERO.primary.to} variant="primary" size="lg" iconAfter={AI_HERO.primary.icon}>
+              {AI_HERO.primary.label}
+            </Btn>
+            <Btn href={AI_HERO.secondary.href} variant="outline" size="lg">
+              {AI_HERO.secondary.label}
+            </Btn>
+          </div>
+        </Reveal>
+
+        {/* Decorative: a representative call being answered and booked. */}
+        <Reveal className="sd-call" index={1} aria-hidden="true">
+          <div className="sd-call__head">
+            <span className="sd-call__ring">
+              <Icon name="phone" />
+            </span>
+            <span className="sd-call__who">
+              <b>{AI_HERO.call.label}</b>
+              <span>{AI_HERO.call.meta}</span>
+            </span>
+            <span className="sd-call__timer">{AI_HERO.call.timer}</span>
+          </div>
+
+          <div className="sd-call__wave">
+            {WAVE.map((d, i) => (
+              <i key={i} style={{ animationDelay: `${d}s` }} />
+            ))}
+          </div>
+
+          <div className="sd-call__body">
+            <Bubbles lines={AI_HERO.call.lines} />
+          </div>
+
+          <p className="sd-call__foot">
+            <Icon name="check" />
+            {AI_HERO.call.foot}
+          </p>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+
+function Intro() {
+  return (
+    <HvSection className="sd-intro">
+      <div className="sd-intro__inner">
+        <Reveal className="sd-intro__aside">
+          <span className="hv-eyebrow">{AI_INTRO.eyebrow}</span>
+          <h2 className="sd-intro__title">{AI_INTRO.title}</h2>
+
+          <blockquote className="sd-intro__quote">
+            <p>{AI_INTRO.quote.text}</p>
+            <span>{AI_INTRO.quote.attribution}</span>
+          </blockquote>
+        </Reveal>
+
+        <Reveal className="sd-intro__prose" index={1}>
+          {AI_INTRO.body.map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
+        </Reveal>
+      </div>
+
+      <Reveal as="ul" className="sd-facts" index={2}>
+        {AI_INTRO.facts.map((fact) => (
+          <li key={fact.label}>
+            <b>{fact.num}</b>
+            <strong>{fact.label}</strong>
+            <span>{fact.sub}</span>
+          </li>
+        ))}
+      </Reveal>
+    </HvSection>
+  );
+}
+
+function Details() {
+  return (
+    <HvSection dark>
+      <Reveal className="sd-grid-head">
+        <span className="hv-eyebrow">{AI_DETAILS.eyebrow}</span>
+        <h2 className="hv-h2">{AI_DETAILS.title}</h2>
+        <p className="hv-body">{AI_DETAILS.lede}</p>
+      </Reveal>
+
+      <ul className="sd-details">
+        {AI_DETAILS.groups.map((group, i) => (
+          <Reveal as="li" key={group.title} index={i}>
+            <article className="sd-detail">
+              <span className="sd-card__icon" aria-hidden="true">
+                <Icon name={group.icon} />
+              </span>
+              <h3>{group.title}</h3>
+              <ul>
+                {group.items.map((item) => (
+                  <li key={item}>
+                    <Icon name="check" aria-hidden="true" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </Reveal>
+        ))}
+      </ul>
+    </HvSection>
+  );
+}
+
+function UseCases() {
+  return (
+    <HvSection>
+      <Reveal className="sd-grid-head">
+        <span className="hv-eyebrow">{AI_USECASES.eyebrow}</span>
+        <h2 className="hv-h2">{AI_USECASES.title}</h2>
+        <p className="hv-lede">{AI_USECASES.lede}</p>
+      </Reveal>
+
+      <ul className="sd-grid">
+        {AI_USECASES.items.map((item, i) => (
+          <Reveal as="li" key={item.title} index={i}>
+            <article className="sd-card">
+              <span className="sd-card__icon" aria-hidden="true">
+                <Icon name={item.icon} />
+              </span>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          </Reveal>
+        ))}
+      </ul>
+    </HvSection>
+  );
+}
+
+function Work() {
+  return (
+    <HvSection mint>
+      <Reveal className="sd-grid-head">
+        <span className="hv-eyebrow">{AI_WORK.eyebrow}</span>
+        <h2 className="hv-h2">{AI_WORK.title}</h2>
+        <p className="hv-lede">{AI_WORK.lede}</p>
+      </Reveal>
+
+      <ul className="sd-work">
+        {AI_WORK.items.map((item, i) => (
+          <Reveal as="li" key={item.title} index={i}>
+            <article className="sd-work__card">
+              <span className="sd-work__tag">{item.tag}</span>
+              <h3>{item.title}</h3>
+              <p className="sd-work__problem">{item.problem}</p>
+
+              <p className="sd-work__label">What we built</p>
+              <ul className="sd-work__built">
+                {item.built.map((b) => (
+                  <li key={b}>
+                    <Icon name="check" aria-hidden="true" />
+                    {b}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="sd-work__outcome">
+                <p>{item.outcome}</p>
+              </div>
+            </article>
+          </Reveal>
+        ))}
+      </ul>
+
+      <Reveal as="p" className="sd-work__note" index={3}>
+        <Icon name="shieldCheck" aria-hidden="true" />
+        {AI_WORK.note}
+      </Reveal>
+    </HvSection>
+  );
+}
+
+function Benefits() {
+  return (
+    <HvSection>
+      <Reveal className="sd-grid-head">
+        <span className="hv-eyebrow">{AI_BENEFITS.eyebrow}</span>
+        <h2 className="hv-h2">{AI_BENEFITS.title}</h2>
+        <p className="hv-body">{AI_BENEFITS.lede}</p>
+      </Reveal>
+
+      <ul className="sd-bens">
+        {AI_BENEFITS.items.map((item, i) => (
+          <Reveal as="li" key={item.title} index={i}>
+            <div className="sd-ben">
+              <span className="sd-ben__icon" aria-hidden="true">
+                <Icon name={item.icon} />
+              </span>
+              <b>{item.title}</b>
+              <p>{item.body}</p>
+            </div>
+          </Reveal>
+        ))}
+      </ul>
+    </HvSection>
+  );
+}
+
+function Offerings() {
+  return (
+    <HvSection mint id="offerings">
+      <Reveal className="sd-grid-head">
+        <span className="hv-eyebrow">{AI_OFFERINGS.eyebrow}</span>
+        <h2 className="hv-h2">{AI_OFFERINGS.title}</h2>
+        <p className="hv-lede">{AI_OFFERINGS.lede}</p>
+      </Reveal>
+
+      <ul className="sd-offers">
+        {AI_OFFERINGS.items.map((item, i) => (
+          <Reveal as="li" key={item.name} index={i}>
+            <article className="sd-offer">
+              <div className="sd-offer__head">
+                <span className="sd-card__icon" aria-hidden="true">
+                  <Icon name={item.icon} />
+                </span>
+                <h3>{item.name}</h3>
+                <span className="sd-offer__tag">{item.tag}</span>
+              </div>
+
+              <p className="sd-offer__body">{item.body}</p>
+
+              <ul className="sd-offer__points">
+                {item.points.map((p) => (
+                  <li key={p}>
+                    <Icon name="check" aria-hidden="true" />
+                    {p}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </Reveal>
+        ))}
+      </ul>
+    </HvSection>
+  );
+}
+
+function HowItWorks() {
+  return (
+    <HvSection dark id="how-it-works">
+      <div className="sd-proc__inner">
+        <Reveal>
+          <span className="hv-eyebrow">{AI_FLOW.eyebrow}</span>
+          <h2 className="hv-h2">{AI_FLOW.title}</h2>
+          <p className="hv-body">{AI_FLOW.lede}</p>
+
+          <ol className="sd-steps">
+            {AI_FLOW.steps.map((step, i) => (
+              <Reveal as="li" className="sd-step" key={step.title} index={i}>
+                <span className="sd-step__num" aria-hidden="true">
+                  {step.num}
+                </span>
+                <div>
+                  <h3>{step.title}</h3>
+                  <p>{step.body}</p>
+                </div>
+              </Reveal>
+            ))}
+          </ol>
+        </Reveal>
+
+        {/* The routing decision itself, drawn in markup rather than a stock
+            desk photo - this section is about the choice the system makes,
+            and a picture of a laptop said nothing about it. aria-hidden
+            because the six steps beside it already state the same flow in
+            prose; this is the diagram of that, not extra information. */}
+        <Reveal className="sd-proc__media" index={1}>
+          <div className="sd-route" aria-hidden="true">
+            <p className="sd-route__cap">{AI_FLOW.diagram.caption}</p>
+
+            <span className="sd-route__node">
+              <Icon name="phone" />
+              {AI_FLOW.diagram.start}
+            </span>
+
+            <span className="sd-route__link" />
+
+            <span className="sd-route__ask">{AI_FLOW.diagram.ask}</span>
+
+            <div className="sd-route__split">
+              {AI_FLOW.diagram.branches.map((branch) => (
+                <div className="sd-route__branch" key={branch.tag}>
+                  <span className="sd-route__tag">{branch.tag}</span>
+                  {branch.nodes.map((node) => (
+                    <span className="sd-route__node" key={node}>
+                      {node}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            <span className="sd-route__node sd-route__end">
+              <Icon name="check" />
+              {AI_FLOW.diagram.end}
+            </span>
+          </div>
+        </Reveal>
+      </div>
+    </HvSection>
+  );
+}
+
+
+
+
+
+function FaqSection() {
+  return (
+    <HvSection className="sd-faq">
+      <StructuredData faq={AI_FAQ.items} />
+
+      <div className="sd-faq__inner">
+        <Reveal>
+          <span className="hv-eyebrow">{AI_FAQ.eyebrow}</span>
+          <h2 className="hv-h2">{AI_FAQ.title}</h2>
+          <p className="hv-body">{AI_FAQ.lede}</p>
+
+          <div className="sd-faq__list">
+            <Faq items={AI_FAQ.items} />
+          </div>
+        </Reveal>
+
+        <ServiceContactCard card={AI_FAQ.card} />
+      </div>
+    </HvSection>
   );
 }
 
@@ -93,285 +431,39 @@ export default function ServiceAiAgentsChatbots() {
   return (
     <Layout
       variant="v2"
-      topbar={<>Hear it answer a live call - <a href="/book">book a 20-minute demo</a></>}
+      topbar={
+        <>
+          Hear it answer a live call - <a href="/book">book a 20-minute demo</a>
+        </>
+      }
     >
       <PageMeta
         title="AI Agents & Chatbots - GHLevelUp"
-        description="An AI receptionist that answers every call, text and chat around the clock in English and Spanish, qualifies the caller and books straight into your calendar."
+        description="Voice AI, conversational AI, website chat widget and social DMs - one agent that answers every call, text and chat around the clock, qualifies the caller and books into your calendar."
+        ogDescription="An AI receptionist for calls, texts, web chat and social DMs: answers in seconds at any hour, in English or Spanish, books into your real calendar and hands off to a person when it should."
       />
 
-      {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <section className="sd-hero">
-        <div className="hv-container">
-          <div className="sd-hero__grid">
-            <Reveal>
-              <p className="sd-hero__crumbs">
-                <Link to="/">Home</Link>
-                <span>/</span>
-                <Link to="/services">Services</Link>
-                <span>/</span>
-                AI Agents &amp; Chatbots
-              </p>
-
-              <span className="sd-live">
-                <span className="sd-live__dot" aria-hidden="true" />
-                Live for clients today
-              </span>
-
-              <h1>
-                Never miss another lead, <em>day or night</em>
-              </h1>
-
-              <p className="sd-hero__lede">
-                Every call, text and chat gets answered the moment it arrives - qualified, booked, or handed to
-                a person. In your tone of voice, in English or Spanish, around the clock.
-              </p>
-
-              <BtnRow>
-                <Btn to="/book" variant="primary" size="lg" iconAfter="arrowRight">
-                  Hear it on a demo
-                </Btn>
-                <Btn onClick={() => openLeadPopup({ profession: "AI Agents & Chatbots" })} variant="outline" size="lg">
-                  Get a free plan
-                </Btn>
-              </BtnRow>
-            </Reveal>
-
-            {/* Decorative: a representative conversation, drawn in markup
-                rather than a screenshot, so it stays crisp and readable at
-                every width and needs no asset. */}
-            <Reveal index={1} aria-hidden="true">
-              <div className="sd-call">
-                <div className="sd-call__head">
-                  <span className="sd-call__avatar">
-                    <Icon name="phone" />
-                  </span>
-                  <span className="sd-call__who">
-                    <strong>Incoming call</strong>
-                    <span>Unknown number &middot; 8:42pm</span>
-                  </span>
-                  <span className="sd-call__timer">00:24</span>
-                </div>
-
-                <div className="sd-wave">
-                  {WAVE_BARS.map((d, i) => (
-                    <i key={i} style={{ "--d": `${d}s` }} />
-                  ))}
-                </div>
-
-                <div className="sd-call__body">
-                  <p className="sd-bubble sd-bubble--them">Hi, are you open tomorrow? I need to come in.</p>
-                  <p className="sd-bubble sd-bubble--ai">
-                    We are - I have 10:00am or 2:30pm free tomorrow. Which suits you better?
-                  </p>
-                  <p className="sd-bubble sd-bubble--them">2:30 works.</p>
-                  <p className="sd-bubble sd-bubble--ai">
-                    Booked for 2:30pm tomorrow. I've texted you the confirmation - see you then.
-                  </p>
-                </div>
-
-                <p className="sd-call__foot">
-                  <Icon name="check" />
-                  Booked and confirmed in 41 seconds, with nobody in the office
-                </p>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Stats ─────────────────────────────────────────────────────────── */}
-      <HvSection tight>
-        <Reveal className="sd-stats">
-          {STATS.map((s) => (
-            <div className="sd-stat" key={s.label}>
-              <div className="sd-stat__num">{s.num}</div>
-              <p className="sd-stat__label">{s.label}</p>
-            </div>
-          ))}
-        </Reveal>
-      </HvSection>
-
-      {/* ── Channels ──────────────────────────────────────────────────────── */}
-      <HvSection mint wash id="channels">
-        <div className="hv-split">
-          <Reveal>
-            <span className="hv-eyebrow">Every channel, one conversation</span>
-            <h2 className="hv-h2">However a client reaches you, someone answers</h2>
-            <p className="hv-lede" style={{ marginTop: 18 }}>
-              Clients don't respect channel boundaries. They call, then text, then message you on Instagram
-              three days later. The agent covers all of it and keeps it as one thread - so a conversation that
-              starts as a missed call can still end as a booked appointment.
-            </p>
-            <BtnRow style={{ marginTop: 26 }}>
-              <Btn to="/book" variant="primary" iconAfter="arrowRight">
-                See it live
-              </Btn>
-            </BtnRow>
-          </Reveal>
-
-          <Reveal index={1}>
-            <ul className="sd-channels">
-              {CHANNELS.map((c) => (
-                <li className="sd-channel" key={c.title}>
-                  <span className="sd-channel__icon" aria-hidden="true">
-                    <Icon name={c.icon} />
-                  </span>
-                  <div>
-                    <h4>{c.title}</h4>
-                    <p>{c.body}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-        </div>
-      </HvSection>
-
-      {/* ── How it works ──────────────────────────────────────────────────── */}
-      <HvSection dark id="how">
-        <SectionHead center eyebrow="How it works" title="One path, decided the moment a contact arrives">
-          Nothing here guesses at something it can't yet know. The system reads who is calling and what they
-          want, and everything downstream follows from that.
-        </SectionHead>
-
-        <ol className="sd-flow">
-          {FLOW.map((step, i) => (
-            <Reveal as="li" className="sd-flow__item" key={step.num} index={i}>
-              <span className="sd-flow__dot" aria-hidden="true" />
-              <span className="sd-flow__num">{step.num}</span>
-              <h4>{step.title}</h4>
-              <p>{step.body}</p>
-            </Reveal>
-          ))}
-        </ol>
-      </HvSection>
-
-      {/* ── Capabilities ──────────────────────────────────────────────────── */}
-      <HvSection id="capabilities">
-        <SectionHead center eyebrow="Configured, not generic" title="Built around how your business actually runs" />
-
-        <div className="hv-grid hv-grid--auto-3">
-          {CAPABILITIES.map((c, i) => (
-            <Reveal className="hv-card hv-card--hover" key={c.title} index={i}>
-              <IconBadge icon={c.icon} />
-              <h3 className="hv-h3" style={{ margin: "16px 0 8px" }}>
-                {c.title}
-              </h3>
-              <p className="hv-body">{c.body}</p>
-            </Reveal>
-          ))}
-        </div>
-      </HvSection>
-
-      {/* ── Comparison ────────────────────────────────────────────────────── */}
-      <HvSection mint id="compare">
-        <SectionHead center eyebrow="The honest comparison" title="Against what you're probably doing now">
-          Most businesses are choosing between voicemail and a traditional answering service. Here is where each
-          one actually lands.
-        </SectionHead>
-
-        <Reveal>
-          <p className="sd-compare-hint">
-            <Icon name="arrowRight" aria-hidden="true" />
-            Swipe the table to see all three
-          </p>
-          <div className="sd-compare-wrap">
-            <table className="sd-compare">
-              <thead>
-                <tr>
-                  <th scope="col">&nbsp;</th>
-                  <th scope="col">Voicemail</th>
-                  <th scope="col">Answering service</th>
-                  <th scope="col" className="is-ours">
-                    AI agent
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {COMPARE_ROWS.map((row) => (
-                  <tr key={row.label}>
-                    <th scope="row">{row.label}</th>
-                    <td>
-                      <CompareMark value={row.voicemail} yes={false} />
-                    </td>
-                    <td>{row.service}</td>
-                    <td className="is-ours">
-                      <CompareMark value={row.ours} yes />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Reveal>
-      </HvSection>
-
-      {/* ── What you get ──────────────────────────────────────────────────── */}
-      <HvSection id="included">
-        <div className="hv-split">
-          <Reveal>
-            <span className="hv-eyebrow">What's included</span>
-            <h2 className="hv-h2">Set up for you, then run with you</h2>
-            <p className="hv-lede" style={{ marginTop: 18 }}>
-              You don't get a login and a tutorial. We configure the whole thing around your business, walk you
-              through it live, and stay on it afterwards - changes to hours, services or call flow are a message
-              to us, not a ticket you file.
-            </p>
-            <BtnRow style={{ marginTop: 26 }}>
-              <Btn to="/book" variant="primary" iconAfter="arrowRight">
-                Book a demo
-              </Btn>
-              <Btn to="/services" variant="ghost">
-                All services
-              </Btn>
-            </BtnRow>
-          </Reveal>
-
-          <Reveal index={1} className="hv-card hv-card--raised">
-            <Checks
-              items={[
-                "A dedicated local number, registered and compliant",
-                "Voice, SMS, web chat and social DMs configured together",
-                "Calendar, CRM and pipeline connected before launch",
-                "Your services, hours and pricing answers trained in",
-                "Handoff rules set by you, for anything it shouldn't handle",
-                "Live walkthrough, then ongoing changes handled by us",
-              ]}
-            />
-          </Reveal>
-        </div>
-      </HvSection>
-
-      {/* ── FAQ ───────────────────────────────────────────────────────────── */}
-      <HvSection mint id="faq">
-        <SectionHead center eyebrow="Questions" title="Before you book a call" />
-        <div style={{ maxWidth: 820, marginInline: "auto" }}>
-          <Faq items={FAQS} />
-        </div>
-      </HvSection>
-
-      {/* ── Closing CTA ───────────────────────────────────────────────────── */}
-      <HvSection dark>
-        <Reveal style={{ textAlign: "center", maxWidth: "62ch", marginInline: "auto" }}>
-          <span className="hv-eyebrow">Twenty minutes, no slide deck</span>
-          <h2 className="hv-h2" style={{ marginBottom: 16 }}>
-            Hear it answer a real conversation
-          </h2>
-          <p className="hv-lede">
-            We'll call the number live on the demo so you hear exactly what your clients would hear - then show
-            you the booking land on the calendar.
-          </p>
-          <BtnRow className="hv-btn-row" style={{ justifyContent: "center", marginTop: 30 }}>
-            <Btn to="/book" variant="primary" size="lg" iconAfter="arrowRight">
-              Book a demo
-            </Btn>
-            <Btn to="/contact" variant="outline" size="lg">
-              Ask a question first
-            </Btn>
-          </BtnRow>
-        </Reveal>
-      </HvSection>
+      <Hero />
+      <Intro />
+      <Offerings />
+      <HowItWorks />
+      <Details />
+      <UseCases />
+      <Work />
+      <Benefits />
+      <ServiceEnquiryForm
+        service={AI_ENQUIRY.service}
+        eyebrow={AI_ENQUIRY.eyebrow}
+        title={AI_ENQUIRY.title}
+        lede={AI_ENQUIRY.lede}
+        points={AI_ENQUIRY.points}
+      />
+      <RelatedServices
+        slug="ai-agents-chatbots"
+        title="What to switch on next to it"
+        lede="An AI agent answers the door. These are the three things that decide what happens once it has."
+      />
+      <FaqSection />
     </Layout>
   );
 }

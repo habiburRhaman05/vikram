@@ -1,122 +1,1060 @@
 /* ==========================================================================
-   /services and /services/:slug - service directory + detail pages
+   /services - v2 redesign
    --------------------------------------------------------------------------
-   Built from the v2 design system's own tokens and classes (--hv-*,
-   .hv-grid, .hv-badge), the same way industries.css and sitemap.css build
-   their own cards - this file only has to describe the clickable service
-   tile's own layout and its two states.
+   Built on the v2 design system's own tokens and classes (--hv-*, .hv-btn,
+   .hv-eyebrow, .hv-checks, .hv-section-dark, .hv-script-note, .hv-reveal),
+   which is why this file only has to describe the sections' own layout.
 
-   Loaded AFTER home-redesign.css and home-chrome.css - the tokens and
-   shared classes have to exist first.
+   Loaded AFTER home-redesign.css and home-chrome.css (see Services.jsx) -
+   those define the tokens, the button set and the script-note annotation
+   this page reuses, and they also restyle the header/footer it sits inside.
+
+   Scope: every class is prefixed .svcs- so nothing here can leak onto
+   another route. Where a section's own background replaces the generic
+   .hv-section--dark fill, the rule is written as `.hv-section--dark.svcs-x`
+   (two classes) rather than one: both files define a single-class rule for
+   the background, so order alone would decide it - two classes makes the
+   override deliberate instead of load-order luck.
+
+   Contents
+     01. Hero
+     02. Why choose us
+     03. Service grid
+     04. Platforms & integrations
+     05. Process
+     06. The results
+     07. Closing CTA
+     08. FAQ
+     09. Responsive
    ========================================================================== */
 
-/* 01. Service tile (clickable card - icon, name, body, arrow) ============= */
 
-.svc-grid {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: var(--hv-s5);
+/* 01. Hero =================================================================
+   A centred banner and nothing else: crumb, headline, lede, the two buttons.
+   The laptop mockup, the floating capability card, the orbiting tiles and the
+   handwritten note that used to fill a right-hand column are gone - see
+   Hero() in pages/Services.jsx for why.
+
+   What replaces that column is the background. Three soft colour washes (the
+   green, then a blue and a violet, the same hues the service cards use) sit
+   over the brand's dark fill, so the centred block is lit from three sides
+   instead of sitting on a flat gradient. Background layers only: no extra
+   element to hide at any width.
+   ------------------------------------------------------------------------- */
+
+.svcs-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  /* Bottom half only: home-chrome.css sets this hero's padding-top (the v2
+     header is transparent and the hero runs up underneath it), and that rule
+     is two classes deep, so it wins over anything written here. */
+  padding-block: clamp(48px, 5vw, 76px) clamp(60px, 6vw, 104px);
+  background:
+    radial-gradient(44% 56% at 88% 6%, rgba(62, 142, 247, .32) 0%, rgba(62, 142, 247, 0) 64%),
+    radial-gradient(40% 54% at 6% 88%, rgba(124, 92, 252, .26) 0%, rgba(124, 92, 252, 0) 66%),
+    radial-gradient(74% 80% at 50% 42%, rgba(14, 164, 107, .46) 0%, rgba(14, 164, 107, 0) 68%),
+    linear-gradient(122deg, #04241F 0%, #073E34 46%, #03211D 100%);
+  color: #fff;
+  text-align: center;
 }
 
-.svc-card {
+/* Faint concentric marks behind the headline - the reference's dotted orbits.
+   Decoration only, so it is painted behind everything and never hit-tested.
+   Oversized and off-centre so the rings read as an arc across the width
+   rather than as two circles parked behind the words. */
+.svcs-hero__orbits {
+  position: absolute;
+  inset: -14% -8%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .42;
+}
+
+.svcs-hero__inner {
   position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+}
+
+.svcs-hero__copy {
   display: flex;
   flex-direction: column;
-  gap: var(--hv-s4);
-  height: 100%;
-  padding: var(--hv-s6);
-  border: 1px solid var(--hv-border);
-  border-radius: var(--hv-r-lg);
-  background: var(--hv-bg);
-  text-decoration: none;
-  color: inherit;
-  transition: transform var(--hv-dur) var(--hv-ease),
-              box-shadow var(--hv-dur) var(--hv-ease),
-              border-color var(--hv-dur) var(--hv-ease);
+  align-items: center;
+  width: 100%;
+  max-width: 64ch;
 }
-.svc-card:hover,
-.svc-card:focus-visible {
-  transform: translateY(-4px);
-  box-shadow: var(--hv-sh-accent);
-  border-color: var(--hv-border-strong);
+
+/* Home / Services. It sits where the eyebrow pill used to, at the weight the
+   .page-hero crumb carries on every other page, so arriving here from About
+   or Industries doesn't change the shape of the top of the page. */
+.svcs-hero__crumbs {
+  margin: 0;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--hv-on-dark-muted);
 }
-.svc-card:hover .svc-card__go,
-.svc-card:focus-visible .svc-card__go {
+.svcs-hero__crumbs a { color: #DCEFE8; text-decoration: none; }
+.svcs-hero__crumbs a:hover { color: var(--hv-accent-bright); text-decoration: underline; }
+.svcs-hero__crumbs span { margin-inline: 8px; opacity: .45; }
+
+.svcs-hero__title {
+  margin: var(--hv-s5) 0 0;
+  font-size: clamp(2.05rem, 1.2rem + 3.1vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -.035em;
   color: #fff;
-  background: var(--hv-accent-strong);
-  transform: translateX(3px);
+  text-wrap: balance;
+}
+/* Second headline line: the bright accent, as in the reference. 8.1:1 on
+   the hero's own fill. */
+.svcs-hero__accent {
+  display: block;
+  color: var(--hv-accent-bright);
 }
 
-.svc-card__top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--hv-s3); }
+.svcs-hero__lede {
+  margin: var(--hv-s6) 0 0;
+  max-width: 58ch;
+  font-family: var(--hv-font-body);
+  font-size: clamp(1rem, .95rem + .3vw, 1.12rem);
+  line-height: 1.68;
+  color: #CBE3DB;
+}
 
-.svc-card__go {
+.svcs-hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--hv-s3);
+  margin-top: var(--hv-s8);
+}
+
+/* The quiet CTA: same pill, no fill. Scoped to this hero rather than using
+   the global .hv-section--dark treatment, because the hero is not an
+   .hv-section--dark (its background is its own gradient). */
+.svcs-hero__ctas .hv-btn--outline {
+  color: #fff;
+  border-color: rgba(255, 255, 255, .42);
+}
+.svcs-hero__ctas .hv-btn--outline:hover {
+  background: rgba(255, 255, 255, .14);
+  border-color: rgba(255, 255, 255, .6);
+  color: #fff;
+}
+
+
+/* 02. Why choose us ======================================================= */
+
+.svcs-why { background: #F4F7F6; }
+
+.svcs-why__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(36px, 4.5vw, 76px);
+  align-items: center;
+}
+
+.svcs-why__title {
+  font-size: var(--hv-fs-h2);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.16;
+  color: var(--hv-text);
+  margin: 0;
+}
+.svcs-why__title span { display: block; }
+
+.svcs-why__list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--hv-s6) var(--hv-s7);
+  margin: var(--hv-s8) 0 0;
+  padding: 0;
+}
+.svcs-why__item {
+  /* Same contract as the service cards and the process steps: the item's hue
+     arrives as --tone, and the read-safe dark end is mixed from it here. */
+  --tone: var(--hv-accent);
+  --tone-ink: color-mix(in srgb, var(--tone) 74%, #04241F);
+
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--hv-s3) var(--hv-s4);
+  align-items: start;
+}
+.svcs-why__icon {
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
-  flex-shrink: 0;
-  border-radius: var(--hv-r-pill);
-  background: var(--hv-bg-mint-deep);
-  color: var(--hv-accent-strong);
-  transition: color var(--hv-dur) var(--hv-ease), background var(--hv-dur) var(--hv-ease), transform var(--hv-dur) var(--hv-ease-spring);
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  /* Not --tone itself: a white glyph on the raw hue fails on the amber and
+     the teal, so the plate is the mixed dark end and the glyph is white. */
+  background: linear-gradient(150deg, var(--tone-ink) 0%, color-mix(in srgb, var(--tone) 74%, #04241F) 100%);
+  color: #fff;
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--tone) 26%, transparent);
 }
-.svc-card__go svg { width: 15px; height: 15px; }
-
-.svc-card__name {
+.svcs-why__icon svg { width: 21px; height: 21px; }
+.svcs-why__name {
+  display: block;
   font-family: var(--hv-font);
-  font-size: 1.02rem;
+  font-size: .98rem;
   font-weight: 700;
   letter-spacing: -.01em;
   color: var(--hv-text);
 }
-
-.svc-card__body {
-  margin: 0;
+.svcs-why__body {
+  display: block;
+  margin-top: 3px;
   font-family: var(--hv-font-body);
   font-size: var(--hv-fs-sm);
-  line-height: 1.6;
+  line-height: 1.55;
+  color: var(--hv-text-muted);
+}
+.svcs-why__cta { margin-top: var(--hv-s9); }
+
+.svcs-why__media {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--hv-r-xl);
+  aspect-ratio: 1.36;
+  box-shadow: var(--hv-sh-lg);
+}
+/* The <picture> is pinned to the frame rather than stretched to it with
+   height:100%, which is how the home page's Why Choose Us frame does it.
+   It is one less percentage height that has to resolve against an
+   aspect-ratio box to work. */
+.svcs-why__media picture,
+.svcs-results__photo picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.svcs-why__media img,
+.svcs-results__photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* The reference's photo has a dark green wall on the right for the script
+   note to sit on. Rather than find a photo with the same wall, the scrim
+   adds one: a green-to-transparent gradient over the right of the frame,
+   which is also what keeps the photo from reading as a bright rectangle
+   dropped into a pale section. */
+.svcs-why__media::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 46%;
+  background: linear-gradient(90deg, rgba(4, 36, 31, 0) 0%, rgba(4, 36, 31, .58) 42%, rgba(4, 36, 31, .84) 100%);
+  pointer-events: none;
+}
+.svcs-why__note {
+  position: absolute;
+  z-index: 2;
+  top: 12%;
+  right: 6%;
+  color: #8FF0C7;
+}
+.svcs-why__note .hv-script-note { color: #8FF0C7; }
+.svcs-why__note .hv-script-note__text { max-width: 11ch; font-size: clamp(1.05rem, .9rem + .7vw, 1.45rem); }
+
+
+/* 03. Service grid ======================================================== */
+
+.svcs-grid-sec { background: #F7F9F8; }
+
+.svcs-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--hv-s5);
+  margin: 0;
+  padding: 0;
+}
+
+/* -- The card -------------------------------------------------------------
+   Photo art on top, copy below, one hue per card carried in --tone from
+   servicesV2.jsx. Only the bright end of the hue ships in the data; the two
+   ends CSS needs are mixed from it here, and that is what keeps a card
+   legible whether its hue is the green (dark enough for white text) or the
+   amber (nowhere near it):
+
+     --tone-ink   the hue mixed most of the way to the brand ink - the only
+                  form used for anything that has to be read (the icon).
+     --tone-soft  the hue mixed almost all the way to white - the flat wash
+                  behind the name and the body copy.
+
+   The photo sits under a tone gradient, which is what makes eight photos
+   from different shoots read as one set instead of eight stock pictures.
+   ------------------------------------------------------------------------- */
+.svcs-card {
+  --tone: var(--hv-accent);
+  --tone-ink: color-mix(in srgb, var(--tone) 74%, #04241F);
+  --tone-soft: color-mix(in srgb, var(--tone) 7%, #fff);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: #fff;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--hv-sh-sm);
+  transition:
+    transform var(--hv-dur) var(--hv-ease),
+    box-shadow var(--hv-dur) var(--hv-ease),
+    border-color var(--hv-dur) var(--hv-ease);
+}
+/* The lift shadow is mixed from the card's own hue rather than taken from
+   the shared green elevation - eight cards rising into the same green glow
+   is what makes a colour-coded grid go flat again. */
+.svcs-card:hover,
+.svcs-card:focus-visible {
+  transform: translateY(-6px);
+  border-color: color-mix(in srgb, var(--tone) 40%, var(--hv-border));
+  box-shadow:
+    0 22px 46px color-mix(in srgb, var(--tone) 22%, transparent),
+    0 6px 16px rgba(6, 40, 34, .06);
+}
+
+.svcs-card__media {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--tone-soft);
+}
+/* Pinned to the frame rather than stretched to it, same as the page's other
+   photo frames - one less percentage height that has to resolve against an
+   aspect-ratio box to work. */
+.svcs-card__media picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.svcs-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--hv-dur-slow) var(--hv-ease);
+}
+.svcs-card:hover .svcs-card__media img,
+.svcs-card:focus-visible .svcs-card__media img { transform: scale(1.06); }
+
+/* The tint. Heavier top and bottom than in the middle: the top of the frame
+   is where the hue is read as the card's colour, the bottom is what the
+   white plate has to sit on, and the middle stays the photograph. */
+.svcs-card__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    170deg,
+    color-mix(in srgb, var(--tone) 60%, transparent) 0%,
+    color-mix(in srgb, var(--tone) 14%, transparent) 46%,
+    rgba(4, 36, 31, .5) 100%
+  );
+  pointer-events: none;
+}
+
+/* The icon plate: white, with the hue's dark end on the glyph. A white plate
+   is the one treatment that survives all eight tints underneath it, and the
+   dark end is what keeps the glyph readable on the white. */
+.svcs-card__plate {
+  position: absolute;
+  z-index: 2;
+  left: var(--hv-s5);
+  bottom: var(--hv-s5);
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--tone-ink);
+  box-shadow: 0 10px 22px rgba(3, 26, 22, .28);
+}
+.svcs-card__plate svg { width: 22px; height: 22px; }
+
+.svcs-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hv-s3);
+  flex: 1;
+  padding: var(--hv-s6) var(--hv-s6) var(--hv-s7);
+  /* A few percent of the card's own hue behind the copy, so the lower half
+     belongs to the upper half instead of being plain white under a tinted
+     photo. */
+  background: linear-gradient(180deg, #fff 0%, var(--tone-soft) 100%);
+}
+
+.svcs-card__name {
+  font-family: var(--hv-font);
+  font-size: 1.06rem;
+  font-weight: 700;
+  letter-spacing: -.015em;
+  color: var(--hv-text);
+}
+
+.svcs-card__body {
+  display: block;
+  flex: 1;
+  font-family: var(--hv-font-body);
+  font-size: .9rem;
+  line-height: 1.62;
   color: var(--hv-text-muted);
 }
 
-.svc-card__soon {
-  align-self: flex-start;
-  margin-top: auto;
-  padding-top: var(--hv-s3);
-  font-size: var(--hv-fs-xs);
+/* Deliberately not the card's tone: that can be the amber, which is 2.2:1 on
+   white and would make this label - the card's only actual link text -
+   unreadable. The brand green is the single text accent on this page. */
+.svcs-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: var(--hv-s2);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
   font-weight: 700;
-  letter-spacing: .04em;
-  text-transform: uppercase;
   color: var(--hv-accent-strong);
 }
+.svcs-card__link svg { width: 15px; height: 15px; transition: transform var(--hv-dur-fast) var(--hv-ease); }
+.svcs-card:hover .svcs-card__link svg,
+.svcs-card:focus-visible .svcs-card__link svg { transform: translateX(4px); }
 
 
-/* 02. Category header row (icon + eyebrow + title, above each grid) ======= */
+/* 04. Platforms & integrations ============================================ */
 
-.svc-cat-head {
-  display: flex;
-  align-items: center;
-  gap: var(--hv-s4);
-  margin-bottom: var(--hv-s6);
+.hv-section--dark.svcs-int {
+  background:
+    radial-gradient(60% 50% at 84% 18%, rgba(14, 164, 107, .38) 0%, rgba(14, 164, 107, 0) 62%),
+    radial-gradient(48% 44% at 8% 92%, rgba(53, 217, 160, .18) 0%, rgba(53, 217, 160, 0) 60%),
+    linear-gradient(160deg, #052E29 0%, #04241F 100%);
+  overflow: hidden;
 }
-.svc-cat-head h3 {
-  font-family: var(--hv-font);
-  font-size: 1.3rem;
+
+.svcs-int__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
+  gap: clamp(36px, 4.5vw, 72px);
+  align-items: center;
+}
+
+.svcs-int__title {
+  font-size: var(--hv-fs-h2);
   font-weight: 800;
-  color: var(--hv-text);
+  letter-spacing: -.03em;
+  line-height: 1.16;
+  color: #fff;
   margin: 0;
 }
-.section--ink .svc-cat-head h3 { color: #fff; }
+.svcs-int__title span { display: block; }
+
+/* 2 rows x 4 columns, as in the reference - the tiles are a list of names,
+   so a fixed 4-up grid reads as one block rather than a ragged auto-fit. */
+.svcs-int__tiles {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--hv-s3);
+  margin: var(--hv-s8) 0 0;
+  padding: 0;
+}
+.svcs-int__tile {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--hv-s2);
+  min-height: 92px;
+  padding: var(--hv-s3) var(--hv-s2);
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: var(--hv-r-md);
+  background: rgba(255, 255, 255, .07);
+  text-align: center;
+  transition: background var(--hv-dur) var(--hv-ease), border-color var(--hv-dur) var(--hv-ease);
+}
+.svcs-int__tile:hover {
+  background: rgba(255, 255, 255, .13);
+  border-color: rgba(53, 217, 160, .45);
+}
+.svcs-int__tile span {
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 700;
+  line-height: 1.3;
+  color: #E4F5EE;
+}
+
+/* Every vendor mark sits on its own white chip: the marks arrive with their
+   own (sometimes dark, sometimes transparent) backgrounds, and a white plate
+   is the only treatment that keeps all eight legible on the dark tile. */
+.svcs-logo {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .22);
+}
+.svcs-logo img { display: block; width: 100%; height: 100%; object-fit: contain; }
+
+.svcs-int__cta { margin-top: var(--hv-s8); }
+
+/* -- The sync diagram ----------------------------------------------------- */
+
+.svcs-int__map {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: clamp(340px, 34vw, 440px);
+}
+
+.svcs-int__orbits {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .55;
+}
+
+.svcs-int__node {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: clamp(52px, 5vw, 64px);
+  height: clamp(52px, 5vw, 64px);
+  padding: 9px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, .3);
+}
+.svcs-int__node img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.svcs-int__node--1 { top: 0; left: 22%; }
+.svcs-int__node--2 { top: 4%; left: 55%; }
+.svcs-int__node--3 { top: 30%; right: 0; }
+.svcs-int__node--4 { top: 62%; right: 6%; }
+.svcs-int__node--5 { top: 46%; left: -2%; }
+
+.svcs-hub {
+  position: relative;
+  z-index: 3;
+  width: min(340px, 88%);
+  padding: var(--hv-s3);
+  border-radius: var(--hv-r-lg);
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, .38);
+}
+.svcs-hub__row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--hv-s3);
+  padding: 10px var(--hv-s3);
+  border-radius: var(--hv-r-sm);
+  background: #EFF7F3;
+}
+.svcs-hub__row + .svcs-hub__row { margin-top: 6px; }
+.svcs-hub__dot {
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--hv-accent-strong);
+}
+/* Hollow centre, so it reads as the "step" marker the reference draws
+   rather than a second tick competing with the one on the right. */
+.svcs-hub__dot::after {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  background: #EFF7F3;
+}
+.svcs-hub__label {
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 600;
+  color: var(--hv-text);
+}
+.svcs-hub__check { color: var(--hv-accent-strong); }
+.svcs-hub__check svg { width: 17px; height: 17px; }
+
+.svcs-int__note {
+  position: absolute;
+  z-index: 4;
+  bottom: -2%;
+  left: 24%;
+}
+.svcs-int__note .hv-script-note { color: #8FF0C7; }
+.svcs-int__note .hv-script-note__text { max-width: 13ch; }
 
 
-/* 03. Reduced motion ======================================================= */
+/* 05. Process ============================================================= */
+
+.svcs-process { background: linear-gradient(180deg, #F7F9F8 0%, #FFFFFF 100%); }
+
+.svcs-steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--hv-s5);
+  margin: 0;
+  padding: 0;
+}
+
+/* -- One step -------------------------------------------------------------
+   --tone arrives from servicesV2.jsx as the bright hue, and the two ends CSS
+   needs are mixed from it here - the same pair-of-tones contract the service
+   cards use, and for the same reason (the amber is 2.2:1 on white, the green
+   is 5:1, so nothing that has to be read can be the raw hue):
+
+     --tone-ink   read-safe dark end: the icon on its plate.
+     --tone-tint  a few percent of the hue over white: the card's own
+                  surface, so four steps are four colours rather than four
+                  identical white boxes.
+
+   The colour runs through everything a step owns - its top edge, its plate,
+   its number, its surface, its connector and its hover shadow - which is
+   what makes four cards read as one sequence travelling left to right
+   instead of four interchangeable panels.
+   ------------------------------------------------------------------------- */
+.svcs-step {
+  --tone: var(--hv-accent);
+  --tone-ink: color-mix(in srgb, var(--tone) 74%, #04241F);
+  --tone-tint: color-mix(in srgb, var(--tone) 9%, #fff);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--hv-s3);
+  padding: var(--hv-s8) var(--hv-s6) var(--hv-s7);
+  /* The rail is the top border, not a strip laid over the card: it has to
+     follow the card's radius at the corners, which a positioned rectangle
+     does not. */
+  border: 1px solid color-mix(in srgb, var(--tone) 22%, var(--hv-border));
+  border-top: 5px solid var(--tone);
+  border-radius: var(--hv-r-lg);
+  background: linear-gradient(180deg, var(--tone-tint) 0%, #fff 62%);
+  box-shadow: var(--hv-sh-sm);
+  transition:
+    transform var(--hv-dur) var(--hv-ease),
+    box-shadow var(--hv-dur) var(--hv-ease),
+    border-color var(--hv-dur) var(--hv-ease);
+}
+.svcs-step:hover {
+  transform: translateY(-5px);
+  border-color: color-mix(in srgb, var(--tone) 40%, var(--hv-border));
+  box-shadow: 0 20px 42px color-mix(in srgb, var(--tone) 20%, transparent);
+}
+
+/* The step number, as type: large, deliberately low-contrast, sitting in the
+   top-right corner beside the plate. It is decoration in every sense that
+   matters - aria-hidden at the call site, and the <ol> already tells a
+   screen reader which step this is - so it is allowed to sit at a fifth of
+   the hue rather than at a readable weight. */
+.svcs-step__ghost {
+  position: absolute;
+  top: var(--hv-s6);
+  right: var(--hv-s5);
+  font-family: var(--hv-font);
+  font-size: 3.4rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.06em;
+  color: color-mix(in srgb, var(--tone) 22%, transparent);
+  pointer-events: none;
+  user-select: none;
+}
+
+.svcs-step__icon {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  background: linear-gradient(150deg, var(--tone-ink) 0%, color-mix(in srgb, var(--tone) 74%, #04241F) 100%);
+  color: #fff;
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--tone) 30%, transparent);
+}
+.svcs-step__icon svg { width: 26px; height: 26px; }
+
+.svcs-step__title {
+  margin: var(--hv-s2) 0 0;
+  font-family: var(--hv-font);
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: -.015em;
+  color: var(--hv-text);
+}
+.svcs-step__body {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.62;
+  color: var(--hv-text-muted);
+}
+
+/* The connector between cards: a chevron in the step's own hue, sitting in
+   the gap. It is the card's ::after rather than a sixth grid item, so the
+   four steps stay one clean 4-up row - and it is dropped on every layout
+   where the cards no longer run in a single row (section 09), because there
+   "next" is simply the card below. */
+.svcs-step::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: calc(var(--hv-s6) / -2 - 5px);
+  width: 9px;
+  height: 9px;
+  translate: 0 -50%;
+  border-right: 2px solid color-mix(in srgb, var(--tone) 55%, #fff);
+  border-bottom: 2px solid color-mix(in srgb, var(--tone) 55%, #fff);
+  rotate: -45deg;
+}
+.svcs-step:last-child::after { content: none; }
+
+
+/* 06. The results ========================================================= */
+
+.hv-section--dark.svcs-results {
+  background:
+    radial-gradient(58% 62% at 18% 20%, rgba(14, 164, 107, .34) 0%, rgba(14, 164, 107, 0) 62%),
+    radial-gradient(50% 50% at 92% 88%, rgba(53, 217, 160, .16) 0%, rgba(53, 217, 160, 0) 60%),
+    linear-gradient(150deg, #06332C 0%, #04241F 100%);
+  overflow: hidden;
+}
+
+.svcs-results__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+  gap: clamp(32px, 4vw, 64px);
+  align-items: center;
+}
+
+.svcs-results__media {
+  position: relative;
+  padding: var(--hv-s8) var(--hv-s9);
+}
+.svcs-results__photo {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--hv-r-xl);
+  aspect-ratio: 1.42;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, .4);
+}
+
+.svcs-float {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--hv-s3);
+  padding: 12px 15px;
+  border-radius: var(--hv-r-md);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, .34);
+}
+.svcs-float__icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 9px;
+}
+.svcs-float__icon svg { width: 18px; height: 18px; }
+.svcs-float__text { display: grid; gap: 2px; }
+.svcs-float__title {
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.svcs-float__body {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.3;
+}
+
+.svcs-float--accent {
+  background: var(--hv-grad-accent);
+  color: #fff;
+}
+.svcs-float--accent .svcs-float__icon { background: rgba(255, 255, 255, .18); color: #fff; }
+.svcs-float--accent .svcs-float__body { color: rgba(255, 255, 255, .82); }
+
+.svcs-float--light {
+  background: #fff;
+  color: var(--hv-text);
+}
+.svcs-float--light .svcs-float__icon { background: var(--hv-bg-mint-deep); color: var(--hv-accent-strong); }
+.svcs-float--light .svcs-float__body { color: var(--hv-text-muted); }
+
+.svcs-float--1 { top: 2%; left: 0; }
+.svcs-float--2 { top: 44%; right: 0; }
+.svcs-float--3 { bottom: 2%; right: 14%; }
+
+/* Live status: a pulsing dot in front of the state word. */
+.svcs-float__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.svcs-float__live::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hv-accent);
+  animation: svcs-pulse 2.2s ease-in-out infinite;
+}
+@keyframes svcs-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: .45; transform: scale(.8); }
+}
+
+.svcs-results__title {
+  font-size: var(--hv-fs-h2);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.16;
+  color: #fff;
+  margin: 0;
+}
+.svcs-results__checks { margin-top: var(--hv-s7); }
+.svcs-results__checks li { font-size: .98rem; }
+
+
+/* 07. Closing CTA ========================================================= */
+
+.svcs-closing { background: #fff; }
+
+.svcs-closing__band {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(28px, 4vw, 56px);
+  padding: clamp(30px, 3.6vw, 52px) clamp(26px, 3.6vw, 54px);
+  border-radius: var(--hv-r-xl);
+  background:
+    radial-gradient(52% 90% at 88% 12%, rgba(14, 164, 107, .5) 0%, rgba(14, 164, 107, 0) 64%),
+    linear-gradient(120deg, #052E29 0%, #06382F 52%, #04241F 100%);
+  color: #fff;
+}
+.svcs-closing__title {
+  margin: 0;
+  max-width: 22ch;
+  font-size: clamp(1.4rem, 1.05rem + 1.3vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.18;
+  color: #fff;
+}
+.svcs-closing__lede {
+  margin: var(--hv-s4) 0 0;
+  max-width: 46ch;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-body);
+  line-height: 1.6;
+  color: #CBE3DB;
+}
+.svcs-closing__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hv-s3);
+}
+.svcs-closing__actions .hv-btn--outline {
+  color: #fff;
+  border-color: rgba(255, 255, 255, .42);
+}
+.svcs-closing__actions .hv-btn--outline:hover {
+  background: rgba(255, 255, 255, .14);
+  border-color: rgba(255, 255, 255, .6);
+  color: #fff;
+}
+/* The reference's scribbled arrow pointing from the copy to the buttons. */
+.svcs-closing__scribble {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 46%;
+  width: 120px;
+  height: auto;
+  translate: 0 -50%;
+  color: rgba(255, 255, 255, .3);
+  pointer-events: none;
+}
+
+
+/* 08. FAQ ================================================================= */
+
+.svcs-faq { background: #F7F9F8; }
+
+.svcs-faq__inner {
+  display: grid;
+  grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
+  gap: clamp(28px, 4vw, 64px);
+  align-items: start;
+}
+
+.svcs-faq__title {
+  margin: 0;
+  font-size: var(--hv-fs-h2);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.16;
+  color: var(--hv-text);
+}
+
+.svcs-faq__list {
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: #fff;
+  padding: 0 var(--hv-s6);
+}
+.svcs-faq__item + .svcs-faq__item { border-top: 1px solid var(--hv-border); }
+
+.svcs-faq__q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--hv-s5);
+  padding: var(--hv-s5) 0;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--hv-font);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+}
+.svcs-faq__q::-webkit-details-marker { display: none; }
+.svcs-faq__q:hover { color: var(--hv-accent-strong); }
+
+/* One mark, two states: the plus's vertical bar is hidden when open, so it
+   becomes the minus. Drawn with gradients rather than two elements, so the
+   rotation animates as a single transform. */
+.svcs-faq__sign {
+  position: relative;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  background:
+    linear-gradient(var(--hv-accent-strong), var(--hv-accent-strong)) center / 15px 2px no-repeat,
+    linear-gradient(var(--hv-accent-strong), var(--hv-accent-strong)) center / 2px 15px no-repeat;
+  transition: transform var(--hv-dur) var(--hv-ease);
+}
+.svcs-faq__item[open] .svcs-faq__sign {
+  background-image: linear-gradient(var(--hv-accent-strong), var(--hv-accent-strong));
+  background-size: 15px 2px;
+  transform: rotate(180deg);
+}
+
+.svcs-faq__a { padding-bottom: var(--hv-s5); max-width: 62ch; }
+.svcs-faq__a p { margin: 0; }
+
+
+/* 09. Responsive ==========================================================
+   Three bands below the desktop layout, and each one is a layout decision
+   rather than a shrink: 4-up becomes 2-up becomes stacked, on the service
+   grid and the process row alike. Anything that only works while the row is
+   still a row - the step connectors - is removed at the band where the row
+   breaks, instead of being squeezed into a gap that no longer faces the
+   right way.
+
+   The hero is a single centred column at every width, so it has no band of
+   its own here; only its button row changes (below).
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 1120px) {
+  .svcs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Two columns of steps is no longer one sequence across the row. */
+  .svcs-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .svcs-step::after { content: none; }
+}
+
+@media (max-width: 980px) {
+  .svcs-why__inner,
+  .svcs-int__inner,
+  .svcs-results__inner,
+  .svcs-faq__inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* Copy first, picture second, on every one of them. */
+  .svcs-why__media { margin-top: var(--hv-s8); }
+  .svcs-int__map { margin-top: var(--hv-s8); }
+  .svcs-results__media { margin-top: var(--hv-s8); }
+
+  .svcs-closing__band { grid-template-columns: minmax(0, 1fr); }
+  .svcs-closing__scribble { display: none; }
+}
+
+@media (max-width: 720px) {
+  .svcs-grid { grid-template-columns: minmax(0, 1fr); }
+  .svcs-steps { grid-template-columns: minmax(0, 1fr); }
+  .svcs-why__list { grid-template-columns: minmax(0, 1fr); }
+  .svcs-int__tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* The floating cards and orbiting marks need width to sit around what
+     they annotate. Rather than shrink them into the photo, the photo
+     becomes a plain frame and the cards become a stacked list under it -
+     same information, no overlap. */
+  .svcs-results__media { padding: 0; }
+  .svcs-float {
+    position: static;
+    margin-top: var(--hv-s3);
+    box-shadow: var(--hv-sh-sm);
+  }
+  .svcs-float--accent,
+  .svcs-float--light { background: #fff; color: var(--hv-text); }
+  .svcs-float--accent .svcs-float__icon { background: var(--hv-bg-mint-deep); color: var(--hv-accent-strong); }
+  .svcs-float--accent .svcs-float__body { color: var(--hv-text-muted); }
+
+  /* The orbiting marks have nowhere to orbit at this width - they land on
+     top of the hub card instead of around it. The hub and the tile list
+     above it already say everything the diagram does. */
+  .svcs-int__node { display: none; }
+}
+
+@media (max-width: 560px) {
+  /* Two buttons side by side on a phone leave neither one wide enough to tap
+     comfortably, so they stack. The block stays centred and the targets get
+     the full width of the column instead of half each. */
+  .svcs-hero__ctas {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 320px;
+    margin-inline: auto;
+  }
+  .svcs-hero__ctas .hv-btn { justify-content: center; }
+
+  /* Less inset on the small cards: at 360px a 24px gutter on each side eats
+     an eighth of the card. */
+  .svcs-card__content,
+  .svcs-step { padding-inline: var(--hv-s5); }
+  .svcs-step__ghost { font-size: 2.9rem; }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .svc-card,
-  .svc-card:hover,
-  .svc-card:focus-visible { transform: none; }
-  .svc-card:hover .svc-card__go,
-  .svc-card:focus-visible .svc-card__go { transform: none; }
+  .svcs-float__live::before { animation: none; }
+  .svcs-card:hover,
+  .svcs-card:focus-visible,
+  .svcs-step:hover { transform: none; }
+  .svcs-card:hover .svcs-card__media img,
+  .svcs-card:focus-visible .svcs-card__media img { transform: none; }
 }

@@ -116,7 +116,8 @@
    and the light-on-dark nav text disappears into it. */
 .home-v2 .hv-hero,
 .home-v2 .page-hero,
-.home-v2 .sd-hero {
+.home-v2 .sd-hero,
+.home-v2 .svcs-hero {
   margin-top: calc(-1 * var(--header-h, 80px));
   padding-top: calc(var(--header-h, 80px) + clamp(8px, 1.5vw, 20px));
 }

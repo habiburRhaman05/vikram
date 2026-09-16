@@ -1,113 +1,474 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout.jsx";
 import PageMeta from "@/components/common/PageMeta.jsx";
-import PageHero from "@/components/common/PageHero.jsx";
-import Section from "@/components/common/Section.jsx";
-import SectionHead from "@/components/common/SectionHead.jsx";
-import Button from "@/components/common/Button.jsx";
-import BtnRow from "@/components/common/BtnRow.jsx";
 import Icon from "@/components/common/Icon.jsx";
-import Stats from "@/components/common/Stats.jsx";
-import Spotlight from "@/components/common/Spotlight.jsx";
-import { Panel } from "@/components/common/Panel.jsx";
-import Checklist from "@/components/common/Checklist.jsx";
-import Faq from "@/components/common/Faq.jsx";
-import CtaBand from "@/components/common/CtaBand.jsx";
-import Reveal from "@/components/common/Reveal.jsx";
-import { NAV_MENUS } from "@/data/navMenus.js";
-import { SERVICE_LINEUP } from "@/data/homeV2.jsx";
+import StructuredData from "@/components/common/StructuredData.jsx";
 
-/* v2 chrome (glass header, SiteFooterV2) - same two stylesheets every other
-   redesigned page loads; see Industries.jsx for why both are needed.
-   services.css only adds this page's own clickable-tile layout on top. */
+/* The home redesign's own primitives. They are deliberately not in
+   components/common/ - they are styled by home-redesign.css, which only
+   applies inside the .home-v2 scope that Layout's variant="v2" sets up. */
+import { HvSection, Reveal, SectionHead, Btn, Checks } from "@/components/home/primitives.jsx";
+import ScriptNote from "@/components/home/ScriptNote.jsx";
+
+import {
+  SVC_HERO,
+  SVC_WHY,
+  SVC_GRID,
+  SVC_INTEGRATIONS,
+  SVC_PROCESS,
+  SVC_RESULTS,
+  SVC_CLOSING,
+  SVC_FAQ,
+} from "@/data/servicesV2.jsx";
+
+/* v2 chrome (glass header, SiteFooterV2) - the same two stylesheets every
+   other redesigned page loads; see Industries.jsx for why both are needed.
+   services.css only adds this page's own sections on top. */
 import "@/styles/home-redesign.css";
 import "@/styles/home-chrome.css";
 import "@/styles/services.css";
 
-/* One icon per NAV_MENUS category - the same mapping the sitemap builds,
-   kept here too since a nav dropdown has no use for an icon but this page
-   does. One icon per individual service, purely decorative - chosen by
-   hand since navMenus.js's own item() helper only carries a title and a
-   one-line body (the dropdown never needed more than that). */
-const CATEGORY_ICONS = { ai: "brain", marketing: "megaphone", development: "code" };
-const ITEM_ICONS = {
-  "AI Agents & Chatbots": "chatWindow",
-  "Workflow Automation": "sliders",
-  "API & Tool Integrations": "layers",
-  "AI Content Systems": "sparkle",
-  "CRM & Sub-account Setup": "target",
-  "Pipeline & Funnel Build": "barChart",
-  "Email & SMS Campaigns": "mail",
-  "Social Media Marketing": "megaphone",
-  "Reporting Dashboards": "lineChart",
-  "Funnel Design & Builds": "layers",
-  "Websites & Landing Pages": "globe",
-  "GoHighLevel Sub-accounts": "code",
-  "eCommerce Builds": "cart",
-};
+/**
+ * /services.
+ *
+ * The layout follows the approved reference design; every word of the copy
+ * and every link is GHLevelUp's own, from src/data/servicesV2.jsx.
+ *
+ * One structural note that is easy to get wrong when editing this page:
+ * the v2 header is transparent at rest and its nav is light-on-dark, and
+ * it achieves that by pulling the page's opening hero up underneath itself
+ * (see the `.home-v2 .hv-hero, .home-v2 .page-hero, .home-v2 .sd-hero`
+ * rule in styles/home-chrome.css). `.svcs-hero` is registered in that same
+ * rule - if this hero is ever renamed, that rule has to be updated with it
+ * or the page opens with a white strip behind the logo.
+ */
 
-/* Only "AI Agents & Chatbots" has a real page today - everything else
-   still resolves through ServiceComingSoon (see that file's own comment
-   for why that's a deliberate, honest placeholder rather than a dead
-   link). Cards for the rest carry a small "coming soon" tag so the grid
-   doesn't quietly imply all thirteen are live. */
-const LIVE_SLUGS = new Set(["ai-agents-chatbots"]);
+/* Decorative dotted orbits and specks - the reference's faint concentric
+   marks. Drawn once and reused by both the hero and the integrations map,
+   which is why the viewBox is square-ish and scaled rather than matched to
+   either section's real aspect ratio. Purely visual: aria-hidden, and the
+   sections' own headings carry the meaning. */
+function Orbits({ className }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 400 400"
+      preserveAspectRatio="xMidYMid meet"
+      fill="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <circle cx="200" cy="200" r="118" stroke="rgba(255,255,255,.20)" strokeWidth="1.2" strokeDasharray="2 9" />
+      <circle cx="200" cy="200" r="168" stroke="rgba(255,255,255,.13)" strokeWidth="1.2" strokeDasharray="2 9" />
+      <circle cx="82" cy="118" r="4" fill="rgba(53,217,160,.75)" />
+      <circle cx="330" cy="272" r="3" fill="rgba(53,217,160,.6)" />
+      <circle cx="314" cy="96" r="2.5" fill="rgba(255,255,255,.4)" />
+    </svg>
+  );
+}
 
-const STAT_ITEMS = [
-  { num: "13", label: "Services, one team" },
-  { num: "24/7", label: "AI coverage, EN & ES" },
-  { num: "1-2 wks", label: "Typical setup time" },
-  { num: "0", label: "Vendors to coordinate between" },
-];
+/* -- Sections -------------------------------------------------------------- */
 
-const PROCESS_STEPS = [
-  { num: "01", title: "Discover", body: "A short call about how your business actually runs today - the calls you miss, the leads that go cold, the manual steps eating your week." },
-  { num: "02", title: "Configure", body: "We build the CRM, automations and AI around your real workflow - not a generic template you have to bend your business to fit." },
-  { num: "03", title: "Connect", body: "Calendars, numbers, domains, payment and every tool you already use get wired into one system before you ever log in." },
-  { num: "04", title: "Launch & support", body: "You go live with a walkthrough, not a login and a PDF - and the same team that built it keeps running it with you." },
-];
+/**
+ * The hero: crumb, headline, lede and the two buttons, centred, with no side
+ * visual. The laptop mockup, the floating capability card, the orbiting tiles
+ * and the handwritten note that used to fill the right column are gone - on
+ * a page whose whole job is to list services, a picture of a laptop was
+ * decoration competing with the eight things the reader came for.
+ *
+ * What replaces that column is the background: three soft colour washes
+ * (green, blue, violet) plus the dotted orbits, so the centred block still
+ * has depth without a second element beside it.
+ */
+function Hero() {
+  return (
+    <section className="svcs-hero">
+      <Orbits className="svcs-hero__orbits" />
 
-const FAQS = [
-  {
-    question: "Do I need to hire someone to manage all of this?",
-    answer: "No. That's the point of one team handling it end to end - configuration, connections and ongoing changes are on us, not a role you have to fill.",
-  },
-  {
-    question: "Can you build something that isn't listed here?",
-    answer: "Often, yes. Configuration covers most requests; when it doesn't, we write custom software and connect it to the rest of your setup - see the About page for how that split works.",
-  },
-  {
-    question: "How long before something is actually live?",
-    answer: "Most CRM and automation builds are ready in one to two weeks. Larger builds - a full website, a multi-stage funnel - are scoped on the call so the timeline is never a guess.",
-  },
-  {
-    question: "Is the AI receptionist a separate product?",
-    answer: "No - it's part of the same platform, reading from the same calendar and pipeline as everything else, so a booked call shows up wherever your team already looks.",
-  },
-  {
-    question: "What does it cost?",
-    answer: "It depends on which services you need and how much custom work they involve. Book a call and we'll give you real numbers for your business, confirmed in writing before anything is signed.",
-  },
-];
+      <div className="hv-container svcs-hero__inner">
+        <Reveal className="svcs-hero__copy">
+          {/* Same crumb pattern as the .page-hero pages (Home / this page),
+              including the separator mark - so a reader arriving from
+              Industries or About sees the hero they already know. */}
+          <p className="svcs-hero__crumbs">
+            <Link to="/">Home</Link>
+            <span>/</span>
+            {SVC_HERO.crumb}
+          </p>
 
-function ServiceCard({ to, icon, label, body, index }) {
-  const live = LIVE_SLUGS.has(to.split("/").pop());
+          <h1 className="svcs-hero__title">
+            {SVC_HERO.titleLead}
+            <span className="svcs-hero__accent">{SVC_HERO.titleAccent}</span>
+          </h1>
+
+          <p className="svcs-hero__lede">{SVC_HERO.lede}</p>
+
+          <div className="svcs-hero__ctas">
+            <Btn to={SVC_HERO.primary.to} variant="primary" size="lg" iconAfter={SVC_HERO.primary.icon}>
+              {SVC_HERO.primary.label}
+            </Btn>
+            {/* A fragment link, not a route: it scrolls to the grid below.
+                The browser's own smooth scroll handles it, offset by
+                html { scroll-padding-top } in legacy/styles.css so the
+                section heading doesn't land under the sticky header. */}
+            <Btn href={SVC_HERO.secondary.href} variant="outline" size="lg">
+              {SVC_HERO.secondary.label}
+            </Btn>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function WhyChooseUs() {
+  return (
+    <HvSection className="svcs-why">
+      <div className="svcs-why__inner">
+        <Reveal>
+          <span className="hv-eyebrow">{SVC_WHY.eyebrow}</span>
+          <h2 className="svcs-why__title">
+            {SVC_WHY.titleLines.map((line) => (
+              <span key={line}>{line}</span>
+            ))}
+          </h2>
+          <p className="hv-lede">{SVC_WHY.lede}</p>
+
+          <ul className="svcs-why__list">
+            {SVC_WHY.items.map((item, i) => (
+              <Reveal as="li" className="svcs-why__item" key={item.title} index={i} style={{ "--tone": item.tone }}>
+                <span className="svcs-why__icon" aria-hidden="true">
+                  <Icon name={item.icon} strokeWidth={2} />
+                </span>
+                <span>
+                  <span className="svcs-why__name">{item.title}</span>
+                  <span className="svcs-why__body">{item.body}</span>
+                </span>
+              </Reveal>
+            ))}
+          </ul>
+
+          <div className="svcs-why__cta">
+            <Btn to={SVC_WHY.cta.to} variant="primary" iconAfter="arrowRight">
+              {SVC_WHY.cta.label}
+            </Btn>
+          </div>
+        </Reveal>
+
+        <Reveal className="svcs-why__media" index={1}>
+          <picture>
+            <source type="image/webp" srcSet={SVC_WHY.imageWebp} />
+            <img src={SVC_WHY.image} alt={SVC_WHY.imageAlt} width={1240} height={930} loading="lazy" decoding="async" />
+          </picture>
+
+          <div className="svcs-why__note" aria-hidden="true">
+            <ScriptNote direction="down-left">{SVC_WHY.note}</ScriptNote>
+          </div>
+        </Reveal>
+      </div>
+    </HvSection>
+  );
+}
+
+/**
+ * One service card. The whole card is the link - one destination, so there
+ * is no reason to make the reader aim at a "Learn more" of its own - and
+ * the visible label carries a visually hidden service name so a screen
+ * reader's links list shows eight distinguishable entries instead of eight
+ * identical "Learn more"s.
+ */
+function ServiceCard({ item, index }) {
+  /* alt="" (decorative) on the card art: the card's own title and body name
+     the service and say what it does, so a description of the photo would be
+     a second, vaguer announcement of the same link. The tone is handed to
+     CSS as a custom property - the stylesheet derives the deep and soft ends
+     of it from that one value. */
   return (
     <Reveal as="li" index={index}>
-      <Link className="svc-card" to={to}>
-        <div className="svc-card__top">
-          <span className="hv-badge hv-badge--sm" aria-hidden="true">
-            <Icon name={icon} />
+      <Link className="svcs-card" to={item.to} style={{ "--tone": item.tone }}>
+        <span className="svcs-card__media">
+          <picture>
+            <source type="image/webp" srcSet={item.imageWebp} />
+            <img src={item.image} alt="" width={840} height={525} loading="lazy" decoding="async" />
+          </picture>
+          <span className="svcs-card__plate" aria-hidden="true">
+            <Icon name={item.icon} strokeWidth={2} />
           </span>
-          <span className="svc-card__go" aria-hidden="true">
-            <Icon name="arrowRight" />
+        </span>
+
+        <span className="svcs-card__content">
+          <span className="svcs-card__name">{item.title}</span>
+          <span className="svcs-card__body">{item.body}</span>
+          <span className="svcs-card__link">
+            {SVC_GRID.learnLabel}
+            <span className="hv-sr-only"> about {item.title}</span>
+            <Icon name="arrowRight" aria-hidden="true" strokeWidth={2.4} />
           </span>
-        </div>
-        <span className="svc-card__name">{label}</span>
-        <p className="svc-card__body">{body}</p>
-        {!live && <span className="svc-card__soon">In development</span>}
+        </span>
       </Link>
     </Reveal>
+  );
+}
+
+function ServiceGrid() {
+  return (
+    <HvSection id="services" className="svcs-grid-sec">
+      <SectionHead eyebrow={SVC_GRID.eyebrow} title={SVC_GRID.title} center>
+        {SVC_GRID.lede}
+      </SectionHead>
+
+      <ul className="svcs-grid">
+        {SVC_GRID.items.map((item, i) => (
+          <ServiceCard item={item} index={i} key={item.to} />
+        ))}
+      </ul>
+    </HvSection>
+  );
+}
+
+/**
+ * "Platforms & integrations": the tile list on the left, and on the right a
+ * diagram of one record moving through the whole system - a hub card with
+ * the five steps, ringed by the platforms involved.
+ *
+ * The diagram is decoration with a job: every mark in it is a real platform
+ * we connect, and the hub rows are the real hand-offs. It is still
+ * aria-hidden, because the hub repeats in prose what the tile list beside
+ * it already states.
+ */
+function Integrations() {
+  const { hub } = SVC_INTEGRATIONS;
+
+  return (
+    <HvSection dark className="svcs-int">
+      <div className="svcs-int__inner">
+        <Reveal>
+          <span className="hv-eyebrow">{SVC_INTEGRATIONS.eyebrow}</span>
+          <h2 className="svcs-int__title">
+            {SVC_INTEGRATIONS.titleLines.map((line) => (
+              <span key={line}>{line}</span>
+            ))}
+          </h2>
+          <p className="hv-lede">{SVC_INTEGRATIONS.lede}</p>
+
+          <ul className="svcs-int__tiles">
+            {SVC_INTEGRATIONS.items.map((tool, i) => (
+              <Reveal as="li" className="svcs-int__tile" key={tool.name} index={i}>
+                <span className="svcs-logo">
+                  <img src={`/img/integrations/${tool.logo}.png`} alt="" width={96} height={96} loading="lazy" decoding="async" />
+                </span>
+                <span>{tool.name}</span>
+              </Reveal>
+            ))}
+          </ul>
+
+          <div className="svcs-int__cta">
+            <Btn to={SVC_INTEGRATIONS.cta.to} variant="primary" iconAfter="arrowRight">
+              {SVC_INTEGRATIONS.cta.label}
+            </Btn>
+          </div>
+        </Reveal>
+
+        <Reveal className="svcs-int__map" index={1}>
+          <Orbits className="svcs-int__orbits" />
+
+          {hub.logos.map((logo, i) => (
+            <span className={`svcs-int__node svcs-int__node--${i + 1}`} key={logo}>
+              <img src={`/img/integrations/${logo}.png`} alt="" width={96} height={96} loading="lazy" decoding="async" />
+            </span>
+          ))}
+
+          <ul className="svcs-hub" aria-hidden="true">
+            {hub.rows.map((row) => (
+              <li className="svcs-hub__row" key={row}>
+                <span className="svcs-hub__dot" />
+                <span className="svcs-hub__label">{row}</span>
+                <span className="svcs-hub__check">
+                  <Icon name="check" strokeWidth={2.6} />
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="svcs-int__note" aria-hidden="true">
+            <ScriptNote direction="down-right">{SVC_INTEGRATIONS.note}</ScriptNote>
+          </div>
+        </Reveal>
+      </div>
+    </HvSection>
+  );
+}
+
+/**
+ * The process, as four colour-coded steps.
+ *
+ * What changed from the four plain white boxes: each step now carries its own
+ * hue (--tone), and that hue runs through the whole card - the rail along its
+ * top edge, the icon plate, the number, the connector that points at the next
+ * step, and the lift shadow on hover. The four cards therefore read as one
+ * sequence travelling left to right instead of four interchangeable panels,
+ * and the faint tint on each card's own surface stops the row reading as a
+ * wall of white.
+ *
+ * The connector is the step's own ::after rather than an element, and the
+ * section stays a plain <ol> with <li> children: whether the steps are laid
+ * out as one row, two columns or a stack is entirely the stylesheet's call,
+ * which is what makes it responsive without a second markup path.
+ *
+ * The number is documented once: the big tone-tinted numeral in the corner.
+ * It is aria-hidden, because the <ol> already tells a screen reader which
+ * step this is - printing "Step 1" as text as well would say it twice, and
+ * the words "step 1" are not what the numbered mark is for on screen.
+ */
+function Process() {
+  return (
+    <HvSection className="svcs-process">
+      <SectionHead eyebrow={SVC_PROCESS.eyebrow} title={SVC_PROCESS.title} center>
+        {SVC_PROCESS.lede}
+      </SectionHead>
+
+      <ol className="svcs-steps">
+        {SVC_PROCESS.steps.map((step, i) => (
+          <Reveal as="li" className="svcs-step" key={step.num} index={i} style={{ "--tone": step.tone }}>
+            <span className="svcs-step__ghost" aria-hidden="true">
+              {step.num}
+            </span>
+
+            <span className="svcs-step__icon" aria-hidden="true">
+              <Icon name={step.icon} strokeWidth={1.9} />
+            </span>
+
+            <h3 className="svcs-step__title">{step.title}</h3>
+            <p className="svcs-step__body">{step.body}</p>
+          </Reveal>
+        ))}
+      </ol>
+    </HvSection>
+  );
+}
+
+function Results() {
+  return (
+    <HvSection dark className="svcs-results">
+      <div className="svcs-results__inner">
+        <Reveal className="svcs-results__media">
+          <div className="svcs-results__photo">
+            <picture>
+              <source type="image/webp" srcSet={SVC_RESULTS.imageWebp} />
+              <img
+                src={SVC_RESULTS.image}
+                alt={SVC_RESULTS.imageAlt}
+                width={1240}
+                height={868}
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
+          </div>
+
+          {SVC_RESULTS.cards.map((card, i) => (
+            <div className={`svcs-float svcs-float--${card.tone} svcs-float--${i + 1}`} key={card.title}>
+              <span className="svcs-float__icon" aria-hidden="true">
+                <Icon name={card.icon} strokeWidth={2} />
+              </span>
+              <span className="svcs-float__text">
+                <span className="svcs-float__title">{card.title}</span>
+                <span className="svcs-float__body">
+                  {card.live ? <span className="svcs-float__live">{card.body}</span> : card.body}
+                </span>
+              </span>
+            </div>
+          ))}
+        </Reveal>
+
+        <Reveal index={1}>
+          <span className="hv-eyebrow">{SVC_RESULTS.eyebrow}</span>
+          <h2 className="svcs-results__title">{SVC_RESULTS.title}</h2>
+          <p className="hv-lede">{SVC_RESULTS.lede}</p>
+          <Checks items={SVC_RESULTS.checks} className="svcs-results__checks" />
+        </Reveal>
+      </div>
+    </HvSection>
+  );
+}
+
+function Closing() {
+  return (
+    <HvSection tight className="svcs-closing">
+      <Reveal className="svcs-closing__band">
+        <div>
+          <h2 className="svcs-closing__title">{SVC_CLOSING.title}</h2>
+          <p className="svcs-closing__lede">{SVC_CLOSING.lede}</p>
+        </div>
+
+        <div className="svcs-closing__actions">
+          <Btn to={SVC_CLOSING.primary.to} variant="primary" size="lg" iconAfter={SVC_CLOSING.primary.icon}>
+            {SVC_CLOSING.primary.label}
+          </Btn>
+          <Btn href={SVC_CLOSING.secondary.href} variant="outline" size="lg">
+            {SVC_CLOSING.secondary.label}
+          </Btn>
+        </div>
+
+        <svg className="svcs-closing__scribble" viewBox="0 0 120 70" fill="none" aria-hidden="true" focusable="false">
+          <path
+            d="M4 6c22 4 44 14 62 30 8 7 15 15 21 26"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeDasharray="7 7"
+          />
+          <path d="M78 54c3 5 6 9 9 12 2-4 3-9 3-14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </Reveal>
+    </HvSection>
+  );
+}
+
+/**
+ * FAQ. <details>/<summary> so the browser supplies the semantics, keyboard
+ * behaviour and find-in-page expansion; React only tracks which one is open,
+ * so opening a question closes the previous one. Same pattern as the home
+ * page's FAQ, and the answers are published as FAQPage structured data.
+ */
+function Faq() {
+  const [openKey, setOpenKey] = useState(null);
+
+  return (
+    <HvSection className="svcs-faq">
+      <StructuredData faq={SVC_FAQ.items} />
+
+      <div className="svcs-faq__inner">
+        <Reveal>
+          <span className="hv-eyebrow">{SVC_FAQ.eyebrow}</span>
+          <h2 className="svcs-faq__title">{SVC_FAQ.title}</h2>
+          <p className="hv-lede">{SVC_FAQ.lede}</p>
+        </Reveal>
+
+        <Reveal className="svcs-faq__list" index={1}>
+          {SVC_FAQ.items.map((item, i) => (
+            <details
+              className="svcs-faq__item"
+              key={item.question}
+              open={openKey === i}
+              onToggle={(e) => {
+                if (e.currentTarget.open) setOpenKey(i);
+                else if (openKey === i) setOpenKey(null);
+              }}
+            >
+              <summary className="svcs-faq__q">
+                <span>{item.question}</span>
+                <span className="svcs-faq__sign" aria-hidden="true" />
+              </summary>
+              <div className="svcs-faq__a">
+                <p className="hv-body">{item.answer}</p>
+              </div>
+            </details>
+          ))}
+        </Reveal>
+      </div>
+    </HvSection>
   );
 }
 
@@ -119,140 +480,18 @@ export default function Services() {
     >
       <PageMeta
         title="Services - GHLevelUp"
-        description="CRM & GoHighLevel, AI automation, marketing and websites - every service GHLevelUp builds and runs, in one place."
+        description="CRM & GoHighLevel, AI automation, marketing, funnels, websites and reporting - every service GHLevelUp builds and runs, in one place."
+        ogDescription="From CRM and automation to marketing, funnels, websites and reporting - modern systems that attract, engage and convert, supported by one team."
       />
 
-      <PageHero
-        crumb="Services"
-        title="One team, every system your business runs on"
-        center
-        lede="CRM, AI automation, marketing and web - built and supported by the same team from setup through the long run, so nothing falls through the cracks between vendors."
-      >
-        <BtnRow style={{ marginTop: 32 }}>
-          <Button to="/book" variant="accent" icon="calendar">
-            Book a demo
-          </Button>
-          <Button to="/contact" variant="ghost-light" icon="message">
-            Ask what fits your business
-          </Button>
-        </BtnRow>
-      </PageHero>
-
-      <Section tight>
-        <Stats items={STAT_ITEMS} />
-      </Section>
-
-      {/* ── CRM & GoHighLevel (the umbrella product) ─────────────────────── */}
-      <Section id="crm">
-        <Spotlight
-          copy={
-            <>
-              <span className="eyebrow">The foundation</span>
-              <h2 className="balance">CRM &amp; GoHighLevel, configured before you log in</h2>
-              <p>
-                Every service on this page runs on the same GoHighLevel CRM - one pipeline, one calendar, one
-                inbox for calls, texts, email and web chat. We set it up around your business first, then hand
-                you a system that already knows your services and your hours.
-              </p>
-              <Checklist
-                items={[
-                  "Pipelines, contacts and calendars mapped to how you actually sell",
-                  "Numbers, domains and A2P registration handled for you",
-                  "One inbox for every channel a client can reach you on",
-                ]}
-              />
-              <BtnRow>
-                <Button to="/book" variant="accent" icon="arrowRight">
-                  See it on a demo
-                </Button>
-              </BtnRow>
-            </>
-          }
-          media={
-            <Panel title="Configured out of the box" status="Live">
-              <div className="tags">
-                {SERVICE_LINEUP.map((s) => (
-                  <span className="tag" key={s.id}>
-                    {s.label}
-                  </span>
-                ))}
-              </div>
-              <p style={{ marginTop: 22, fontSize: ".9rem", color: "var(--muted)" }}>
-                Every service below connects back into this same CRM - nothing lives on its own island.
-              </p>
-            </Panel>
-          }
-        />
-      </Section>
-
-      {/* ── The three service categories ─────────────────────────────────── */}
-      {NAV_MENUS.map((menu, mi) => (
-        <Section key={menu.id} mist={mi % 2 === 0} id={menu.id}>
-          <div className="svc-cat-head">
-            <span className="hv-badge" aria-hidden="true">
-              <Icon name={CATEGORY_ICONS[menu.id]} />
-            </span>
-            <div>
-              <span className="eyebrow" style={{ display: "block", marginBottom: 4 }}>
-                {mi === 0 ? "First - AI Automation" : mi === 1 ? "Then - Marketing" : "And - Funnels, Websites & GHL"}
-              </span>
-              <h3>{menu.label}</h3>
-            </div>
-          </div>
-
-          <ul className="svc-grid">
-            {menu.items.map((item, i) => (
-              <ServiceCard
-                key={item.title}
-                to={item.to}
-                icon={ITEM_ICONS[item.title] || CATEGORY_ICONS[menu.id]}
-                label={item.title}
-                body={item.body}
-                index={i}
-              />
-            ))}
-          </ul>
-        </Section>
-      ))}
-
-      {/* ── How we get you live ──────────────────────────────────────────── */}
-      <Section ink>
-        <SectionHead center eyebrow="How it works" title="Four moves from call to live system" />
-        <div className="steps">
-          {PROCESS_STEPS.map((step) => (
-            <div className="step" key={step.num}>
-              <span className="step__num">{step.num}</span>
-              <h4>{step.title}</h4>
-              <p>{step.body}</p>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      {/* ── FAQ ───────────────────────────────────────────────────────────── */}
-      <Section narrow>
-        <SectionHead center eyebrow="Questions" title="Before you book a call" />
-        <Faq items={FAQS} />
-      </Section>
-
-      <Section tight flushTop>
-        <CtaBand
-          title="Tell us what's slowing you down"
-          actions={
-            <>
-              <Button to="/book" variant="accent" size="lg" icon="calendar">
-                Book a demo
-              </Button>
-              <Button to="/contact" variant="ghost-light" size="lg" icon="message">
-                Ask a question first
-              </Button>
-            </>
-          }
-        >
-          We'll say plainly which of this is live today, what's next, and what it would cost to fix the specific
-          thing that's eating your week.
-        </CtaBand>
-      </Section>
+      <Hero />
+      <WhyChooseUs />
+      <ServiceGrid />
+      <Integrations />
+      <Process />
+      <Results />
+      <Closing />
+      <Faq />
     </Layout>
   );
 }
