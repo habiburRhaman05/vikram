@@ -84,7 +84,8 @@
   z-index: 1;
   display: grid;
   grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr);
-  gap: clamp(32px, 5vw, 64px);
+  column-gap: clamp(32px, 5vw, 64px);
+  row-gap: 0;
   /* Copy and the spine sit level at the top; the crumbs own the row above. */
   align-items: start;
 }
@@ -94,11 +95,11 @@
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--hv-s2);
   font-size: var(--hv-fs-xs);
   color: var(--hv-on-dark-muted);
-  margin: 0 0 var(--hv-s7);
+  margin: var(--hv-s4) 0 var(--hv-s3);
 }
 .ai-hero__crumbs a { color: inherit; text-decoration: none; }
 .ai-hero__crumbs a:hover { color: var(--hv-on-dark); }
@@ -1283,6 +1284,11 @@
   .ai-phases,
   .ai-why__grid,
   .ai-reviews__grid { grid-template-columns: minmax(0, 1fr); }
+
+  .ai-hero__copy { text-align: center; }
+  .ai-hero__crumbs,
+  .ai-hero__ctas { justify-content: center; }
+  .ai-hero__lede { margin-inline: auto; }
 
   /* The bento loses its spans and becomes one plain column of tiles, and the
      wide tiles' two-column item list collapses with it. */

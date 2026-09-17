@@ -290,10 +290,6 @@
         {
           "slug": "ai-agents-chatbots",
           "why": "What handles the first five minutes when no one is at a desk, so an evening enquiry gets answered instead of waiting for the morning."
-        },
-        {
-          "slug": "api-tool-integrations",
-          "why": "How the CRM learns what the calendar, the phone system and your accounts package already know, so follow-up reacts to reality rather than to a form fill."
         }
       ]
     },
@@ -569,10 +565,6 @@
         {
           "slug": "ai-agents-chatbots",
           "why": "The build itself: a voice and chat agent that answers in seconds, qualifies against your criteria and books into your real calendar."
-        },
-        {
-          "slug": "api-tool-integrations",
-          "why": "What gives an agent something true to say. Live availability, pricing and customer history read from the tools you already run."
         },
         {
           "slug": "workflow-automation",
@@ -852,10 +844,6 @@
       ],
       "relatedServices": [
         {
-          "slug": "websites-landing-pages",
-          "why": "Where this checklist gets applied properly: fast, responsive pages built to convert rather than to look good in a screenshot."
-        },
-        {
           "slug": "funnel-design-builds",
           "why": "A page is one step of a path. This is the offer, the stages and the follow-up that turn a single page into a booked appointment."
         },
@@ -1042,10 +1030,6 @@
         {
           "slug": "workflow-automation",
           "why": "Everything that has to happen after the reply: routing it to a person, chasing the ones who go quiet, and keeping the record straight."
-        },
-        {
-          "slug": "api-tool-integrations",
-          "why": "How your phone system, calendar and CRM agree on what a missed call is, so the text back fires from the right number at the right moment."
         }
       ]
     },
@@ -1442,10 +1426,6 @@
         }
       ],
       "relatedServices": [
-        {
-          "slug": "websites-landing-pages",
-          "why": "The build itself: fast, responsive pages written to convert rather than to look right in a screenshot."
-        },
         {
           "slug": "funnel-design-builds",
           "why": "When the offer needs a sequence rather than a page, this is the offer, the stages and the follow-up behind them."

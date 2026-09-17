@@ -2,7 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- viewport-fit=cover lets the page paint into the iPhone notch/status-bar
+         safe area instead of leaving Safari's default white strip there;
+         theme-color below (matching --hv-bg-dark, the hero's own top colour)
+         is what Safari/Chrome actually paint that area with - without both,
+         mobile browsers show a white gap above the header on every dark-hero
+         page. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#052E29" />
 
     <!-- Per-page <title>/<meta description>/canonical/og: tags are rendered
          by each page component (React 19 hoists <title>/<meta>/<link>
@@ -57,84 +64,6 @@
          plain script tag here rather than injected by React, since it is
          genuinely global and not tied to any one route/component). -->
     <script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6aa3ebfbf095905710c4d288"></script>
- <script>
-(function () {
-  function injectGlassCSS(shadowRoot) {
-    if (shadowRoot.querySelector('#glass-effect-override')) return; // avoid duplicates
-    const style = document.createElement('style');
-    style.id = 'glass-effect-override';
-    style.textContent = `
-      #lc_text-widget--box {
-        background: rgba(255, 255, 255, 0.15) !important;
-        backdrop-filter: blur(20px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        border-radius: 20px !important;
-        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.25) !important;
-        overflow: hidden !important;
-      }
-      .lc_text-widget--header-wrapper {
-        background: rgba(0, 64, 193, 0.55) !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
-        border-bottom: 1px solid rgba(255,255,255,0.2) !important;
-      }
-      .lc_text-widget--bubble {
-        background: rgba(17, 24, 40, 0.6) !important;
-        backdrop-filter: blur(10px) !important;
-        -webkit-backdrop-filter: blur(10px) !important;
-        border: 1px solid rgba(255,255,255,0.25) !important;
-      }
-      .lc_text-widget--agency-branding {
-        background: rgba(255,255,255,0.1) !important;
-        backdrop-filter: blur(8px) !important;
-        -webkit-backdrop-filter: blur(8px) !important;
-      }
-    `;
-    shadowRoot.appendChild(style);
-  }
 
-  /* The widget renders its launcher avatar as an <img> with no alt,
-     which is a real accessibility failure on our page even though the
-     markup is theirs. It is decorative (the button already has a label),
-     so an empty alt is the correct value - it hides it from screen
-     readers instead of announcing a filename. */
-  function fixWidgetA11y() {
-    var roots = [document];
-    var host = document.querySelector('chat-widget');
-    // The launcher lives inside the widget's shadow root, which
-    // document.querySelectorAll cannot see through - query both.
-    if (host && host.shadowRoot) roots.push(host.shadowRoot);
-    roots.forEach(function (root) {
-      root.querySelectorAll('img:not([alt])').forEach(function (img) {
-        img.setAttribute('alt', '');
-      });
-    });
-  }
-
-  function tryInject() {
-    fixWidgetA11y();
-    const widget = document.querySelector('chat-widget');
-    if (widget && widget.shadowRoot) {
-      injectGlassCSS(widget.shadowRoot);
-      return true;
-    }
-    return false;
-  }
-
-  // Widget loads asynchronously via loader.js, so poll + observe for it
-  if (!tryInject()) {
-    const observer = new MutationObserver(() => {
-      if (tryInject()) observer.disconnect();
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-  }
-
-  /* The launcher image can be swapped in after the shadow root exists
-     (which is when the observer above stops), so re-apply the alt fix a
-     few times over the first few seconds rather than only once. */
-  [500, 1500, 3000, 6000].forEach(function (ms) { setTimeout(fixWidgetA11y, ms); });
-})();
-</script>
   </body>
 </html>

@@ -391,7 +391,18 @@ p:last-child { margin-bottom: 0; }
 .scroll-top-btn:hover { background: var(--grad-accent); color: #fff; box-shadow: var(--sh-glow); }
 .scroll-top-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
 @media (max-width: 640px) {
-  .scroll-top-btn { left: 16px; bottom: 16px; padding: 11px 18px; }
+  /* Icon only on phone - the label is redundant once the button is this
+     small, and a round tap target reads faster than a wide pill. */
+  .scroll-top-btn {
+    left: 16px;
+    bottom: 16px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    gap: 0;
+    justify-content: center;
+  }
+  .scroll-top-btn__label { display: none; }
 }
 
 .btn-row {
@@ -456,26 +467,22 @@ p:last-child { margin-bottom: 0; }
 .nav {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 64px;
   min-height: 74px;
 }
 
 /* Brand ------------------------------------------------------------------ */
-/* flex:1 1 0 here and on .nav__actions below (both grow from a zero basis)
-   is what actually centers .nav__links on the true middle of the bar: two
-   equal-flex-grow items are FORCED to end up the same rendered width
-   regardless of how different their own content's natural width is - the
-   logo (~50px) vs phone number + button (~300px) - so whichever is wider
-   sets the width both sides end up at, and .nav__links sitting between two
-   equal-width flanks lands exactly at centre by construction. Restored to
-   fixed-size (not flex-grown) for mobile - see Responsive - where
-   .nav__links leaves the flow entirely and the old 2-item "logo left,
-   actions pinned right via margin-left:auto" layout takes over instead. */
+/* Fixed-size (not flex-grown), so .nav__links sits in normal flow right
+   after the logo instead of being centred on the bar - only .nav__actions
+   below grows to soak up the remaining space, pinning the CTA buttons to
+   the right edge. (This used to be flex:1 1 0 to force .nav__links to the
+   true centre of the bar; moved left on request.) Same fixed sizing is
+   used below the 1150px cutover regardless - see Responsive. */
 .brand {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  flex: 1 1 0;
+  flex: 1.5 1 0;
 }
 
 /* Company name set beside the logo mark, split into its two halves so
@@ -1714,6 +1721,10 @@ p:last-child { margin-bottom: 0; }
 /* Booking calendar sizes itself via form_embed.js; floor it so there is
    never a 0-height flash before the script runs. */
 .ghl-embed--calendar iframe { min-height: 760px; }
+
+/* The calendar widget already has its own visible frame - the wrapper's
+   border just doubled it up as a box around a box. */
+.ghl-embed--calendar { border: 0; }
 
 .ghl-embed--bare {
   background: transparent;

@@ -149,15 +149,6 @@ export const SVC_GRID = {
       imageWebp: "/img/home/svc-ai.webp",
     },
     {
-      icon: "globe",
-      title: "Websites & Landing Pages",
-      body: "Fast, responsive sites built to convert visitors into booked calls - not just to look good in a screenshot.",
-      to: "/services/websites-landing-pages",
-      tone: "#06B6D4",
-      image: "/img/home/service-web.jpg",
-      imageWebp: "/img/home/service-web.webp",
-    },
-    {
       icon: "layers",
       title: "Funnel Design & Builds",
       body: "High-converting funnels and landing pages mapped to your offer and your pipeline stages.",

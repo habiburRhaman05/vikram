@@ -53,22 +53,20 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, .92fr);
   column-gap: clamp(32px, 5vw, 68px);
-  row-gap: clamp(28px, 4vw, 44px);
+  row-gap: var(--hv-s3);
   align-items: center;
 }
 
-/* Centred and pulled close to the title beneath it, matching the other
-   service pages' breadcrumb treatment - not a separate, loosely-spaced
-   header element. */
+/* Left-aligned, matching the other service pages' breadcrumb treatment. */
 .cs-hero__crumbs {
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--hv-s2);
   font-size: var(--hv-fs-xs);
   color: var(--hv-on-dark-muted);
-  margin: 0;
+  margin: var(--hv-s4) 0 0;
 }
 .cs-hero__crumbs a { color: inherit; text-decoration: none; }
 .cs-hero__crumbs a:hover { color: var(--hv-on-dark); }
@@ -212,6 +210,11 @@
 @media (max-width: 900px) {
   .cs-hero__inner { grid-template-columns: 1fr; }
   .cs-hero__viz { margin-top: var(--hv-s8); }
+  .cs-hero__copy { text-align: center; }
+  .cs-hero__crumbs,
+  .cs-hero__ctas { justify-content: center; }
+  .cs-hero__title,
+  .cs-hero__lede { margin-inline: auto; }
 }
 @media (max-width: 440px) {
   .cs-tree__branches { grid-template-columns: 1fr; gap: var(--hv-s5); }

@@ -1,9 +1,9 @@
 /* ==========================================================================
    /services/funnel-design-builds - the Funnel Design & Builds page
    --------------------------------------------------------------------------
-   One of the two "Funnels, Websites & GHL" detail pages. This file is the
+   One of the "Funnels, Websites & GHL" detail pages. This file is the
    Funnel page's OWN layout, deliberately composed differently from every
-   other service detail page and from the Websites page (service-webdev.css):
+   other service detail page:
 
    - hero: split composition, text left, portrait photo right (every other
      service hero is centred text-only, a coded mock, or a console)
@@ -91,7 +91,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  margin: 0 0 var(--hv-s5);
+  margin: var(--hv-s4) 0 var(--hv-s2);
   font-size: var(--hv-fs-sm);
   color: var(--hv-on-dark-muted);
 }
@@ -1027,6 +1027,10 @@
   .fnl-hero__inner { grid-template-columns: minmax(0, 1fr); }
   /* The photo follows the copy on a phone. */
   .fnl-hero__photo { max-width: 520px; }
+  .fnl-hero__copy { text-align: center; }
+  .fnl-hero__crumbs,
+  .fnl-hero__ctas { justify-content: center; }
+  .fnl-hero__lede { margin-inline: auto; }
 
   .fnl-overview__inner { grid-template-columns: minmax(0, 1fr); }
   /* Quote after prose on narrow screens: it reads as a summary there. */

@@ -46,7 +46,7 @@ export default function ScrollToTop() {
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
     >
       <Icon name="arrowUp" strokeWidth={2.5} />
-      Scroll to top
+      <span className="scroll-top-btn__label">Scroll to top</span>
     </button>
   );
 }

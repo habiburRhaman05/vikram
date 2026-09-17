@@ -10,6 +10,11 @@ import GhlEmbed from "@/components/common/GhlEmbed.jsx";
 import Reveal from "@/components/common/Reveal.jsx";
 import { SITE } from "@/data/site";
 
+/* Same two stylesheets Home loads for the v2 header and footer. See
+   ServiceComingSoon.jsx for the full note on why both are needed. */
+import "@/styles/home-redesign.css";
+import "@/styles/home-chrome.css";
+
 const COVER_ITEMS = [
   "A live call into the AI receptionist, in English and in Spanish",
   "The client portal from your client's side and from yours",
@@ -25,7 +30,10 @@ const REASSURANCE_CARDS = [
 
 export default function Book() {
   return (
-    <Layout topbar={<>Demos run <strong>Monday to Friday</strong> - evening slots available during filing season</>}>
+    <Layout
+      variant="v2"
+      topbar={<>Demos run <strong>Monday to Friday</strong> - evening slots available during filing season</>}
+    >
       <PageMeta
         title="Book a Demo - GHLevelUp"
         description="Book a 20-minute walkthrough of the platform: the AI receptionist answering live, a client uploading documents, and a return moving through the board."

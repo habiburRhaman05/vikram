@@ -48,14 +48,8 @@ const routes = [
      is not in this list is a page nobody links to from search. */
   { path: "/services/ai-agents-chatbots", priority: "0.8", changefreq: "monthly" },
   { path: "/services/workflow-automation", priority: "0.8", changefreq: "monthly" },
-  { path: "/services/api-tool-integrations", priority: "0.8", changefreq: "monthly" },
   { path: "/services/funnel-design-builds", priority: "0.8", changefreq: "monthly" },
   { path: "/services/gohighlevel-sub-accounts", priority: "0.8", changefreq: "monthly" },
-  /* These three have real <Route>s in App.jsx but were missing from this
-     list, which is exactly the drift the comment above warns about: a page
-     that exists and is not in the sitemap is a page search has to find on
-     its own. Filled in while adding the blog rather than left for later. */
-  { path: "/services/websites-landing-pages", priority: "0.8", changefreq: "monthly" },
   { path: "/services/social-media-marketing", priority: "0.8", changefreq: "monthly" },
   { path: "/services/email-sms-campaigns", priority: "0.8", changefreq: "monthly" },
   /* Added later, and both missed by this list until now - same drift as the

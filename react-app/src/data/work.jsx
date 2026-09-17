@@ -202,8 +202,6 @@ export function workBySlug(slug) {
   return WORK_PROJECTS.find((p) => p.id === slug) || null;
 }
 
-/* Same disclaimer shape as every service page's Work section - see
-   ServiceWebsitesLanding.jsx's WEB_WORK.note for the original wording this
-   is adapted from. */
+/* Same disclaimer shape as every service page's Work section. */
 export const WORK_NOTE =
   "This is a representative project type, not a named client engagement - we do not publish client details or performance figures without written sign-off.";

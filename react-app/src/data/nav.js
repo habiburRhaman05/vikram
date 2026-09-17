@@ -1,14 +1,10 @@
 /** The plain (non-dropdown) items in the primary nav, in bar order after
- * the four service dropdowns from navMenus.js. Active state is derived
- * from the router location, not string-matched against location.pathname
- * the way the original main.js did it.
- *
- * Plans and About were removed from the bar on request; both still have
- * their footer entries (FOOTER_LINKS below) so nothing is orphaned. */
-/* Blog is a plain bar item rather than a dropdown: it has one destination,
-   and a dropdown holding one thing is the pattern navMenus.js was rewritten
-   to get away from. */
+ * the Services mega menu (see MegaMenu.jsx / navMenus.js). Active state is
+ * derived from the router location, not string-matched against
+ * location.pathname the way the original main.js did it. */
 export const NAV_LINKS = [
+  { label: "Pricing", to: "/pricing" },
+  { label: "About Us", to: "/about" },
   { label: "Blog", to: "/blog" },
   { label: "Contact", to: "/contact" },
 ];

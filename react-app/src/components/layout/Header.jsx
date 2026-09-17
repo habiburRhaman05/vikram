@@ -1,7 +1,7 @@
 import { NavLink, Link, useLocation } from "react-router-dom";
 import Button from "@/components/common/Button.jsx";
 import Container from "@/components/common/Container.jsx";
-import NavDropdown from "./NavDropdown.jsx";
+import MegaMenu from "./MegaMenu.jsx";
 import useStickyHeader from "@/hooks/useStickyHeader";
 import useMobileNav from "@/hooks/useMobileNav";
 import { NAV_LINKS } from "@/data/nav";
@@ -14,11 +14,9 @@ import "@/styles/mega-menu.css";
  * office-hours note, etc.) exactly like each .html file hard-coded its own
  * <div class="topbar"> text.
  *
- * Nav order: three service dropdowns (NAV_MENUS - AI Automation, Marketing,
- * Funnels/Websites & GHL), then the plain links (NAV_LINKS, which
- * is now just Contact - Plans and About were taken out of the bar). Each
- * dropdown owns its own open/close state (see NavDropdown.jsx) so they
- * don't interfere with one another.
+ * Nav order: the Services mega menu (MegaMenu.jsx, all of NAV_MENUS behind
+ * one trigger), then the plain links (NAV_LINKS - Pricing, About Us,
+ * Contact).
  */
 export default function Header({ topbar }) {
   const headerRef = useStickyHeader();
@@ -26,7 +24,9 @@ export default function Header({ topbar }) {
   const { pathname } = useLocation();
 
   const navLinkClass = ({ isActive }) => `nav__link${isActive ? " is-active" : ""}`;
-  const menuActive = (menu) => pathname === menu.to || pathname.startsWith(`${menu.to}/`);
+  const servicesActive = NAV_MENUS.some(
+    (menu) => pathname === menu.to || pathname.startsWith(`${menu.to}/`)
+  );
 
   return (
     <>
@@ -68,9 +68,7 @@ export default function Header({ topbar }) {
             </Link>
 
             <div className={`nav__links${open ? " is-open" : ""}`} id="nav-links">
-              {NAV_MENUS.map((menu) => (
-                <NavDropdown key={menu.id} menu={menu} active={menuActive(menu)} />
-              ))}
+              <MegaMenu active={servicesActive} onNavigate={close} />
               {NAV_LINKS.map((link) => (
                 <NavLink key={link.to} className={navLinkClass} to={link.to}>
                   {link.label}
@@ -88,6 +86,9 @@ export default function Header({ topbar }) {
             </div>
 
             <div className="nav__actions">
+              <Button to="/contact" variant="ghost-light" size="sm" icon="mail" className="nav__cta-desktop">
+                Contact Us
+              </Button>
               <Button to="/book" variant="accent" size="sm" icon="calendar" className="nav__cta-desktop">
                 Get Free Consultation
               </Button>

@@ -46,8 +46,7 @@ import "@/styles/service-funnels.css";
  * steps and a journey, who we work with, why GHLevelUp, FAQs, a client
  * review, then the contact-page CTA and form. The layout is this page's
  * own - split hero, editorial overview, dark film-strip and process band -
- * deliberately composed differently from the other service detail pages
- * and from the Websites page (see service-webdev.css).
+ * deliberately composed differently from the other service detail pages.
  */
 
 /* -- Sections -------------------------------------------------------------- */
@@ -56,7 +55,7 @@ function Hero() {
   return (
     <section className="fnl-hero">
       <div className="hv-container fnl-hero__inner">
-        <Reveal>
+        <Reveal className="fnl-hero__copy">
           <p className="fnl-hero__crumbs">
             <Link to="/">Home</Link>
             <span aria-hidden="true">/</span>

@@ -30,12 +30,6 @@ export const SERVICES = {
     icon: "sliders",
     blurb: "Turn the hand-offs your team does manually into automations that fire on time, every time.",
   },
-  "api-tool-integrations": {
-    slug: "api-tool-integrations",
-    title: "API & Tool Integrations",
-    icon: "layers",
-    blurb: "One record per customer across every tool, updated live instead of by spreadsheet export.",
-  },
   "funnel-design-builds": {
     slug: "funnel-design-builds",
     title: "Funnel Design & Builds",
@@ -47,12 +41,6 @@ export const SERVICES = {
     title: "GoHighLevel Sub-accounts",
     icon: "key",
     blurb: "Numbers, domains, calendars and A2P compliance configured end to end before you log in.",
-  },
-  "websites-landing-pages": {
-    slug: "websites-landing-pages",
-    title: "Websites & Landing Pages",
-    icon: "globe",
-    blurb: "Fast, responsive pages built to convert, not just to look right in a screenshot.",
   },
   "social-media-marketing": {
     slug: "social-media-marketing",
@@ -96,10 +84,6 @@ export const RELATED = {
       why: "The agent books the appointment. This is what fires afterwards - the reminder, the intake form, the follow-up if they no-show.",
     },
     {
-      slug: "api-tool-integrations",
-      why: "An agent is only as useful as what it can see. Integrations give it live availability, pricing and customer history to answer from.",
-    },
-    {
       slug: "gohighlevel-sub-accounts",
       why: "The platform the agent runs on - the number it answers, the calendar it books into and the inbox it writes to.",
     },
@@ -111,35 +95,12 @@ export const RELATED = {
       why: "Automation handles what happens after an enquiry lands. This is what catches the enquiry in the first place, at any hour.",
     },
     {
-      slug: "api-tool-integrations",
-      why: "A workflow can only move data it can reach. This is how the tools either end of the hand-off get connected.",
-    },
-    {
       slug: "gohighlevel-sub-accounts",
       why: "Where the pipelines, triggers and calendars these automations run against actually live.",
     },
   ],
 
-  "api-tool-integrations": [
-    {
-      slug: "workflow-automation",
-      why: "Connections on their own just move data. This is what puts them to work - the sequences that act on the record once it updates.",
-    },
-    {
-      slug: "ai-agents-chatbots",
-      why: "The clearest payoff of a live integration: an agent that quotes real availability and real prices instead of guessing.",
-    },
-    {
-      slug: "gohighlevel-sub-accounts",
-      why: "The hub most of these integrations point at, set up properly so the connections have somewhere to land.",
-    },
-  ],
-
   "funnel-design-builds": [
-    {
-      slug: "websites-landing-pages",
-      why: "A funnel needs pages to run on. This is the build side - speed, responsiveness and the form that actually submits.",
-    },
     {
       slug: "workflow-automation",
       why: "The opt-in is the start, not the finish. This is the follow-up sequence that turns a captured lead into a booked call.",
@@ -165,26 +126,7 @@ export const RELATED = {
     },
   ],
 
-  "websites-landing-pages": [
-    {
-      slug: "funnel-design-builds",
-      why: "A site tells people who you are. A funnel gives one offer its own dedicated path - useful when a page has a single job.",
-    },
-    {
-      slug: "workflow-automation",
-      why: "What happens to a form submission after it is submitted, so an enquiry never sits in an inbox unanswered.",
-    },
-    {
-      slug: "ai-agents-chatbots",
-      why: "The chat widget on the site, answering questions and booking instead of collecting a form nobody reads.",
-    },
-  ],
-
   "social-media-marketing": [
-    {
-      slug: "websites-landing-pages",
-      why: "A post can only send people somewhere. This is the page it sends them to, built to actually convert.",
-    },
     {
       slug: "email-sms-campaigns",
       why: "A follower is rented attention. This is how you turn one into an address and a number you actually own.",
@@ -212,10 +154,6 @@ export const RELATED = {
 
   "reporting-dashboards": [
     {
-      slug: "api-tool-integrations",
-      why: "A dashboard can only show what it can reach. This is how the sources it reads from actually get connected.",
-    },
-    {
       slug: "gohighlevel-sub-accounts",
       why: "The platform most of this data already lives in - configured properly, it's most of the connection work already done.",
     },
@@ -229,10 +167,6 @@ export const RELATED = {
     {
       slug: "workflow-automation",
       why: "A structured CRM is the foundation. This is what starts running on top of it once the pipelines exist.",
-    },
-    {
-      slug: "api-tool-integrations",
-      why: "Setup connects the obvious tools. This is the custom joins for anything without a ready-made connector.",
     },
     {
       slug: "reporting-dashboards",
