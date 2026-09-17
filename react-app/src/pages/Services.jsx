@@ -29,6 +29,15 @@ import "@/styles/home-redesign.css";
 import "@/styles/home-chrome.css";
 import "@/styles/services.css";
 
+/* The hub's own ItemList: exactly the cards the page shows, in the order it
+   shows them. Built from SVC_GRID rather than from serviceLinks.js so the
+   structured data can never describe a different set of services than the
+   visitor sees - every slug in that grid has a real route now, so this is
+   also the accurate list. Note GoHighLevel Sub-accounts has its own page and
+   is in the sitemap without being one of these cards; an ItemList describes
+   what THIS page lists, not the whole catalogue. */
+const SERVICE_LIST = SVC_GRID.items.map((item) => ({ name: item.title, path: item.to }));
+
 /**
  * /services.
  *
@@ -437,7 +446,19 @@ function Faq() {
 
   return (
     <HvSection className="svcs-faq">
-      <StructuredData faq={SVC_FAQ.items} />
+      <StructuredData
+        faq={SVC_FAQ.items}
+        collection={{
+          name: "Services",
+          description: SVC_GRID.lede,
+          path: "/services",
+          items: SERVICE_LIST,
+        }}
+        crumbs={[
+          { name: "Home", path: "/" },
+          { name: "Services", path: "/services" },
+        ]}
+      />
 
       <div className="svcs-faq__inner">
         <Reveal>
@@ -479,7 +500,7 @@ export default function Services() {
       topbar={<>Tell us what's slowing your team down - <a href="/contact">we'll say which of this fits</a></>}
     >
       <PageMeta
-        title="Services - GHLevelUp"
+        title="Services: CRM, AI Automation, Funnels, Websites - GHLevelUp"
         description="CRM & GoHighLevel, AI automation, marketing, funnels, websites and reporting - every service GHLevelUp builds and runs, in one place."
         ogDescription="From CRM and automation to marketing, funnels, websites and reporting - modern systems that attract, engage and convert, supported by one team."
       />

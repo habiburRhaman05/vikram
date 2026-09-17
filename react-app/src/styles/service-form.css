@@ -49,6 +49,23 @@
 
 /* -- Left column: the argument -------------------------------------------- */
 
+/* The real brand mark - same logo asset the header uses, so the form reads
+   as GHLevelUp's own rather than a generic embedded widget. */
+.sd-form__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: var(--hv-s7);
+}
+.sd-form__brand img { display: block; width: 40px; height: 34px; }
+.sd-form__brand span {
+  font-family: var(--hv-font);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: #fff;
+}
+
 .sd-form__title {
   margin: var(--hv-s4) 0 var(--hv-s5);
   font-family: var(--hv-font);
@@ -93,6 +110,48 @@
   color: var(--hv-accent-bright);
 }
 
+/* The three-step "what happens next" list - fills the column out under the
+   points/checklist so the left side reads as complete rather than trailing
+   off into white space above the phone/email links. */
+.sd-form__steps {
+  list-style: none;
+  margin: var(--hv-s8) 0 0;
+  padding: var(--hv-s6) 0 0;
+  border-top: 1px solid rgba(255, 255, 255, .14);
+  display: flex;
+  flex-direction: column;
+  gap: var(--hv-s5);
+}
+.sd-form__steps li { display: flex; align-items: flex-start; gap: var(--hv-s4); }
+.sd-form__steps li > span {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(53, 217, 160, .14);
+  color: var(--hv-accent-bright);
+  font-family: var(--hv-font);
+  font-size: .78rem;
+  font-weight: 800;
+}
+.sd-form__steps b {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: .88rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+.sd-form__steps p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: .82rem;
+  line-height: 1.5;
+  color: #B9D4CB;
+}
+
 .sd-form__direct {
   margin-top: var(--hv-s8);
   padding-top: var(--hv-s6);
@@ -129,29 +188,55 @@
 }
 
 /* Names the service being enquired about, so the form is never ambiguous
-   once it is submitted or screenshotted. */
+   once it is submitted or screenshotted. A small icon badge instead of a
+   plain uppercase label, matching the more visual, icon-led feel the rest
+   of the form now has. */
 .sd-form__card-head {
+  display: flex;
+  align-items: center;
+  gap: var(--hv-s4);
   margin: 0 0 var(--hv-s6);
   padding-bottom: var(--hv-s5);
   border-bottom: 1px solid var(--hv-border);
 }
+.sd-form__card-head-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+}
+.sd-form__card-head-icon svg { width: 19px; height: 19px; }
+.sd-form__card-head > div { min-width: 0; }
 .sd-form__card-head span {
   display: block;
   font-family: var(--hv-font);
-  font-size: var(--hv-fs-eyebrow);
-  font-weight: 800;
-  letter-spacing: .14em;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--hv-text-muted);
 }
 .sd-form__card-head strong {
   display: block;
-  margin-top: 5px;
+  margin-top: 3px;
   font-family: var(--hv-font);
   font-size: 1.1rem;
-  font-weight: 800;
-  letter-spacing: -.02em;
+  font-weight: 700;
+  letter-spacing: -.015em;
   color: var(--hv-accent-strong);
+}
+
+.sd-form__field--interest { margin-bottom: var(--hv-s5); }
+.sd-form__hint {
+  margin: 6px 0 0;
+  font-family: var(--hv-font-body);
+  font-size: .76rem;
+  line-height: 1.4;
+  color: var(--hv-text-muted);
 }
 
 /* Two fields per row on desktop, one per row on narrow screens. */
@@ -159,10 +244,12 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--hv-s4);
+  color:balck
 }
 .sd-form__row + .sd-form__row,
 .sd-form__row + .sd-form__field,
-.sd-form__field + .sd-form__row { margin-top: var(--hv-s5); }
+.sd-form__field + .sd-form__row,
+.sd-form__field + .sd-form__field { margin-top: var(--hv-s5); }
 
 .sd-form__field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
 .sd-form__field label {
@@ -178,14 +265,14 @@
 .sd-form__field textarea,
 .sd-form__field select {
   width: 100%;
-  padding: 12px 14px;
+  padding: 13px 14px;
   border: 1px solid var(--hv-border-strong);
-  border-radius: var(--hv-r-sm);
+  border-radius: var(--hv-r-md);
   background: #fff;
   font-family: var(--hv-font-body);
   font-size: .95rem;
   color: var(--hv-text);
-  transition: border-color var(--hv-dur-fast) var(--hv-ease), box-shadow var(--hv-dur-fast) var(--hv-ease);
+  transition: border-color var(--hv-dur-fast) var(--hv-ease), box-shadow var(--hv-dur-fast) var(--hv-ease), background var(--hv-dur-fast) var(--hv-ease);
 }
 .sd-form__field textarea { resize: vertical; min-height: 112px; line-height: 1.6; }
 .sd-form__field input::placeholder,
@@ -196,15 +283,18 @@
 .sd-form__field select:focus {
   outline: none;
   border-color: var(--hv-accent-strong);
-  box-shadow: 0 0 0 3px rgba(10, 127, 82, .14);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(10, 127, 82, .12);
 }
 
 /* The error state is border + message + an aria-invalid hook, never colour
    alone - colour is not available to everyone. */
 .sd-form__field--error input,
-.sd-form__field--error textarea { border-color: #C2410C; }
+.sd-form__field--error textarea,
+.sd-form__field--error select { border-color: #C2410C; }
 .sd-form__field--error input:focus,
-.sd-form__field--error textarea:focus { box-shadow: 0 0 0 3px rgba(194, 65, 12, .14); }
+.sd-form__field--error textarea:focus,
+.sd-form__field--error select:focus { box-shadow: 0 0 0 4px rgba(194, 65, 12, .12); }
 
 .sd-form__err {
   display: flex;
@@ -218,17 +308,113 @@
   color: #C2410C;
 }
 
-.sd-form__select { position: relative; }
-.sd-form__select select { appearance: none; cursor: pointer; padding-right: 40px; }
-.sd-form__select svg {
+/* -- Icon-prefixed control (input or select) -------------------------------
+   Every field except the message textarea sits inside this wrapper: a
+   leading icon that tints to the brand colour on focus, and - for selects -
+   a trailing chevron. Both icons are purely decorative (aria-hidden); the
+   input/select itself carries the real label association. */
+/* `position: relative` on the wrapper turns it into the containing block
+   for the icon's `position: absolute` - which takes the icon out of flex
+   flow entirely, so the wrapper's own `align-items: center` never touches
+   it. Centering has to be explicit (top: 50% + a negative translate), or
+   the icon sits at its static position instead - a few pixels above where
+   it belongs, which is what made these look "off" rather than centred. */
+.sd-form__control { position: relative; display: flex; align-items: center; }
+.sd-form__control-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  translate: 0 -50%;
+  width: 17px;
+  height: 17px;
+  line-height: 0;
+  color: #9AADA8;
+  pointer-events: none;
+  transition: color var(--hv-dur-fast) var(--hv-ease);
+}
+.sd-form__field:focus-within .sd-form__control-icon { color: var(--hv-accent-strong); }
+.sd-form__control input,
+.sd-form__control select { padding-left: 42px; }
+.sd-form__control select { appearance: none; cursor: pointer; padding-right: 40px; }
+.sd-form__chevron {
   position: absolute;
   right: 13px;
   top: 50%;
   translate: 0 -50%;
   width: 16px;
   height: 16px;
+  line-height: 0;
   color: var(--hv-text-muted);
   pointer-events: none;
+}
+
+/* -- Phone: country-code select + local number, one bordered control ------- */
+
+.sd-form__phone {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--hv-border-strong);
+  border-radius: var(--hv-r-md);
+  background: #fff;
+  overflow: hidden;
+  transition: border-color var(--hv-dur-fast) var(--hv-ease), box-shadow var(--hv-dur-fast) var(--hv-ease);
+}
+.sd-form__phone:focus-within {
+  border-color: var(--hv-accent-strong);
+  box-shadow: 0 0 0 4px rgba(10, 127, 82, .12);
+}
+.sd-form__field--error .sd-form__phone { border-color: #C2410C; }
+.sd-form__field--error .sd-form__phone:focus-within { box-shadow: 0 0 0 4px rgba(194, 65, 12, .12); }
+
+.sd-form__phone-country {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid var(--hv-border);
+  background: var(--hv-bg-mint);
+}
+.sd-form__phone-badge {
+  margin-left: 9px;
+  padding: 3px 6px;
+  border-radius: 5px;
+  background: var(--badge-tint, var(--hv-accent-strong));
+  color: #fff;
+  font-family: var(--hv-font);
+  font-size: .64rem;
+  font-weight: 700;
+  letter-spacing: .01em;
+  line-height: 1;
+  pointer-events: none;
+}
+.sd-form__phone-country select {
+  appearance: none;
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  padding: 13px 22px 13px 6px;
+  font-family: var(--hv-font);
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--hv-text);
+}
+.sd-form__phone-country .sd-form__chevron { right: 7px; width: 12px; height: 12px; }
+
+/* A floor on the number field so it can never get crushed to an unreadable
+   sliver when Email and Phone share a row at in-between widths - flex's
+   default min-width:auto would otherwise let it shrink to fit its
+   country-select sibling first. */
+.sd-form__phone input {
+  flex: 1 1 110px;
+  min-width: 110px;
+  border: 0;
+  border-radius: 0;
+  padding: 13px 14px;
+}
+.sd-form__phone input:focus { outline: none; box-shadow: none; }
+
+@media (max-width: 760px) {
+  .sd-form__row:has(.sd-form__phone) { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* Honeypot: off-canvas rather than display:none, because some bots skip
@@ -265,6 +451,29 @@
 
 .sd-form__submit { width: 100%; justify-content: center; margin-top: var(--hv-s6); }
 
+/* Small reassurance row under the submit button - not a claim, just what's
+   already true elsewhere on the site (privacy policy, one-business-day
+   reply commitment) restated where it actually reduces hesitation. */
+.sd-form__trust {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--hv-s3) var(--hv-s6);
+  margin: var(--hv-s5) 0 0;
+  padding: 0;
+}
+.sd-form__trust li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--hv-font-body);
+  font-size: .76rem;
+  font-weight: 600;
+  color: var(--hv-text-muted);
+}
+.sd-form__trust svg { width: 14px; height: 14px; color: var(--hv-accent-strong); flex-shrink: 0; }
+
 .sd-form__small {
   margin: var(--hv-s5) 0 0;
   font-family: var(--hv-font-body);
@@ -291,6 +500,29 @@
 }
 .sd-form__tick svg { width: 29px; height: 29px; }
 .sd-form__tick--warn { background: rgba(194, 65, 12, .1); color: #C2410C; }
+
+.sd-form__result-next {
+  list-style: none;
+  margin: 0 auto var(--hv-s7);
+  padding: var(--hv-s5) var(--hv-s6);
+  max-width: 42ch;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: var(--hv-r-md);
+  background: var(--hv-bg-mint);
+  text-align: left;
+}
+.sd-form__result-next li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-family: var(--hv-font-body);
+  font-size: .84rem;
+  line-height: 1.5;
+  color: var(--hv-text);
+}
+.sd-form__result-next svg { width: 16px; height: 16px; color: var(--hv-accent-strong); flex-shrink: 0; margin-top: 2px; }
 
 .sd-form__result h3 {
   margin: 0 0 var(--hv-s4);

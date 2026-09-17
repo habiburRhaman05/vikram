@@ -1,168 +1,345 @@
+import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout.jsx";
 import PageMeta from "@/components/common/PageMeta.jsx";
-import PageHero from "@/components/common/PageHero.jsx";
-import Section from "@/components/common/Section.jsx";
-import SectionHead from "@/components/common/SectionHead.jsx";
-import Button from "@/components/common/Button.jsx";
-import BtnRow from "@/components/common/BtnRow.jsx";
-import Card from "@/components/common/Card.jsx";
-import FeatureList from "@/components/common/FeatureList.jsx";
-import InfoCard from "@/components/common/InfoCard.jsx";
+import StructuredData from "@/components/common/StructuredData.jsx";
 import Icon from "@/components/common/Icon.jsx";
-import CtaBand from "@/components/common/CtaBand.jsx";
-import Reveal from "@/components/common/Reveal.jsx";
+import { HvSection, Reveal, Btn, BtnRow } from "@/components/home/primitives.jsx";
 import { SITE } from "@/data/site";
-import { PRINCIPLES, CAPABILITIES } from "@/data/about";
+import {
+  AB_HERO,
+  AB_TRUST,
+  AB_LETTER,
+  AB_JOURNEY,
+  AB_VALUES,
+  AB_CAPABILITY,
+  AB_CONTACT,
+  AB_CLOSING,
+} from "@/data/aboutV2.jsx";
 
-// v2 chrome (glass header, SiteFooterV2) - same two stylesheets Industries.jsx
-// and ServiceComingSoon.jsx import, so this page's header and footer match
-// the redesigned landing page instead of the legacy site shell.
+/* v2 chrome (glass header, SiteFooterV2) - the same two stylesheets every
+   other redesigned page loads; see Industries.jsx for why both are needed.
+   about.css only adds this page's own sections on top. */
 import "@/styles/home-redesign.css";
 import "@/styles/home-chrome.css";
+import "@/styles/about.css";
+
+/**
+ * /about.
+ *
+ * Layout follows the approved reference design (hero + trust bar, founder
+ * letter, journey timeline, values grid, capability section, contact strip,
+ * closing CTA); every word of the copy is GHLevelUp's own. See the note at
+ * the top of data/aboutV2.jsx for the "no invented facts" rule this page
+ * holds to - the reference's founding year and client-count trust bar and
+ * "company history" timeline do not appear here because we have no real
+ * figures to publish yet.
+ *
+ * STRUCTURAL NOTE: the v2 header is transparent at rest with light-on-dark
+ * nav, achieved by pulling the opening hero up under it (the
+ * `.home-v2 .hv-hero, .home-v2 .page-hero, .home-v2 .sd-hero,
+ * .home-v2 .svcs-hero, .home-v2 .ab-hero` rule in styles/home-chrome.css).
+ * `.ab-hero` is registered there - renaming this hero without updating that
+ * rule opens the page with a white strip behind the logo.
+ */
+
+function Hero() {
+  return (
+    <section className="ab-hero">
+      <div className="hv-container ab-hero__inner">
+        <Reveal>
+          <p className="ab-hero__crumbs">
+            <Link to="/">Home</Link>
+            <span>/</span>
+            {AB_HERO.crumb}
+          </p>
+
+          <span className="ab-hero__eyebrow">{AB_HERO.eyebrow}</span>
+
+          <h1 className="ab-hero__title">
+            {AB_HERO.titleLead}
+            <span>{AB_HERO.titleAccent}</span>
+          </h1>
+
+          <p className="ab-hero__lede">{AB_HERO.lede}</p>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function TrustBar() {
+  return (
+    <HvSection tight className="ab-trust">
+      <Reveal as="ul" className="ab-trust__row">
+        {AB_TRUST.map((item) => (
+          <li key={item.label}>
+            <div className="ab-trust__item">
+              <span className="ab-trust__icon" aria-hidden="true">
+                <Icon name={item.icon} />
+              </span>
+              <span>
+                <span className="ab-trust__value">{item.value}</span>
+                <span className="ab-trust__label">{item.label}</span>
+              </span>
+            </div>
+          </li>
+        ))}
+      </Reveal>
+    </HvSection>
+  );
+}
+
+function FounderLetter() {
+  return (
+    <HvSection className="ab-letter">
+      <div className="ab-letter__inner">
+        <Reveal className="ab-letter__aside">
+          <div className="ab-letter__photo">
+            <img
+              src={AB_LETTER.photo}
+              alt={`${AB_LETTER.name}, ${AB_LETTER.role}`}
+              width={560}
+              height={700}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div className="ab-letter__who">
+            <b>{AB_LETTER.name}</b>
+            <span>{AB_LETTER.role}</span>
+          </div>
+        </Reveal>
+
+        <Reveal className="ab-letter__card" index={1}>
+          <span className="hv-eyebrow">{AB_LETTER.eyebrow}</span>
+
+          {AB_LETTER.sections.map((s, i) => (
+            <div className="ab-letter__section" key={s.heading}>
+              <h3>{s.heading}</h3>
+              <p>{s.body}</p>
+              {/* The pull quote breaks up the letter after the middle
+                  section, where the reference places its own callout. */}
+              {i === 1 && (
+                <blockquote className="ab-letter__quote">
+                  <p>{AB_LETTER.pullQuote.text}</p>
+                  <span>{AB_LETTER.pullQuote.attribution}</span>
+                </blockquote>
+              )}
+            </div>
+          ))}
+
+          <p className="ab-letter__closing">{AB_LETTER.closing}</p>
+
+          <p className="ab-letter__sign" aria-hidden="true">
+            {AB_LETTER.signature}
+          </p>
+        </Reveal>
+      </div>
+    </HvSection>
+  );
+}
+
+function Journey() {
+  return (
+    <HvSection>
+      <Reveal className="ab-journey__head">
+        <span className="hv-eyebrow">{AB_JOURNEY.eyebrow}</span>
+        <h2 className="hv-h2">{AB_JOURNEY.title}</h2>
+        <p className="hv-lede">{AB_JOURNEY.lede}</p>
+      </Reveal>
+
+      <div className="ab-timeline">
+        <ol className="ab-timeline__list">
+          {AB_JOURNEY.steps.map((step, i) => (
+            <Reveal as="li" className="ab-timeline__row" key={step.num} index={i}>
+              <span className="ab-timeline__dot" aria-hidden="true" />
+              <div className="ab-timeline__card">
+                <div className="ab-timeline__head">
+                  <span className="ab-timeline__num" aria-hidden="true">
+                    {step.num}
+                  </span>
+                  <h3>{step.title}</h3>
+                </div>
+                <p>{step.body}</p>
+              </div>
+            </Reveal>
+          ))}
+        </ol>
+      </div>
+    </HvSection>
+  );
+}
+
+function Values() {
+  return (
+    <HvSection className="ab-values">
+      <Reveal className="ab-journey__head">
+        <span className="hv-eyebrow">{AB_VALUES.eyebrow}</span>
+        <h2 className="hv-h2">{AB_VALUES.title}</h2>
+        <p className="hv-lede">{AB_VALUES.lede}</p>
+      </Reveal>
+
+      <ul className="ab-values__grid">
+        {AB_VALUES.items.map((item, i) => (
+          <Reveal as="li" key={item.title} index={i}>
+            <article className="ab-value">
+              <span className="ab-value__icon" aria-hidden="true">
+                <Icon name={item.icon} />
+              </span>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          </Reveal>
+        ))}
+      </ul>
+    </HvSection>
+  );
+}
+
+function Capability() {
+  return (
+    <HvSection dark>
+      <div className="ab-cap__inner">
+        <Reveal>
+          <span className="hv-eyebrow">{AB_CAPABILITY.eyebrow}</span>
+          <h2 className="hv-h2">{AB_CAPABILITY.title}</h2>
+          <p className="ab-cap__body">{AB_CAPABILITY.body}</p>
+
+          <BtnRow style={{ marginTop: "var(--hv-s7)" }}>
+            <Btn to={AB_CAPABILITY.cta.to} variant="primary" iconAfter="arrowRight">
+              {AB_CAPABILITY.cta.label}
+            </Btn>
+            <Btn to="/contact" variant="outline">
+              Send a message
+            </Btn>
+          </BtnRow>
+        </Reveal>
+
+        <Reveal className="ab-cap__grid" index={1}>
+          {AB_CAPABILITY.items.map((item) => (
+            <div className="ab-cap__item" key={item.title}>
+              <span className="ab-cap__icon" aria-hidden="true">
+                <Icon name={item.icon} />
+              </span>
+              <div>
+                <h4>{item.title}</h4>
+                <p>{item.body}</p>
+              </div>
+            </div>
+          ))}
+        </Reveal>
+      </div>
+    </HvSection>
+  );
+}
+
+function Contact() {
+  return (
+    <HvSection>
+      <Reveal className="ab-journey__head">
+        <span className="hv-eyebrow">{AB_CONTACT.eyebrow}</span>
+        <h2 className="hv-h2">{AB_CONTACT.title}</h2>
+      </Reveal>
+
+      <ul className="ab-contact__grid">
+        <Reveal as="li" index={0}>
+          <div className="ab-contact__card">
+            <span className="ab-contact__icon" aria-hidden="true">
+              <Icon name="mapPin" />
+            </span>
+            <h4>Office</h4>
+            <p>
+              {SITE.addressLine1}
+              <br />
+              {SITE.addressLine2}
+              <br />
+              <small>Visits by appointment</small>
+            </p>
+          </div>
+        </Reveal>
+        <Reveal as="li" index={1}>
+          <div className="ab-contact__card">
+            <span className="ab-contact__icon" aria-hidden="true">
+              <Icon name="phone" />
+            </span>
+            <h4>Call or text</h4>
+            <p>
+              <a href={SITE.phoneHref}>{SITE.phone}</a>
+              <br />
+              <small>{SITE.hours}</small>
+            </p>
+          </div>
+        </Reveal>
+        <Reveal as="li" index={2}>
+          <div className="ab-contact__card">
+            <span className="ab-contact__icon" aria-hidden="true">
+              <Icon name="mail" />
+            </span>
+            <h4>Email</h4>
+            <p>
+              <a href={SITE.emailHref}>{SITE.email}</a>
+              <br />
+              <small>Same business day</small>
+            </p>
+          </div>
+        </Reveal>
+      </ul>
+    </HvSection>
+  );
+}
+
+function Closing() {
+  return (
+    <HvSection tight>
+      <Reveal className="ab-closing">
+        <div className="ab-closing__inner">
+          <h2>{AB_CLOSING.title}</h2>
+          <p>{AB_CLOSING.body}</p>
+          <BtnRow className="ab-closing__ctas">
+            <Btn to={AB_CLOSING.primary.to} variant="primary" size="lg" iconAfter={AB_CLOSING.primary.icon}>
+              {AB_CLOSING.primary.label}
+            </Btn>
+            <Btn href={SITE.phoneHref} variant="outline" size="lg">
+              Call {SITE.phone}
+            </Btn>
+          </BtnRow>
+        </div>
+      </Reveal>
+    </HvSection>
+  );
+}
 
 export default function About() {
   return (
     <Layout variant="v2" topbar="Based in Albany, New York - working with practices across all 50 states">
       <PageMeta
-        title="About - GHLevelUp"
-        description="An engineering team that builds and runs the operating layer for tax practices - configuration where it fits, custom software where it doesn't."
+        title="About GHLevelUp - The Team Behind Your Systems"
+        description="An engineering team that builds and runs the operating layer for growing businesses - configuration where it fits, custom software where it doesn't."
+        ogDescription="Who builds and runs the systems we sell: one team on the build, the migrations and the support afterwards, rather than a sale followed by a handover."
       />
 
-      <PageHero
-        crumb="About"
-        title="We build the system, then we run it with you"
-        center
-        lede="GHLevelUp came out of a tax practice, not a software pitch deck. We know what the second week of April feels like - and we build for that week, not for a demo."
+      <StructuredData
+        page={{
+          type: "AboutPage",
+          name: "About GHLevelUp",
+          description:
+            "An engineering team that builds and runs the operating layer for growing businesses - configuration where it fits, custom software where it doesn't.",
+          path: "/about",
+        }}
+        crumbs={[
+          { name: "Home", path: "/" },
+          { name: "About", path: "/about" },
+        ]}
       />
 
-      {/* ── Story ─────────────────────────────────────────────────────── */}
-      <Section narrow>
-        <Reveal>
-          <span className="eyebrow">Why we exist</span>
-          <h2 className="balance" style={{ marginBottom: 24 }}>
-            Tax offices don't need more software. They need fewer places to look.
-          </h2>
-          <p className="lede">
-            Most practices we meet are running on four or five tools that don't speak to each other: a phone, an
-            email inbox, a folder of scanned documents, a spreadsheet tracking who's where, and a separate
-            calendar. None of it is broken exactly. It just leaks time - a few minutes at a stretch, several
-            hundred times a season.
-          </p>
-          <p style={{ color: "var(--text-mid)", marginTop: 20 }}>
-            We built one system that holds all of it: the number clients call, the inbox every message lands
-            in, the portal they upload to, the board that tracks their return, and the automations that chase
-            what's missing. One place to look, one place to update, one place that stays current whether or not
-            anybody remembered to update it.
-          </p>
-          <p style={{ color: "var(--text-mid)" }}>
-            Based in Albany, New York, we work with practices across all fifty states - and we still answer our
-            own phone.
-          </p>
-        </Reveal>
-      </Section>
-
-      {/* ── Principles ────────────────────────────────────────────────── */}
-      <Section mist>
-        <SectionHead center eyebrow="How we work" title="Four things we hold to" />
-        <div className="grid grid--2">
-          {PRINCIPLES.map((p, i) => (
-            <Card index={p.index} title={p.title} key={i} revealIndex={i}>
-              {p.body}
-            </Card>
-          ))}
-        </div>
-      </Section>
-
-      {/* ── Capability ────────────────────────────────────────────────── */}
-      <Section ink>
-        <div className="grid grid--2" style={{ gap: 64, alignItems: "center" }}>
-          <Reveal>
-            <span className="eyebrow">What's behind it</span>
-            <h2 className="balance">Platform people and engineers, on the same team</h2>
-            <p style={{ color: "var(--on-dark-muted)", fontSize: "1.05rem", marginTop: 18 }}>
-              Plenty of agencies can assemble automations. Fewer can write the software that takes over when the
-              automation runs out. We do both under one roof, which means a request like "our clients need to
-              see their return status without calling us" gets a built answer instead of a workaround.
-            </p>
-            <BtnRow style={{ marginTop: 30 }}>
-              <Button to="/book" variant="accent" icon="calendar">
-                Book a demo
-              </Button>
-              <Button to="/contact" variant="ghost-light" icon="message">
-                Send a message
-              </Button>
-            </BtnRow>
-          </Reveal>
-          <Reveal>
-            <FeatureList items={CAPABILITIES} />
-          </Reveal>
-        </div>
-      </Section>
-
-      {/* ── Contact strip ─────────────────────────────────────────────── */}
-      <Section>
-        <SectionHead center eyebrow="Where to find us" title="Albany, New York" />
-        <Reveal as="div" className="grid grid--3">
-          <InfoCard>
-            <span className="info-list__icon" style={{ marginBottom: 16 }} aria-hidden="true">
-              <Icon name="mapPin" />
-            </span>
-            <h4 style={{ marginBottom: 8 }}>Office</h4>
-            <p style={{ fontSize: ".96rem", color: "var(--text-mid)" }}>
-              {SITE.addressLine1}
-              <br />
-              {SITE.addressLine2}
-              <br />
-              <small style={{ color: "var(--muted)" }}>Visits by appointment</small>
-            </p>
-          </InfoCard>
-          <InfoCard>
-            <span className="info-list__icon" style={{ marginBottom: 16 }} aria-hidden="true">
-              <Icon name="phone" />
-            </span>
-            <h4 style={{ marginBottom: 8 }}>Call or text</h4>
-            <p style={{ fontSize: ".96rem", color: "var(--text-mid)" }}>
-              <a href={SITE.phoneHref} style={{ color: "var(--text)", fontWeight: 600 }}>
-                {SITE.phone}
-              </a>
-              <br />
-              <small style={{ color: "var(--muted)" }}>{SITE.hours}</small>
-            </p>
-          </InfoCard>
-          <InfoCard>
-            <span className="info-list__icon" style={{ marginBottom: 16 }} aria-hidden="true">
-              <Icon name="mail" />
-            </span>
-            <h4 style={{ marginBottom: 8 }}>Email</h4>
-            <p style={{ fontSize: ".96rem", color: "var(--text-mid)", wordBreak: "break-word" }}>
-              <a href={SITE.emailHref} style={{ color: "var(--text)", fontWeight: 600 }}>
-                {SITE.email}
-              </a>
-              <br />
-              <small style={{ color: "var(--muted)" }}>Same business day</small>
-            </p>
-          </InfoCard>
-        </Reveal>
-      </Section>
-
-      <Section tight flushTop>
-        <CtaBand
-          title="Twenty minutes will tell you more than this page"
-          actions={
-            <>
-              <Button to="/book" variant="accent" size="lg" icon="calendar">
-                Book a demo
-              </Button>
-              <Button href={SITE.phoneHref} variant="ghost-light" size="lg" icon="phone">
-                Call {SITE.phone}
-              </Button>
-            </>
-          }
-        >
-          Bring the problem that annoys you most about running the office. We'll show you what the system does
-          with it.
-        </CtaBand>
-      </Section>
+      <Hero />
+      <TrustBar />
+      <FounderLetter />
+      <Journey />
+      <Values />
+      <Capability />
+      <Contact />
+      <Closing />
     </Layout>
   );
 }

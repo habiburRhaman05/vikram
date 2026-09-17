@@ -47,19 +47,68 @@ import "@/styles/service-detail.css";
 
 /* -- Sections -------------------------------------------------------------- */
 
+/** The hero's flow mock: one trigger firing two parallel actions and
+ *  landing on an outcome - the shape of an automation, not a screenshot of
+ *  one. Hardcoded here rather than in the data file, same reasoning as the
+ *  AI page's call-mock bubbles: it's decoration for this hero specifically,
+ *  not page copy. */
+function WfMock() {
+  return (
+    <div className="sd-heromock sd-wfmock" aria-hidden="true">
+      <div className="sd-heromock__head">
+        <span className="sd-heromock__badge">
+          <Icon name="bolt" />
+        </span>
+        <div className="sd-heromock__who">
+          <b>New booking</b>
+          <span>Automation running</span>
+        </div>
+        <span className="sd-heromock__live">Live</span>
+      </div>
+
+      <div className="sd-wfmock__body">
+        <div className="sd-wfmock__node sd-wfmock__node--trigger">
+          <Icon name="bolt" />
+          Booking confirmed
+        </div>
+
+        <span className="sd-wfmock__link" />
+
+        <div className="sd-wfmock__branches">
+          <div className="sd-wfmock__node">
+            <Icon name="mail" />
+            Confirmation sent
+          </div>
+          <div className="sd-wfmock__node">
+            <Icon name="calendar" />
+            Reminder started
+          </div>
+        </div>
+
+        <span className="sd-wfmock__link" />
+
+        <div className="sd-wfmock__node sd-wfmock__node--done">
+          <Icon name="check" />
+          CRM record updated
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Hero() {
   return (
-    <section className="sd-hero">
+    <section className="sd-hero sd-hero--split">
       <div className="hv-container sd-hero__inner">
-        <Reveal>
-          <p className="sd-hero__crumbs">
+        <Reveal as="p" className="sd-hero__crumbs">
             <Link to="/">Home</Link>
             <span>/</span>
             <Link to="/services">Services</Link>
             <span>/</span>
             Workflow Automation
-          </p>
+        </Reveal>
 
+        <Reveal>
           <span className="sd-hero__eyebrow">{WF_HERO.eyebrow}</span>
 
           <h1 className="sd-hero__title">
@@ -77,7 +126,10 @@ function Hero() {
               {WF_HERO.secondary.label}
             </Btn>
           </div>
+        </Reveal>
 
+        <Reveal index={1}>
+          <WfMock />
         </Reveal>
       </div>
     </section>
@@ -124,9 +176,7 @@ function Comparison() {
             ))}
           </ul>
 
-          <div className="sd-compare__note" aria-hidden="true">
-            <ScriptNote direction="down-left">{WF_COMPARE.note}</ScriptNote>
-          </div>
+     
         </Reveal>
       </div>
     </HvSection>
@@ -401,10 +451,7 @@ function Work() {
         ))}
       </ul>
 
-      <Reveal as="p" className="sd-work__note" index={3}>
-        <Icon name="shieldCheck" aria-hidden="true" />
-        {WF_WORK.note}
-      </Reveal>
+     
     </HvSection>
   );
 }
@@ -438,7 +485,15 @@ function Benefits() {
 function FaqSection() {
   return (
     <HvSection className="sd-faq">
-      <StructuredData faq={WF_FAQ.items} />
+      <StructuredData
+        faq={WF_FAQ.items}
+        service={SEO}
+        crumbs={[
+          { name: "Home", path: "/" },
+          { name: "Services", path: "/services" },
+          { name: SEO.name, path: `/services/${SEO.slug}` },
+        ]}
+      />
 
       <div className="sd-faq__inner">
         <Reveal>
@@ -457,6 +512,18 @@ function FaqSection() {
   );
 }
 
+/* One definition of this page's search identity, read by both its <PageMeta>
+   and its Service structured data below - so the title, the description and
+   the schema can never describe the same page three slightly different ways. */
+const SEO = {
+  slug: "workflow-automation",
+  name: "Workflow Automation",
+  description:
+    "Lead routing, follow-up sequences, quotes, hand-offs and appointment setting built as automations that run on time and record what they did.",
+  ogDescription:
+    "The repeat work your team does by hand, moved into the system: lead capture and routing, follow-up, quotes, internal hand-offs and exceptions you actually hear about.",
+};
+
 export default function ServiceWorkflowAutomation() {
   return (
     <Layout
@@ -467,11 +534,7 @@ export default function ServiceWorkflowAutomation() {
         </>
       }
     >
-      <PageMeta
-        title="Workflow Automation - GHLevelUp"
-        description="Lead routing, follow-up sequences, quotes, hand-offs and appointment setting built as automations that run on time and record what they did."
-        ogDescription="The repeat work your team does by hand, moved into the system: lead capture and routing, follow-up, quotes, internal hand-offs and exceptions you actually hear about."
-      />
+      <PageMeta title={`${SEO.name} - GHLevelUp`} description={SEO.description} ogDescription={SEO.ogDescription} />
 
       <div className="sd-pg">
         <Hero />
@@ -491,11 +554,11 @@ export default function ServiceWorkflowAutomation() {
           lede={WF_ENQUIRY.lede}
           points={WF_ENQUIRY.points}
         />
-        <RelatedServices
+        {/* <RelatedServices
           slug="workflow-automation"
           title="What automation needs either side of it"
           lede="A workflow is the middle of a chain. These cover the end that catches the enquiry and the end that carries the data."
-        />
+        /> */}
         <FaqSection />
       </div>
     </Layout>

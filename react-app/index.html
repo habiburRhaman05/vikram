@@ -7,9 +7,25 @@
     <!-- Per-page <title>/<meta description>/canonical/og: tags are rendered
          by each page component (React 19 hoists <title>/<meta>/<link>
          rendered anywhere in the tree up into <head> automatically) - see
-         src/hooks/usePageMeta.js. This is just the fallback shown before
-         the app mounts. -->
-    <title>GHLevelUp - The complete operating system for your tax practice</title>
+         src/components/common/PageMeta.jsx.
+
+         THE TITLE BELOW IS A FALLBACK, AND THERE WILL BE TWO OF THEM.
+         React's hoisted <title> is inserted ahead of this one, so it is what
+         the tab, the history entry and a JS-rendering crawler use on every
+         route; this line only decides what is shown before the bundle
+         executes and to a crawler that runs no JavaScript at all. It is
+         written for the home page because that is the page a crawler with
+         no JS is overwhelmingly likely to be asking about.
+
+         DO NOT ADD A STATIC <meta name="description"> HERE. That was tried:
+         it produces two description tags on every route, and because this
+         one is parsed first, every page's own description was shadowed by
+         the generic one. The per-page description comes only from React.
+         Crawlers that run no JavaScript therefore get no description - that
+         is a real limitation of shipping a client-rendered app, and the fix
+         for it is prerendering the routes at build time, not a second tag
+         here. -->
+    <title>GHLevelUp - CRM, AI Automation &amp; Web Development for Growing Businesses</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

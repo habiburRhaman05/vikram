@@ -11,12 +11,24 @@ import Home from "@/pages/Home.jsx";
  * seeing anything.
  */
 const Services = lazy(() => import("@/pages/Services.jsx"));
+/* The blog: an index and one page per post. PostPage reads its own slug from
+   the route rather than taking a prop, so one lazy import serves every
+   /blog/:slug - adding a post is a data change, not a routing change. */
+const Blog = lazy(() => import("@/pages/Blog.jsx"));
+const BlogPost = lazy(() => import("@/pages/BlogPost.jsx"));
 const ServiceAiAgentsChatbots = lazy(() => import("@/pages/ServiceAiAgentsChatbots.jsx"));
 const ServiceWorkflowAutomation = lazy(() => import("@/pages/ServiceWorkflowAutomation.jsx"));
 const ServiceApiIntegrations = lazy(() => import("@/pages/ServiceApiIntegrations.jsx"));
 const ServiceFunnelBuilds = lazy(() => import("@/pages/ServiceFunnelBuilds.jsx"));
 const ServiceGhlSubaccounts = lazy(() => import("@/pages/ServiceGhlSubaccounts.jsx"));
 const ServiceWebsitesLanding = lazy(() => import("@/pages/ServiceWebsitesLanding.jsx"));
+const ServiceSocialMediaMarketing = lazy(() => import("@/pages/ServiceSocialMediaMarketing.jsx"));
+const ServiceEmailSmsCampaigns = lazy(() => import("@/pages/ServiceEmailSmsCampaigns.jsx"));
+const ServiceReportingDashboards = lazy(() => import("@/pages/ServiceReportingDashboards.jsx"));
+const ServiceCrmSubaccountSetup = lazy(() => import("@/pages/ServiceCrmSubaccountSetup.jsx"));
+const Pricing = lazy(() => import("@/pages/Pricing.jsx"));
+const Work = lazy(() => import("@/pages/Work.jsx"));
+const WorkDetail = lazy(() => import("@/pages/WorkDetail.jsx"));
 const Industries = lazy(() => import("@/pages/Industries.jsx"));
 const About = lazy(() => import("@/pages/About.jsx"));
 const Contact = lazy(() => import("@/pages/Contact.jsx"));
@@ -55,6 +67,21 @@ export default function App() {
         <Route path="/services/funnel-design-builds" element={<ServiceFunnelBuilds />} />
         <Route path="/services/gohighlevel-sub-accounts" element={<ServiceGhlSubaccounts />} />
         <Route path="/services/websites-landing-pages" element={<ServiceWebsitesLanding />} />
+        <Route path="/services/social-media-marketing" element={<ServiceSocialMediaMarketing />} />
+        <Route path="/services/email-sms-campaigns" element={<ServiceEmailSmsCampaigns />} />
+        <Route path="/services/reporting-dashboards" element={<ServiceReportingDashboards />} />
+        <Route path="/services/crm-sub-account-setup" element={<ServiceCrmSubaccountSetup />} />
+        <Route path="/pricing" element={<Pricing />} />
+        {/* Static route above the dynamic one, same reasoning as every
+            other real-slug-above-:slug-catch-all route in this file. */}
+        <Route path="/work" element={<Work />} />
+        <Route path="/work/:slug" element={<WorkDetail />} />
+        {/* Static route above the dynamic one, the same reason the service
+            pages sit above their :slug catch-all. React Router ranks a
+            literal path higher anyway, but the order here makes it obvious
+            that /blog is a page and /blog/:slug is the article. */}
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
         <Route path="/industries" element={<Industries />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />

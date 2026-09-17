@@ -2,80 +2,200 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.ghlevelup.com/</loc>
-    <lastmod>2026-09-16</lastmod>
+    <lastmod>2026-09-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ghlevelup.com/services</loc>
-    <lastmod>2026-09-16</lastmod>
+    <lastmod>2026-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.ghlevelup.com/services/ai-agents-chatbots</loc>
-    <lastmod>2026-09-16</lastmod>
+    <lastmod>2026-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.ghlevelup.com/services/workflow-automation</loc>
-    <lastmod>2026-09-16</lastmod>
+    <lastmod>2026-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.ghlevelup.com/services/api-tool-integrations</loc>
-    <lastmod>2026-09-16</lastmod>
+    <lastmod>2026-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.ghlevelup.com/services/funnel-design-builds</loc>
-    <lastmod>2026-09-16</lastmod>
+    <lastmod>2026-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.ghlevelup.com/services/gohighlevel-sub-accounts</loc>
-    <lastmod>2026-09-16</lastmod>
+    <lastmod>2026-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.ghlevelup.com/services/websites-landing-pages</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/services/social-media-marketing</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/services/email-sms-campaigns</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/services/reporting-dashboards</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/services/crm-sub-account-setup</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/pricing</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/work</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/work/clinic</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/work/home-services</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/work/real-estate</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/work/agency-reporting</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/work/retail-automation</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.ghlevelup.com/industries</loc>
-    <lastmod>2026-09-16</lastmod>
+    <lastmod>2026-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.ghlevelup.com/about</loc>
-    <lastmod>2026-09-16</lastmod>
+    <lastmod>2026-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.ghlevelup.com/contact</loc>
-    <lastmod>2026-09-16</lastmod>
+    <lastmod>2026-09-17</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.ghlevelup.com/book</loc>
-    <lastmod>2026-09-16</lastmod>
+    <lastmod>2026-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.ghlevelup.com/privacy</loc>
-    <lastmod>2026-09-16</lastmod>
+    <lastmod>2026-09-17</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://www.ghlevelup.com/terms</loc>
-    <lastmod>2026-09-16</lastmod>
+    <lastmod>2026-09-17</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/blog</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/blog/lead-pipeline-follow-up</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/blog/where-ai-agents-actually-save-time</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/blog/landing-page-conversion-checklist</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/blog/missed-call-text-back-setup</loc>
+    <lastmod>2026-09-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/blog/a2p-registration-and-text-deliverability</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/blog/website-funnel-or-landing-page</loc>
+    <lastmod>2026-08-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.ghlevelup.com/blog/five-numbers-worth-a-dashboard</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>

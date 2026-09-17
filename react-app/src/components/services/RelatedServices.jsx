@@ -1,63 +1,78 @@
 import { Link } from "react-router-dom";
 import Icon from "@/components/common/Icon.jsx";
-import { HvSection, Reveal, Btn } from "@/components/home/primitives.jsx";
-import { relatedFor } from "@/data/serviceLinks.js";
+
+
+import { WHAT_WE_DO } from "@/data/homeV2";
+import ServiceMockup from "../home/ServiceMockups.jsx";
+import { HvSection, Reveal, SectionHead } from "../home/primitives.jsx";
+import { InfoIcon } from "lucide-react";
 
 /**
- * "Works well with" - the cross-links between service detail pages.
+ * "Related Services" - six service cards, copy on top, a device mockup rising
+ * out of the bottom edge.
  *
- * `slug` is the page this is rendered ON, not a destination: the component
- * looks its own related set up in data/serviceLinks.js, which also supplies
- * the one-line reason each neighbour matters *from here*. So the module is
- * the same component on all six pages but never the same three sentences,
- * which is what stops it reading as a generic shelf.
+ * HOVER
+ * The card lifts, the device rises into it, a soft spotlight follows the
+ * pointer, and a frosted action bar slides up over the mockup with
+ * "Explore" and "Book a demo". The spotlight position is written straight
+ * to CSS custom properties on pointermove - no React state, so moving the
+ * mouse never re-renders the grid.
  *
- * Every card is a whole-card <Link> to a route that genuinely exists (see
- * the note in serviceLinks.js about why the placeholder services are left
- * out). The visible title carries the link's accessible name, so a screen
- * reader's link list shows three distinct destinations rather than three
- * identical "Learn more"s.
+ * NOT HOVER-ONLY
+ * The two actions are real links, so the bar also opens on :focus-within
+ * (a keyboard user tabbing in sees exactly what a mouse user sees), and on
+ * devices without hover it is simply always shown - a phone user would
+ * otherwise have no way to reach either button.
+ *
+ * The card itself is deliberately NOT a link: it contains two different
+ * destinations, and nesting links is invalid and ambiguous for assistive
+ * tech. Each action's accessible name carries the service ("Explore
+ * Software Development") via visually hidden text, so six "Explore" links
+ * are distinguishable in a links list.
+ *
+ * Reveal wraps the <li>, and the hover transform lives on the inner card.
+ * Both animate `transform`; on one element the reveal's settled
+ * `transform: none` would fight the hover lift.
  */
-export default function RelatedServices({ slug, eyebrow = "Works well with", title, lede }) {
-  const items = relatedFor(slug);
-  if (!items.length) return null;
+export default function RelatedServices({ slug, title, lede}) {
+  const onPointerMove = (e) => {
+    const el = e.currentTarget;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+    el.style.setProperty("--my", `${e.clientY - r.top}px`);
+  };
 
   return (
-    <HvSection mint className="sd-rel">
-      <Reveal className="sd-rel__head">
-        <span className="hv-eyebrow">{eyebrow}</span>
-        <h2 className="hv-h2">{title || "Pairs with the rest of the stack"}</h2>
-        {lede && <p className="hv-lede">{lede}</p>}
-      </Reveal>
+    <HvSection id="what-we-do" className="hv-wwd">
+      <SectionHead eyebrow={WHAT_WE_DO.eyebrow} title={WHAT_WE_DO.title} center>
+        {lede}
+      </SectionHead>
 
-      <ul className="sd-rel__grid">
-        {items.map((item, i) => (
-          <Reveal as="li" key={item.slug} index={i}>
-            <Link className="sd-rel__card" to={item.to}>
-              <span className="sd-rel__icon" aria-hidden="true">
-                <Icon name={item.icon} />
-              </span>
+      <ul className="hv-wwd__grid">
+        {WHAT_WE_DO.items.slice(0,3).map((item, i) => (
+          <Reveal as="li" key={item.id} index={i} className="hv-wwd__cell">
+            <article className="hv-wwd__card" onPointerMove={onPointerMove}>
+              <div className="hv-wwd__copy">
+                <h3 className="hv-wwd__title">{item.title}</h3>
+                <p className="hv-wwd__body">{item.body}</p>
+              </div>
 
-              <h3>{item.title}</h3>
-              <p className="sd-rel__why">{item.why}</p>
+              <div className="hv-wwd__art" aria-hidden="true">
+                <ServiceMockup kind={item.mock} />
+              </div>
 
-              <span className="sd-rel__go" aria-hidden="true">
-                Explore
-                <Icon name="arrowRight" />
-              </span>
-            </Link>
+              <div className="hv-wwd__actions">
+           
+                <Link to={item.to} className="hv-wwd__btn hv-wwd__btn--solid">
+                  <InfoIcon/>
+                  View Details
+                  <span className="hv-sr-only"> for {item.title}</span>
+                </Link>
+              </div>
+            </article>
           </Reveal>
         ))}
       </ul>
-
-      <Reveal className="sd-rel__foot" index={3}>
-        <Btn to="/services" variant="outline" iconAfter="arrowRight">
-          See all services
-        </Btn>
-        <Btn to="/contact" variant="ghost">
-          Not sure which you need?
-        </Btn>
-      </Reveal>
     </HvSection>
   );
 }

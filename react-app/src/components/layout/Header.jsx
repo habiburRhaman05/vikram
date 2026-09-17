@@ -4,7 +4,6 @@ import Container from "@/components/common/Container.jsx";
 import NavDropdown from "./NavDropdown.jsx";
 import useStickyHeader from "@/hooks/useStickyHeader";
 import useMobileNav from "@/hooks/useMobileNav";
-import { openLeadPopup } from "@/components/common/LeadPopup.jsx";
 import { NAV_LINKS } from "@/data/nav";
 import { NAV_MENUS } from "@/data/navMenus";
 import "@/styles/mega-menu.css";
@@ -78,10 +77,8 @@ export default function Header({ topbar }) {
                 </NavLink>
               ))}
               <Button
-                onClick={() => {
-                  close();
-                  openLeadPopup();
-                }}
+                to="/book"
+                onClick={close}
                 variant="accent"
                 icon="calendar"
                 className="nav__cta-mobile"
@@ -91,7 +88,7 @@ export default function Header({ topbar }) {
             </div>
 
             <div className="nav__actions">
-              <Button onClick={openLeadPopup} variant="accent" size="sm" icon="calendar" className="nav__cta-desktop">
+              <Button to="/book" variant="accent" size="sm" icon="calendar" className="nav__cta-desktop">
                 Get Free Consultation
               </Button>
               <button

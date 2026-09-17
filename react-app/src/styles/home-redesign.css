@@ -117,6 +117,18 @@
   --hv-sh-glass:   0 12px 34px rgba(6, 40, 34, .10),
                    0 2px 8px rgba(6, 40, 34, .05);
 
+  /* The glass once the bar is STUCK to the top of the viewport, or the
+     mobile menu is open, rather than sitting over its own hero at rest.
+
+     At rest the bar is over a hero we control, and 62% white is plenty. Once
+     stuck it is over whatever the reader has scrolled to: a dark hero, a
+     photograph, the dark closing band. Measured on the worst case, .62 white
+     over near-black gives the nav text about 2.4:1, which fails WCAG AA and
+     is the difference between a bar that reads and one that looks smudged.
+     At .92 the same worst case is about 5.4:1, comfortably AA, while the blur
+     and the lit top edge still read as a surface rather than a white slab. */
+  --hv-glass-stuck: rgba(255, 255, 255, .92);
+
   /* -- Motion ------------------------------------------------------------ */
   --hv-dur-fast: 160ms;
   --hv-dur:      280ms;
@@ -224,7 +236,15 @@
 .home-v2 .hv-why__text,
 .home-v2 .hv-post__excerpt,
 .home-v2 .hv-testimonial__quote,
-.home-v2 .hv-footer__pitch {
+.home-v2 .hv-footer__pitch,
+/* The blog's article body. Listed here rather than only in blog.css so the
+   DM Sans / Roboto split stays in one place, which is the point of this
+   list: blog.css still sets the size, leading and colour, but the face is
+   decided here with every other piece of reading copy. */
+.home-v2 .bl-prose,
+.home-v2 .bl-post__summary,
+.home-v2 .bl-svc__card p,
+.home-v2 .bl-author__bio {
   font-family: var(--hv-font-body);
 }
 

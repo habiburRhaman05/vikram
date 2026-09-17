@@ -44,19 +44,60 @@ import "@/styles/service-detail.css";
 
 /* -- Sections -------------------------------------------------------------- */
 
+/** The hero's provisioning checklist: the account being set up before the
+ *  reader ever logs in - the same claim the page makes in words, shown as
+ *  the thing itself. Hardcoded here rather than in the data file, same
+ *  reasoning as the other heroes' mocks: it's decoration for this hero
+ *  specifically, not page copy. */
+function ProvisionMock() {
+  return (
+    <div className="sd-heromock" aria-hidden="true">
+      <div className="sd-heromock__head">
+        <span className="sd-heromock__badge">
+          <Icon name="key" />
+        </span>
+        <div className="sd-heromock__who">
+          <b>Sub-account setup</b>
+          <span>yourbusiness · GoHighLevel</span>
+        </div>
+        <span className="sd-heromock__live">Live</span>
+      </div>
+
+      <ul className="sd-provision__list">
+        <li className="is-done">
+          <Icon name="check" />
+          Domain connected
+        </li>
+        <li className="is-done">
+          <Icon name="check" />
+          Phone number provisioned
+        </li>
+        <li className="is-done">
+          <Icon name="check" />
+          Calendar synced
+        </li>
+        <li className="is-pending">
+          <Icon name="clock" />
+          A2P registration submitted
+        </li>
+      </ul>
+    </div>
+  );
+}
+
 function Hero() {
   return (
-    <section className="sd-hero">
+    <section className="sd-hero sd-hero--split">
       <div className="hv-container sd-hero__inner">
-        <Reveal>
-          <p className="sd-hero__crumbs">
+        <Reveal as="p" className="sd-hero__crumbs">
             <Link to="/">Home</Link>
             <span>/</span>
             <Link to="/services">Services</Link>
             <span>/</span>
             GoHighLevel Sub-accounts
-          </p>
+        </Reveal>
 
+        <Reveal>
           <span className="sd-hero__eyebrow">{GHL_HERO.eyebrow}</span>
 
           <h1 className="sd-hero__title">
@@ -74,7 +115,10 @@ function Hero() {
               {GHL_HERO.secondary.label}
             </Btn>
           </div>
+        </Reveal>
 
+        <Reveal index={1}>
+          <ProvisionMock />
         </Reveal>
       </div>
     </section>
@@ -431,7 +475,15 @@ function Benefits() {
 function FaqSection() {
   return (
     <HvSection className="sd-faq">
-      <StructuredData faq={GHL_FAQ.items} />
+      <StructuredData
+        faq={GHL_FAQ.items}
+        service={SEO}
+        crumbs={[
+          { name: "Home", path: "/" },
+          { name: "Services", path: "/services" },
+          { name: SEO.name, path: `/services/${SEO.slug}` },
+        ]}
+      />
 
       <div className="sd-faq__inner">
         <Reveal>
@@ -450,6 +502,18 @@ function FaqSection() {
   );
 }
 
+/* One definition of this page's search identity, read by both its <PageMeta>
+   and its Service structured data below - so the title, the description and
+   the schema can never describe the same page three slightly different ways. */
+const SEO = {
+  slug: "gohighlevel-sub-accounts",
+  name: "GoHighLevel Sub-accounts",
+  description:
+    "Full sub-account builds: domain, numbers and A2P registration, calendars, pipelines, workflows, permissions and a snapshot you keep.",
+  ogDescription:
+    "A GoHighLevel sub-account configured end to end in the order that avoids rework, with compliance filed early, the team set up properly and a walkthrough at handover.",
+};
+
 export default function ServiceGhlSubaccounts() {
   return (
     <Layout
@@ -460,11 +524,7 @@ export default function ServiceGhlSubaccounts() {
         </>
       }
     >
-      <PageMeta
-        title="GoHighLevel Sub-accounts - GHLevelUp"
-        description="Full sub-account builds: domain, numbers and A2P registration, calendars, pipelines, workflows, permissions and a snapshot you keep."
-        ogDescription="A GoHighLevel sub-account configured end to end in the order that avoids rework, with compliance filed early, the team set up properly and a walkthrough at handover."
-      />
+      <PageMeta title={`${SEO.name} - GHLevelUp`} description={SEO.description} ogDescription={SEO.ogDescription} />
 
       <div className="sd-pg">
         <Hero />

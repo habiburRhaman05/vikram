@@ -68,7 +68,7 @@ export const WF_COMPARE = {
   ],
 
   cta: { label: "Get Free Consultation", to: "/book" },
-  note: "Out of your week, into the system",
+  note: "",
 };
 
 /* -- 3. What we automate -------------------------------------------------- */
@@ -346,7 +346,7 @@ export const WF_WORK = {
   lede:
     "Every build starts with the same question: which hand-off breaks when the week gets busy? These are the three answers we hear most.",
   note:
-    "These describe the shape of work of this kind, not named client engagements - we do not publish client details or performance figures without written sign-off.",
+    "",
   items: [
     {
       tag: "Lead routing",

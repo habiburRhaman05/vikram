@@ -17,12 +17,12 @@ let shownThisVisit = false;
 const QUIET_ROUTES = ["/book", "/contact", "/privacy", "/terms"];
 
 /**
- * A CTA elsewhere in the app (the navbar's "Get Free Consultation" button,
- * the hero's ghost link) opens this SAME popup on demand, instead of each
- * one navigating to its own page. LeadPopup is a singleton mounted once in
- * Layout, so a plain window event is enough to reach it from anywhere in
- * the tree without wiring a context provider through the whole app just
- * for one on/off signal.
+ * A CTA elsewhere in the app (the Industries page's profession cards)
+ * opens this SAME popup on demand, rather than each one navigating to its
+ * own page. LeadPopup is a singleton mounted once in Layout, so a plain
+ * window event is enough to reach it from anywhere in the tree without
+ * wiring a context provider through the whole app just for one on/off
+ * signal.
  *
  * openLeadPopup() bypasses the auto-play gating entirely (shownThisVisit,
  * the snooze window, QUIET_ROUTES) - those exist to stop the TIMED popup

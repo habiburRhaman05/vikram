@@ -57,15 +57,17 @@
   isolation: isolate;
   overflow: hidden;
   padding-bottom: clamp(60px, 6vw, 104px);
-  background:
-    radial-gradient(72% 58% at 84% 38%, rgba(14, 164, 107, .52) 0%, rgba(14, 164, 107, 0) 62%),
-    radial-gradient(62% 56% at 2% 102%, rgba(53, 217, 160, .30) 0%, rgba(53, 217, 160, 0) 60%),
-    linear-gradient(122deg, #04241F 0%, #073E34 48%, #03211D 100%);
+  /* One hero background across every service detail page: the same radial
+     wash the Social Media Marketing hero uses, so the family of pages opens
+     the same way instead of each carrying its own gradient. */
+  background: radial-gradient(120% 140% at 14% -10%, #0E4B3E 0%, var(--hv-bg-dark) 46%, var(--hv-bg-dark-2) 100%);
   color: #fff;
 }
 
-/* Faint grid, so the flat gradient has some structure behind the mock.
-   Masked out toward the edges so it never reads as a hard-edged texture. */
+/* The shared hero grid: the same accent-green cell texture the Social Media
+   Marketing hero draws, so every service detail hero carries an identical
+   background treatment. Masked from the top-left so it fades out before it
+   reaches the visual column. */
 .sd-hero::after {
   content: "";
   position: absolute;
@@ -73,11 +75,11 @@
   z-index: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
-  background-size: 54px 54px;
-  mask-image: radial-gradient(76% 68% at 50% 40%, #000 40%, transparent 100%);
-  -webkit-mask-image: radial-gradient(76% 68% at 50% 40%, #000 40%, transparent 100%);
+    linear-gradient(rgba(53, 217, 160, .08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(53, 217, 160, .08) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(65% 65% at 20% 10%, #000 0%, transparent 75%);
+  -webkit-mask-image: radial-gradient(65% 65% at 20% 10%, #000 0%, transparent 75%);
 }
 
 /* Text-only hero: one centred column, no visual beside it. `z-index: 1`
@@ -376,6 +378,11 @@
   color: var(--hv-accent-strong);
 }
 .sd-card__icon svg { width: 22px; height: 22px; }
+/* A vendor logo dropped into the same plate a generic icon would sit in,
+   so a card backed by a real partner mark (GoHighLevel, Google Calendar,
+   Twilio, Zocdoc) reads as part of the same grid rhythm rather than a
+   different component. */
+.sd-card__icon img { width: 24px; height: 24px; object-fit: contain; }
 .sd-card h3 {
   margin: 0;
   font-family: var(--hv-font);
@@ -1567,13 +1574,25 @@
   display: grid;
   grid-template-columns: minmax(0, 1.04fr) minmax(0, .96fr);
   gap: clamp(36px, 4vw, 72px);
-  align-items: center;
+  /* Copy and visual sit level at the top; the crumbs own the row above. */
+  align-items: start;
   text-align: left;
 }
-.sd-hero--split .sd-hero__crumbs { justify-content: flex-start; }
+/* The breadcrumb is a full-width row above the two columns, centred across
+   the hero rather than tucked into the copy column. */
+.sd-hero--split .sd-hero__crumbs {
+  grid-column: 1 / -1;
+  justify-content: center;
+  margin: 0 0 var(--hv-s7);
+}
 .sd-hero--split .sd-hero__ctas { justify-content: flex-start; }
 .sd-hero--split .sd-hero__title { max-width: 18ch; }
 .sd-hero--split .sd-hero__lede { max-width: 52ch; }
+
+/* The split hero used to override the shared grid with a stronger, right-
+   anchored field. It now uses the same base grid as every other detail hero
+   (see `.sd-hero::after`), which is the point of the pass that added this
+   breadcrumb row: one consistent hero background across the family. */
 
 /* -- The live-call mock --------------------------------------------------- */
 
@@ -1787,6 +1806,496 @@
   box-shadow: var(--hv-sh-accent-sm);
 }
 .sd-route__end svg { color: #fff; }
+
+
+/* 16c. Shared hero-card chrome =============================================
+   Every detail page's hero now opts into `.sd-hero--split` with its own
+   right-column visual - the AI page's live-call mock was the first, and
+   this is the same dark glass card used underneath the other five, each
+   with completely different content (a flow, a hub-and-spoke diagram, a
+   funnel shape, a provisioning checklist, a framed photo). One shared
+   chrome class instead of six copies of the same six declarations; the
+   part that makes each page's hero distinct is what's inside it, not the
+   frame. `.sd-heromock__head/__badge/__who/__live` are the small "status
+   bar" pattern two of those visuals (workflow, sub-accounts) both use. */
+
+.sd-heromock {
+  position: relative;
+  border-radius: var(--hv-r-xl);
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: linear-gradient(168deg, rgba(10, 46, 39, .92), rgba(3, 22, 19, .96));
+  box-shadow: 0 34px 68px rgba(0, 0, 0, .46);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.sd-heromock__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: var(--hv-s5) var(--hv-s6);
+  border-bottom: 1px solid rgba(255, 255, 255, .1);
+}
+.sd-heromock__badge {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--hv-grad-accent);
+  color: #fff;
+}
+.sd-heromock__badge svg { width: 19px; height: 19px; }
+.sd-heromock__who { flex: 1; min-width: 0; }
+.sd-heromock__who b {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: .92rem;
+  font-weight: 700;
+  color: #fff;
+}
+.sd-heromock__who span {
+  display: block;
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sd-heromock__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+.sd-heromock__live::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hv-accent-bright);
+  box-shadow: 0 0 0 3px rgba(53, 217, 160, .25);
+}
+
+/* -- Workflow Automation: trigger -> branch -> outcome ---------------------- */
+
+.sd-wfmock__body { padding: var(--hv-s6); display: flex; flex-direction: column; align-items: center; }
+.sd-wfmock__node {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 15px;
+  border-radius: var(--hv-r-md);
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(255, 255, 255, .06);
+  font-family: var(--hv-font);
+  font-size: .84rem;
+  font-weight: 700;
+  color: #fff;
+}
+.sd-wfmock__node svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--hv-accent-bright); }
+.sd-wfmock__node--trigger { border-color: rgba(53, 217, 160, .4); }
+.sd-wfmock__node--done { background: var(--hv-grad-accent); border-color: transparent; }
+.sd-wfmock__node--done svg { color: #fff; }
+
+.sd-wfmock__link { width: 1px; height: 20px; background: linear-gradient(180deg, rgba(53, 217, 160, .7), rgba(53, 217, 160, .25)); }
+
+.sd-wfmock__branches {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--hv-s4);
+  position: relative;
+  padding-top: var(--hv-s6);
+}
+.sd-wfmock__branches::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  height: 1px;
+  background: rgba(53, 217, 160, .45);
+}
+.sd-wfmock__branches > .sd-wfmock__node { position: relative; font-size: .76rem; padding: 10px; text-align: center; }
+.sd-wfmock__branches > .sd-wfmock__node::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--hv-s6) * -1);
+  left: 50%;
+  width: 1px;
+  height: var(--hv-s6);
+  background: rgba(53, 217, 160, .45);
+}
+
+/* -- API & Tool Integrations: hub-and-spoke ---------------------------------- */
+
+.sd-hub { padding: var(--hv-s8) var(--hv-s7) var(--hv-s4); display: grid; place-items: center; }
+.sd-hub__field { position: relative; width: min(320px, 100%); aspect-ratio: 1; }
+.sd-hub__field svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sd-hub__center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  gap: 3px;
+  width: 34%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--hv-grad-accent);
+  color: #fff;
+  box-shadow: var(--hv-sh-accent);
+  text-align: center;
+}
+.sd-hub__center svg { width: 26px; height: 26px; }
+.sd-hub__center b { font-family: var(--hv-font); font-size: .72rem; font-weight: 700; }
+.sd-hub__node {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 13px 8px 9px;
+  border-radius: var(--hv-r-pill);
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(255, 255, 255, .07);
+  font-family: var(--hv-font);
+  font-size: .76rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+.sd-hub__node svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--hv-accent-bright); }
+.sd-hub__node--tl { top: 4%; left: 0; }
+.sd-hub__node--tr { top: 4%; right: 0; }
+.sd-hub__node--bl { bottom: 4%; left: 0; }
+.sd-hub__node--br { bottom: 4%; right: 0; }
+.sd-hub__caption {
+  margin: 0;
+  padding: 0 var(--hv-s7) var(--hv-s7);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+  text-align: center;
+}
+
+/* -- Funnel Design & Builds: the funnel shape --------------------------------- */
+
+.sd-funnelviz { padding: var(--hv-s7) var(--hv-s6) var(--hv-s6); }
+.sd-funnelviz__stages { list-style: none; margin: 0 0 var(--hv-s5); padding: 0; display: flex; flex-direction: column; align-items: center; }
+.sd-funnelviz__stages li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 10px;
+  margin-bottom: 3px;
+  font-family: var(--hv-font);
+  font-size: .84rem;
+  font-weight: 700;
+  color: #fff;
+  clip-path: polygon(6% 0, 94% 0, 88% 100%, 12% 100%);
+}
+.sd-funnelviz__stages li:nth-child(1) { width: 100%; background: linear-gradient(135deg, #35D9A0, #0EA46B); }
+.sd-funnelviz__stages li:nth-child(2) { width: 82%; background: linear-gradient(135deg, #24C592, #0A7F52); }
+.sd-funnelviz__stages li:nth-child(3) { width: 63%; background: linear-gradient(135deg, #14A97E, #0A7F52); }
+.sd-funnelviz__stages li:nth-child(4) { width: 44%; background: linear-gradient(135deg, #0A7F52, #06603E); margin-bottom: 0; }
+.sd-funnelviz__foot {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.5;
+  color: var(--hv-on-dark-muted);
+}
+.sd-funnelviz__foot svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; color: var(--hv-accent-bright); }
+
+/* -- GoHighLevel Sub-accounts: the provisioning checklist ---------------------- */
+
+.sd-provision__list { list-style: none; margin: 0; padding: var(--hv-s5) var(--hv-s6) var(--hv-s6); display: flex; flex-direction: column; gap: 10px; }
+.sd-provision__list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--hv-r-md);
+  border: 1px solid rgba(255, 255, 255, .12);
+  background: rgba(255, 255, 255, .04);
+  font-family: var(--hv-font);
+  font-size: .84rem;
+  font-weight: 600;
+  color: var(--hv-on-dark-muted);
+}
+.sd-provision__list li svg { width: 17px; height: 17px; flex-shrink: 0; }
+.sd-provision__list li.is-done {
+  color: #fff;
+  border-color: rgba(53, 217, 160, .3);
+  background: rgba(53, 217, 160, .08);
+}
+.sd-provision__list li.is-done svg { color: var(--hv-accent-bright); }
+.sd-provision__list li.is-pending svg { color: var(--hv-on-dark-muted); animation: sd-tick 1.8s linear infinite; }
+@keyframes sd-tick { to { transform: rotate(360deg); } }
+
+/* -- Websites & Landing Pages: the framed photo --------------------------------- */
+
+.sd-photoframe { padding: 10px; }
+.sd-photoframe__pic { border-radius: 14px; overflow: hidden; line-height: 0; }
+.sd-photoframe__pic img { width: 100%; height: auto; display: block; aspect-ratio: 4 / 3; object-fit: cover; }
+.sd-photoframe__cap {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: var(--hv-s4) var(--hv-s3) var(--hv-s2);
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+}
+.sd-photoframe__cap svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--hv-accent-bright); }
+
+/* -- API & Tool Integrations hero: GHLevelUp <-> GoHighLevel, syncing -------
+   The central visual anchor Task 1 asked for: our own mark and
+   GoHighLevel's, connected by a line that visibly moves, rather than a
+   static "as seen with" logo strip. Both marks sit in plain white plates so
+   neither reads as more important than the other - the point is the
+   partnership, not a hierarchy between the two. */
+
+.sd-logosync { padding: var(--hv-s9) var(--hv-s7); }
+.sd-logosync__row { display: flex; align-items: center; justify-content: center; gap: 0; }
+.sd-logosync__badge {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  width: 132px;
+  padding: var(--hv-s6) var(--hv-s4);
+  border-radius: var(--hv-r-lg);
+  background: #fff;
+  box-shadow: var(--hv-sh-lg);
+  text-align: center;
+}
+.sd-logosync__badge img { width: 44px; height: 44px; object-fit: contain; }
+.sd-logosync__badge span {
+  font-family: var(--hv-font);
+  font-size: .74rem;
+  font-weight: 700;
+  color: var(--hv-text);
+}
+
+/* The link: a track plus a shorter bright segment that slides along it on
+   a loop, read as data moving between the two marks rather than a static
+   line. Respects prefers-reduced-motion via section 10's blanket rule. */
+.sd-logosync__link { position: relative; width: clamp(70px, 12vw, 130px); height: 2px; margin: 0 -4px; background: rgba(255, 255, 255, .14); }
+.sd-logosync__link::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -30%;
+  width: 30%;
+  height: 100%;
+  background: var(--hv-accent-bright);
+  box-shadow: 0 0 8px 1px rgba(53, 217, 160, .7);
+  animation: sd-sync 2.2s linear infinite;
+}
+@keyframes sd-sync {
+  0%   { left: -30%; }
+  100% { left: 100%; }
+}
+
+.sd-logosync__status {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--hv-s6);
+}
+.sd-logosync__status span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 13px;
+  border-radius: var(--hv-r-pill);
+  border: 1px solid rgba(53, 217, 160, .3);
+  background: rgba(53, 217, 160, .1);
+  font-family: var(--hv-font);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+.sd-logosync__status span::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hv-accent-bright);
+  box-shadow: 0 0 0 3px rgba(53, 217, 160, .25);
+}
+
+/* -- Connection hub: what syncs, category by category ------------------------ */
+
+.sd-hub-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--hv-s5);
+}
+.sd-hub-card {
+  padding: var(--hv-s6);
+  border-radius: var(--hv-r-lg);
+  border: 1px solid var(--hv-border);
+  background: #fff;
+  transition: border-color var(--hv-dur) var(--hv-ease), transform var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease);
+}
+.sd-hub-card:hover { border-color: var(--hv-accent-bright); transform: translateY(-3px); box-shadow: var(--hv-sh-md); }
+
+.sd-hub-card__pair { display: flex; align-items: center; gap: 8px; margin-bottom: var(--hv-s5); }
+.sd-hub-card__mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+  flex-shrink: 0;
+}
+.sd-hub-card__mark img { width: 18px; height: 18px; object-fit: contain; }
+.sd-hub-card__mark svg { width: 17px; height: 17px; }
+.sd-hub-card__plus { color: var(--hv-border-strong); font-weight: 700; flex-shrink: 0; }
+
+.sd-hub-card h3 { font-size: 1rem; font-weight: 700; margin: 0 0 4px; }
+.sd-hub-card__with { display: block; font-size: var(--hv-fs-xs); font-weight: 600; color: var(--hv-accent-strong); margin-bottom: var(--hv-s3); }
+.sd-hub-card p { font-size: var(--hv-fs-sm); line-height: 1.55; color: var(--hv-text-muted); margin: 0; }
+
+@media (max-width: 1000px) { .sd-hub-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .sd-hub-cards { grid-template-columns: 1fr; } }
+
+/* -- The credential-connection mock (Setup Guide / Process section) ---------
+   Replaces a generic stock desk photo with an illustrative screen of what
+   authorizing the connection looks like - clearly a mockup (labelled as
+   one), not a reproduction of GoHighLevel's real product UI. */
+
+.sd-authmock { max-width: 400px; margin-left: auto; }
+.sd-authmock__head { padding: var(--hv-s5) var(--hv-s6); border-bottom: 1px solid rgba(255, 255, 255, .1); }
+.sd-authmock__head b { display: block; font-family: var(--hv-font); font-size: .92rem; font-weight: 700; color: #fff; }
+.sd-authmock__head span { display: block; font-size: var(--hv-fs-xs); color: var(--hv-on-dark-muted); margin-top: 2px; }
+
+.sd-authmock__body { padding: var(--hv-s6); display: flex; flex-direction: column; gap: var(--hv-s4); }
+.sd-authmock__field label {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--hv-on-dark-muted);
+  margin-bottom: 6px;
+}
+.sd-authmock__field div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 13px;
+  border-radius: var(--hv-r-md);
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(255, 255, 255, .05);
+  font-family: var(--hv-font);
+  font-size: .84rem;
+  color: var(--hv-on-dark-muted);
+}
+.sd-authmock__field div svg { width: 15px; height: 15px; flex-shrink: 0; color: var(--hv-accent-bright); }
+.sd-authmock__dots { letter-spacing: 3px; }
+
+.sd-authmock__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: var(--hv-r-md);
+  background: var(--hv-grad-accent);
+  color: #fff;
+  font-family: var(--hv-font);
+  font-size: .86rem;
+  font-weight: 700;
+}
+.sd-authmock__btn svg { width: 16px; height: 16px; }
+
+.sd-authmock__tag {
+  display: block;
+  padding: var(--hv-s3) var(--hv-s6) var(--hv-s5);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+  text-align: center;
+}
+
+/* -- Developer / API documentation: tabbed code box --------------------------- */
+
+.sd-docs { padding: var(--hv-s7); }
+.sd-docs__tabs { display: flex; gap: 4px; padding: 4px; border-radius: var(--hv-r-md); background: rgba(255, 255, 255, .05); margin-bottom: var(--hv-s5); }
+.sd-docs__tabs button {
+  flex: 1;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  font-family: var(--hv-font);
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--hv-on-dark-muted);
+  cursor: pointer;
+  transition: background var(--hv-dur) var(--hv-ease), color var(--hv-dur) var(--hv-ease);
+}
+.sd-docs__tabs button:hover { color: var(--hv-on-dark); }
+.sd-docs__tabs button.is-active { background: var(--hv-grad-accent); color: #fff; }
+
+.sd-docs__panel {
+  margin: 0;
+  padding: var(--hv-s5) var(--hv-s6);
+  border-radius: var(--hv-r-md);
+  background: rgba(0, 0, 0, .28);
+  border: 1px solid rgba(255, 255, 255, .08);
+  overflow-x: auto;
+}
+.sd-docs__panel code {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  font-family: "SFMono-Regular", "Consolas", "Liberation Mono", Menlo, monospace;
+  font-size: .82rem;
+  line-height: 1.65;
+  color: var(--hv-on-dark);
+  white-space: pre;
+}
+
+.sd-docs__note {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: var(--hv-s5) 0 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.5;
+  color: var(--hv-on-dark-muted);
+}
+.sd-docs__note svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; color: var(--hv-accent-bright); }
+
+@media (max-width: 560px) {
+  .sd-docs__tabs { flex-wrap: wrap; }
+  .sd-docs__tabs button { flex: 1 1 calc(50% - 4px); }
+}
 
 
 /* 17. Intro + facts ======================================================= */
@@ -2150,6 +2659,8 @@
 @media (prefers-reduced-motion: reduce) {
   .sd-call__wave i { animation: none; height: 45%; }
   .sd-offer, .sd-offer:hover { transition: none; }
+  .sd-logosync__link::after { animation: none; left: 35%; }
+  .sd-provision__list li.is-pending svg { animation: none; }
 }
 
 

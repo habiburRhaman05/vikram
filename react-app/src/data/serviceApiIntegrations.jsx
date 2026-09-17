@@ -10,13 +10,18 @@
  * call. Nothing counts clients or claims a saving.
  *
  * ASSETS - provenance, so these can be re-sourced or replaced knowingly:
- *   /img/services/api-build.jpg|webp
- *     Pexels #33572895 (same license). A two monitor desk with code on
- *     screen. 1240x930, used by the build process section.
  *   /img/integrations/*.png
  *     Each vendor's own mark, fetched once for /services and reused here.
  *     Trademarks belong to their owners; they appear only to name the
- *     platforms we connect to.
+ *     platforms we connect to. GoHighLevel's mark specifically is used on
+ *     this page under the same basis GHLevelUp uses it site-wide, as a
+ *     certified partner naming the platform it builds on - not a claim of
+ *     co-ownership or an official partner badge.
+ *
+ * The Process section's photo (api-build.jpg) was replaced by a coded
+ * illustrative mock of a credential-connection screen (see AuthMock in the
+ * page) - it is clearly a mockup, not a screenshot of GoHighLevel's actual
+ * product UI, which we have no rights to reproduce.
  */
 
 /* -- 1. Hero --------------------------------------------------------------- */
@@ -67,6 +72,43 @@ export const API_TRUTH = {
   note: "Same record, every screen",
 };
 
+/* -- 2b. Connection hub ---------------------------------------------------- */
+
+export const API_HUB = {
+  eyebrow: "Connection hub",
+  title: "What Actually Syncs, Live",
+  lede:
+    "Not a one-time import - a standing, two-way connection between GoHighLevel and the systems around it. Four examples of what that looks like in practice.",
+  items: [
+    {
+      category: "Contacts",
+      partnerLogo: null,
+      partnerIcon: "globe",
+      partnerLabel: "Web & booking forms",
+      body: "A new contact from any form writes straight into GoHighLevel - no duplicate entries, no re-typing.",
+    },
+    {
+      category: "Pipelines",
+      partnerLogo: null,
+      partnerIcon: "creditCard",
+      partnerLabel: "Billing & payments",
+      body: "A payment landing or an invoice going unpaid moves the deal stage the moment it changes.",
+    },
+    {
+      category: "Calendars",
+      partnerLogo: "google-calendar",
+      partnerLabel: "Google Calendar",
+      body: "A booking made in either calendar blocks the same slot in both, instantly, in either direction.",
+    },
+    {
+      category: "SMS & email logs",
+      partnerLogo: "twilio",
+      partnerLabel: "Twilio",
+      body: "Every call, text and email outcome logged against the contact automatically, transcripts included.",
+    },
+  ],
+};
+
 /* -- 3. What we connect --------------------------------------------------- */
 
 export const API_GRID = {
@@ -78,17 +120,17 @@ export const API_GRID = {
 
   items: [
     {
-      icon: "layers",
+      logo: "gohighlevel",
       title: "CRM and pipeline",
       body: "GoHighLevel, Salesforce and the rest: one contact record with its stages, owners and notes written from wherever the change happened.",
     },
     {
-      icon: "calendar",
+      logo: "google-calendar",
       title: "Calendars and scheduling",
       body: "Live availability in both directions, so a booking made in one place blocks the slot in the other and nothing gets double booked.",
     },
     {
-      icon: "phone",
+      logo: "twilio",
       title: "Telephony, SMS and email",
       body: "Calls, messages and replies logged against the contact, with the transcripts and recordings attached where the platform allows it.",
     },
@@ -103,9 +145,9 @@ export const API_GRID = {
       body: "Form submissions and orders arriving with their source attached, so the marketing report and the pipeline agree about where a lead came from.",
     },
     {
-      icon: "fileCheck",
+      logo: "zocdoc",
       title: "Booking and practice platforms",
-      body: "Practice management, booking and intake tools joined to the CRM, which is where most clinics and offices lose the thread.",
+      body: "Zocdoc, OptiMantra and the practice, booking and intake tools joined to the CRM, which is where most clinics and offices lose the thread.",
     },
   ],
 
@@ -121,9 +163,6 @@ export const API_PROCESS = {
   lede:
     "The mapping step is the one worth taking slowly. Half of a failed integration project is a field that two systems both think they own.",
 
-  image: "/img/services/api-build.jpg",
-  imageWebp: "/img/services/api-build.webp",
-  imageAlt: "A desk with two monitors showing code, a keyboard and headphones",
   steps: [
     {
       num: "01",
@@ -149,15 +188,6 @@ export const API_PROCESS = {
       title: "Monitor and maintain",
       body: "Runs are logged, failures retry, and an alert reaches you when a connection needs attention instead of losing the record.",
     },
-  ],
-
-
-  /* Floating chips over the build photo, as the reference layout does. */
-  chips: [
-    { icon: "key", label: "Credentials stored" },
-    { icon: "bolt", label: "Retries on failure" },
-    { icon: "lineChart", label: "Every run logged" },
-    { icon: "usersTwo", label: "One record per person" },
   ],
 
   cta: { label: "Talk Through Your Stack", to: "/book", icon: "arrowRight" },
@@ -320,6 +350,67 @@ export const API_DETAILS = {
       ],
     },
   ],
+};
+
+/* -- 8b. Developers / API documentation ------------------------------------
+   Illustrative, generic REST examples - the shape of what a webhook and a
+   custom call look like, not a live endpoint or a secret. Anyone reading
+   this page's HTML sees the same three tabs; nothing here is credential
+   material. */
+
+export const API_DOCS = {
+  eyebrow: "For developers",
+  title: "What a Custom Connection Looks Like",
+  lede:
+    "When there's no off-the-shelf connector, this is the shape of what we build - a webhook in, a mapped call out, documented so it can be maintained.",
+  tabs: [
+    {
+      label: "Webhook payload",
+      lang: "json",
+      code: `POST /hooks/ghl/contact-updated
+Content-Type: application/json
+X-Signature: sha256=4a1f9e...
+
+{
+  "event": "ContactUpdate",
+  "locationId": "loc_8f2c1a",
+  "contact": {
+    "id": "cnt_5591d2",
+    "email": "jordan@example.com",
+    "phone": "+15185550123",
+    "tags": ["booked", "returning"],
+    "pipelineStage": "Consultation Scheduled"
+  },
+  "occurredAt": "2026-09-17T14:32:05Z"
+}`,
+    },
+    {
+      label: "Outbound call",
+      lang: "bash",
+      code: `curl -X POST https://api.gohighlevel.com/v2/contacts \\
+  -H "Authorization: Bearer $GHL_TOKEN" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "locationId": "loc_8f2c1a",
+    "email": "jordan@example.com",
+    "phone": "+15185550123",
+    "source": "Website booking form"
+  }'`,
+    },
+    {
+      label: "Retry handling",
+      lang: "js",
+      code: `async function deliver(event) {
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    const res = await send(event);
+    if (res.ok) return log(event, "delivered");
+    await backoff(attempt);      // exponential, capped
+  }
+  return alertOnCall(event);     // a human gets paged, not silence
+}`,
+    },
+  ],
+  note: "Illustrative examples, not a public API - every real integration is built and documented against the specific platforms in your stack.",
 };
 
 /* -- 9. Who it is for ------------------------------------------------------ */

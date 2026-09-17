@@ -4,7 +4,19 @@
  * Kept out of the page component for the same reason homeV2.jsx and
  * servicesV2.jsx are: the page is long enough that inlining the copy turns
  * it into a wall of strings with the structure buried inside. Section order
- * here mirrors the order the page renders them in.
+ * here mirrors the order the page renders them in, which is the order the
+ * CRM & Sub-account Setup page established:
+ *
+ *   hero overview -> the overview and what the four offerings are -> what's
+ *   included -> how it works (journey, phases, a proof panel per phase,
+ *   plus the routing diagram) -> who we work with (and the representative
+ *   setups) -> why GHLevelUp -> FAQ -> client reviews -> closing CTA with
+ *   the contact details -> enquiry form -> related services.
+ *
+ * The ORDER is shared with that page; none of the LAYOUT is. The AI page is
+ * built in its own visual language (a console/signal-desk one - channel
+ * spine, readout panels, transcript mocks) out of its own stylesheet,
+ * styles/service-ai-agents.css, and uses no cs- class from the CRM page.
  *
  * This page covers the whole conversational-AI offer - voice receptionist,
  * conversational AI over chat, the website widget and social/SMS DMs - as
@@ -50,26 +62,30 @@ export const AI_HERO = {
   primary: { label: "Get this service", to: "#enquiry", icon: "arrowRight" },
   secondary: { label: "Hear how it works", href: "#how-it-works" },
 
-  /* The live-call mock beside the copy. Representative of a real booking
-     conversation; the timings are what this build is configured against. */
-  call: {
-    label: "Incoming call",
-    meta: "Unknown number · 8:42pm",
-    timer: "00:24",
-    lines: [
-      { from: "them", text: "Hi, are you open tomorrow? I need to come in." },
-      { from: "us", text: "We are - I have 10:00am or 2:30pm free. Which suits you better?" },
-      { from: "them", text: "2:30 works" },
-      { from: "us", text: "Booked for 2:30pm. I've texted you the confirmation - see you then." },
+  /* The hero's visual: the four doors one agent answers, each showing the
+     state it hands on, funnelling into the single contact record they all
+     write to. Statuses are process states, not performance figures - see
+     rule 2 at the top of this file. */
+  spine: {
+    caption: "One agent, every door",
+    channels: [
+      { icon: "phone", label: "Voice call", note: "Your main line, or a number of its own", status: "Answered" },
+      { icon: "message", label: "Text & SMS", note: "A missed call becomes a conversation", status: "Replied" },
+      { icon: "chatWindow", label: "Website chat", note: "On the pages where people hesitate", status: "Qualified" },
+      { icon: "megaphone", label: "Social DMs", note: "Instagram, Facebook and WhatsApp", status: "Booked" },
     ],
-    foot: "Booked and confirmed in 41 seconds, with nobody in the office",
+    record: {
+      icon: "layers",
+      label: "One contact record",
+      note: "Transcript, recording and outcome land on the same contact in your CRM",
+    },
   },
 };
 
 /* -- 2. Intro: what this actually is -------------------------------------- */
 
 export const AI_INTRO = {
-  eyebrow: "The short version",
+  eyebrow: "Overview",
   title: "What an AI agent actually is",
   body: [
     "An AI agent is not a phone tree with better wording, and it is not a chatbot that answers three scripted questions before asking someone to email you. It is a trained receptionist that happens to be software: it knows your services, your opening hours, your prices and the handful of exceptions that matter, and it holds a normal conversation about them.",
@@ -165,36 +181,124 @@ export const AI_FLOW = {
   lede:
     "Nothing in this flow guesses at something it cannot know yet. The first question is always what time it is right now, and everything after that follows from the answer - which is why it behaves the same way on a Tuesday morning as it does at midnight.",
 
+  /* The delivery journey - how long the build itself takes, not the flow a
+     call follows. The same indicative timings quoted on the other service
+     pages; the FAQ says they are not a guarantee. */
+  journey: [
+    { label: "Discovery", when: "Day 1" },
+    { label: "Build & train", when: "Days 2-6" },
+    { label: "Test calls", when: "Week 2" },
+    { label: "Live", when: "Week 2, on sign-off" },
+  ],
+
+  /* The flow itself. Each phase carries three things beyond its prose: the
+     artefact it produces (`deliverable`), and a `proof` panel - a coded
+     mock of the thing that artefact looks like, so the section shows the
+     work rather than claiming it. `proof.kind` selects which mock the page
+     renders; the mocks are the AI page's own (transcript, readout, chips,
+     checks), not the CRM page's set. */
   steps: [
     {
       num: "01",
+      icon: "phone",
       title: "Contact arrives",
       body: "A call, text, web chat or DM reaches your number or widget. The same agent picks up whichever it is.",
+      deliverable: "One number, one widget, one inbox",
+      proof: {
+        kind: "status",
+        caption: "Channels live",
+        rows: [
+          { label: "Main number answered by voice", state: "done" },
+          { label: "Missed-call-to-text armed", state: "done" },
+          { label: "Website chat widget online", state: "done" },
+          { label: "Social DMs connected", state: "done" },
+        ],
+      },
     },
     {
       num: "02",
+      icon: "clock",
       title: "Business hours are checked",
       body: "In hours, it can ring your team first and wait. Out of hours, it handles the conversation itself rather than sending anyone to voicemail.",
+      deliverable: "Your hours, holidays and exceptions loaded",
+      proof: {
+        kind: "record",
+        caption: "Routing rules",
+        rows: [
+          { label: "In hours", value: "Ring your team first, 15s wait" },
+          { label: "Out of hours", value: "Handled end to end by the agent" },
+          { label: "Weekends", value: "Covered, same rules" },
+          { label: "Holidays", value: "Your own override list" },
+        ],
+      },
     },
     {
       num: "03",
+      icon: "brain",
       title: "Intent is established",
       body: "New enquiry, existing customer, a quick question or something urgent. It works out which before it decides what to say.",
+      deliverable: "An approved intent map",
+      proof: {
+        kind: "transcript",
+        caption: "Live, 8:42pm",
+        lines: [
+          { from: "them", text: "Hi, are you open tomorrow? I need to come in." },
+          { from: "us", text: "We are - I have 10:00am or 2:30pm free. Which suits you better?" },
+          { from: "note", text: "Intent: new booking · existing customer: no" },
+          { from: "them", text: "2:30 works" },
+        ],
+      },
     },
     {
       num: "04",
+      icon: "shieldCheck",
       title: "Qualified or answered",
       body: "It asks the questions your front desk would ask, or answers directly from what it knows about your services and pricing.",
+      deliverable: "Your qualifying questions, in your words",
+      proof: {
+        kind: "checks",
+        caption: "Configured behaviour",
+        items: [
+          "Asks what the job is before offering a slot",
+          "Answers pricing from your own approved list",
+          "Says plainly when it does not know",
+          "Never invents a price, a time or a promise",
+        ],
+      },
     },
     {
       num: "05",
+      icon: "calendar",
       title: "Booked, or handed to a person",
       body: "A confirmed slot on your real calendar and a confirmation text - or a clean transfer with context attached. Never left hanging.",
+      deliverable: "A confirmed appointment, or a warm transfer",
+      proof: {
+        kind: "record",
+        caption: "Outcome of the call above",
+        rows: [
+          { label: "Slot", value: "Tomorrow, 2:30pm - genuinely open" },
+          { label: "Calendar", value: "The one your team already uses" },
+          { label: "Confirmation", value: "Text and email, sent during the call" },
+          { label: "Escalation", value: "Complaints and emergencies to a person" },
+        ],
+      },
     },
     {
       num: "06",
+      icon: "layers",
       title: "Logged and followed up",
       body: "Transcript, recording and outcome land on the contact in your CRM, and any follow-up you have configured queues behind it.",
+      deliverable: "The record, and the follow-up it triggers",
+      proof: {
+        kind: "record",
+        caption: "Written to the contact",
+        rows: [
+          { label: "Transcript", value: "Attached to the contact record" },
+          { label: "Recording", value: "Kept to your retention policy" },
+          { label: "Pipeline", value: "Stage moved to Booked" },
+          { label: "Follow-up", value: "Reminder queued automatically" },
+        ],
+      },
     },
   ],
 
@@ -379,7 +483,24 @@ export const AI_BENEFITS = {
   ],
 };
 
-/* -- 9. Enquiry form ------------------------------------------------------- */
+/* -- 9. Closing CTA + contact --------------------------------------------- */
+
+/**
+ * The page's own closing block - the CTA pair and the contact details the
+ * /contact page lists. This is the one place on the page that asks for the
+ * work: the FAQ used to carry its own contact card, which competed with
+ * both this and the enquiry form at the foot of the page.
+ */
+export const AI_CLOSING = {
+  eyebrow: "Let's talk",
+  title: "Put it on the number that rings most",
+  lede:
+    "Tell us what you keep missing - the calls after five, the texts at the weekend, the questions that eat the front desk's morning - and we will tell you exactly what the agent would answer, what it would book and where it would hand off, then quote it.",
+  primary: { label: "Get Free Consultation", to: "/book", icon: "arrowRight" },
+  secondary: { label: "Send us a message", to: "/contact" },
+};
+
+/* -- 10. Enquiry form ------------------------------------------------------ */
 
 export const AI_ENQUIRY = {
   service: "AI Agents & Chatbots",
@@ -394,7 +515,7 @@ export const AI_ENQUIRY = {
   ],
 };
 
-/* -- 10. FAQ + contact card ------------------------------------------------ */
+/* -- 11. FAQ --------------------------------------------------------------- */
 
 export const AI_FAQ = {
   eyebrow: "FAQ",
@@ -449,10 +570,4 @@ export const AI_FAQ = {
     },
   ],
 
-  card: {
-    eyebrow: "Let's talk",
-    titleLines: ["Ready to stop", "missing calls?"],
-    body: "Get in touch and we'll map out exactly what your AI agent would answer, book and hand off - then give you real numbers.",
-    cta: { label: "Get Free Consultation", to: "/book", icon: "arrowRight" },
-  },
 };

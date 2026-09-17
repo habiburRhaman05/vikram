@@ -1,0 +1,655 @@
+/**
+ * /services/crm-sub-account-setup - this page's own section styles.
+ *
+ * Own prefix (cs-), own layout grammar, and deliberately NOT a reuse of
+ * any other service page's shapes. service-detail.css is imported by the
+ * page only for RelatedServices' .sd-rel classes.
+ *
+ * The language here is "blueprint / spec sheet":
+ *   - an account ARCHITECTURE TREE in the hero (root -> branches -> leaves)
+ *     rather than the split photo/mock card every sd- page uses
+ *   - a stacked BEFORE/AFTER account-state pair with an arrow between them
+ *   - a three-up CARD GRID for what's included, each card a self-contained
+ *     spec sheet for one part of the build
+ *   - a STEPPER where each phase sits beside a coded mock of the artefact
+ *     it produces (discovery notes, a pipeline, a build status, a test list)
+ *   - NUMBERED REASON ROWS for the differentiators
+ * Same brand tokens and the single accent green as every other page.
+ */
+
+.cs-pg { --cs-radius: 18px; }
+
+.cs-head { max-width: 62ch; margin-bottom: var(--hv-s9); }
+.cs-head--center { max-width: 56ch; margin-inline: auto; text-align: center; }
+.cs-cta-row { margin-top: var(--hv-s9); display: flex; justify-content: center; }
+
+/* -- 1. Hero: architecture tree ------------------------------------------------ */
+
+.cs-hero {
+  position: relative;
+  background: linear-gradient(170deg, var(--hv-bg-dark) 0%, #073029 58%, var(--hv-bg-dark-2) 100%);
+  color: var(--hv-on-dark);
+  padding-bottom: clamp(72px, 9vw, 120px);
+  overflow: clip;
+}
+/* A faint blueprint grid - squarer and more regular than the other heroes'
+   textures, because this page's whole argument is structure. */
+.cs-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: radial-gradient(90% 80% at 72% 20%, #000 10%, transparent 88%);
+  -webkit-mask-image: radial-gradient(90% 80% at 72% 20%, #000 10%, transparent 88%);
+  pointer-events: none;
+}
+
+.cs-hero__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .92fr);
+  column-gap: clamp(32px, 5vw, 68px);
+  row-gap: clamp(28px, 4vw, 44px);
+  align-items: center;
+}
+
+/* Centred and pulled close to the title beneath it, matching the other
+   service pages' breadcrumb treatment - not a separate, loosely-spaced
+   header element. */
+.cs-hero__crumbs {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--hv-s2);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+  margin: 0;
+}
+.cs-hero__crumbs a { color: inherit; text-decoration: none; }
+.cs-hero__crumbs a:hover { color: var(--hv-on-dark); }
+
+.cs-hero__eyebrow {
+  display: inline-flex;
+  font-size: var(--hv-fs-eyebrow);
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+  margin-bottom: var(--hv-s4);
+}
+.cs-hero__title {
+  font-family: var(--hv-font);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  font-size: clamp(2rem, 1.35rem + 2.3vw, 2.95rem);
+  line-height: 1.09;
+  margin: 0 0 var(--hv-s5);
+  max-width: 17ch;
+}
+.cs-hero__title span { display: block; color: var(--hv-accent-bright); }
+.cs-hero__lede {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-lede);
+  line-height: 1.65;
+  color: var(--hv-on-dark-muted);
+  max-width: 50ch;
+  margin: 0 0 var(--hv-s7);
+}
+.cs-hero__ctas { display: flex; flex-wrap: wrap; gap: var(--hv-s4); }
+
+/* The tree itself - a real hierarchy, drawn with connectors. */
+.cs-tree {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--hv-s7) var(--hv-s6);
+  border-radius: var(--hv-r-xl);
+  border: 1px solid rgba(255, 255, 255, .14);
+  background: rgba(4, 30, 25, .6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.cs-tree__root,
+.cs-tree__node {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--hv-font);
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+.cs-tree__root {
+  padding: 11px 20px;
+  border-radius: var(--hv-r-pill);
+  background: var(--hv-grad-accent);
+  box-shadow: var(--hv-sh-accent-sm);
+  font-size: .9rem;
+}
+.cs-tree__root svg { width: 17px; height: 17px; }
+
+.cs-tree__fork { width: 1px; height: 22px; background: rgba(53, 217, 160, .5); }
+
+.cs-tree__branches {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--hv-s4);
+  width: 100%;
+  padding-top: var(--hv-s5);
+}
+/* The horizontal rail plus a drop into each branch. */
+.cs-tree__branches::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  height: 1px;
+  background: rgba(53, 217, 160, .5);
+}
+.cs-tree__branch { position: relative; }
+.cs-tree__branch::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--hv-s5) * -1);
+  left: 50%;
+  width: 1px;
+  height: var(--hv-s5);
+  background: rgba(53, 217, 160, .5);
+}
+
+.cs-tree__node {
+  justify-content: center;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--hv-r-md);
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(255, 255, 255, .06);
+  font-size: .78rem;
+}
+.cs-tree__node svg { width: 14px; height: 14px; color: var(--hv-accent-bright); flex-shrink: 0; }
+
+.cs-tree__branch ul { list-style: none; margin: 8px 0 0; padding: 0 0 0 var(--hv-s4); display: flex; flex-direction: column; gap: 5px; }
+.cs-tree__branch li {
+  position: relative;
+  padding-left: 13px;
+  font-size: .72rem;
+  color: var(--hv-on-dark-muted);
+}
+.cs-tree__branch li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(53, 217, 160, .6);
+}
+
+.cs-tree__snapshot {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: var(--hv-s6);
+  padding: 6px 14px;
+  border-radius: var(--hv-r-pill);
+  border: 1px dashed rgba(53, 217, 160, .45);
+  background: rgba(53, 217, 160, .08);
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--hv-accent-bright);
+}
+.cs-tree__snapshot svg { width: 13px; height: 13px; }
+
+@media (max-width: 900px) {
+  .cs-hero__inner { grid-template-columns: 1fr; }
+  .cs-hero__viz { margin-top: var(--hv-s8); }
+}
+@media (max-width: 440px) {
+  .cs-tree__branches { grid-template-columns: 1fr; gap: var(--hv-s5); }
+  .cs-tree__branches::before { display: none; }
+  .cs-tree__branch::before { display: none; }
+}
+
+/* -- 2. Overview + before/after states ----------------------------------------- */
+
+.cs-overview__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
+  gap: clamp(32px, 5vw, 68px);
+  align-items: start;
+}
+.cs-overview__copy .hv-h2 { margin: var(--hv-s3) 0 var(--hv-s6); }
+.cs-overview__copy p {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-body);
+  line-height: 1.75;
+  color: var(--hv-text-muted);
+  margin: 0 0 var(--hv-s5);
+}
+.cs-overview__copy p:last-child { margin-bottom: 0; }
+
+.cs-states { display: flex; flex-direction: column; align-items: center; gap: 0; }
+.cs-state { width: 100%; padding: var(--hv-s6); border-radius: var(--cs-radius); }
+.cs-state--before { background: var(--hv-bg-mint); }
+.cs-state--after { background: linear-gradient(158deg, var(--hv-bg-dark) 0%, var(--hv-bg-dark-2) 100%); color: var(--hv-on-dark); }
+
+.cs-state__label {
+  display: block;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  margin-bottom: var(--hv-s4);
+}
+.cs-state--before .cs-state__label { color: var(--hv-text-muted); }
+.cs-state--after .cs-state__label { color: var(--hv-accent-bright); }
+
+.cs-state ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.cs-state li { display: flex; align-items: flex-start; gap: 9px; font-size: var(--hv-fs-sm); line-height: 1.5; }
+.cs-state li svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 3px; }
+.cs-state--before li { color: var(--hv-text-muted); }
+.cs-state--before li svg { color: #C2705E; }
+.cs-state--after li { color: var(--hv-on-dark); }
+.cs-state--after li svg { color: var(--hv-accent-bright); }
+
+.cs-states__arrow {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin: calc(var(--hv-s3) * -1) 0;
+  position: relative;
+  z-index: 1;
+  border-radius: 50%;
+  background: var(--hv-grad-accent);
+  color: #fff;
+  box-shadow: var(--hv-sh-accent-sm);
+}
+.cs-states__arrow svg { width: 16px; height: 16px; }
+
+@media (max-width: 900px) { .cs-overview__grid { grid-template-columns: 1fr; } }
+
+/* -- 3. What's included: card grid ----------------------------------------------- */
+
+.cs-included__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--hv-s5);
+}
+.cs-included__card {
+  position: relative;
+  height: 100%;
+  padding: var(--hv-s7);
+  border-radius: var(--cs-radius);
+  background: #fff;
+  border: 1px solid var(--hv-border);
+  box-shadow: var(--hv-sh-sm);
+  transition: transform var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease), border-color var(--hv-dur) var(--hv-ease);
+}
+.cs-included__card:hover { transform: translateY(-4px); box-shadow: var(--hv-sh-lg); border-color: var(--hv-accent-bright); }
+
+.cs-included__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+  margin-bottom: var(--hv-s5);
+}
+.cs-included__icon svg { width: 21px; height: 21px; }
+
+.cs-included__tag {
+  display: block;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--hv-accent-strong);
+  margin-bottom: var(--hv-s2);
+}
+.cs-included__card h3 {
+  font-size: 1.08rem;
+  font-weight: 800;
+  margin: 0 0 var(--hv-s5);
+  padding-bottom: var(--hv-s5);
+  border-bottom: 1px solid var(--hv-border);
+}
+
+.cs-included__card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.cs-included__card li { display: flex; align-items: flex-start; gap: 9px; font-size: var(--hv-fs-sm); line-height: 1.55; color: var(--hv-text-muted); }
+.cs-included__card li svg { width: 16px; height: 16px; color: var(--hv-accent-strong); flex-shrink: 0; margin-top: 3px; }
+
+@media (max-width: 980px) { .cs-included__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) { .cs-included__grid { grid-template-columns: 1fr; } }
+
+/* -- 4. Journey bar + stepper with proof panels --------------------------------- */
+
+.cs-journey {
+  list-style: none;
+  margin: 0 0 var(--hv-s10);
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  position: relative;
+}
+.cs-journey::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 12.5%;
+  right: 12.5%;
+  height: 2px;
+  background: rgba(255, 255, 255, .14);
+}
+.cs-journey li { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+.cs-journey__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--hv-accent-bright);
+  box-shadow: 0 0 0 4px rgba(53, 217, 160, .18);
+  position: relative;
+  z-index: 1;
+  margin-bottom: var(--hv-s3);
+}
+.cs-journey b { font-family: var(--hv-font); font-size: .92rem; font-weight: 700; color: var(--hv-on-dark); }
+.cs-journey span:last-child { font-size: var(--hv-fs-xs); color: var(--hv-on-dark-muted); }
+
+.cs-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--hv-s7); }
+.cs-step {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+  gap: clamp(24px, 4vw, 52px);
+  align-items: center;
+  padding: var(--hv-s7);
+  border-radius: var(--cs-radius);
+  background: rgba(255, 255, 255, .04);
+  border: 1px solid rgba(255, 255, 255, .1);
+}
+/* Alternating sides, so the column of proof panels does not read as a
+   second, separate list running down the page. */
+.cs-step:nth-child(even) .cs-step__copy { order: 2; }
+
+.cs-step__head { display: flex; align-items: center; gap: var(--hv-s4); margin-bottom: var(--hv-s5); }
+.cs-step__num {
+  font-family: var(--hv-font);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: rgba(53, 217, 160, .55);
+}
+.cs-step__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--hv-grad-accent);
+  color: #fff;
+}
+.cs-step__icon svg { width: 19px; height: 19px; }
+
+.cs-step h3 { font-size: 1.15rem; font-weight: 800; color: var(--hv-on-dark); margin: 0 0 var(--hv-s3); }
+.cs-step p { font-family: var(--hv-font-body); font-size: var(--hv-fs-sm); line-height: 1.65; color: var(--hv-on-dark-muted); margin: 0 0 var(--hv-s5); }
+
+.cs-step__deliverable {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 13px;
+  border-radius: var(--hv-r-pill);
+  background: rgba(53, 217, 160, .1);
+  border: 1px solid rgba(53, 217, 160, .28);
+  font-size: var(--hv-fs-xs);
+  font-weight: 700;
+  color: var(--hv-accent-bright);
+}
+.cs-step__deliverable svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+/* The proof panels - four shapes, one frame. */
+.cs-proof {
+  padding: var(--hv-s5);
+  border-radius: var(--hv-r-md);
+  background: rgba(0, 0, 0, .26);
+  border: 1px solid rgba(255, 255, 255, .1);
+}
+.cs-proof__cap {
+  display: block;
+  font-size: .66rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--hv-on-dark-muted);
+  margin-bottom: var(--hv-s4);
+}
+.cs-proof ul,
+.cs-proof ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+
+.cs-proof__notes li {
+  position: relative;
+  padding-left: 14px;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: .74rem;
+  line-height: 1.5;
+  color: var(--hv-on-dark);
+}
+.cs-proof__notes li::before { content: "-"; position: absolute; left: 0; color: var(--hv-accent-bright); }
+
+.cs-proof__pipeline li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .05);
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--hv-on-dark);
+}
+.cs-proof__pipeline li span {
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(53, 217, 160, .2);
+  font-size: .62rem;
+  font-weight: 800;
+  color: var(--hv-accent-bright);
+}
+
+.cs-proof__status li,
+.cs-proof__checks li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: .78rem;
+  line-height: 1.45;
+}
+.cs-proof__status li svg,
+.cs-proof__checks li svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; }
+.cs-proof__status li.is-done { color: var(--hv-on-dark); }
+.cs-proof__status li.is-done svg { color: var(--hv-accent-bright); }
+.cs-proof__status li.is-pending { color: var(--hv-on-dark-muted); }
+.cs-proof__checks li { color: var(--hv-on-dark); }
+.cs-proof__checks li svg { color: var(--hv-accent-bright); }
+
+@media (max-width: 860px) {
+  .cs-step { grid-template-columns: 1fr; }
+  .cs-step:nth-child(even) .cs-step__copy { order: 0; }
+}
+@media (max-width: 620px) {
+  .cs-journey { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--hv-s6) 0; }
+  .cs-journey::before { display: none; }
+}
+
+/* -- 5. Who we work with -------------------------------------------------------- */
+
+.cs-who__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--hv-s5); }
+.cs-who__grid > li {
+  display: flex;
+  gap: var(--hv-s5);
+  padding: var(--hv-s7);
+  border-radius: var(--cs-radius);
+  background: #fff;
+  border: 1px solid var(--hv-border);
+
+  box-shadow: var(--hv-sh-sm);
+  transition: transform var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease);
+}
+.cs-who__grid > li:hover { transform: translateY(-4px); box-shadow: var(--hv-sh-lg); }
+.cs-who__icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 13px;
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+}
+.cs-who__icon svg { width: 21px; height: 21px; }
+.cs-who__grid h3 { font-size: 1.05rem; font-weight: 700; margin: 0 0 var(--hv-s2); }
+.cs-who__grid p { font-size: var(--hv-fs-sm); line-height: 1.6; color: var(--hv-text-muted); margin: 0; }
+
+@media (max-width: 760px) { .cs-who__grid { grid-template-columns: 1fr; } }
+@media (max-width: 440px) { .cs-who__grid > li { flex-direction: column; gap: var(--hv-s4); } }
+
+/* -- 6. Why GHLevelUp: numbered rows --------------------------------------------- */
+
+.cs-why__rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--hv-s4); }
+.cs-why__rows > li {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--hv-s5);
+  padding: var(--hv-s6) var(--hv-s7);
+  border-radius: var(--cs-radius);
+  background: #fff;
+  border: 1px solid var(--hv-border);
+  transition: border-color var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease);
+}
+.cs-why__rows > li:hover { border-color: var(--hv-accent-bright); box-shadow: var(--hv-sh-md); }
+.cs-why__num {
+  font-family: var(--hv-font);
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  color: var(--hv-border-strong);
+}
+.cs-why__icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+}
+.cs-why__icon svg { width: 19px; height: 19px; }
+.cs-why__rows h3 { font-size: 1.05rem; font-weight: 700; margin: 0 0 4px; }
+.cs-why__rows p { font-size: var(--hv-fs-sm); line-height: 1.6; color: var(--hv-text-muted); margin: 0; }
+
+@media (max-width: 620px) {
+  .cs-why__rows > li { grid-template-columns: auto minmax(0, 1fr); row-gap: var(--hv-s4); }
+  .cs-why__num { grid-row: 1; }
+  .cs-why__icon { display: none; }
+}
+
+/* -- 7. FAQ ----------------------------------------------------------------------- */
+
+.cs-faq__list { max-width: 780px; margin: 0 auto; }
+
+/* -- 8. Reviews -------------------------------------------------------------------- */
+
+.cs-reviews__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--hv-s5); }
+.cs-review {
+  position: relative;
+  height: 100%;
+  margin: 0;
+  padding: var(--hv-s7) var(--hv-s6) var(--hv-s6);
+  border-radius: var(--cs-radius);
+  background: rgba(255, 255, 255, .04);
+  border: 1px solid rgba(255, 255, 255, .1);
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--hv-dur) var(--hv-ease), border-color var(--hv-dur) var(--hv-ease);
+}
+.cs-review:hover { transform: translateY(-4px); border-color: rgba(53, 217, 160, .4); }
+.cs-review__mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(53, 217, 160, .14);
+  color: var(--hv-accent-bright);
+  margin-bottom: var(--hv-s5);
+}
+.cs-review__mark svg { width: 16px; height: 16px; }
+.cs-review blockquote {
+  margin: 0 0 var(--hv-s6);
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.7;
+  color: var(--hv-on-dark);
+}
+.cs-review figcaption { margin-top: auto; padding-top: var(--hv-s5); border-top: 1px solid rgba(255, 255, 255, .1); }
+.cs-review figcaption b { display: block; font-family: var(--hv-font); font-size: .92rem; color: #fff; }
+.cs-review figcaption span { font-size: var(--hv-fs-xs); color: var(--hv-on-dark-muted); }
+
+@media (max-width: 900px) { .cs-reviews__grid { grid-template-columns: 1fr; } }
+
+/* -- 9. Closing CTA + contact ------------------------------------------------------ */
+
+.cs-closing__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .95fr);
+  gap: clamp(32px, 5vw, 64px);
+  align-items: center;
+}
+.cs-closing__copy .hv-h2 { margin: var(--hv-s3) 0 var(--hv-s5); }
+.cs-closing__ctas { display: flex; flex-wrap: wrap; gap: var(--hv-s4); margin-top: var(--hv-s7); }
+
+.cs-contact { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--hv-s4); }
+.cs-contact > li {
+  display: flex;
+  gap: var(--hv-s4);
+  padding: var(--hv-s5);
+  border-radius: var(--hv-r-lg);
+  background: var(--hv-bg-mint);
+}
+.cs-contact > li > span {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--hv-accent-strong);
+}
+.cs-contact svg { width: 17px; height: 17px; }
+.cs-contact b { display: block; font-size: var(--hv-fs-xs); font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--hv-text-muted); margin-bottom: 3px; }
+.cs-contact a,
+.cs-contact__plain { display: block; font-family: var(--hv-font); font-size: .92rem; font-weight: 700; color: var(--hv-text); text-decoration: none; line-height: 1.4; }
+.cs-contact a:hover { color: var(--hv-accent-strong); text-decoration: underline; text-underline-offset: 3px; }
+.cs-contact small { display: block; font-size: var(--hv-fs-xs); color: var(--hv-text-muted); margin-top: 4px; }
+
+@media (max-width: 900px) { .cs-closing__grid { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .cs-contact { grid-template-columns: 1fr; } }

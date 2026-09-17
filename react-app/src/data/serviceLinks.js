@@ -54,6 +54,30 @@ export const SERVICES = {
     icon: "globe",
     blurb: "Fast, responsive pages built to convert, not just to look right in a screenshot.",
   },
+  "social-media-marketing": {
+    slug: "social-media-marketing",
+    title: "Social Media Marketing",
+    icon: "megaphone",
+    blurb: "Content planned, scheduled and posted on a cadence you don't have to think about.",
+  },
+  "email-sms-campaigns": {
+    slug: "email-sms-campaigns",
+    title: "Email & SMS Campaigns",
+    icon: "mail",
+    blurb: "Sequences that follow up on every lead without anyone having to remember.",
+  },
+  "reporting-dashboards": {
+    slug: "reporting-dashboards",
+    title: "Reporting Dashboards",
+    icon: "lineChart",
+    blurb: "Source, conversion and revenue visible in one place, without exporting a spreadsheet.",
+  },
+  "crm-sub-account-setup": {
+    slug: "crm-sub-account-setup",
+    title: "CRM & Sub-account Setup",
+    icon: "building",
+    blurb: "Account structure, pipelines, compliance and migration configured before you log in.",
+  },
 };
 
 /** Helper so a page can ask for its own related set by slug. */
@@ -153,6 +177,66 @@ export const RELATED = {
     {
       slug: "ai-agents-chatbots",
       why: "The chat widget on the site, answering questions and booking instead of collecting a form nobody reads.",
+    },
+  ],
+
+  "social-media-marketing": [
+    {
+      slug: "websites-landing-pages",
+      why: "A post can only send people somewhere. This is the page it sends them to, built to actually convert.",
+    },
+    {
+      slug: "email-sms-campaigns",
+      why: "A follower is rented attention. This is how you turn one into an address and a number you actually own.",
+    },
+    {
+      slug: "ai-agents-chatbots",
+      why: "Every comment and DM a post generates lands in the same inbox this answers - none of it goes missing.",
+    },
+  ],
+
+  "email-sms-campaigns": [
+    {
+      slug: "workflow-automation",
+      why: "A sequence is an automation with a subject line. This is the rest of what triggers, waits and branches on your data.",
+    },
+    {
+      slug: "social-media-marketing",
+      why: "The list has to come from somewhere. This is how it keeps growing instead of slowly going stale.",
+    },
+    {
+      slug: "ai-agents-chatbots",
+      why: "A missed call becomes the first text in the sequence automatically - the two are built to hand off to each other.",
+    },
+  ],
+
+  "reporting-dashboards": [
+    {
+      slug: "api-tool-integrations",
+      why: "A dashboard can only show what it can reach. This is how the sources it reads from actually get connected.",
+    },
+    {
+      slug: "gohighlevel-sub-accounts",
+      why: "The platform most of this data already lives in - configured properly, it's most of the connection work already done.",
+    },
+    {
+      slug: "workflow-automation",
+      why: "A dashboard tells you what's happening. This is what acts on it automatically once you've seen it.",
+    },
+  ],
+
+  "crm-sub-account-setup": [
+    {
+      slug: "workflow-automation",
+      why: "A structured CRM is the foundation. This is what starts running on top of it once the pipelines exist.",
+    },
+    {
+      slug: "api-tool-integrations",
+      why: "Setup connects the obvious tools. This is the custom joins for anything without a ready-made connector.",
+    },
+    {
+      slug: "reporting-dashboards",
+      why: "Clean structure is what makes reporting possible at all - this is the view you get once the data has a shape.",
     },
   ],
 };

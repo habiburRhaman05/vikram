@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout.jsx";
 import PageMeta from "@/components/common/PageMeta.jsx";
@@ -13,11 +14,13 @@ import RelatedServices from "@/components/services/RelatedServices.jsx";
 import {
   API_HERO,
   API_TRUTH,
+  API_HUB,
   API_GRID,
   API_PROCESS,
   API_EFFECT,
   API_INTRO,
   API_DETAILS,
+  API_DOCS,
   API_USECASES,
   API_WORK,
   API_BENEFITS,
@@ -35,28 +38,64 @@ import "@/styles/service-detail.css";
 /**
  * /services/api-tool-integrations.
  *
- * Six sections: the hero, what a connection actually is, the joins we build
- * most often, how one gets built, what changes afterwards, and the FAQ that
- * doubles as the contact card. Every section ends with the next step, so
- * there is always a route out of the page from where the reader is.
+ * The hero's visual anchor is our own mark connected to GoHighLevel's, with
+ * an animated "syncing" link - not a generic hub icon - and every icon
+ * plate on the page that can carry a real partner's mark (GoHighLevel,
+ * Google Calendar, Twilio, Zocdoc) does, rather than a generic glyph.
  *
+ * Sections: the hero, the connection hub (four concrete sync examples),
+ * what a connection actually is, the joins we build most often, how one
+ * gets built (with an illustrative authorization-screen mock in place of a
+ * stock photo), the detail, a developer-facing tabbed code sample, who it's
+ * for, representative work, benefits, what changes afterwards, and the FAQ
+ * that doubles as the contact card. Every section ends with the next step,
+ * so there is always a route out of the page from where the reader is.
  */
 
 /* -- Sections -------------------------------------------------------------- */
 
+/** The hero's central visual anchor: our own mark and GoHighLevel's,
+ *  connected by a line with a bright segment that slides along it on a
+ *  loop - "connected and syncing" shown rather than told. Hardcoded here
+ *  rather than in the data file, same reasoning as the other heroes'
+ *  mocks: it's decoration for this hero specifically, not page copy. */
+function LogoSync() {
+  return (
+    <div className="sd-heromock sd-logosync" aria-hidden="true">
+      <div className="sd-logosync__row">
+        <div className="sd-logosync__badge">
+          <img src="/img/logo.png" alt="" width={44} height={44} loading="eager" decoding="async" />
+          <span>GHLevelUp</span>
+        </div>
+
+        <span className="sd-logosync__link" />
+
+        <div className="sd-logosync__badge">
+          <img src="/img/integrations/gohighlevel.png" alt="" width={44} height={44} loading="eager" decoding="async" />
+          <span>GoHighLevel</span>
+        </div>
+      </div>
+
+      <div className="sd-logosync__status">
+        <span>Connected &amp; syncing</span>
+      </div>
+    </div>
+  );
+}
+
 function Hero() {
   return (
-    <section className="sd-hero">
+    <section className="sd-hero sd-hero--split">
       <div className="hv-container sd-hero__inner">
-        <Reveal>
-          <p className="sd-hero__crumbs">
+        <Reveal as="p" className="sd-hero__crumbs">
             <Link to="/">Home</Link>
             <span>/</span>
             <Link to="/services">Services</Link>
             <span>/</span>
             API &amp; Tool Integrations
-          </p>
+        </Reveal>
 
+        <Reveal>
           <span className="sd-hero__eyebrow">{API_HERO.eyebrow}</span>
 
           <h1 className="sd-hero__title">
@@ -74,10 +113,68 @@ function Hero() {
               {API_HERO.secondary.label}
             </Btn>
           </div>
+        </Reveal>
 
+        <Reveal index={1}>
+          <LogoSync />
         </Reveal>
       </div>
     </section>
+  );
+}
+
+/**
+ * The connection hub: four concrete examples of what syncs, each paired
+ * with the real mark of the system on the other end where we have one -
+ * Google Calendar, Twilio - and a plain icon where the other side is
+ * "whatever tool you use" rather than one named vendor (web forms,
+ * billing). GoHighLevel's own mark anchors every card, since every example
+ * here is GoHighLevel talking to something else.
+ */
+function ConnectionHub() {
+  return (
+    <HvSection className="sd-hubsec">
+      <Reveal className="sd-grid-head">
+        <span className="hv-eyebrow">{API_HUB.eyebrow}</span>
+        <h2 className="hv-h2">{API_HUB.title}</h2>
+        <p className="hv-lede">{API_HUB.lede}</p>
+      </Reveal>
+
+      <ul className="sd-hub-cards">
+        {API_HUB.items.map((item, i) => (
+          <Reveal as="li" key={item.category} index={i}>
+            <article className="sd-hub-card">
+              <div className="sd-hub-card__pair">
+                <span className="sd-hub-card__mark">
+                  <img src="/img/integrations/gohighlevel.png" alt="" width={18} height={18} loading="lazy" decoding="async" />
+                </span>
+                <span className="sd-hub-card__plus" aria-hidden="true">
+                  +
+                </span>
+                <span className="sd-hub-card__mark">
+                  {item.partnerLogo ? (
+                    <img
+                      src={`/img/integrations/${item.partnerLogo}.png`}
+                      alt=""
+                      width={18}
+                      height={18}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <Icon name={item.partnerIcon} />
+                  )}
+                </span>
+              </div>
+
+              <h3>{item.category}</h3>
+              <span className="sd-hub-card__with">with {item.partnerLabel}</span>
+              <p>{item.body}</p>
+            </article>
+          </Reveal>
+        ))}
+      </ul>
+    </HvSection>
   );
 }
 
@@ -140,7 +237,11 @@ function WhatWeConnect() {
           <Reveal as="li" key={item.title} index={i}>
             <article className="sd-card">
               <span className="sd-card__icon" aria-hidden="true">
-                <Icon name={item.icon} />
+                {item.logo ? (
+                  <img src={`/img/integrations/${item.logo}.png`} alt="" width={24} height={24} loading="lazy" decoding="async" />
+                ) : (
+                  <Icon name={item.icon} />
+                )}
               </span>
               <h3>{item.title}</h3>
               <p>{item.body}</p>
@@ -155,6 +256,45 @@ function WhatWeConnect() {
         </Btn>
       </Reveal>
     </HvSection>
+  );
+}
+
+/** The illustrative "authorize the connection" screen replacing a stock
+ *  desk photo - clearly a mockup, not a reproduction of GoHighLevel's real
+ *  product UI, which we have no rights to screenshot and pass off as one. */
+function AuthMock() {
+  return (
+    <div className="sd-heromock sd-authmock" aria-hidden="true">
+      <div className="sd-authmock__head">
+        <b>Connect your GoHighLevel account</b>
+        <span>Step 3 of 4 - Authorize</span>
+      </div>
+
+      <div className="sd-authmock__body">
+        <div className="sd-authmock__field">
+          <label>Location ID</label>
+          <div>
+            <Icon name="key" />
+            loc_8f2c1a
+          </div>
+        </div>
+
+        <div className="sd-authmock__field">
+          <label>API key</label>
+          <div>
+            <Icon name="shieldCheck" />
+            <span className="sd-authmock__dots">••••••••••••3f9d</span>
+          </div>
+        </div>
+
+        <span className="sd-authmock__btn">
+          <Icon name="check" />
+          Authorize connection
+        </span>
+      </div>
+
+      <span className="sd-authmock__tag">Illustrative setup screen</span>
+    </div>
   );
 }
 
@@ -190,28 +330,7 @@ function Process() {
         </Reveal>
 
         <Reveal className="sd-proc__media" index={1}>
-          <div className="sd-proc__frame">
-            <picture>
-              <source type="image/webp" srcSet={API_PROCESS.imageWebp} />
-              <img
-                src={API_PROCESS.image}
-                alt={API_PROCESS.imageAlt}
-                width={1240}
-                height={930}
-                loading="lazy"
-                decoding="async"
-              />
-            </picture>
-          </div>
-
-          <div className="sd-proc__chips" aria-hidden="true">
-            {API_PROCESS.chips.map((chip) => (
-              <span className="sd-proc__chip" key={chip.label}>
-                <Icon name={chip.icon} />
-                <span>{chip.label}</span>
-              </span>
-            ))}
-          </div>
+          <AuthMock />
         </Reveal>
       </div>
     </HvSection>
@@ -317,6 +436,53 @@ function Details() {
   );
 }
 
+/**
+ * Developers / API documentation: a dark, tabbed code box. Illustrative
+ * REST examples, not a live endpoint - see the note under the panel and
+ * the data file's own comment on why these are examples rather than a
+ * public API reference.
+ */
+function ApiDocs() {
+  const [active, setActive] = useState(0);
+  const tab = API_DOCS.tabs[active];
+
+  return (
+    <HvSection dark className="sd-docs-sec">
+      <Reveal className="sd-grid-head">
+        <span className="hv-eyebrow">{API_DOCS.eyebrow}</span>
+        <h2 className="hv-h2">{API_DOCS.title}</h2>
+        <p className="hv-body">{API_DOCS.lede}</p>
+      </Reveal>
+
+      <Reveal className="sd-heromock sd-docs" index={1}>
+        <div className="sd-docs__tabs" role="tablist">
+          {API_DOCS.tabs.map((t, i) => (
+            <button
+              key={t.label}
+              type="button"
+              role="tab"
+              aria-selected={i === active}
+              className={i === active ? "is-active" : ""}
+              onClick={() => setActive(i)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        <pre className="sd-docs__panel">
+          <code>{tab.code}</code>
+        </pre>
+
+        <p className="sd-docs__note">
+          <Icon name="shieldCheck" aria-hidden="true" />
+          {API_DOCS.note}
+        </p>
+      </Reveal>
+    </HvSection>
+  );
+}
+
 function UseCases() {
   return (
     <HvSection>
@@ -417,7 +583,15 @@ function Benefits() {
 function FaqSection() {
   return (
     <HvSection className="sd-faq">
-      <StructuredData faq={API_FAQ.items} />
+      <StructuredData
+        faq={API_FAQ.items}
+        service={SEO}
+        crumbs={[
+          { name: "Home", path: "/" },
+          { name: "Services", path: "/services" },
+          { name: SEO.name, path: `/services/${SEO.slug}` },
+        ]}
+      />
 
       <div className="sd-faq__inner">
         <Reveal>
@@ -436,6 +610,18 @@ function FaqSection() {
   );
 }
 
+/* One definition of this page's search identity, read by both its <PageMeta>
+   and its Service structured data below - so the title, the description and
+   the schema can never describe the same page three slightly different ways. */
+const SEO = {
+  slug: "api-tool-integrations",
+  name: "API & Tool Integrations",
+  description:
+    "CRM, calendars, telephony, billing, checkout and practice platforms joined up, so one record moves between the tools you already use.",
+  ogDescription:
+    "We connect the platforms your business already runs on and document the map, so a booking, payment or enquiry is written everywhere it matters, once.",
+};
+
 export default function ServiceApiIntegrations() {
   return (
     <Layout
@@ -446,19 +632,17 @@ export default function ServiceApiIntegrations() {
         </>
       }
     >
-      <PageMeta
-        title="API & Tool Integrations - GHLevelUp"
-        description="CRM, calendars, telephony, billing, checkout and practice platforms joined up, so one record moves between the tools you already use."
-        ogDescription="We connect the platforms your business already runs on and document the map, so a booking, payment or enquiry is written everywhere it matters, once."
-      />
+      <PageMeta title={`${SEO.name} - GHLevelUp`} description={SEO.description} ogDescription={SEO.ogDescription} />
 
       <div className="sd-pg">
         <Hero />
+        <ConnectionHub />
         <Intro />
         <OneTruth />
         <WhatWeConnect />
         <Process />
         <Details />
+        <ApiDocs />
         <UseCases />
         <Work />
         <Benefits />

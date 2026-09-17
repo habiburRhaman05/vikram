@@ -1,0 +1,1177 @@
+/* ==========================================================================
+   /services/websites-landing-pages - the Websites & Landing Pages page
+   --------------------------------------------------------------------------
+   The second of the two "Funnels, Websites & GHL" detail pages. Same
+   section set as the Funnel page (service-funnels.css) - that is the
+   specified order - but this file composes every one of them differently,
+   so the two pages never read as the same template with the words swapped:
+
+   - hero: centred, no photo, a CODED browser-window mock (the Funnel page's
+     hero is a split with a portrait photo)
+   - overview: photo-left, prose-right, compact fact tiles (not a strip)
+   - anatomy: LIGHT numbered editorial rows with a right-aligned "test" line
+     (the Funnel page renders its stages as a dark film-strip)
+   - includes: white cards with an accent top edge, one wide + five
+   - process: LIGHT section, 2x2 numbered steps around a centre photo
+   - journey: dark chevron band (the Funnel page's journey is a light grid)
+   - who: three-column tiles (the Funnel page uses hairline rows)
+   - why: white spec-sheet list with a numbered side rail
+   - faq: dark section, FAQ left, contact card right (mirrored emphasis)
+   - review: light star card
+   - closing: centred contact-page form embed + CtaBand
+
+   Built on the v2 tokens (--hv-*) and primitives. Scope: every class is
+   prefixed .wb- so nothing here can leak onto another route.
+
+   HERO / HEADER COUPLING: `.wb-hero` is registered in the
+   `.home-v2 .hv-hero, .home-v2 .page-hero, .home-v2 .sd-hero, .home-v2
+   .fnl-hero, .home-v2 .wb-hero, ...` rule in home-chrome.css, which pulls
+   the hero up under the transparent header and adds the header's height
+   back as padding. If this hero is ever renamed, that rule has to be
+   updated with it, or the page opens with a white strip behind the logo.
+
+   Contents
+     01. Hero (centred + coded browser mock)
+     02. Overview (photo + prose + fact tiles)
+     03. Anatomy (light editorial rows)
+     04. Includes (accent-edge cards)
+     05. Process (light 2x2 + photo)
+     06. Journey (dark chevron band)
+     07. Who (three-column tiles)
+     08. Why (spec-sheet list)
+     09. FAQ (dark, card right)
+     10. Review (light star card)
+     11. Closing (form embed + CtaBand)
+     12. Responsive
+     13. Reduced motion
+   ========================================================================== */
+
+
+/* 01. Hero ================================================================== */
+
+.wb-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-bottom: clamp(60px, 6vw, 104px);
+  /* The one hero background shared by every service detail page, so the
+     family of pages still opens as one family - what differs here is the
+     composition, not the palette. */
+  background: radial-gradient(120% 140% at 14% -10%, #0E4B3E 0%, var(--hv-bg-dark) 46%, var(--hv-bg-dark-2) 100%);
+  color: #fff;
+}
+
+.wb-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(53, 217, 160, .08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(53, 217, 160, .08) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(65% 65% at 50% 0%, #000 0%, transparent 75%);
+  -webkit-mask-image: radial-gradient(65% 65% at 50% 0%, #000 0%, transparent 75%);
+}
+
+/* Centred single column - the opposite composition from the Funnel page's
+   split hero. */
+.wb-hero__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.wb-hero__crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 var(--hv-s5);
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-on-dark-muted);
+}
+.wb-hero__crumbs a { color: inherit; text-decoration: none; }
+.wb-hero__crumbs a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.wb-hero__crumbs span[aria-hidden] { opacity: .6; }
+
+.wb-hero__eyebrow {
+  display: inline-block;
+  margin-bottom: var(--hv-s4);
+  font-size: var(--hv-fs-eyebrow);
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+
+.wb-hero__title {
+  margin: 0 0 var(--hv-s5);
+  max-width: 18ch;
+  font-family: var(--hv-font);
+  font-size: clamp(2.3rem, 1.5rem + 3vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -.03em;
+  text-wrap: balance;
+}
+.wb-hero__title span { color: var(--hv-accent-bright); }
+
+.wb-hero__lede {
+  margin: 0 0 var(--hv-s7);
+  max-width: 64ch;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-lede);
+  line-height: 1.65;
+  color: var(--hv-on-dark);
+}
+
+.wb-hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--hv-s4);
+}
+
+.wb-hero__chips {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--hv-s3) var(--hv-s5);
+  margin: var(--hv-s7) 0 0;
+  padding: var(--hv-s5) 0 0;
+  border-top: 1px solid var(--hv-border-dark);
+}
+.wb-hero__chips li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 600;
+  color: var(--hv-on-dark);
+}
+.wb-hero__chips svg { width: 16px; height: 16px; color: var(--hv-accent-bright); flex-shrink: 0; }
+
+/* The coded browser-window mock: the page being judged - what-you-do and
+   who-for in the first screen, one action repeated, and the three-second
+   judgement rendered as the mock itself. Drawn as markup rather than a
+   photo so it stays sharp and carries no claim about a real client. */
+.wb-hero__mock {
+  width: min(680px, 100%);
+  margin: var(--hv-s9) auto 0;
+  border-radius: var(--hv-r-lg);
+  background: #fff;
+  color: var(--hv-text);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, .42);
+  outline: 1px solid var(--hv-border-dark);
+  overflow: hidden;
+  text-align: left;
+}
+
+.wb-mock__bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--hv-border);
+  background: var(--hv-bg-mint);
+}
+.wb-mock__dots { display: flex; gap: 5px; }
+.wb-mock__dots i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--hv-border-strong);
+}
+.wb-mock__url {
+  flex: 1;
+  padding: 4px 12px;
+  border-radius: var(--hv-r-pill);
+  background: #fff;
+  border: 1px solid var(--hv-border);
+  font-family: var(--hv-font);
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--hv-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wb-mock__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr);
+  gap: var(--hv-s6);
+  padding: var(--hv-s6);
+}
+
+.wb-mock__kicker {
+  display: inline-block;
+  width: 84px;
+  height: 8px;
+  border-radius: var(--hv-r-pill);
+  background: var(--hv-accent-bright);
+  opacity: .85;
+}
+.wb-mock__h1 {
+  margin: var(--hv-s4) 0;
+  font-family: var(--hv-font);
+  font-size: clamp(1.15rem, 1rem + .6vw, 1.45rem);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.2;
+}
+.wb-mock__sub {
+  margin: 0 0 var(--hv-s5);
+  font-family: var(--hv-font-body);
+  font-size: .82rem;
+  line-height: 1.55;
+  color: var(--hv-text-muted);
+  max-width: 34ch;
+}
+
+.wb-mock__ctas { display: flex; gap: var(--hv-s3); }
+.wb-mock__btn {
+  padding: 8px 14px;
+  border-radius: var(--hv-r-pill);
+  font-family: var(--hv-font);
+  font-size: .74rem;
+  font-weight: 700;
+}
+.wb-mock__btn--solid { background: var(--hv-accent-strong); color: #fff; }
+.wb-mock__btn--ghost { outline: 1px solid var(--hv-border-strong); color: var(--hv-text); }
+
+/* The right rail of the mock: what the visitor checks in the first three
+   seconds, rendered as the page's own checklist. */
+.wb-mock__side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: var(--hv-s5);
+  border: 1px dashed var(--hv-border-strong);
+  border-radius: var(--hv-r-md);
+  background: var(--hv-bg-mint);
+}
+.wb-mock__check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--hv-font);
+  font-size: .74rem;
+  font-weight: 700;
+  color: var(--hv-text);
+}
+.wb-mock__check svg { width: 14px; height: 14px; color: var(--hv-accent-strong); flex-shrink: 0; }
+
+/* The judgement timer: the hero's own claim, drawn as the thing itself. */
+.wb-mock__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--hv-border);
+  font-family: var(--hv-font);
+  font-size: .7rem;
+  font-weight: 700;
+  color: var(--hv-accent-strong);
+}
+.wb-mock__meta svg { width: 14px; height: 14px; }
+
+/* 02. Overview ============================================================== */
+
+.wb-overview { padding-block: var(--hv-section-y); }
+
+.wb-overview__inner {
+  display: grid;
+  grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+  gap: clamp(36px, 5vw, 72px);
+  align-items: center;
+}
+
+/* The overview's visual: the real build photo, framed with an offset mint
+   plate behind it - a different framing treatment from the hero photo on
+   the Funnel page. */
+.wb-overview__media {
+  position: relative;
+}
+.wb-overview__media::before {
+  content: "";
+  position: absolute;
+  inset: 24px -20px -20px 24px;
+  border-radius: var(--hv-r-lg);
+  background: var(--hv-bg-mint-deep);
+}
+.wb-overview__frame {
+  position: relative;
+  z-index: 1;
+  border-radius: var(--hv-r-lg);
+  overflow: hidden;
+  box-shadow: var(--hv-sh-lg);
+}
+.wb-overview__frame img { display: block; width: 100%; height: auto; }
+
+.wb-overview__quote {
+  margin: 0 0 var(--hv-s6);
+  padding: var(--hv-s5) var(--hv-s6);
+  border-left: 3px solid var(--hv-accent);
+  border-radius: 0 var(--hv-r-md) var(--hv-r-md) 0;
+  background: var(--hv-bg-mint);
+}
+.wb-overview__quote p {
+  margin: 0 0 var(--hv-s3);
+  font-family: var(--hv-font);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -.015em;
+  color: var(--hv-text);
+  text-wrap: balance;
+}
+.wb-overview__quote span {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-text-muted);
+}
+
+.wb-overview__prose p {
+  margin: 0 0 var(--hv-s5);
+  font-family: var(--hv-font-body);
+  font-size: 1.02rem;
+  line-height: 1.75;
+  color: var(--hv-text);
+}
+.wb-overview__prose p:last-child { margin-bottom: 0; }
+
+/* Fact tiles: a 2x2 compact grid (the Funnel page's facts are a 4-wide
+   strip), tied together by a shared border. */
+.wb-facts {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: var(--hv-s9) 0 0;
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  overflow: hidden;
+  padding: 0;
+}
+.wb-facts li {
+  padding: var(--hv-s6);
+  background: #fff;
+  border-top: 1px solid var(--hv-border);
+  border-left: 1px solid var(--hv-border);
+}
+/* Remove the doubled inner edges. */
+.wb-facts li:nth-child(-n + 2) { border-top: 0; }
+.wb-facts li:nth-child(2n + 1) { border-left: 0; }
+
+.wb-facts b {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: clamp(1.5rem, 1.25rem + .9vw, 1.95rem);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--hv-accent-strong);
+}
+.wb-facts strong {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  color: var(--hv-text);
+}
+.wb-facts span {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.45;
+  color: var(--hv-text-muted);
+}
+
+
+/* 03. Anatomy: light editorial rows ========================================== */
+
+.wb-anatomy { padding-block: var(--hv-section-y); }
+
+.wb-decisions {
+  list-style: none;
+  display: grid;
+  margin: var(--hv-s8) 0 0;
+  padding: 0;
+  border-top: 1px solid var(--hv-border);
+}
+
+.wb-decision {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) minmax(0, .62fr) 44px;
+  gap: var(--hv-s6);
+  align-items: center;
+  padding: var(--hv-s6) var(--hv-s2);
+  border-bottom: 1px solid var(--hv-border);
+}
+
+.wb-decision__num {
+  font-family: var(--hv-font);
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: -.04em;
+  color: var(--hv-border-strong);
+  transition: color var(--hv-dur) var(--hv-ease);
+}
+.wb-decision:hover .wb-decision__num { color: var(--hv-accent-strong); }
+
+.wb-decision__body h3 {
+  margin: 0 0 var(--hv-s2);
+  font-family: var(--hv-font);
+  font-size: 1.12rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+}
+.wb-decision__body p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.6;
+  color: var(--hv-text-muted);
+}
+
+/* The right-aligned "test" line: the acceptance test for the decision,
+   visually separate from the description rather than another sentence. */
+.wb-decision__want {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+  font-family: var(--hv-font);
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--hv-accent-strong);
+  text-align: right;
+}
+.wb-decision__want svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+.wb-decision__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+}
+.wb-decision__icon svg { width: 20px; height: 20px; }
+
+.wb-anatomy__foot {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--hv-s8);
+}
+
+
+/* 04. Includes: accent-edge cards ============================================ */
+
+.wb-includes {
+  padding-block: var(--hv-section-y);
+  background: var(--hv-bg-mint);
+}
+
+.wb-sub { margin: var(--hv-s3) 0 0; font-family: var(--hv-font); font-weight: 700; color: var(--hv-accent-strong); }
+
+.wb-cards {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--hv-s5);
+  margin: var(--hv-s8) 0 0;
+  padding: 0;
+}
+
+/* Card anatomy: white tile, a 3px accent edge across the top, and the
+   icon inline with the title rather than stacked above it - the opposite
+   arrangement from the Funnel page's ghost-number cards. */
+.wb-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--hv-s6);
+  border-radius: var(--hv-r-lg);
+  background: #fff;
+  border-top: 3px solid var(--hv-accent);
+  box-shadow: var(--hv-sh-sm);
+  transition: transform var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease);
+}
+.wb-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--hv-sh-accent);
+}
+
+.wb-card__head {
+  display: flex;
+  align-items: center;
+  gap: var(--hv-s4);
+  margin-bottom: var(--hv-s4);
+}
+.wb-card__icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+}
+.wb-card__icon svg { width: 20px; height: 20px; }
+
+.wb-card h3 {
+  margin: 0;
+  font-family: var(--hv-font);
+  font-size: 1.06rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+}
+.wb-card p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.62;
+  color: var(--hv-text-muted);
+}
+
+/* The wide card: the first item spans two columns so the grid reads as
+   composed rather than uniform. */
+.wb-card--wide { grid-column: span 2; }
+
+
+/* 05. Process: light 2x2 + photo ============================================= */
+
+.wb-process { padding-block: var(--hv-section-y); }
+
+/* The 2x2 step grid wraps AROUND a centre photo: steps 1-2 left, photo
+   middle, steps 3-4 right - the Funnel page's process is a dark 4-across
+   band, so nothing about this reads as the same section. */
+.wb-process__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .9fr) minmax(0, 1fr);
+  grid-template-areas:
+    "a photo b"
+    "c photo d";
+  gap: var(--hv-s5) clamp(28px, 4vw, 56px);
+  align-items: stretch;
+  margin: var(--hv-s8) 0 0;
+}
+
+.wb-process__grid > :nth-child(1) { grid-area: a; }
+.wb-process__grid > :nth-child(2) { grid-area: b; }
+.wb-process__grid > :nth-child(3) { grid-area: c; }
+.wb-process__grid > :nth-child(4) { grid-area: d; }
+
+.wb-process__media {
+  grid-area: photo;
+  position: relative;
+  align-self: center;
+}
+.wb-process__frame {
+  border-radius: var(--hv-r-lg);
+  overflow: hidden;
+  box-shadow: var(--hv-sh-lg);
+}
+.wb-process__frame img { display: block; width: 100%; height: auto; }
+
+/* The verification chips sit INSIDE the photo's bottom edge on this
+   layout (the Funnel page overlaps its photo's top edge). */
+.wb-process__chips {
+  position: absolute;
+  left: var(--hv-s4);
+  right: var(--hv-s4);
+  bottom: var(--hv-s4);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hv-s2);
+}
+.wb-process__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: var(--hv-r-pill);
+  background: rgba(5, 46, 41, .88);
+  font-family: var(--hv-font);
+  font-size: .72rem;
+  font-weight: 700;
+  color: #fff;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.wb-process__chip svg { width: 13px; height: 13px; color: var(--hv-accent-bright); }
+
+.wb-step {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--hv-s3);
+  padding: var(--hv-s6);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: #fff;
+  box-shadow: var(--hv-sh-sm);
+}
+
+.wb-step__top {
+  display: flex;
+  align-items: baseline;
+  gap: var(--hv-s3);
+}
+.wb-step__num {
+  font-family: var(--hv-font);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  color: var(--hv-accent);
+}
+.wb-step__top h3 {
+  margin: 0;
+  font-family: var(--hv-font);
+  font-size: 1.08rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+}
+
+.wb-step__body {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.62;
+  color: var(--hv-text-muted);
+}
+
+.wb-step__proof {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: auto 0 0;
+  padding-top: var(--hv-s3);
+  border-top: 1px dashed var(--hv-border-strong);
+  font-family: var(--hv-font);
+  font-size: .8rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--hv-accent-strong);
+}
+.wb-step__proof svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 2px; }
+
+.wb-process__foot {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--hv-s8);
+}
+
+
+/* 06. Journey: dark chevron band ============================================= */
+
+.wb-journey {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: var(--hv-section-y);
+  background: var(--hv-bg-dark);
+  color: #fff;
+}
+.wb-journey > .hv-container { position: relative; z-index: 1; }
+
+.wb-journey .hv-eyebrow { color: var(--hv-accent-bright); }
+.wb-journey .hv-h2 { color: #fff; }
+.wb-journey .hv-lede { color: var(--hv-on-dark-muted); }
+
+/* Six stages joined by chevrons: the arrow is between the cells, not a
+   rail through them - a different connective tissue from the Funnel
+   page's journey grid. Each item is an <li> holding one cell and one
+   chevron; display:contents promotes both to grid items on desktop so
+   the eleven tracks alternate cell-arrow-cell-arrow... */
+.wb-flow {
+  list-style: none;
+  display: grid;
+  /* 6 cells spanning 2 + 5 chevron tracks = 17. */
+  grid-template-columns: repeat(17, minmax(0, 1fr));
+  gap: var(--hv-s4);
+  margin: var(--hv-s8) 0 0;
+  padding: 0;
+}
+
+.wb-flow__item { display: contents; }
+
+.wb-flow__cell {
+  grid-column: span 2;
+  padding: var(--hv-s5) var(--hv-s4);
+  border: 1px solid var(--hv-border-dark);
+  border-radius: var(--hv-r-md);
+  background: rgba(255, 255, 255, .04);
+  text-align: center;
+}
+
+/* The chevron columns. */
+.wb-flow__arrow {
+  grid-column: span 1;
+  align-self: center;
+  display: grid;
+  place-items: center;
+  color: var(--hv-accent-bright);
+  opacity: .7;
+}
+.wb-flow__arrow svg { width: 18px; height: 18px; }
+
+.wb-flow__icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin: 0 auto var(--hv-s3);
+  border-radius: 50%;
+  background: rgba(53, 217, 160, .12);
+  color: var(--hv-accent-bright);
+}
+.wb-flow__icon svg { width: 19px; height: 19px; }
+
+.wb-flow__step {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+.wb-flow__cell h3 {
+  margin: 4px 0 var(--hv-s2);
+  font-family: var(--hv-font);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: #fff;
+}
+.wb-flow__cell p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: .8rem;
+  line-height: 1.5;
+  color: var(--hv-on-dark-muted);
+}
+
+.wb-journey__foot {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--hv-s8);
+}
+
+
+/* 07. Who: three-column tiles ================================================= */
+
+.wb-who { padding-block: var(--hv-section-y); }
+
+.wb-who__grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--hv-s5);
+  margin: var(--hv-s8) 0 0;
+  padding: 0;
+}
+
+/* Quiet tiles: no card chrome, just the icon, the label and one line, so
+   the section reads lighter than the includes grid. */
+.wb-who__cell {
+  height: 100%;
+  padding: var(--hv-s5);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-md);
+  background: #fff;
+}
+
+.wb-who__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--hv-s4);
+  border-radius: 11px;
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+}
+.wb-who__icon svg { width: 19px; height: 19px; }
+
+.wb-who__cell h3 {
+  margin: 0 0 var(--hv-s2);
+  font-family: var(--hv-font);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+}
+.wb-who__cell p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.58;
+  color: var(--hv-text-muted);
+}
+
+
+/* 08. Why: spec-sheet list ==================================================== */
+
+.wb-why {
+  padding-block: var(--hv-section-y);
+  background: var(--hv-bg-mint);
+}
+
+.wb-why__inner {
+  display: grid;
+  grid-template-columns: minmax(0, .38fr) minmax(0, .62fr);
+  gap: clamp(36px, 5vw, 80px);
+  align-items: start;
+}
+
+.wb-why__intro { position: sticky; top: calc(var(--header-h, 80px) + var(--hv-s6)); }
+.wb-why__intro .hv-body { max-width: 36ch; }
+
+.wb-why__band {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hv-s4);
+  flex-wrap: wrap;
+  margin-top: var(--hv-s6);
+}
+
+/* The spec sheet: numbered rows with hairline rules - engineering-copy
+   energy rather than marketing cards. */
+.wb-specs {
+  list-style: none;
+  counter-reset: wb-spec;
+  margin: 0;
+  padding: 0;
+}
+
+.wb-specs li {
+  counter-increment: wb-spec;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: var(--hv-s5);
+  padding: var(--hv-s6) 0;
+  border-bottom: 1px solid var(--hv-border-strong);
+}
+.wb-specs li:first-child { padding-top: 0; }
+
+.wb-specs li::before {
+  content: "0" counter(wb-spec);
+  font-family: var(--hv-font);
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  color: var(--hv-accent);
+}
+
+.wb-specs h3 {
+  margin: 0 0 var(--hv-s2);
+  font-family: var(--hv-font);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+}
+.wb-specs h3 svg {
+  width: 17px;
+  height: 17px;
+  margin-left: 8px;
+  vertical-align: -2px;
+  color: var(--hv-accent-strong);
+}
+.wb-specs p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.65;
+  color: var(--hv-text-muted);
+}
+
+
+/* 09. FAQ: dark, card right ==================================================== */
+
+.wb-faq {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: var(--hv-section-y);
+  background:
+    radial-gradient(55% 55% at 88% 6%, rgba(14, 164, 107, .2) 0%, rgba(14, 164, 107, 0) 60%),
+    var(--hv-bg-dark);
+  color: #fff;
+}
+.wb-faq > .hv-container { position: relative; z-index: 1; }
+
+.wb-faq .hv-eyebrow { color: var(--hv-accent-bright); }
+.wb-faq .hv-h2 { color: #fff; }
+.wb-faq .hv-body { color: var(--hv-on-dark-muted); }
+
+.wb-faq__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, .65fr);
+  gap: clamp(36px, 5vw, 72px);
+  align-items: start;
+}
+
+/* The legacy .faq accordion on a dark surface: repoint the hairlines and
+   text, and pull the answer gutter back to what this narrow column
+   actually has. */
+.wb-faq .faq { border-top-color: var(--hv-border-dark); }
+.wb-faq .faq__item { border-bottom-color: var(--hv-border-dark); }
+.wb-faq .faq__q { color: #fff; }
+.wb-faq .faq__q:hover { color: var(--hv-accent-bright); }
+.wb-faq .faq__sign { border-color: var(--hv-border-dark); }
+.wb-faq .faq__a > div { padding: 0 28px 24px 0; }
+.wb-faq .faq__a p { color: var(--hv-on-dark-muted); }
+
+.wb-faq__aside {
+  position: sticky;
+  top: calc(var(--header-h, 80px) + var(--hv-s6));
+}
+
+.wb-contact-card {
+  padding: var(--hv-s6);
+  border-radius: var(--hv-r-lg);
+  background: #fff;
+  color: var(--hv-text);
+  box-shadow: 0 30px 64px rgba(0, 0, 0, .34);
+}
+.wb-contact-card__eyebrow {
+  display: block;
+  margin-bottom: var(--hv-s3);
+  font-size: var(--hv-fs-eyebrow);
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hv-accent-strong);
+}
+.wb-contact-card h2 {
+  margin: 0 0 var(--hv-s4);
+  font-family: var(--hv-font);
+  font-size: clamp(1.3rem, 1.1rem + .7vw, 1.6rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  color: var(--hv-text);
+  text-wrap: balance;
+}
+.wb-contact-card > div > p,
+.wb-contact-card > p {
+  margin: 0 0 var(--hv-s6);
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.65;
+  color: var(--hv-text-muted);
+}
+
+.wb-contact-card__list {
+  list-style: none;
+  display: grid;
+  gap: var(--hv-s3);
+  margin: var(--hv-s6) 0 0;
+  padding: var(--hv-s5) 0 0;
+  border-top: 1px solid var(--hv-border);
+}
+.wb-contact-card__list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-text);
+}
+.wb-contact-card__list a { color: inherit; text-decoration: none; }
+.wb-contact-card__list a:hover { color: var(--hv-accent-strong); text-decoration: underline; text-underline-offset: 3px; }
+.wb-contact-card__list svg { width: 16px; height: 16px; color: var(--hv-accent-strong); flex-shrink: 0; }
+
+.wb-contact-card__links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: var(--hv-s5) 0 0;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 600;
+}
+.wb-contact-card__links a { color: var(--hv-accent-strong); text-decoration: none; }
+.wb-contact-card__links a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.wb-contact-card__links span[aria-hidden] { color: var(--hv-text-muted); }
+
+
+/* 10. Review: light star card ================================================== */
+
+.wb-review { padding-block: var(--hv-section-y); }
+
+.wb-review__card {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: clamp(28px, 4vw, 48px);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-xl);
+  background: #fff;
+  box-shadow: var(--hv-sh-lg);
+}
+
+.wb-review__stars {
+  display: flex;
+  gap: 4px;
+  color: var(--hv-accent-strong);
+}
+.wb-review__stars svg { width: 18px; height: 18px; }
+
+.wb-review__quote {
+  margin: var(--hv-s5) 0 0;
+  font-family: var(--hv-font);
+  font-size: clamp(1.1rem, 1rem + .7vw, 1.4rem);
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -.015em;
+  color: var(--hv-text);
+  text-wrap: balance;
+}
+
+.wb-review__person {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--hv-s5);
+  flex-wrap: wrap;
+  margin-top: var(--hv-s7);
+  padding-top: var(--hv-s5);
+  border-top: 1px solid var(--hv-border);
+}
+.wb-review__who {
+  display: flex;
+  align-items: center;
+  gap: var(--hv-s4);
+}
+.wb-review__who img,
+.wb-review__who .hv-imgslot {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.wb-review__who img { object-fit: cover; }
+.wb-review__who strong {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--hv-text);
+}
+.wb-review__who em {
+  display: block;
+  font-style: normal;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-text-muted);
+}
+
+.wb-review__card .hv-btn { white-space: nowrap; }
+
+
+/* 11. Closing ================================================================== */
+
+.wb-closing { padding-block: 0 var(--hv-section-y); }
+
+.wb-closing .cta-band { margin: 0; }
+
+/* The centred contact embed: narrower than the Contact page's grid column
+   because this closing section is single-column rather than split. */
+.wb-embed {
+  max-width: 720px;
+  margin: var(--hv-s8) auto 0;
+}
+
+
+/* 12. Responsive ================================================================ */
+
+@media (max-width: 1060px) {
+  .wb-flow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* Chevrons only make sense in one row - hide them once the flow wraps,
+     and drop display:contents so each item lays out as a normal block. */
+  .wb-flow__item { display: block; }
+  .wb-flow__arrow { display: none; }
+  .wb-flow__cell { grid-column: auto; }
+
+  .wb-process__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "photo photo"
+      "a     b"
+      "c     d";
+  }
+
+  .wb-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wb-card--wide { grid-column: auto; }
+
+  .wb-who__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .wb-why__inner { grid-template-columns: minmax(0, 1fr); }
+  .wb-why__intro { position: static; }
+
+  .wb-decision { grid-template-columns: 52px minmax(0, 1fr) 44px; }
+  .wb-decision__want { display: none; }
+}
+
+@media (max-width: 900px) {
+  .wb-overview__inner { grid-template-columns: minmax(0, 1fr); }
+  /* Photo after prose on narrow screens. */
+  .wb-overview__media { order: 2; max-width: 560px; }
+
+  .wb-faq__inner { grid-template-columns: minmax(0, 1fr); }
+  .wb-faq__aside { position: static; }
+}
+
+@media (max-width: 640px) {
+  .wb-cards { grid-template-columns: minmax(0, 1fr); }
+  .wb-who__grid { grid-template-columns: minmax(0, 1fr); }
+
+  .wb-facts { grid-template-columns: minmax(0, 1fr); }
+  .wb-facts li:nth-child(-n + 2) { border-top: 1px solid var(--hv-border); }
+  .wb-facts li:first-child { border-top: 0; }
+  .wb-facts li:nth-child(2n + 1) { border-left: 1px solid var(--hv-border); }
+  .wb-facts li:first-child { border-left: 0; }
+
+  .wb-process__grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "photo"
+      "a"
+      "b"
+      "c"
+      "d";
+  }
+
+  .wb-mock__body { grid-template-columns: minmax(0, 1fr); }
+}
+
+
+/* 13. Reduced motion ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .wb-card,
+  .wb-card:hover,
+  .wb-decision__num,
+  .wb-decision:hover .wb-decision__num { transition: none; transform: none; }
+}

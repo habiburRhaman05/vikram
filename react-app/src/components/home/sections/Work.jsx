@@ -18,8 +18,8 @@ import { WORK } from "@/data/homeV2";
  *
  * Each card is one link (the title, stretched over the card), so there is
  * one tab stop per project and its accessible name is the project title.
- * There are no case-study pages yet, so every card leads to the contact
- * page - see the note on WORK in homeV2.jsx about the projects themselves.
+ * Cards link to that project's own /work/:slug page - see data/work.jsx,
+ * which extends these same five projects with the detail-page content.
  */
 export default function Work() {
   const [filter, setFilter] = useState("all");
@@ -72,7 +72,7 @@ export default function Work() {
 
               <div className="hv-works__body">
                 <h3 className="hv-works__name">
-                  <Link to={WORK.cta.to} className="hv-works__link">
+                  <Link to={`/work/${p.id}`} className="hv-works__link">
                     {p.title}
                   </Link>
                 </h3>

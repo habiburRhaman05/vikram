@@ -1,0 +1,1324 @@
+/**
+ * /services/ai-agents-chatbots - every section this page owns.
+ *
+ * THE ORDER IN HERE MIRRORS THE PAGE, and it is the same order the CRM &
+ * Sub-account Setup page uses (hero overview, overview + offerings, what's
+ * included, how it works, who we work with, why, FAQ, reviews, closing).
+ * The LAYOUT IS NOT SHARED WITH THAT PAGE: nothing below reuses a cs- class,
+ * and no section here borrows a shape from service-detail.css either. Where
+ * the CRM page is a blueprint/spec sheet - architecture tree, before/after
+ * states, sticky rail beside a ledger, stepper - this page is a console and
+ * signal desk:
+ *
+ *   .ai-spine     the four doors one agent answers, funnelling into one
+ *                 contact record (hero)
+ *   .ai-quote     the one line worth remembering, as a card beside the
+ *                 heading rather than a band under the whole section
+ *   .ai-spec      product facts as a datasheet list with dotted leaders
+ *   .ai-channel   one card per offering, with a dark channel header
+ *   .ai-scope     the included scope as a bento of four unequal tiles on a
+ *                 12-column grid (7+5, then 5+7), not a plain 2x2
+ *   .ai-phase     a phase card whose "proof" is a coded mock INSIDE it
+ *                 (transcript, readout, status, checklist) rather than a
+ *                 panel beside it
+ *   .ai-route     the routing decision as a horizontal lane
+ *   .ai-who       hairline-separated columns, not cards
+ *   .ai-why       a split head over six result cards, the lead one dark
+ *
+ * Same brand tokens as every other v2 page (the --hv-* custom properties
+ * from home-redesign.css) and the single brand green throughout. Space Mono
+ * is used for the mock panels and their labels only, because a readout that
+ * looks like a readout is the whole point of them; everything a reader has
+ * to read for meaning stays in the site's own body font.
+ *
+ * HERO BACKGROUND: .ai-hero keeps the SAME background recipe as .sd-hero,
+ * .sm-hero and the rest (dark radial wash + 42px accent grid) on purpose -
+ * the site-wide consistency asked for on the service pages is a background
+ * decision, and this page's difference is its composition, not its palette.
+ * Registered in home-chrome.css alongside the other bespoke heroes.
+ */
+
+.ai-pg {
+  --ai-radius: 20px;
+  --ai-console: rgba(255, 255, 255, .04);
+  --ai-console-line: rgba(255, 255, 255, .12);
+  --ai-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* -- Shared head ------------------------------------------------------------- */
+
+.ai-head {
+  max-width: 62ch;
+  margin-bottom: var(--hv-s9);
+}
+
+.ai-head--center {
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* -- 1. Hero ----------------------------------------------------------------- */
+
+.ai-hero {
+  position: relative;
+  background: radial-gradient(120% 140% at 14% -10%, #0E4B3E 0%, var(--hv-bg-dark) 46%, var(--hv-bg-dark-2) 100%);
+  color: var(--hv-on-dark);
+  padding-bottom: clamp(72px, 9vw, 132px);
+  overflow: clip;
+}
+
+.ai-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(53, 217, 160, .08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(53, 217, 160, .08) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(65% 65% at 20% 10%, #000 0%, transparent 75%);
+  pointer-events: none;
+}
+
+.ai-hero__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr);
+  gap: clamp(32px, 5vw, 64px);
+  /* Copy and the spine sit level at the top; the crumbs own the row above. */
+  align-items: start;
+}
+
+/* Full-width, centred breadcrumb row above the two columns. */
+.ai-hero__crumbs {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--hv-s2);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+  margin: 0 0 var(--hv-s7);
+}
+.ai-hero__crumbs a { color: inherit; text-decoration: none; }
+.ai-hero__crumbs a:hover { color: var(--hv-on-dark); }
+
+.ai-hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hv-s2);
+  font-size: var(--hv-fs-eyebrow);
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+
+.ai-hero__title {
+  font-size: var(--hv-fs-display);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  margin: var(--hv-s4) 0 0;
+  color: #fff;
+}
+.ai-hero__title span {
+  display: block;
+  color: var(--hv-accent-bright);
+}
+
+.ai-hero__lede {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-lede);
+  line-height: 1.65;
+  color: var(--hv-on-dark-muted);
+  margin: var(--hv-s5) 0 0;
+  max-width: 54ch;
+}
+
+.ai-hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hv-s3);
+  margin-top: var(--hv-s7);
+}
+
+/* -- The channel spine -------------------------------------------------------- */
+
+.ai-spine {
+  position: relative;
+  background: var(--ai-console);
+  border: 1px solid var(--ai-console-line);
+  border-radius: var(--ai-radius);
+  padding: var(--hv-s6);
+  box-shadow: var(--hv-sh-lg);
+  backdrop-filter: blur(8px);
+}
+
+.ai-spine__cap {
+  font-family: var(--ai-mono);
+  font-size: var(--hv-fs-xs);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+  margin: 0 0 var(--hv-s5);
+}
+
+.ai-spine__channels {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ai-spine__channel,
+.ai-spine__record {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--hv-s4);
+}
+
+.ai-spine__channel {
+  padding: var(--hv-s4) 0;
+  border-bottom: 1px solid var(--ai-console-line);
+}
+
+.ai-spine__icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(53, 217, 160, .12);
+  color: var(--hv-accent-bright);
+  flex: none;
+}
+
+.ai-spine__text { display: grid; gap: 2px; min-width: 0; }
+.ai-spine__text b {
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  color: var(--hv-on-dark);
+}
+.ai-spine__text small {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+  line-height: 1.45;
+}
+
+/* Process states, not metrics - see rule 2 in the data file. */
+.ai-spine__status {
+  font-family: var(--ai-mono);
+  font-size: 0.7rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+  background: rgba(53, 217, 160, .1);
+  border: 1px solid rgba(53, 217, 160, .3);
+  border-radius: var(--hv-r-pill);
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+/* The record every channel writes to - the conclusion of the panel, so it
+   gets the accent edge rather than another hairline. */
+.ai-spine__record {
+  margin-top: var(--hv-s5);
+  padding: var(--hv-s4) var(--hv-s4) var(--hv-s4) var(--hv-s3);
+  border-left: 2px solid var(--hv-accent-bright);
+  background: rgba(53, 217, 160, .06);
+  border-radius: 0 12px 12px 0;
+}
+
+/* -- 2. Overview -------------------------------------------------------------- */
+
+.ai-overview__grid {
+  display: grid;
+  grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: start;
+}
+
+.ai-overview__head {
+  position: sticky;
+  top: calc(var(--header-h, 80px) + 32px);
+}
+.ai-overview__head h2 { margin: var(--hv-s3) 0 0; }
+
+/* The argument the prose beside it is making, given the weight of a card. */
+.ai-quote {
+  margin: var(--hv-s7) 0 0;
+  padding: var(--hv-s6);
+  border-radius: var(--ai-radius);
+  background: var(--hv-bg-dark);
+  border: 1px solid rgba(53, 217, 160, .18);
+  box-shadow: var(--hv-sh-md);
+}
+.ai-quote p {
+  margin: 0;
+  font-size: clamp(1.02rem, .95rem + .35vw, 1.2rem);
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: -0.015em;
+  color: #fff;
+}
+.ai-quote span {
+  display: block;
+  margin-top: var(--hv-s4);
+  padding-top: var(--hv-s4);
+  border-top: 1px solid var(--hv-border-dark);
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.6;
+  color: var(--hv-on-dark-muted);
+}
+
+.ai-overview__body p {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-body);
+  line-height: 1.75;
+  color: var(--hv-text-muted);
+  margin: 0 0 var(--hv-s4);
+}
+/* The opening paragraph carries the definition, so it reads as the lede. */
+.ai-overview__body p:first-child {
+  font-size: var(--hv-fs-lede);
+  color: var(--hv-text);
+}
+
+/* The facts as a datasheet: label, dotted leader, value, and the detail on
+   its own line under it. A reader who only wants the number can skim the
+   right-hand edge. */
+.ai-spec {
+  list-style: none;
+  margin: var(--hv-s8) 0 0;
+  padding-top: var(--hv-s6);
+  border-top: 1px solid var(--hv-border);
+  display: grid;
+  gap: var(--hv-s5);
+}
+
+.ai-spec__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--hv-s3);
+}
+
+.ai-spec__label {
+  font-size: var(--hv-fs-sm);
+  font-weight: 600;
+  color: var(--hv-text);
+}
+
+.ai-spec__lead {
+  flex: 1 1 auto;
+  min-width: 20px;
+  border-bottom: 1px dotted var(--hv-border-strong);
+}
+
+.ai-spec__value {
+  font-family: var(--ai-mono);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--hv-accent-strong);
+  white-space: nowrap;
+}
+
+.ai-spec__sub {
+  flex-basis: 100%;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.5;
+  color: var(--hv-text-muted);
+}
+
+/* -- 3. The four offerings ---------------------------------------------------- */
+
+.ai-channels__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--hv-s6);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ai-channel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #fff;
+  border: 1px solid var(--hv-border);
+  border-radius: var(--ai-radius);
+  overflow: clip;
+  box-shadow: var(--hv-sh-sm);
+  transition: box-shadow var(--hv-dur) var(--hv-ease), transform var(--hv-dur) var(--hv-ease);
+}
+.ai-channel:hover {
+  box-shadow: var(--hv-sh-lg);
+  transform: translateY(-2px);
+}
+
+/* The dark channel bar is the thing that separates the four cards at a
+   glance: which door this offering answers. */
+.ai-channel__head {
+  display: flex;
+  align-items: center;
+  gap: var(--hv-s4);
+  background: var(--hv-bg-dark);
+  color: var(--hv-on-dark);
+  padding: var(--hv-s5) var(--hv-s6);
+}
+.ai-channel__head h3 {
+  font-size: var(--hv-fs-h3);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin: 0;
+  color: #fff;
+}
+.ai-channel__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(53, 217, 160, .14);
+  color: var(--hv-accent-bright);
+  flex: none;
+}
+.ai-channel__tag {
+  margin-left: auto;
+  font-family: var(--ai-mono);
+  font-size: 0.7rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+  border: 1px solid var(--ai-console-line);
+  border-radius: var(--hv-r-pill);
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+.ai-channel__body {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-body);
+  line-height: 1.65;
+  color: var(--hv-text-muted);
+  margin: 0;
+  padding: var(--hv-s5) var(--hv-s6) 0;
+}
+
+.ai-channel__points {
+  list-style: none;
+  margin: 0;
+  padding: var(--hv-s5) var(--hv-s6) var(--hv-s6);
+  display: grid;
+  gap: var(--hv-s3);
+}
+.ai-channel__points li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--hv-s3);
+  align-items: start;
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-text);
+  line-height: 1.5;
+}
+.ai-channel__points svg {
+  width: 18px;
+  height: 18px;
+  color: var(--hv-accent);
+  margin-top: 2px;
+}
+
+/* -- 4. What's included: the bento ------------------------------------------- */
+
+.ai-scope {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--hv-s5);
+}
+
+.ai-scope__tile {
+  position: relative;
+  overflow: clip;
+  display: flex;
+  flex-direction: column;
+  gap: var(--hv-s5);
+  padding: var(--hv-s7) var(--hv-s6);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--ai-radius);
+  background: linear-gradient(180deg, #fff 0%, var(--hv-bg-mint) 165%);
+  box-shadow: var(--hv-sh-sm);
+  transition: box-shadow var(--hv-dur) var(--hv-ease), transform var(--hv-dur) var(--hv-ease);
+}
+.ai-scope__tile:hover {
+  box-shadow: var(--hv-sh-lg);
+  transform: translateY(-2px);
+}
+
+/* Unequal on purpose: 7+5 then 5+7 reads as one block of four rather than a
+   grid of identical boxes, and the wide tiles have room for two columns of
+   detail. */
+.ai-scope__tile--wide { grid-column: span 7; }
+.ai-scope__tile--narrow { grid-column: span 5; }
+
+/* The tile's number as a watermark, bottom-right, where it cannot collide
+   with the heading. */
+.ai-scope__ghost {
+  position: absolute;
+  right: var(--hv-s5);
+  bottom: var(--hv-s4);
+  font-family: var(--ai-mono);
+  font-size: clamp(2.6rem, 2rem + 2vw, 4rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--hv-accent);
+  opacity: .13;
+  pointer-events: none;
+}
+
+.ai-scope__head {
+  display: flex;
+  align-items: center;
+  gap: var(--hv-s4);
+}
+.ai-scope__head h3 {
+  font-size: var(--hv-fs-h3);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.ai-scope__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--hv-bg-dark);
+  color: var(--hv-accent-bright);
+  flex: none;
+}
+
+.ai-scope__items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--hv-s3);
+}
+.ai-scope__items li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--hv-s3);
+  align-items: start;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.5;
+  color: var(--hv-text);
+}
+.ai-scope__items svg {
+  width: 16px;
+  height: 16px;
+  color: var(--hv-accent-strong);
+  margin-top: 3px;
+}
+
+/* The two wide tiles run their items in two columns; the narrow ones stay a
+   single list so the lines keep a readable measure. */
+.ai-scope__tile--wide .ai-scope__items {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--hv-s6);
+}
+
+/* -- 5. How it works --------------------------------------------------------- */
+
+.ai-journey {
+  list-style: none;
+  margin: 0 0 var(--hv-s10);
+  padding: var(--hv-s5) var(--hv-s6);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--hv-s5);
+  background: var(--ai-console);
+  border: 1px solid var(--ai-console-line);
+  border-radius: var(--ai-radius);
+}
+
+.ai-journey li {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  padding-left: var(--hv-s5);
+}
+/* The connector between phases: a hairline running through the row, with the
+   phase numeral sitting on it. */
+.ai-journey li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: var(--hv-s4);
+  height: 1px;
+  background: var(--hv-accent-bright);
+  opacity: .5;
+}
+.ai-journey__num {
+  font-family: var(--ai-mono);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-accent-bright);
+}
+.ai-journey b {
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  color: var(--hv-on-dark);
+}
+.ai-journey span:last-child {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+}
+
+.ai-phases {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--hv-s6);
+}
+
+.ai-phase {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hv-s5);
+  background: var(--ai-console);
+  border: 1px solid var(--ai-console-line);
+  border-radius: var(--ai-radius);
+  padding: var(--hv-s6);
+}
+
+.ai-phase__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ai-phase__num {
+  font-family: var(--ai-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--hv-accent-bright);
+}
+.ai-phase__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(53, 217, 160, .12);
+  color: var(--hv-accent-bright);
+}
+
+.ai-phase__copy h3 {
+  font-size: var(--hv-fs-h3);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: #fff;
+  margin: var(--hv-s4) 0 var(--hv-s3);
+}
+.ai-phase__copy p {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.65;
+  color: var(--hv-on-dark-muted);
+  margin: 0;
+}
+
+.ai-phase__deliverable {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hv-s2);
+  margin-top: var(--hv-s5);
+  font-size: var(--hv-fs-xs);
+  font-weight: 600;
+  color: var(--hv-accent-bright);
+}
+.ai-phase__deliverable svg { width: 16px; height: 16px; flex: none; }
+
+/* -- The proof mocks --------------------------------------------------------- */
+
+.ai-proof {
+  margin-top: auto;
+  background: rgba(0, 0, 0, .28);
+  border: 1px solid var(--ai-console-line);
+  border-radius: 14px;
+  padding: var(--hv-s5);
+}
+
+.ai-proof__cap {
+  font-family: var(--ai-mono);
+  font-size: 0.7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--hv-on-dark-muted);
+  margin: 0 0 var(--hv-s4);
+}
+
+/* Status readout - channels live, build status. */
+.ai-proof__status,
+.ai-proof__checks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--hv-s3);
+}
+.ai-proof__status li,
+.ai-proof__checks li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--hv-s3);
+  align-items: start;
+  font-family: var(--ai-mono);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.5;
+}
+.ai-proof__status svg,
+.ai-proof__checks svg { width: 16px; height: 16px; margin-top: 2px; }
+.ai-proof__status .is-done { color: var(--hv-accent-bright); }
+.ai-proof__status .is-pending { color: var(--hv-on-dark-muted); }
+.ai-proof__checks li { color: var(--hv-on-dark); }
+.ai-proof__checks svg { color: var(--hv-accent-bright); }
+
+/* Key/value readout - routing rules, the outcome of a call. */
+.ai-proof__record { margin: 0; }
+.ai-proof__record > div {
+  display: grid;
+  grid-template-columns: minmax(0, 38fr) minmax(0, 62fr);
+  gap: var(--hv-s3);
+  padding: var(--hv-s3) 0;
+  border-top: 1px solid var(--ai-console-line);
+}
+.ai-proof__record > div:first-child { border-top: 0; padding-top: 0; }
+.ai-proof__record > div:last-child { padding-bottom: 0; }
+.ai-proof__record dt {
+  font-family: var(--ai-mono);
+  font-size: 0.7rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--hv-on-dark-muted);
+}
+.ai-proof__record dd {
+  margin: 0;
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark);
+  line-height: 1.5;
+}
+
+/* Transcript - two speakers and a system note, the turns left/right so the
+   shape of the conversation is visible without reading it. */
+.ai-proof__transcript {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--hv-s3);
+}
+.ai-proof__transcript li {
+  font-family: var(--ai-mono);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.5;
+  padding: 8px 12px;
+  border-radius: 12px;
+  max-width: 92%;
+}
+.ai-proof__transcript .is-them {
+  justify-self: start;
+  background: rgba(255, 255, 255, .07);
+  color: var(--hv-on-dark);
+  border-bottom-left-radius: 4px;
+}
+.ai-proof__transcript .is-us {
+  justify-self: end;
+  background: rgba(53, 217, 160, .14);
+  color: var(--hv-accent-bright);
+  border-bottom-right-radius: 4px;
+}
+.ai-proof__transcript .is-note {
+  justify-self: center;
+  background: none;
+  border: 1px dashed var(--ai-console-line);
+  color: var(--hv-on-dark-muted);
+  font-size: 0.68rem;
+  max-width: 100%;
+}
+
+/* -- The routing lane -------------------------------------------------------- */
+
+.ai-flow__visual { margin-top: var(--hv-s9); }
+
+.ai-route {
+  background: var(--ai-console);
+  border: 1px solid var(--ai-console-line);
+  border-radius: var(--ai-radius);
+  padding: var(--hv-s6);
+}
+
+.ai-route__cap {
+  font-family: var(--ai-mono);
+  font-size: 0.7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+  margin: 0 0 var(--hv-s5);
+}
+
+/* A lane, not a stack: what arrives, the one question, the two answers, and
+   where both end up - read left to right. */
+.ai-route__lane {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--hv-s5);
+}
+
+.ai-route__node {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hv-s3);
+  font-size: var(--hv-fs-xs);
+  font-weight: 600;
+  color: var(--hv-on-dark);
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid var(--ai-console-line);
+  border-radius: var(--hv-r-pill);
+  padding: 10px 16px;
+  white-space: nowrap;
+}
+.ai-route__node svg { width: 16px; height: 16px; color: var(--hv-accent-bright); }
+.ai-route__node--end { border-color: rgba(53, 217, 160, .45); color: var(--hv-accent-bright); }
+
+.ai-route__ask {
+  font-family: var(--ai-mono);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-accent-bright);
+  border: 1px dashed rgba(53, 217, 160, .45);
+  border-radius: var(--hv-r-pill);
+  padding: 10px 16px;
+  white-space: nowrap;
+}
+
+.ai-route__branches {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--hv-s4);
+}
+
+.ai-route__branch {
+  border-left: 2px solid rgba(53, 217, 160, .35);
+  padding-left: var(--hv-s4);
+}
+.ai-route__tag {
+  display: inline-block;
+  font-family: var(--ai-mono);
+  font-size: 0.68rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+  margin-bottom: var(--hv-s2);
+}
+.ai-route__branch ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--hv-s2);
+}
+.ai-route__branch li {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+  line-height: 1.5;
+}
+
+.ai-flow__cta {
+  margin-top: var(--hv-s8);
+  display: flex;
+  justify-content: center;
+}
+
+/* -- 6. Who we work with + the representative setups -------------------------- */
+
+.ai-who__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* Hairlines between columns instead of cards: a grid of bordered boxes is
+     what every other service page already does. */
+  gap: 0;
+}
+
+.ai-who__list li {
+  padding: var(--hv-s6) var(--hv-s7) var(--hv-s6) 0;
+  border-top: 1px solid var(--hv-border);
+}
+.ai-who__list li:nth-child(3n + 2),
+.ai-who__list li:nth-child(3n + 3) {
+  padding-left: var(--hv-s7);
+  border-left: 1px solid var(--hv-border);
+}
+.ai-who__list li:nth-last-child(-n + 3) { border-bottom: 1px solid var(--hv-border); }
+
+.ai-who__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--hv-bg-mint);
+  color: var(--hv-accent-strong);
+  margin-bottom: var(--hv-s4);
+}
+.ai-who__list h3 {
+  font-size: var(--hv-fs-h3);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin: 0 0 var(--hv-s2);
+}
+.ai-who__list p {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.6;
+  color: var(--hv-text-muted);
+  margin: 0;
+}
+
+.ai-setups__head { margin: var(--hv-s12) 0 var(--hv-s8); }
+.ai-setups__head h3 { margin: var(--hv-s3) 0 0; }
+
+.ai-setups {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--hv-s6);
+}
+
+.ai-setup {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid var(--hv-border);
+  border-radius: var(--ai-radius);
+  background: #fff;
+  padding: var(--hv-s6);
+}
+
+.ai-setup__tag {
+  font-family: var(--ai-mono);
+  font-size: 0.7rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--hv-accent-strong);
+  background: var(--hv-bg-mint);
+  border-radius: var(--hv-r-pill);
+  padding: 5px 12px;
+  align-self: flex-start;
+}
+
+.ai-setup h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  margin: var(--hv-s4) 0 var(--hv-s4);
+}
+
+/* The problem it solves, set apart from what we build - this is the reader's
+   own situation, so it gets the rule down its left edge. */
+.ai-setup__problem {
+  border-left: 3px solid var(--hv-border-strong);
+  padding-left: var(--hv-s4);
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.6;
+  color: var(--hv-text-muted);
+  margin: 0 0 var(--hv-s5);
+}
+
+.ai-setup__label {
+  font-family: var(--ai-mono);
+  font-size: 0.7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--hv-text-muted);
+  margin: 0 0 var(--hv-s3);
+}
+
+.ai-setup__built {
+  list-style: none;
+  margin: 0 0 var(--hv-s5);
+  padding: 0;
+  display: grid;
+  gap: var(--hv-s3);
+}
+.ai-setup__built li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--hv-s3);
+  align-items: start;
+  font-size: var(--hv-fs-sm);
+  line-height: 1.5;
+  color: var(--hv-text);
+}
+.ai-setup__built svg { width: 18px; height: 18px; color: var(--hv-accent); margin-top: 2px; }
+
+.ai-setup__outcome {
+  margin: auto 0 0;
+  padding: var(--hv-s4);
+  border-radius: 12px;
+  background: var(--hv-bg-mint-deep);
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.6;
+  color: var(--hv-accent-deep);
+}
+
+.ai-setups__note {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--hv-s3);
+  align-items: start;
+  max-width: 78ch;
+  margin: var(--hv-s7) 0 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.6;
+  color: var(--hv-text-muted);
+}
+.ai-setups__note svg { width: 18px; height: 18px; color: var(--hv-accent-strong); margin-top: 3px; }
+
+/* -- 7. Why GHLevelUp: the results ------------------------------------------- */
+
+/* Split head: the title and the one-line summary sit on the same baseline at
+   opposite ends, which is how a modern editorial section opens - and it keeps
+   this head different from the centred ones in the sections around it. */
+.ai-why__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, .6fr);
+  align-items: end;
+  gap: clamp(24px, 4vw, 64px);
+  margin-bottom: var(--hv-s9);
+}
+.ai-why__head h2 { margin: var(--hv-s3) 0 0; }
+.ai-why__head .hv-lede { margin: 0 0 4px; }
+
+.ai-why__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--hv-s5);
+}
+
+/* Cards rather than ruled rows, each with an accent edge along the top so the
+   six outcomes read as products of the same system. */
+.ai-result {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--hv-s4);
+  height: 100%;
+  overflow: clip;
+  padding: var(--hv-s7) var(--hv-s6) var(--hv-s6);
+  background: #fff;
+  border: 1px solid var(--hv-border);
+  border-radius: var(--ai-radius);
+  box-shadow: var(--hv-sh-sm);
+  transition: transform var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease);
+}
+
+.ai-result:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--hv-sh-lg);
+}
+
+.ai-result__icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: var(--hv-bg-mint);
+  color: var(--hv-accent-strong);
+}
+.ai-result h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.ai-result p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.65;
+  color: var(--hv-text-muted);
+}
+
+/* The lead outcome is the dark one: on a grid of six otherwise equal cards,
+   the eye needs somewhere to land first, and it ties this band to the two
+   dark sections either side of it. */
+.ai-result--feature {
+  background: var(--hv-bg-dark);
+  border-color: var(--hv-bg-dark);
+  box-shadow: var(--hv-sh-lg);
+}
+.ai-result--feature::before { background: var(--hv-accent-bright); }
+.ai-result--feature h3 { color: #fff; }
+.ai-result--feature p { color: var(--hv-on-dark-muted); }
+.ai-result--feature .ai-result__icon {
+  background: rgba(53, 217, 160, .14);
+  color: var(--hv-accent-bright);
+}
+
+/* -- 8. FAQ ------------------------------------------------------------------ */
+
+/* Centred, the way the client asked for it: heading block at the top, then
+   the questions under it on a narrower measure than the page (880px) so the
+   answer text stays readable when a row opens. */
+.ai-faq__head {
+  max-width: 60ch;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.ai-faq__list {
+  max-width: 880px;
+  margin: var(--hv-s9) auto 0;
+}
+
+.ai-faq__alt {
+  max-width: 60ch;
+  margin: var(--hv-s7) auto 0;
+  padding-top: var(--hv-s6);
+  border-top: 1px solid var(--hv-border);
+  text-align: center;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.6;
+  color: var(--hv-text-muted);
+}
+.ai-faq__alt a { color: var(--hv-accent-strong); font-weight: 600; }
+
+/* -- 9. Client reviews ------------------------------------------------------- */
+
+.ai-reviews__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--hv-s6);
+}
+
+.ai-review {
+  position: relative;
+  height: 100%;
+  margin: 0;
+  background: #fff;
+  border: 1px solid var(--hv-border);
+  border-radius: var(--ai-radius);
+  padding: var(--hv-s7) var(--hv-s6) var(--hv-s6);
+  box-shadow: var(--hv-sh-sm);
+}
+
+.ai-review__mark {
+  position: absolute;
+  top: calc(-1 * var(--hv-s4));
+  left: var(--hv-s6);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--hv-bg-dark);
+  color: var(--hv-accent-bright);
+}
+.ai-review__mark svg { width: 16px; height: 16px; }
+
+.ai-review blockquote {
+  margin: 0 0 var(--hv-s5);
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.7;
+  color: var(--hv-text);
+}
+
+.ai-review figcaption {
+  display: flex;
+  align-items: center;
+  gap: var(--hv-s3);
+  padding-top: var(--hv-s4);
+  border-top: 1px solid var(--hv-border);
+}
+.ai-review figcaption img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+}
+.ai-review figcaption span { display: grid; gap: 1px; }
+.ai-review figcaption b { font-size: var(--hv-fs-sm); font-weight: 700; }
+.ai-review figcaption small {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-text-muted);
+}
+
+/* -- 10. Closing CTA + contact ---------------------------------------------- */
+
+.ai-closing__cta {
+  max-width: 66ch;
+  margin-inline: auto;
+  text-align: center;
+}
+.ai-closing__cta h2 { margin: var(--hv-s3) 0 0; }
+.ai-closing__cta .hv-lede { margin-inline: auto; }
+
+.ai-closing__btns {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--hv-s3);
+  margin-top: var(--hv-s7);
+}
+
+.ai-closing__contact {
+  list-style: none;
+  margin: var(--hv-s10) 0 0;
+  padding: var(--hv-s6);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--hv-s6);
+  background: var(--ai-console);
+  border: 1px solid var(--ai-console-line);
+  border-radius: var(--ai-radius);
+}
+
+.ai-closing__contact li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--hv-s4);
+  align-items: start;
+}
+.ai-closing__contact li > span {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(53, 217, 160, .12);
+  color: var(--hv-accent-bright);
+  flex: none;
+}
+.ai-closing__contact b {
+  display: block;
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+.ai-closing__contact a,
+.ai-closing__plain {
+  display: block;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.5;
+  color: var(--hv-on-dark);
+  text-decoration: none;
+}
+.ai-closing__contact a:hover { color: var(--hv-accent-bright); }
+.ai-closing__contact small {
+  display: block;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+  margin-top: 2px;
+}
+
+/* -- Narrow screens ---------------------------------------------------------- */
+
+@media (max-width: 1100px) {
+  .ai-who__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ai-who__list li:nth-child(3n + 2),
+  .ai-who__list li:nth-child(3n + 3) { padding-left: 0; border-left: 0; }
+  .ai-who__list li:nth-child(2n) {
+    padding-left: var(--hv-s7);
+    border-left: 1px solid var(--hv-border);
+  }
+  .ai-who__list li:nth-last-child(-n + 3) { border-bottom: 0; }
+  .ai-who__list li:nth-last-child(-n + 2) { border-bottom: 1px solid var(--hv-border); }
+
+  .ai-setups { grid-template-columns: minmax(0, 1fr); }
+  .ai-closing__contact { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ai-journey { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ai-why__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  .ai-hero__inner,
+  .ai-overview__grid,
+  .ai-channels__grid,
+  .ai-phases,
+  .ai-why__grid,
+  .ai-reviews__grid { grid-template-columns: minmax(0, 1fr); }
+
+  /* The bento loses its spans and becomes one plain column of tiles, and the
+     wide tiles' two-column item list collapses with it. */
+  .ai-scope { grid-template-columns: minmax(0, 1fr); }
+  .ai-scope__tile--wide,
+  .ai-scope__tile--narrow { grid-column: auto; }
+  .ai-scope__tile--wide .ai-scope__items { grid-template-columns: minmax(0, 1fr); }
+
+  /* Sticky headings are only useful beside a scrolling column. */
+  .ai-overview__head { position: static; }
+
+  /* The split head stacks: title, then its summary underneath. */
+  .ai-why__head {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .ai-route__lane { grid-template-columns: minmax(0, 1fr); }
+  .ai-route__node,
+  .ai-route__ask { white-space: normal; }
+  .ai-route__node--end { justify-self: start; }
+}
+
+@media (max-width: 640px) {
+  .ai-who__list { grid-template-columns: minmax(0, 1fr); }
+  .ai-who__list li,
+  .ai-who__list li:nth-child(2n) {
+    padding-left: 0;
+    padding-right: 0;
+    border-left: 0;
+  }
+  .ai-who__list li:nth-last-child(-n + 2) { border-bottom: 0; }
+  .ai-who__list li:last-child { border-bottom: 1px solid var(--hv-border); }
+
+  .ai-closing__contact { grid-template-columns: minmax(0, 1fr); }
+  .ai-route__branches { grid-template-columns: minmax(0, 1fr); }
+  .ai-channel__head { flex-wrap: wrap; }
+  .ai-channel__tag { margin-left: 0; }
+}

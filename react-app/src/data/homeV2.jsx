@@ -30,6 +30,7 @@
  */
 
 import { slugify } from "@/lib/slugify.js";
+import { LATEST_POSTS } from "./blog.js";
 
 /* -- 0. Service lineup ------------------------------------------------------ */
 
@@ -337,71 +338,77 @@ export const WHY = {
 export const WORK = {
   eyebrow: "Our Work",
   title: "Systems We've Built",
-  lede: "A look at the kind of work we deliver - CRM, automation, websites and brand, built to fit how each business actually runs.",
-  cta: { label: "Talk about your project", to: "/contact" },
-  /* ILLUSTRATIVE PROJECTS. The earlier names here (Elevated Core Health,
-     Savannah Skin Med, AgeManagement Med, JLLPrime) came from the reference
-     site - another agency's clients - so they are replaced with anonymised
-     project types, and no results or metrics are claimed. The photos are
-     Pexels stock standing in for real screenshots. Swap in real, approved
-     case studies before launch. */
+  lede: "GoHighLevel systems built to capture leads, automate follow-up, manage pipelines and turn more conversations into booked customers.",
+  cta: {
+    label: "Talk about your project",
+    to: "/contact",
+  },
+
   filters: [
     { id: "all", label: "All work" },
     { id: "crm", label: "CRM & Automation" },
-    { id: "web", label: "Websites" },
-    { id: "ai", label: "AI" },
+    { id: "funnels", label: "Funnels & Websites" },
+    { id: "ai", label: "AI & Conversations" },
+    { id: "marketing", label: "Marketing & Nurture" },
   ],
+
   projects: [
     {
-      id: "clinic",
+      id: "lead-crm",
       filter: "crm",
-      industry: "Healthcare",
-      title: "Multi-Location Clinic Group",
-      body: "Patient intake, booking and follow-up unified across every location in one GoHighLevel system.",
-      tags: ["GoHighLevel", "AI receptionist", "Reporting"],
+      industry: "Home Services",
+      title: "Lead Management CRM",
+      body: "A complete GoHighLevel CRM setup that captures leads, organizes pipelines and automatically moves prospects through every stage of the sales process.",
+      tags: ["GoHighLevel", "CRM", "Pipelines", "Workflows"],
       image: "/img/home/svc-crm",
       tone: "#3E8EF7",
     },
+
     {
-      id: "home-services",
-      filter: "web",
-      industry: "Home Services",
-      title: "Booking-First Website",
-      body: "A fast new site and quote funnel that drops every request straight into the pipeline.",
-      tags: ["Website", "Funnels", "SMS"],
-      image: "/img/home/svc-development",
+      id: "sales-pipeline",
+      filter: "crm",
+      industry: "Real Estate",
+      title: "Sales Pipeline Automation",
+      body: "A structured GoHighLevel pipeline with automated lead assignment, stage-based workflows, reminders and follow-ups for sales teams.",
+      tags: ["Pipeline", "Lead Routing", "Automation", "CRM"],
+      image: "/img/home/svc-crm",
       tone: "#A855F7",
     },
+
     {
-      id: "real-estate",
+      id: "lead-funnel",
+      filter: "funnels",
+      industry: "Local Business",
+      title: "Lead Capture & Funnel System",
+      body: "A GoHighLevel funnel connected directly to forms, CRM pipelines, calendars and automated follow-up so every new enquiry enters the sales system instantly.",
+      tags: ["Funnels", "Forms", "CRM", "Calendar"],
+      image: "/img/home/svc-development",
+      tone: "#8B5CF6",
+    },
+
+    {
+      id: "ai-receptionist",
       filter: "ai",
-      industry: "Real Estate",
-      title: "24/7 AI Lead Qualifier",
-      body: "AI agents that answer enquiries, qualify buyers and book viewings around the clock.",
-      tags: ["AI agents", "Workflows"],
+      industry: "Service Business",
+      title: "AI Sales & Receptionist",
+      body: "A GoHighLevel AI system that responds to enquiries, answers common questions, qualifies prospects and helps move conversations toward booked appointments.",
+      tags: ["AI", "Conversations", "Qualification", "Booking"],
       image: "/img/home/svc-ai",
       tone: "#35D9A0",
     },
+
     {
-      id: "agency-reporting",
-      filter: "crm",
+      id: "follow-up-engine",
+      filter: "marketing",
       industry: "Professional Services",
-      title: "Campaign & Reporting Hub",
-      body: "Email, SMS and paid campaigns run from one CRM, with a dashboard the owner actually opens.",
-      tags: ["Campaigns", "Dashboards"],
+      title: "Automated Follow-Up Engine",
+      body: "Multi-step email and SMS workflows built inside GoHighLevel to follow up with new leads, missed opportunities and prospects who stopped responding.",
+      tags: ["SMS", "Email", "Nurture", "Workflows"],
       image: "/img/home/svc-marketing",
       tone: "#F59E0B",
     },
-    {
-  id: "retail-automation",
-  filter: "ai",
-  industry: "E-commerce & Retail",
-  title: "Cart Recovery & Support Bot",
-  body: "Smart AI bots that rescue abandoned carts and handle post-purchase tracking support automatically.",
-  tags: ["AI agents", "E-commerce", "Automation"],
-  image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWWsYMkyUKeLFAUfE7lxW7u3dyP74IRP7NTDfoOUQslespOmodBE7bwkA&s=10",
-  tone: "#EC4899",
-}
+
+
 
   ],
 };
@@ -535,9 +542,17 @@ export const FAQ = {
 
 /* -- 11. Latest insights --------------------------------------------------- */
 
-/* DESTINATIONS: there is no /blog route yet, so every link here is a dead
-   end until one exists - see the note in src/data/navMenus.js. `base` plus
-   a per-post `slug` is all that has to change. */
+/* The posts come from data/blog.js, which is the single source of truth for
+   every article. This used to hold its own copy of the three summaries, with
+   a comment admitting that every link out of this section was a dead end
+   because /blog did not exist yet.
+
+   Deriving rather than duplicating means a fourth post appears here the
+   moment it is added to POSTS, a retitled post cannot be retitled in one
+   place and not the other, and the home page can change how many it teases
+   by changing LATEST_POSTS in blog.jsx rather than by editing this array.
+   The field names below match what components/home/sections/Insights.jsx
+   reads, so that component needed no changes at all. */
 export const BLOG = {
   badge: "Blog & resources",
   /* Two-tone heading: the accent half is split out rather than marked up
@@ -546,44 +561,7 @@ export const BLOG = {
   titleAccent: "Insights",
   cta: { label: "View All Posts", to: "/blog" },
   base: "/blog",
-  posts: [
-    {
-      slug: "lead-pipeline-follow-up",
-      category: "GoHighLevel",
-      title: "How to build a lead pipeline that actually follows up",
-      excerpt:
-        "Most pipelines stall because the follow-up lives in someone's head. Here is the stage-by-stage setup we use so nothing goes quiet after day three.",
-      date: "2026-09-02",
-      dateLabel: "Sep 2, 2026",
-      readMins: 6,
-      image: "/img/home/post-pipeline.jpg",
-      imageWebp: "/img/home/post-pipeline.webp",
-    },
-    {
-      slug: "where-ai-agents-actually-save-time",
-      category: "AI Automation",
-      title: "Where AI agents genuinely save time, and where they do not",
-      excerpt:
-        "Intake, qualifying and booking are worth automating today. Judgement calls and anything with a refund attached are not. A practical dividing line.",
-      date: "2026-08-21",
-      dateLabel: "Aug 21, 2026",
-      readMins: 8,
-      image: "/img/home/post-ai.jpg",
-      imageWebp: "/img/home/post-ai.webp",
-    },
-    {
-      slug: "landing-page-conversion-checklist",
-      category: "Web & Conversion",
-      title: "Why your landing page converts worse than your competitor's",
-      excerpt:
-        "It is rarely the headline. Nine times out of ten it is load time, an unclear next step, or a form asking for things you do not need yet.",
-      date: "2026-08-07",
-      dateLabel: "Aug 7, 2026",
-      readMins: 5,
-      image: "/img/home/post-landing.jpg",
-      imageWebp: "/img/home/post-landing.webp",
-    },
-  ],
+  posts: LATEST_POSTS,
 };
 
 /* -- 11b. Pricing ----------------------------------------------------------- */
@@ -746,7 +724,7 @@ export const FOOTER_COLUMNS = [
     links: [
       { label: "About Us", to: "/about" },
       { label: "Industries", to: "/industries" },
-      { label: "Our Work", href: "/#work" },
+      { label: "Our Work", to: "/work" },
       { label: "Contact", to: "/contact" },
     ],
   },
@@ -754,7 +732,7 @@ export const FOOTER_COLUMNS = [
     title: "Resources",
     links: [
       { label: "Book a Consultation", to: "/book" },
-      { label: "Plans & Pricing", href: "/#pricing" },
+      { label: "Plans & Pricing", to: "/pricing" },
       { label: "FAQ", href: "/#faq" },
       { label: "Our Services", href: "/#services" },
     ],

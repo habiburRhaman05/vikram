@@ -1,0 +1,1674 @@
+/* ==========================================================================
+   /blog and /blog/:slug
+   --------------------------------------------------------------------------
+   Two pages share this file because they share a card: the listing's grid,
+   its featured post, the related-posts row under an article and the home
+   page's "Latest insights" strip are the same object at different sizes.
+   One set of card rules means a change to the hover treatment happens in
+   one place rather than in three that look alike until they don't.
+
+   Built on the v2 design system's tokens and primitives (--hv-*, .hv-card,
+   .hv-btn, .hv-eyebrow, .hv-container, .hv-section). Nothing here invents a
+   colour: every value resolves to a token, so the blog cannot drift out of
+   the palette the rest of the site is painted from.
+
+   Loaded AFTER home-redesign.css and home-chrome.css (see the pages) -
+   those define the tokens, the button set, the card set and the header and
+   footer this file sits inside. That order matters in one specific place:
+   .hv-card--hover owns the card's translateY on hover and the accent wash
+   behind it, so .bl-card deliberately never sets `transform` on itself -
+   it only moves the things INSIDE the card (image, arrow, accent line).
+
+   Scope: every class is prefixed .bl- so nothing here can leak onto another
+   route.
+
+   HERO / HEADER COUPLING: `.bl-hero` is registered in the
+   `.home-v2 .hv-hero, .home-v2 .page-hero, .home-v2 .sd-hero, ...` rule in
+   home-chrome.css, which pulls the hero up under the transparent header and
+   adds the header's height back as padding. If this hero is ever renamed,
+   that rule has to be updated with it, or the page opens with a white strip
+   behind the logo and the light-on-dark nav text disappears into it.
+
+   Contents
+     01. Hero
+     02. Topic filter
+     03. Featured post
+     04. Post grid and card
+     05. Article shell (prose + table of contents)
+     06. Prose
+     07. In-article consultation band
+     08. Matched services
+     09. Author, FAQ, back link
+     10. Related posts
+     11. Responsive
+     12. Button polish
+     13. Reading progress
+     14. Reading depth (topics, previous/next, drop cap)
+     15. Reduced motion
+   ========================================================================== */
+
+
+/* 01. Hero ================================================================= */
+/* Same dark field, same family of grid texture as the home and service
+   heroes, sized for this page: 60px cells with an accent line every four,
+   masked from the top so the grid is strongest behind the headline and has
+   faded before the filter row below. */
+
+.bl-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-bottom: clamp(56px, 6vw, 96px);
+  background:
+    radial-gradient(66% 58% at 78% 22%, rgba(14, 164, 107, .46) 0%, rgba(14, 164, 107, 0) 62%),
+    radial-gradient(58% 54% at 4% 96%, rgba(53, 217, 160, .26) 0%, rgba(53, 217, 160, 0) 62%),
+    linear-gradient(122deg, #04241F 0%, #073E34 48%, #03211D 100%);
+  color: #fff;
+  text-align: center;
+}
+
+.bl-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .06) 1px, transparent 1px),
+    linear-gradient(rgba(53, 217, 160, .16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(53, 217, 160, .16) 1px, transparent 1px);
+  background-size: 60px 60px, 60px 60px, 240px 240px, 240px 240px;
+  mask-image: radial-gradient(88% 76% at 50% 30%, #000 16%, transparent 92%);
+  -webkit-mask-image: radial-gradient(88% 76% at 50% 30%, #000 16%, transparent 92%);
+}
+
+.bl-hero__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bl-hero__crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 var(--hv-s5);
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-on-dark-muted);
+}
+.bl-hero__crumbs a { color: inherit; text-decoration: none; }
+.bl-hero__crumbs a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.bl-hero__crumbs span { opacity: .45; }
+
+.bl-hero__eyebrow {
+  display: inline-block;
+  padding: 7px 16px;
+  border: 1px solid rgba(53, 217, 160, .38);
+  border-radius: var(--hv-r-pill);
+  background: rgba(53, 217, 160, .12);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+
+.bl-hero__title {
+  margin: var(--hv-s5) 0 0;
+  max-width: 22ch;
+  font-family: var(--hv-font);
+  font-size: clamp(2rem, 1.1rem + 3.2vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -.035em;
+  color: #fff;
+  text-wrap: balance;
+}
+.bl-hero__title span { display: block; color: var(--hv-accent-bright); }
+
+.bl-hero__lede {
+  margin: var(--hv-s6) 0 0;
+  max-width: 68ch;
+  font-family: var(--hv-font-body);
+  font-size: clamp(1rem, .95rem + .34vw, 1.15rem);
+  line-height: 1.68;
+  color: #CBE3DB;
+  text-wrap: pretty;
+}
+
+
+/* 02. Topic filter ========================================================= */
+/* Real buttons, not links: filtering is a client-side view of one list, and
+   a button that looks like a link but does not navigate is worse for a
+   screen reader than a button. The row scrolls sideways on a phone rather
+   than wrapping into three lines. */
+
+.bl-filters {
+  display: flex;
+  align-items: center;
+  gap: var(--hv-s2);
+  overflow-x: auto;
+  padding-bottom: var(--hv-s2);
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bl-filters__label {
+  flex-shrink: 0;
+  margin-right: var(--hv-s2);
+  font-size: var(--hv-fs-xs);
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--hv-text-muted);
+}
+
+.bl-filter {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hv-s2);
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1.5px solid var(--hv-border-strong);
+  border-radius: var(--hv-r-pill);
+  background: var(--hv-bg);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  color: var(--hv-text-muted);
+  cursor: pointer;
+  transition: background var(--hv-dur-fast) var(--hv-ease),
+              color var(--hv-dur-fast) var(--hv-ease),
+              border-color var(--hv-dur-fast) var(--hv-ease);
+}
+.bl-filter:hover {
+  border-color: var(--hv-accent);
+  color: var(--hv-accent-strong);
+}
+
+/* aria-pressed is the state, so the styling cannot disagree with what the
+   assistive tech is told. */
+.bl-filter[aria-pressed="true"] {
+  background: var(--hv-grad-accent);
+  border-color: transparent;
+  color: #fff;
+}
+
+.bl-filter__count {
+  padding: 1px 7px;
+  border-radius: var(--hv-r-pill);
+  background: var(--hv-bg-mint);
+  font-size: .7rem;
+  font-weight: 800;
+  color: var(--hv-accent-strong);
+}
+.bl-filter[aria-pressed="true"] .bl-filter__count {
+  background: rgba(255, 255, 255, .22);
+  color: #fff;
+}
+
+.bl-list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--hv-s6);
+  margin-bottom: var(--hv-s7);
+}
+
+
+/* 03. Featured post ======================================================== */
+/* The newest post, horizontal: image on the left at a fixed ratio, copy on
+   the right. Same card object as the grid below, laid on its side, so the
+   hover behaviour is identical and there is nothing extra to learn. */
+
+.bl-featured { margin-bottom: clamp(32px, 4vw, 56px); }
+.bl-featured .bl-card__media { aspect-ratio: 16 / 10; }
+
+@media (min-width: 861px) {
+  .bl-featured .bl-card { flex-direction: row; }
+  .bl-featured .bl-card__media { flex: 0 0 52%; aspect-ratio: auto; }
+  .bl-featured .bl-card__body { flex: 1; justify-content: center; padding: clamp(24px, 3vw, 44px); gap: var(--hv-s4); }
+  .bl-featured .bl-card__title { font-size: clamp(1.35rem, 1rem + 1.3vw, 2rem); }
+  .bl-featured .bl-card__excerpt { font-size: var(--hv-fs-lede); -webkit-line-clamp: 4; }
+}
+
+.bl-featured__flag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hv-s2);
+  padding: 5px 12px;
+  border-radius: var(--hv-r-pill);
+  background: var(--hv-bg-mint);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--hv-accent-strong);
+}
+.bl-featured__flag svg { width: 13px; height: 13px; }
+
+
+/* 04. Post grid and card =================================================== */
+/* THREE columns, explicitly, rather than auto-fill. At this container width
+   an auto-fill track count of FOUR is what the maths produces, and a six-card
+   grid then renders 4 + 2 with half of the second row empty and the cards a
+   different size from the featured one above them. The same reasoning is
+   recorded on .sd-grid in service-detail.css, which hit it first.
+
+   Down to two columns at 1080 and one at 760. Both are stated rather than
+   left to auto behaviour so the featured card, the related row and the
+   filtered results all lay out identically. */
+
+.bl-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 2.2vw, 28px);
+  margin: 0;
+  padding: 0;
+}
+.bl-grid > li { display: flex; }
+
+@media (max-width: 1080px) {
+  .bl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .bl-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+.bl-card {
+  /* padding: 0 because the media bleeds to the card's edges - .hv-card's
+     own padding would inset the image and leave a white frame around it. */
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+  /* A resting shadow, not just a border. A hairline on white at this card
+     size reads as a box drawn on the page; a shallow shadow reads as a card
+     sitting on it, and it also means the hover state is a deepening rather
+     than the shadow appearing from nothing. */
+  box-shadow: var(--hv-sh-sm);
+}
+
+/* The accent hairline that draws itself across the top of the card on
+   hover. Painted on the card's ::after rather than as a border so it does
+   not affect layout, and scaled from the left so it reads as a response to
+   the cursor rather than as a fade. */
+.bl-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: var(--hv-r-lg) var(--hv-r-lg) 0 0;
+  background: var(--hv-grad-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--hv-dur) var(--hv-ease);
+}
+.bl-card:hover::after,
+.bl-card:focus-within::after { transform: scaleX(1); }
+
+.bl-card__media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--hv-bg-mint-deep);
+}
+.bl-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--hv-dur-slow) var(--hv-ease);
+}
+.bl-card:hover .bl-card__media img,
+.bl-card:focus-within .bl-card__media img { transform: scale(1.06); }
+
+/* A scrim under the category pill, so the pill stays legible over a light
+   photograph without an opaque plate sitting on the image. */
+.bl-card__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(3, 33, 30, .34) 0%, rgba(3, 33, 30, 0) 46%);
+  pointer-events: none;
+}
+
+.bl-card__cat {
+  position: absolute;
+  z-index: 1;
+  top: var(--hv-s4);
+  left: var(--hv-s4);
+  padding: 5px 11px;
+  border-radius: var(--hv-r-pill);
+  background: rgba(255, 255, 255, .94);
+  box-shadow: 0 2px 8px rgba(3, 33, 30, .22);
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--hv-accent-strong);
+}
+
+.bl-card__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--hv-s3);
+  padding: var(--hv-s6);
+  flex: 1;
+}
+
+.bl-card__title {
+  margin: 0;
+  font-family: var(--hv-font);
+  font-size: 1.12rem;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -.015em;
+  color: var(--hv-text);
+}
+
+/* One link, stretched over the whole card. Two links to the same post in
+   one card would be two tab stops and two identical announcements, so the
+   title carries the only <a> and everything else is decoration. */
+.bl-card__link { color: inherit; text-decoration: none; }
+.bl-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+.bl-card__link:focus-visible { outline: none; }
+.bl-card:focus-within { outline: 2px solid var(--hv-accent-strong); outline-offset: 3px; }
+
+.bl-card__excerpt {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.62;
+  color: var(--hv-text-muted);
+  /* Clamped rather than truncated by hand: excerpts of different lengths
+     would otherwise push the meta row to different heights and the grid
+     would go ragged. The full excerpt is still in the DOM, so search
+     engines and screen readers get all of it. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.bl-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--hv-s2) var(--hv-s4);
+  /* margin-top: auto pushes the meta row to the bottom of the card, so
+     every card in a row lines up however long its title is. */
+  margin: auto 0 0;
+  padding-top: var(--hv-s3);
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--hv-text-muted);
+}
+.bl-card__meta span { display: inline-flex; align-items: center; gap: 6px; }
+.bl-card__meta svg { width: 14px; height: 14px; color: var(--hv-accent-strong); }
+
+.bl-card__more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hv-s2);
+  padding-top: var(--hv-s2);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  color: var(--hv-accent-strong);
+}
+.bl-card__more svg { width: 15px; height: 15px; transition: transform var(--hv-dur) var(--hv-ease); }
+.bl-card:hover .bl-card__more svg,
+.bl-card:focus-within .bl-card__more svg { transform: translateX(5px); }
+
+/* The "no posts in this category" state. Reachable only if a category is
+   filtered to nothing, which is why it says something rather than being a
+   blank region. */
+.bl-empty {
+  padding: clamp(32px, 5vw, 64px);
+  border: 1px dashed var(--hv-border-strong);
+  border-radius: var(--hv-r-lg);
+  text-align: center;
+  color: var(--hv-text-muted);
+}
+.bl-empty .bl-actions { justify-content: center; margin-top: var(--hv-s5); }
+
+
+/* 05. Article shell ======================================================== */
+/* Two columns: the reading measure, and a sticky table of contents. The
+   aside is SECOND in the DOM and moved to the top by `order` on a narrow
+   screen, so a phone gets "On this page" above the article it describes
+   without the markup changing between breakpoints. */
+
+/* Less bottom padding than the listing hero: this one is followed by the
+   article rather than by a grid, and the two together were reading as a
+   gap rather than as a break. */
+.bl-post__hero { padding-bottom: clamp(32px, 4vw, 56px); }
+
+/* The contents list is COLLAPSED behind a toggle on a narrow screen and
+   always open on a wide one.
+
+   The reason is measured, not stylistic: this article has twelve headings,
+   which is about 400px of list. On a phone the list sits above the article
+   it describes, so a reader had to scroll most of a screen before reaching
+   the first paragraph. Splitting it into two columns only halved a problem
+   that wanted removing, and at 390px the tracks were ~145px wide, so the
+   headings wrapped into four and five lines each.
+
+   Shut by default and opened on request, the same list costs one 44px row.
+   Desktop hides the toggle and forces the list visible, so nothing about the
+   wide-screen version changed. There is no resize listener and no duplicated
+   markup: one button, one list, and CSS decides which of the two is shown.
+
+   THE DISPLAY OVERRIDES LIVE FURTHER DOWN, not here, immediately after the
+   .bl-toc__list rule they override. Media queries do not add specificity, so
+   a `display: none` written up here at equal specificity loses to the
+   `display: grid` in the base rule below it. Same lesson service-detail.css
+   records about the related-services grid: an override has to come after
+   what it overrides. */
+
+.bl-toc__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--hv-s3);
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--hv-text-muted);
+  cursor: pointer;
+}
+.bl-toc__toggle svg {
+  width: 15px;
+  height: 15px;
+  color: var(--hv-accent-strong);
+  transition: transform var(--hv-dur-fast) var(--hv-ease);
+}
+.bl-toc__toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+/* The article column FILLS the container: the contents rail is a fixed
+   340px, the gap between them a tight clamp, and everything left over goes
+   to the article. The old split - a 264px rail, a gap of up to 72px and a
+   prose measure capped well short of the column - read as a page with a
+   strip of nothing down its right-hand side. The rail is wider than it was
+   because the article beside it got wider: 264px of twelve headings next to
+   a full-width article looked like an afterthought. */
+.bl-post__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: clamp(24px, 2.5vw, 40px);
+  align-items: start;
+}
+
+/* The rail column stretches to the article's full height so something
+   sticky can follow the reader all the way down - but the STRETCH IS THE
+   COLUMN'S, never the cards'. The aside is a flex column whose first child
+   is the sticky group (natural height, top-stuck) and whose last child is a
+   spacer flex-grown to absorb whatever runway remains. Get this wrong in
+   either direction and the failure is visible: with no stretch the stick
+   runs out after a screenful and the right column dies; with the stretch on
+   the card itself you get a bordered slab the height of the article. The
+   Reveal wrapper between the aside and the group needs height: 100% too, or
+   it caps the chain one level up. */
+.bl-post__aside {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  height: 100%;
+}
+.bl-post__aside > .hv-reveal {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.bl-post__aside .bl-toc {
+  position: sticky;
+  top: calc(var(--header-h, 80px) + var(--hv-s5));
+}
+.bl-rail__fill { flex: 1; }
+
+/* -- Mini consultation card (rides inside the sticky group) ---------------- */
+/* Dark like the hero and the mid-article band, so the three asks read as
+   one family - and so the rail's one solid block of colour anchors a column
+   that is otherwise hairlines and text. Quieter than the band: no eyebrow
+   plaque, no bullet row, one button. */
+.bl-rail__cta {
+  margin-top: var(--hv-s4);
+  padding: var(--hv-s5);
+  border-radius: var(--hv-r-lg);
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(53, 217, 160, .18) 0%, rgba(53, 217, 160, 0) 60%),
+    var(--hv-bg-dark);
+  color: var(--hv-on-dark);
+}
+.bl-rail__cta-eyebrow {
+  display: block;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+.bl-rail__cta-title {
+  margin: var(--hv-s2) 0 0;
+  font-family: var(--hv-font);
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -.015em;
+  color: #fff;
+}
+.bl-rail__cta-text {
+  margin: var(--hv-s2) 0 0;
+  font-family: var(--hv-font-body);
+  font-size: .82rem;
+  line-height: 1.55;
+  color: var(--hv-on-dark-muted);
+}
+.bl-rail__cta-btn { width: 100%; justify-content: center; margin-top: var(--hv-s4); min-height: 44px; }
+
+/* -- Runway fillers --------------------------------------------------------- */
+/* Three quiet picks under the sticky group: label + link, hairline-topped
+   like the toc's own back-link, so the column reads as one instrument panel
+   rather than a stack of boxes. They occupy the runway the sticky group
+   cannot cover; past them the column is genuinely finished, which is the
+   honest state for a shorter-than-the-article rail. */
+.bl-rail__pick {
+  padding: var(--hv-s4) 0 0;
+  margin-top: var(--hv-s4);
+  border-top: 1px solid var(--hv-border);
+}
+.bl-rail__pick-label {
+  display: block;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--hv-text-muted);
+}
+.bl-rail__pick-link {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  margin-top: 6px;
+  font-family: var(--hv-font);
+  font-size: .88rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--hv-text);
+  text-decoration: none;
+}
+.bl-rail__pick-link svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--hv-accent-strong);
+  transition: transform var(--hv-dur-fast) var(--hv-ease);
+}
+.bl-rail__pick-link:hover { color: var(--hv-accent-strong); }
+.bl-rail__pick-link:hover svg { transform: translateX(3px); }
+
+/* The article header lives on the dark hero, so it is set for a dark surface
+   throughout: an article title in --hv-text on #073E34 is about 1.1:1 and
+   invisible.
+
+   ALIGNMENT. The header is a CENTRED column, like every other hero on the
+   site. The shared .bl-hero__inner already centres its flex children and
+   .bl-hero already centres text, so the only job here is the WIDTH CAP - the
+   "text parent" the title, summary and byline all fill, so none of them run
+   to the container edge on a wide screen. Below the cap the header is simply
+   the container's width and the cap does nothing, which is correct. */
+.bl-post__header {
+  width: 100%;
+  max-width: 56rem;
+  margin-inline: auto;
+  text-align: center;
+}
+.bl-post__header .bl-hero__crumbs { justify-content: center; }
+.bl-post__header .bl-post__meta { justify-content: center; }
+
+/* The on-dark chip, the same treatment as .bl-hero__eyebrow. The light mint
+   chip used on the cards would flip this to a light-on-dark plaque on the
+   hero, which is a different component as far as the eye is concerned. */
+/* The hero is left centred by .bl-hero/.bl-hero__inner - there is no
+   alignment override here any more. (History, because it cost an hour once:
+   this used to carry `align-items: flex-start` written against
+   `.bl-hero--post`, a class no element has ever had, so it failed silently
+   and the header drifted left of the page it belonged to. A selector that
+   matches nothing is a bug with no symptom; keep class names and CSS in one
+   diff.) */
+
+.bl-post__cat {
+  display: inline-block;
+  padding: 5px 13px;
+  border: 1px solid rgba(53, 217, 160, .38);
+  border-radius: var(--hv-r-pill);
+  background: rgba(53, 217, 160, .12);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+
+.bl-post__title {
+  margin: var(--hv-s5) 0 0;
+  /* Fills the header's centred column and stops at TWO LINES: a long title
+     ends in an ellipsis instead of pushing the summary and byline further
+     down the hero. The clamp needs the -webkit-box display to work; the
+     prefixed property is understood by every current engine, so no
+     fallback is needed. text-wrap: balance is deliberately gone - it does
+     nothing inside a -webkit-box and it is the clamp that shapes the text
+     now. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  font-size: clamp(1.75rem, 1.15rem + 2.1vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -.03em;
+  color: #fff;
+}
+
+.bl-post__summary {
+  margin: var(--hv-s6) 0 0;
+  /* Same two-line clamp as the title, for the same reason: the hero stays a
+     fixed, predictable height no matter how long the post's summary runs. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  font-family: var(--hv-font-body);
+  font-size: clamp(1.02rem, .97rem + .3vw, 1.16rem);
+  line-height: 1.66;
+  color: #CBE3DB;
+}
+
+/* No cap of its own: it fills .bl-post__header, so the hairline above the
+   byline is exactly as wide as the article's reading column. */
+.bl-post__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--hv-s3) var(--hv-s5);
+  margin: var(--hv-s7) 0 0;
+  padding-top: var(--hv-s5);
+  border-top: 1px solid rgba(255, 255, 255, .14);
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-on-dark-muted);
+}
+.bl-post__meta span { display: inline-flex; align-items: center; gap: 7px; }
+.bl-post__meta svg { width: 15px; height: 15px; color: var(--hv-accent-bright); }
+.bl-post__meta a { color: #fff; font-weight: 700; text-decoration: none; }
+.bl-post__meta a:hover { color: var(--hv-accent-bright); text-decoration: underline; text-underline-offset: 3px; }
+
+.bl-post__figure {
+  /* Tight under the hero: hero padding-bottom plus this margin is the gap a
+     reader crosses before the article's first pixel, and it was reading as
+     a blank band between two sections. */
+  margin: clamp(28px, 3.5vw, 44px) 0 0;
+  border-radius: var(--hv-r-lg);
+  overflow: hidden;
+  background: var(--hv-bg-mint-deep);
+  border: 1px solid var(--hv-border);
+}
+.bl-post__figure img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+
+/* -- Table of contents ----------------------------------------------------- */
+
+.bl-toc {
+  padding: var(--hv-s5);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: linear-gradient(180deg, #FAFDFC 0%, var(--hv-bg) 100%);
+}
+
+.bl-toc__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+
+.bl-toc__link {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  padding: 5px 0 5px 13px;
+  border-left: 2px solid var(--hv-border);
+  font-family: var(--hv-font);
+  font-size: .82rem;
+  line-height: 1.35;
+  color: var(--hv-text-muted);
+  text-decoration: none;
+  transition: color var(--hv-dur-fast) var(--hv-ease),
+              border-color var(--hv-dur-fast) var(--hv-ease);
+}
+/* Clamped to two lines so a long heading cannot run three or four and
+   balloon the list - the one thing a rail of this height cannot afford. */
+.bl-toc__list li { min-width: 0; }
+.bl-toc__link:hover { color: var(--hv-accent-strong); border-color: var(--hv-accent); }
+/* The heading currently on screen. Set by the IntersectionObserver in
+   BlogPost.jsx, and only ever additive: with no observer the list simply
+   has no active item rather than being wrong. */
+.bl-toc__link.is-active {
+  color: var(--hv-accent-strong);
+  border-color: var(--hv-accent);
+  font-weight: 700;
+}
+
+.bl-toc__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hv-s2);
+  margin-top: var(--hv-s5);
+  padding-top: var(--hv-s4);
+  border-top: 1px solid var(--hv-border);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  color: var(--hv-accent-strong);
+  text-decoration: none;
+}
+.bl-toc__back svg { width: 15px; height: 15px; transition: transform var(--hv-dur-fast) var(--hv-ease); }
+.bl-toc__back:hover svg { transform: translateX(-3px); }
+
+/* Placed here on purpose: after .bl-toc__list above, which is what these
+   have to beat (see the note in the section header). The breakpoint matches
+   the one that collapses .bl-post__inner to one column (section 11): the
+   moment the rail stops sitting BESIDE the article it stops being a
+   always-open sidebar and becomes the collapsible list instead. */
+@media (max-width: 1240px) {
+  .bl-toc__list { display: none; }
+  .bl-toc__list.is-open { display: grid; margin-top: var(--hv-s3); }
+}
+@media (min-width: 1241px) {
+  .bl-toc__toggle { display: none; }
+}
+
+
+/* 06. Prose ================================================================ */
+/* The reading column. Body copy is --hv-text-muted (6.3:1 on white, the
+   same tone .hv-body uses) and never --hv-accent: a saturated green that
+   passes at 1.06rem is still a colour that makes people stop reading. */
+
+/* No max-width: the prose fills the article column, which is what the grid
+   above gives it. Tables, figures and the embedded consultation blocks all
+   want the width; capping the text shorter than its own column is what
+   produced the dead strip this layout replaced. */
+.bl-prose {
+  font-family: var(--hv-font-body);
+  font-size: 1.06rem;
+  line-height: 1.74;
+  color: var(--hv-text-muted);
+}
+
+.bl-prose > * + * { margin-top: var(--hv-s5); }
+
+.bl-prose h2,
+.bl-prose h3 {
+  font-family: var(--hv-font);
+  color: var(--hv-text);
+  letter-spacing: -.025em;
+  /* NO scroll-margin-top here, deliberately. legacy/styles.css already sets
+     html { scroll-padding-top: 96px } for exactly this, and the two add
+     together rather than overriding each other: with a margin of just
+     header-h + 24px the headings landed ~200px down the screen instead of
+     ~96px. Measured, then removed. */
+}
+
+.bl-prose h2 {
+  margin-top: clamp(40px, 4.5vw, 64px);
+  font-size: clamp(1.32rem, 1.1rem + .9vw, 1.65rem);
+  font-weight: 800;
+  line-height: 1.22;
+}
+
+.bl-prose h3 {
+  margin-top: var(--hv-s8);
+  font-size: 1.12rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+/* The first block of an article is its lead paragraph, which is set larger
+   and darker so the top of the page reads as an opening rather than as the
+   middle of a document. */
+.bl-prose .bl-lead {
+  font-size: clamp(1.12rem, 1.02rem + .45vw, 1.3rem);
+  line-height: 1.62;
+  color: var(--hv-text);
+}
+
+.bl-prose strong { color: var(--hv-text); font-weight: 700; }
+
+.bl-prose a { color: var(--hv-accent-strong); text-underline-offset: 3px; }
+
+.bl-prose ul,
+.bl-prose ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--hv-s3);
+}
+.bl-prose li {
+  position: relative;
+  padding-left: 30px;
+}
+
+/* Numbered blocks get an accent counter rather than a browser marker, so a
+   numbered list matches the checklist styling used across the site instead
+   of switching to the default list-style numerals. */
+.bl-prose ol { counter-reset: bl-step; }
+.bl-prose ol > li { padding-left: 42px; }
+.bl-prose ol > li::before {
+  counter-increment: bl-step;
+  content: counter(bl-step);
+  position: absolute;
+  left: 0;
+  top: 4px;
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: var(--hv-bg-mint);
+  font-family: var(--hv-font);
+  font-size: .78rem;
+  font-weight: 800;
+  color: var(--hv-accent-strong);
+}
+
+.bl-prose ul > li::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: .72em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--hv-accent);
+}
+
+.bl-prose blockquote {
+  margin: 0;
+  padding: var(--hv-s2) 0 var(--hv-s2) var(--hv-s6);
+  border-left: 3px solid var(--hv-accent);
+  font-family: var(--hv-font);
+  font-size: 1.16rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--hv-text);
+}
+.bl-prose blockquote cite {
+  display: block;
+  margin-top: var(--hv-s2);
+  font-size: var(--hv-fs-sm);
+  font-style: normal;
+  font-weight: 600;
+  color: var(--hv-text-muted);
+}
+
+/* -- Callout --------------------------------------------------------------- */
+
+.bl-note {
+  padding: var(--hv-s6);
+  border: 1px solid rgba(10, 127, 82, .16);
+  border-left: 4px solid var(--hv-accent);
+  border-radius: var(--hv-r-md);
+  background: linear-gradient(180deg, #F3FBF7 0%, var(--hv-bg-mint) 100%);
+}
+.bl-note__title {
+  display: block;
+  margin-bottom: var(--hv-s2);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--hv-accent-strong);
+}
+.bl-note p { margin: 0; font-size: var(--hv-fs-lede); line-height: 1.66; color: var(--hv-text-muted); }
+
+/* -- Table ----------------------------------------------------------------- */
+/* Horizontally scrollable below the breakpoint rather than squeezed, with
+   tabindex and a region role on the wrapper so a keyboard user can scroll
+   it. A table that overflows with no way to reach the right-hand columns is
+   the most common accessibility failure in article content. */
+
+.bl-table {
+  overflow-x: auto;
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-md);
+  -webkit-overflow-scrolling: touch;
+}
+.bl-table table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: var(--hv-fs-sm);
+}
+.bl-table th,
+.bl-table td {
+  padding: 13px 16px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--hv-border);
+}
+.bl-table thead th {
+  background: var(--hv-bg-mint);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--hv-accent-strong);
+  border-bottom-color: var(--hv-border-strong);
+}
+.bl-table tbody tr:last-child td { border-bottom: none; }
+.bl-table tbody tr:nth-child(even) { background: #FAFDFC; }
+.bl-table td:first-child { color: var(--hv-text); font-weight: 600; }
+
+/* -- Key points ------------------------------------------------------------ */
+/* The summary box. Sits under the meta row, before the article: a reader
+   who only wants the answer should not have to scroll for it, and a
+   scannable summary is also what a search snippet tends to lift. */
+
+.bl-keypoints {
+  margin: clamp(24px, 3vw, 40px) 0 0;
+  padding: clamp(20px, 2.6vw, 30px);
+  border-radius: var(--hv-r-lg);
+  background: var(--hv-bg-dark);
+  color: var(--hv-on-dark);
+}
+.bl-keypoints__title {
+  margin: 0 0 var(--hv-s4);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+.bl-keypoints ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--hv-s3);
+}
+.bl-keypoints li {
+  position: relative;
+  padding-left: 30px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-lede);
+  line-height: 1.6;
+  color: var(--hv-on-dark);
+}
+.bl-keypoints li svg {
+  position: absolute;
+  left: 0;
+  top: .26em;
+  width: 17px;
+  height: 17px;
+  color: var(--hv-accent-bright);
+}
+
+
+/* 07. In-article consultation band ========================================= */
+/* Painted on .hv-card--dark, not on a new class, so the buttons and text
+   inside it inherit the dark-surface treatments (an outline button in
+   --hv-accent-strong on #052E29 is about 1.6:1 and unreadable). Sets no
+   colour of its own for that reason. */
+
+.bl-cta {
+  margin-top: clamp(40px, 4.5vw, 64px);
+  padding: clamp(24px, 3vw, 36px);
+}
+/* The tight variant sits between the article's two halves; it reads as part
+   of the flow rather than as another section, so it gets the prose's own
+   block spacing and a lighter padding than the full card. */
+.bl-cta--inline {
+  margin-top: var(--hv-s7);
+  padding: clamp(20px, 2.4vw, 30px);
+}
+.bl-cta__eyebrow { color: var(--hv-accent-bright); margin-bottom: var(--hv-s2); }
+.bl-cta h3 {
+  margin: 0;
+  font-size: clamp(1.2rem, 1.05rem + .7vw, 1.55rem);
+  font-weight: 800;
+  line-height: 1.22;
+  letter-spacing: -.02em;
+  color: #fff;
+}
+.bl-cta p {
+  margin: var(--hv-s3) 0 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-lede);
+  line-height: 1.64;
+  color: var(--hv-on-dark-muted);
+}
+.bl-cta__actions { display: flex; flex-wrap: wrap; gap: var(--hv-s3); margin-top: var(--hv-s5); }
+
+/* -- Enquiry form, embedded in the article --------------------------------
+   The shared enquiry form ships as a full dark SECTION (its own background,
+   page gutter, and a tall argument column stacked above the fields when
+   narrowed - which inside the article read as a page inside the page, with
+   half the card's width wasted beside it). This repaints it as ONE COMPACT
+   TWO-COLUMN CARD in the reading flow:
+
+     - .sd-form-sec loses the dark field, the texture and the section
+       padding; the card's own border does the framing.
+     - .sd-form__inner becomes the card: copy LEFT and narrow, fields RIGHT
+       and dominant - the same shape the service pages use, compressed.
+       Nothing stacks, so there is no tall copy block and no dead width.
+     - Type, fields and gaps all step down one size: this form interrupts
+       an article, it does not open a page.
+
+   Scoped to .bl-inline-form so the service pages keep their full-width dark
+   section untouched. */
+/* The section it replaced also carried the block's rhythm, so the wrapper
+   owns the gap from the consultation band above it now. */
+.bl-inline-form { margin-top: var(--hv-s6); }
+
+.bl-inline-form .sd-form-sec {
+  padding-block: 0;
+  background: none;
+  overflow: visible;
+}
+.bl-inline-form .sd-form-sec::after { content: none; }
+
+/* The grid itself becomes the card surface, so both columns share one
+   border instead of the copy floating above a separate box. */
+.bl-inline-form .sd-form__inner {
+  grid-template-columns: minmax(0, .58fr) minmax(0, 1.42fr);
+  gap: clamp(22px, 3vw, 40px);
+  padding: clamp(18px, 2.2vw, 28px);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: linear-gradient(180deg, #FAFDFC 0%, var(--hv-bg) 100%);
+  box-shadow: 0 1px 3px rgba(6, 40, 34, .06);
+}
+
+/* -- Copy column: compact, secondary -------------------------------------- */
+.bl-inline-form .sd-form__title {
+  margin: var(--hv-s2) 0 var(--hv-s3);
+  font-size: 1.25rem;
+  color: var(--hv-text);
+}
+.bl-inline-form .sd-form__lede {
+  font-size: .9rem;
+  line-height: 1.6;
+  color: var(--hv-text-muted);
+}
+.bl-inline-form .sd-form__points { margin-top: var(--hv-s4); gap: 9px; }
+.bl-inline-form .sd-form__points li { font-size: .84rem; color: var(--hv-text-muted); }
+.bl-inline-form .sd-form__points svg { width: 16px; height: 16px; color: var(--hv-accent-strong); }
+
+/* "Would rather just talk?" becomes the footer of the copy column. */
+.bl-inline-form .sd-form__direct {
+  margin-top: var(--hv-s5);
+  padding-top: var(--hv-s4);
+  border-top: 1px solid var(--hv-border);
+}
+.bl-inline-form .sd-form__direct p { font-size: .84rem; color: var(--hv-text); }
+.bl-inline-form .sd-form__direct-link { font-size: .84rem; color: var(--hv-text-muted); }
+.bl-inline-form .sd-form__direct-link:hover { color: var(--hv-accent-strong); }
+
+/* -- Fields column --------------------------------------------------------- */
+.bl-inline-form .sd-form__card {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+.bl-inline-form .sd-form__card-head {
+  margin: 0 0 var(--hv-s5);
+  padding-bottom: var(--hv-s4);
+  border-bottom: 1px solid var(--hv-border);
+}
+.bl-inline-form .sd-form__card-head strong { font-size: .98rem; }
+
+/* Field density: the shared form is sized for a page of its own; inside the
+   article every control steps down so the whole card is roughly the height
+   of the consultation band above it. */
+.bl-inline-form .sd-form__field input,
+.bl-inline-form .sd-form__field textarea,
+.bl-inline-form .sd-form__field select {
+  padding: 9px 11px;
+  font-size: .88rem;
+}
+.bl-inline-form .sd-form__field textarea { min-height: 84px; }
+.bl-inline-form .sd-form__field label { font-size: .78rem; }
+.bl-inline-form .sd-form__select select { padding-right: 34px; }
+.bl-inline-form .sd-form__select svg { right: 11px; width: 15px; height: 15px; }
+.bl-inline-form .sd-form__row + .sd-form__row,
+.bl-inline-form .sd-form__row + .sd-form__field,
+.bl-inline-form .sd-form__field + .sd-form__row { margin-top: var(--hv-s4); }
+.bl-inline-form .sd-form__field + .sd-form__field { margin-top: var(--hv-s4); }
+.bl-inline-form .sd-form__err { font-size: .74rem; }
+.bl-inline-form .sd-form__consent { margin-top: var(--hv-s4); }
+.bl-inline-form .sd-form__consent label { font-size: .76rem; }
+.bl-inline-form .sd-form__consent input { width: 16px; height: 16px; }
+.bl-inline-form .sd-form__submit {
+  margin-top: var(--hv-s5);
+  padding: 11px 22px;
+  min-height: 46px;
+  font-size: .9rem;
+}
+.bl-inline-form .sd-form__small { margin-top: var(--hv-s3); font-size: .74rem; }
+
+/* Below the rail collapse there is not enough column width for two columns
+   inside the card, so the copy stacks over the fields; on a phone the rows
+   go single-column too, which the shared form's own rules already do. */
+@media (max-width: 1240px) {
+  .bl-inline-form .sd-form__inner { grid-template-columns: minmax(0, 1fr); gap: var(--hv-s5); }
+}
+@media (max-width: 620px) {
+  .bl-inline-form .sd-form__row { grid-template-columns: minmax(0, 1fr); }
+  .bl-inline-form .sd-form__row + .sd-form__row,
+  .bl-inline-form .sd-form__row + .sd-form__field,
+  .bl-inline-form .sd-form__field + .sd-form__row { margin-top: var(--hv-s4); }
+}
+
+/* -- Shared bits -----------------------------------------------------------
+   Used by the in-article band, the article's own closing band and the
+   listing's, so the three consultation prompts are visibly the same
+   component rather than three similar-looking ones. */
+
+/* A row of ticked reassurances. On dark surfaces only, which is where all
+   three prompts live, so it sets the on-dark muted tone. */
+.bl-points {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hv-s2) var(--hv-s5);
+  margin: var(--hv-s5) 0 0;
+  padding: 0;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-on-dark-muted);
+}
+.bl-points li { display: inline-flex; align-items: center; gap: 7px; }
+.bl-points svg { width: 15px; height: 15px; color: var(--hv-accent-bright); }
+
+/* A button row that carries the bottom of a section. */
+.bl-actions { display: flex; flex-wrap: wrap; gap: var(--hv-s3); margin-top: var(--hv-s8); }
+
+.bl-closing__inner { max-width: 62ch; }
+.bl-closing__actions { margin-top: var(--hv-s8); }
+
+/* 07b. Closing CTA card ==================================================== */
+/* The banner shape conversion research keeps finding: a single high-contrast
+   card inside a quiet dark section. Copy on the left, the ask on the right,
+   so the primary button sits on the eye's landing point instead of below
+   the fold of a tall left-aligned column. The card's gradient runs the
+   same two greens as the primary button, so the button stays dominant
+   because of its bright fill, not despite the banner. */
+.bl-cta-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--hv-s9);
+  padding: clamp(28px, 4vw, 56px);
+  border-radius: var(--hv-r-xl);
+  background: linear-gradient(120deg, #06603E 0%, #052E29 55%, #03211E 100%);
+  color: var(--hv-on-dark);
+  overflow: hidden;
+  position: relative;
+  isolation: isolate;
+}
+/* Two soft accent glows - depth without a hard drop shadow, which is the
+   flat-design language the rest of the page uses. */
+.bl-cta-card::before,
+.bl-cta-card::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+}
+.bl-cta-card::before {
+  width: 380px; height: 380px;
+  right: -120px; top: -160px;
+  background: rgba(53, 217, 160, .18);
+}
+.bl-cta-card::after {
+  width: 300px; height: 300px;
+  left: -120px; bottom: -160px;
+  background: rgba(10, 127, 82, .35);
+}
+/* Hairline ring so the card reads as a surface against the dark wash. */
+.bl-cta-card::after { box-shadow: inset 0 0 0 1px var(--hv-border-dark); }
+
+.bl-cta-card__copy .hv-eyebrow { color: var(--hv-accent-bright); }
+.bl-cta-card__copy .hv-h2 { margin-top: var(--hv-s3); color: #fff; }
+.bl-cta-card__copy .hv-lede { margin-top: var(--hv-s4); color: var(--hv-on-dark-muted); }
+
+.bl-cta-card__side { display: flex; flex-direction: column; align-items: flex-start; gap: var(--hv-s5); }
+.bl-cta-card .bl-closing__actions { margin-top: 0; }
+.bl-cta-card .bl-points { margin: 0; }
+
+@media (max-width: 900px) {
+  .bl-cta-card { grid-template-columns: minmax(0, 1fr); gap: var(--hv-s6); }
+  .bl-cta-card__side { align-items: flex-start; }
+}
+
+
+/* 08. Matched services ===================================================== */
+/* The services a reader of THIS article is most likely to need, each with
+   the reason it applies to what they just read. The slugs live in the post
+   data and are resolved against the registry in data/serviceLinks.js, so a
+   card here can only ever point at a route that exists. */
+
+.bl-svc__head { max-width: 60ch; margin-bottom: var(--hv-s8); }
+
+.bl-svc__grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: var(--hv-s6);
+  margin: 0;
+  padding: 0;
+}
+.bl-svc__grid > li { display: flex; }
+
+.bl-svc__card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--hv-s3);
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+.bl-svc__card h3 {
+  margin: 0;
+  font-family: var(--hv-font);
+  font-size: 1.08rem;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--hv-text);
+}
+.bl-svc__card p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.62;
+  color: var(--hv-text-muted);
+}
+.bl-svc__go {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hv-s2);
+  margin-top: auto;
+  padding-top: var(--hv-s3);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  color: var(--hv-accent-strong);
+}
+.bl-svc__go svg { width: 15px; height: 15px; transition: transform var(--hv-dur) var(--hv-ease); }
+.bl-svc__card:hover .bl-svc__go svg { transform: translateX(3px); }
+.bl-svc__foot { display: flex; flex-wrap: wrap; gap: var(--hv-s3); margin-top: var(--hv-s8); }
+
+
+/* 09. Author, FAQ, back link =============================================== */
+
+.bl-author {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--hv-s5);
+  align-items: center;
+  margin-top: clamp(40px, 4.5vw, 64px);
+  padding: clamp(20px, 2.8vw, 30px);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: linear-gradient(180deg, #FAFDFC 0%, var(--hv-bg) 100%);
+}
+/* A monogram rather than a photograph: the same fallback the home page's
+   founder note uses when no portrait is set, so the two read as one
+   treatment instead of two different placeholder styles. */
+.bl-author__mark {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--hv-grad-accent);
+  font-family: var(--hv-font);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #fff;
+}
+.bl-author__who { font-family: var(--hv-font); font-size: var(--hv-fs-lede); font-weight: 800; color: var(--hv-text); }
+.bl-author__role { display: block; font-size: var(--hv-fs-sm); font-weight: 600; color: var(--hv-text-muted); }
+.bl-author__bio {
+  margin: var(--hv-s2) 0 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.62;
+  color: var(--hv-text-muted);
+}
+.bl-author a { color: var(--hv-accent-strong); font-weight: 700; text-underline-offset: 3px; }
+
+/* A centred column, not a two-column split: the contact card that used to
+   sit beside the list is gone (the ask lives in the article and the rail
+   already), so questions get the page's full reading shape back. */
+.bl-faq__head {
+  max-width: 56rem;
+  margin-inline: auto;
+  text-align: center;
+}
+.bl-faq__head .hv-h2 { margin-top: var(--hv-s4); }
+.bl-faq__head .hv-body { margin-top: var(--hv-s3); }
+.bl-faq__list {
+  max-width: 56rem;
+  margin: var(--hv-s7) auto 0;
+}
+
+.bl-post__back {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--hv-s4);
+  margin-top: var(--hv-s8);
+}
+
+
+/* 10. Related posts ======================================================== */
+
+.bl-related__head { margin-bottom: var(--hv-s8); }
+
+
+/* 11. Responsive =========================================================== */
+
+@media (max-width: 1240px) {
+  /* One column, and the contents list moves above the article it describes
+     (see the note in section 05). `order` rather than duplicating the
+     markup: the same DOM, two readings. The rail stops being a rail here:
+     the sticky group un-sticks, the fillers go - a phone wants the contents
+     and nothing else. */
+  .bl-post__inner { grid-template-columns: minmax(0, 1fr); }
+  .bl-post__aside { order: -1; display: block; }
+  .bl-post__aside > .hv-reveal { display: block; }
+  .bl-rail__group .bl-toc,
+  .bl-toc { position: static; }
+  .bl-rail__cta,
+  .bl-rail__fill { display: none; }
+}
+
+@media (max-width: 860px) {
+  .bl-hero__title { max-width: 26ch; }
+  .bl-list-head { flex-direction: column; align-items: stretch; }
+  .bl-post__figure img { aspect-ratio: 16 / 10; }
+}
+
+@media (max-width: 560px) {
+  .bl-card__body { padding: var(--hv-s5); }
+  .bl-prose { font-size: 1rem; }
+  .bl-prose ol > li { padding-left: 38px; }
+  .bl-filters__label { display: none; }
+  .bl-author { grid-template-columns: minmax(0, 1fr); }
+  .bl-cta__actions .hv-btn { width: 100%; }
+  .bl-svc__foot .hv-btn { width: 100%; }
+}
+
+
+/* 12. Button polish ======================================================== */
+/* Scoped to the blog's own sections rather than written onto .hv-btn in
+   home-redesign.css. The same button component is used by every page on the
+   site, and "the shadows on the blog could be better" is not the same
+   instruction as "repaint every page". If this reads better here, moving it
+   to the shared set is a deliberate change with the whole site to regression
+   test, and that is a separate decision from this one.
+
+   What it adds: a resting shadow so the outlines are not flat, and a slightly
+   stronger accent bloom on the primary. The dark contact shadow this rule
+   used to ALSO stack under the primary (0 2px 5px rgba(6,40,34,.10), rest
+   and hover) is gone - it read as a hard dark edge under the button, which
+   is exactly the bottom shadow the flat design is avoiding. */
+:is(.bl-hero, .bl-post__back, .bl-cta, .bl-actions, .bl-svc__foot, .bl-related, .bl-closing, .bl-empty, .bl-rail__cta) .hv-btn {
+  box-shadow: 0 1px 3px rgba(6, 40, 34, .07);
+}
+:is(.bl-hero, .bl-post__back, .bl-cta, .bl-actions, .bl-svc__foot, .bl-related, .bl-closing, .bl-empty, .bl-rail__cta) .hv-btn--primary {
+  box-shadow: 0 6px 18px rgba(10, 127, 82, .28);
+}
+:is(.bl-hero, .bl-post__back, .bl-cta, .bl-actions, .bl-svc__foot, .bl-related, .bl-closing, .bl-empty, .bl-rail__cta) .hv-btn--primary:hover {
+  box-shadow: 0 12px 28px rgba(10, 127, 82, .34);
+}
+/* The white fill behind outline buttons is for LIGHT surfaces only - it
+   used to include .bl-closing (dark), which put a light fill under light
+   text and made the second button unreadable. */
+:is(.bl-hero, .bl-post__back, .bl-cta, .bl-actions, .bl-svc__foot, .bl-related, .bl-empty) .hv-btn--outline {
+  background: var(--hv-bg);
+}
+/* The dark closing band's outline button: transparent fill, on-dark text. */
+.bl-closing .hv-btn--outline { background: transparent; color: var(--hv-on-dark); border-color: var(--hv-border-dark); }
+.bl-closing .hv-btn--outline:hover { background: rgba(255, 255, 255, .12); border-color: rgba(255, 255, 255, .3); color: #fff; }
+
+
+/* 13. Reading progress ===================================================== */
+/* A hairline across the top of the viewport showing how far through the
+   article the reader is.
+
+   z-index 110 because the sticky header in legacy/styles.css is at 100 and
+   is a stacking context of its own: anything under 100 here would slide
+   behind the glass the moment the bar became visible, which is precisely
+   when the reader is looking at it. Above 100 it paints over the top edge of
+   the header instead, which is also the conventional place for it.
+
+   Driven by transform: scaleX rather than width, and written to the element
+   directly rather than through state: this updates on every frame of a
+   scroll, and re-rendering the article 60 times a second to move a 3px line
+   would be absurd. */
+
+.bl-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 110;
+  height: 3px;
+  background: rgba(10, 127, 82, .12);
+  pointer-events: none;
+}
+.bl-progress__fill {
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--hv-accent) 0%, var(--hv-accent-bright) 100%);
+}
+
+
+/* 14. Reading depth ======================================================== */
+
+/* -- Drop cap -------------------------------------------------------------- */
+/* The opening letter of the lead paragraph. Only the lead gets one: it is by
+   definition the first block of the article, and a drop cap halfway down a
+   page is a decoration with no reason.
+
+   Behind a min-width rather than applied everywhere. At 1rem on a phone the
+   article column is about 34 characters wide, and a three-line capital eats
+   roughly a fifth of the first three lines. The measure cannot afford it.
+
+   float rather than `initial-letter`, which is the modern property but is
+   still partial in Firefox. The float version is understood by every engine
+   and looks the same at these sizes. */
+@media (min-width: 700px) {
+  .bl-prose .bl-lead::first-letter {
+    float: left;
+    margin: .05em .1em 0 0;
+    font-family: var(--hv-font);
+    font-size: 3.05em;
+    font-weight: 800;
+    line-height: .8;
+    color: var(--hv-accent-strong);
+  }
+}
+
+/* -- Topics ---------------------------------------------------------------- */
+/* The post's own tags, at the foot of the article where they describe what
+   the reader has just finished rather than competing with the headline.
+
+   Not links. Filtering the listing is by category, and there is no tag
+   route; a chip that looks clickable and goes nowhere is worse than a chip
+   that plainly does not. When tag filtering exists, these become the entry
+   point to it and this comment goes away. */
+
+.bl-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--hv-s3) var(--hv-s4);
+  margin-top: clamp(36px, 4vw, 56px);
+  padding-top: var(--hv-s6);
+  border-top: 1px solid var(--hv-border);
+}
+.bl-tags__label {
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--hv-text-muted);
+}
+.bl-tags ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hv-s2);
+  margin: 0;
+  padding: 0;
+}
+.bl-tags li {
+  padding: 6px 14px;
+  border: 1px solid var(--hv-border-strong);
+  border-radius: var(--hv-r-pill);
+  background: #FAFDFC;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 600;
+  color: var(--hv-text-muted);
+}
+
+/* -- Previous / next -------------------------------------------------------- */
+/* The two neighbouring posts, newest-first order, so "next" is the newer
+   piece. Same card language as the related row below it and visibly a
+   navigation rather than a third content block: smaller padding, no image,
+   and the direction label is the loudest thing in each card. */
+
+.bl-next {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--hv-s4);
+  margin-top: var(--hv-s6);
+}
+/* At the ends of the catalogue there is only one neighbour. Left as-is it
+   would sit alone in the left column with an empty half next to it, which
+   reads as a failed render; it takes the full width instead. */
+.bl-next__item:only-child { grid-column: 1 / -1; }
+
+.bl-next__item {
+  display: grid;
+  gap: var(--hv-s2);
+  padding: var(--hv-s5) var(--hv-s6);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: linear-gradient(180deg, #FAFDFC 0%, var(--hv-bg) 100%);
+  text-decoration: none;
+  transition: border-color var(--hv-dur) var(--hv-ease),
+              transform var(--hv-dur) var(--hv-ease),
+              box-shadow var(--hv-dur) var(--hv-ease);
+}
+.bl-next__item:hover,
+.bl-next__item:focus-visible {
+  border-color: var(--hv-accent);
+  transform: translateY(-2px);
+  box-shadow: var(--hv-sh-md);
+}
+
+.bl-next__dir {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--hv-accent-strong);
+}
+.bl-next__dir svg { width: 14px; height: 14px; }
+.bl-next__item--next { text-align: right; }
+.bl-next__item--next .bl-next__dir { justify-content: flex-end; }
+
+.bl-next__title {
+  font-family: var(--hv-font);
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.32;
+  letter-spacing: -.015em;
+  color: var(--hv-text);
+}
+
+@media (max-width: 660px) {
+  .bl-next { grid-template-columns: minmax(0, 1fr); }
+  .bl-next__item--next { text-align: left; }
+  .bl-next__item--next .bl-next__dir { justify-content: flex-start; }
+}
+
+
+/* 15. Reduced motion ======================================================= */
+/* Every hover embellishment is a movement, so all of them go when the user
+   has asked for less motion - including the card lift, which is normally
+   owned by .hv-card--hover in home-chrome.css. */
+
+@media (prefers-reduced-motion: reduce) {
+  .bl-card::after,
+  .bl-card__media img,
+  .bl-card__more svg,
+  .bl-svc__go svg,
+  .bl-toc__back svg,
+  .bl-toc__link { transition-duration: 1ms; }
+  .bl-next__item { transition-duration: 1ms; }
+  .bl-card:hover::after,
+  .bl-card:focus-within::after { transform: scaleX(1); }
+  .bl-card:hover .bl-card__media img,
+  .bl-card:focus-within .bl-card__media img,
+  .bl-card:hover .bl-card__more svg,
+  .bl-card:focus-within .bl-card__more svg,
+  .bl-svc__card:hover .bl-svc__go svg,
+  .bl-toc__back:hover svg { transform: none; }
+  .bl-next__item:hover,
+  .bl-next__item:focus-visible { transform: none; }
+}

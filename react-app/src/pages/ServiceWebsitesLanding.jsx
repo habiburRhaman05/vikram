@@ -4,71 +4,131 @@ import PageMeta from "@/components/common/PageMeta.jsx";
 import Icon from "@/components/common/Icon.jsx";
 import Faq from "@/components/common/Faq.jsx";
 import StructuredData from "@/components/common/StructuredData.jsx";
+import CtaBand from "@/components/common/CtaBand.jsx";
+import GhlEmbed from "@/components/common/GhlEmbed.jsx";
+import Button from "@/components/common/Button.jsx";
+import Section from "@/components/common/Section.jsx";
+import SectionHead from "@/components/common/SectionHead.jsx";
+import LegacyReveal from "@/components/common/Reveal.jsx";
 import { HvSection, Reveal, Btn } from "@/components/home/primitives.jsx";
-import ScriptNote from "@/components/home/ScriptNote.jsx";
-import ServiceContactCard from "@/components/services/ServiceContactCard.jsx";
-import ServiceEnquiryForm from "@/components/services/ServiceEnquiryForm.jsx";
-import RelatedServices from "@/components/services/RelatedServices.jsx";
+import ImageSlot from "@/components/home/ImageSlot.jsx";
+import { SITE } from "@/data/site";
 
 import {
   WEB_HERO,
+  WEB_OVERVIEW,
   WEB_ANATOMY,
-  WEB_GRID,
+  WEB_INCLUDES,
   WEB_PROCESS,
-  WEB_FIX,
-  WEB_INTRO,
-  WEB_DETAILS,
-  WEB_USECASES,
-  WEB_WORK,
-  WEB_BENEFITS,
-  WEB_ENQUIRY,
+  WEB_JOURNEY,
+  WEB_WHO,
+  WEB_WHY,
   WEB_FAQ,
+  WEB_REVIEW,
+  WEB_CLOSING,
 } from "@/data/serviceWebsitesLanding.jsx";
 
-/* v2 chrome plus the shared service detail stylesheet - see Industries.jsx
-   for why the first two are both needed, and the note atop
-   service-detail.css for how .sd-hero couples to the transparent header. */
+/* v2 chrome plus this page's own stylesheet - see Industries.jsx for why
+   the first two are both needed, and the note atop service-webdev.css for
+   how .wb-hero couples to the transparent header. service-detail.css is
+   deliberately NOT loaded: this page no longer shares the other service
+   pages' sd- layout, and its own stylesheet carries everything it needs. */
 import "@/styles/home-redesign.css";
 import "@/styles/home-chrome.css";
-import "@/styles/service-detail.css";
+import "@/styles/service-webdev.css";
 
 /**
  * /services/websites-landing-pages.
  *
- * Six sections: the hero, the six decisions a build gets right, the pieces
- * we build, the design-to-launch process, the four things that cost the
- * enquiry, and the FAQ that doubles as the contact card. Each section
- * carries its own call to action, so a reader convinced by any one of them
- * has somewhere to go without scrolling back to the header. The hero is
- * text-only, like every service page.
- *
+ * Section order (specified): hero overview, detailed overview, service
+ * detail with a visual, what's included, how it works with proof-of-work
+ * steps and a journey, who we work with, why GHLevelUp, FAQs, a client
+ * review, then the contact-page CTA and form. Same section set as the
+ * Funnel page, deliberately different layout: centred hero with a coded
+ * browser mock, light editorial decision rows, a 2x2 process around a
+ * centre photo, a chevron journey band and a dark FAQ (see
+ * service-webdev.css).
  */
 
 /* -- Sections -------------------------------------------------------------- */
 
+/** The hero's browser-window mock: the page being judged in the first
+ *  three seconds, drawn as the thing itself. Hardcoded here rather than in
+ *  the data file, same reasoning as the other heroes' mocks: it's
+ *  decoration for this hero specifically, not page copy, and it carries no
+ *  numbers or client names. */
+function BrowserMock() {
+  return (
+    <div className="wb-hero__mock" aria-hidden="true">
+      <div className="wb-mock__bar">
+        <span className="wb-mock__dots">
+          <i />
+          <i />
+          <i />
+        </span>
+        <span className="wb-mock__url">yourbusiness.com</span>
+      </div>
+
+      <div className="wb-mock__body">
+        <div>
+          <span className="wb-mock__kicker" />
+          <p className="wb-mock__h1">
+            What you do, who for, and the one action worth taking
+          </p>
+          <p className="wb-mock__sub">
+            Understood without scrolling, in the words your customers use.
+          </p>
+          <div className="wb-mock__ctas">
+            <span className="wb-mock__btn wb-mock__btn--solid">Book now</span>
+            <span className="wb-mock__btn wb-mock__btn--ghost">See pricing</span>
+          </div>
+        </div>
+
+        <div className="wb-mock__side">
+          <span className="wb-mock__check">
+            <Icon name="tick" strokeWidth={3} />
+            Above the fold
+          </span>
+          <span className="wb-mock__check">
+            <Icon name="tick" strokeWidth={3} />
+            One obvious next step
+          </span>
+          <span className="wb-mock__check">
+            <Icon name="tick" strokeWidth={3} />
+            Loads before interest fades
+          </span>
+          <span className="wb-mock__meta">
+            <Icon name="bolt" />
+            Judged in the first three seconds
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Hero() {
   return (
-    <section className="sd-hero">
-      <div className="hv-container sd-hero__inner">
+    <section className="wb-hero">
+      <div className="hv-container wb-hero__inner">
         <Reveal>
-          <p className="sd-hero__crumbs">
+          <p className="wb-hero__crumbs">
             <Link to="/">Home</Link>
-            <span>/</span>
+            <span aria-hidden="true">/</span>
             <Link to="/services">Services</Link>
-            <span>/</span>
+            <span aria-hidden="true">/</span>
             Websites &amp; Landing Pages
           </p>
 
-          <span className="sd-hero__eyebrow">{WEB_HERO.eyebrow}</span>
+          <span className="wb-hero__eyebrow">{WEB_HERO.eyebrow}</span>
 
-          <h1 className="sd-hero__title">
-            {WEB_HERO.titleLead}
-            <span>{WEB_HERO.titleAccent}</span>
+          <h1 className="wb-hero__title">
+            {WEB_HERO.titleLead} <span>{WEB_HERO.titleAccent}</span>
           </h1>
 
-          <p className="sd-hero__lede">{WEB_HERO.lede}</p>
+          <p className="wb-hero__lede">{WEB_HERO.lede}</p>
 
-          <div className="sd-hero__ctas">
+          <div className="wb-hero__ctas">
             <Btn to={WEB_HERO.primary.to} variant="primary" size="lg" iconAfter={WEB_HERO.primary.icon}>
               {WEB_HERO.primary.label}
             </Btn>
@@ -77,129 +137,193 @@ function Hero() {
             </Btn>
           </div>
 
+          <ul className="wb-hero__chips">
+            {WEB_HERO.chips.map((chip) => (
+              <li key={chip.label}>
+                <Icon name={chip.icon} aria-hidden="true" />
+                {chip.label}
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+
+        <Reveal index={1}>
+          <BrowserMock />
         </Reveal>
       </div>
     </section>
   );
 }
 
-/**
- * The six decisions. Rendered as an ordered list because the order is the
- * point, with the "what it has to pass" line as a separate element rather
- * than a second paragraph: it is the acceptance test for that decision, not
- * more description.
- */
-function Anatomy() {
+/** The detailed overview: the real build photo left, prose right, and the
+ *  pull-quote carried as a banner inside the prose column. */
+function Overview() {
   return (
-    <HvSection id="anatomy" className="sd-anatomy-sec">
-      <Reveal className="sd-grid-head">
-        <span className="hv-eyebrow">{WEB_ANATOMY.eyebrow}</span>
-        <h2 className="hv-h2">{WEB_ANATOMY.title}</h2>
-        <p className="hv-body">{WEB_ANATOMY.lede}</p>
-      </Reveal>
+    <HvSection id="overview" className="wb-overview">
+      <div className="wb-overview__inner">
+        <Reveal className="wb-overview__media">
+          <div className="wb-overview__frame">
+            {/* The wireframe-being-sketched photo, not the process section's
+                code-and-live-page shot - one photo per section, so the page
+                never shows the same asset twice. */}
+            <picture>
+              <source type="image/webp" srcSet="/img/services/web-hero.webp" />
+              <img
+                src="/img/services/web-hero.jpg"
+                alt="A wireframe for a web page being sketched by hand"
+                width={900}
+                height={675}
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
+          </div>
+        </Reveal>
 
-      <ol className="sd-anatomy">
-        {WEB_ANATOMY.stages.map((stage, i) => (
-          <Reveal as="li" className="sd-anatomy__row" key={stage.num} index={i}>
-            <span className="sd-anatomy__num" aria-hidden="true">
-              {stage.num}
-            </span>
+        <Reveal className="wb-overview__prose" index={1}>
+          <span className="hv-eyebrow">{WEB_OVERVIEW.eyebrow}</span>
+          <h2 className="hv-h2">{WEB_OVERVIEW.title}</h2>
 
-            <div className="sd-anatomy__body">
-              <h3>{stage.title}</h3>
-              <p>{stage.body}</p>
-            </div>
+          <blockquote className="wb-overview__quote">
+            <p>{WEB_OVERVIEW.quote.text}</p>
+            <span>{WEB_OVERVIEW.quote.attribution}</span>
+          </blockquote>
 
-            <span className="sd-anatomy__want">
-              <Icon name="tick" aria-hidden="true" strokeWidth={3} />
-              {stage.want}
-            </span>
+          {WEB_OVERVIEW.body.map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
+        </Reveal>
+      </div>
 
-            <span className="sd-anatomy__icon" aria-hidden="true">
-              <Icon name={stage.icon} strokeWidth={1.9} />
-            </span>
-          </Reveal>
+      <Reveal as="ul" className="wb-facts" index={2}>
+        {WEB_OVERVIEW.facts.map((fact) => (
+          <li key={fact.label}>
+            <b>{fact.num}</b>
+            <strong>{fact.label}</strong>
+            <span>{fact.sub}</span>
+          </li>
         ))}
-      </ol>
-
-      <Reveal className="sd-anatomy__foot">
-        <Btn to={WEB_ANATOMY.cta.to} variant="primary" size="lg" iconAfter="arrowRight">
-          {WEB_ANATOMY.cta.label}
-        </Btn>
-
-        <div className="sd-anatomy__note" aria-hidden="true">
-          <ScriptNote direction="down-right">{WEB_ANATOMY.note}</ScriptNote>
-        </div>
       </Reveal>
     </HvSection>
   );
 }
 
-function WhatWeBuild() {
+/** The six decisions as light editorial rows: number, name, description and
+ *  the right-aligned test each one has to pass. The Funnel page renders its
+ *  stages as a dark film-strip, so nothing about this reads as the same
+ *  section. */
+function Anatomy() {
   return (
-    <HvSection className="sd-caps">
-      <Reveal className="sd-grid-head">
-        <span className="hv-eyebrow">{WEB_GRID.eyebrow}</span>
-        <h2 className="hv-h2">{WEB_GRID.title}</h2>
-        <p className="sd-sub">{WEB_GRID.subtitle}</p>
-        <p className="hv-body">{WEB_GRID.lede}</p>
+    <HvSection className="wb-anatomy">
+      <Reveal className="hv-section-head">
+        <span className="hv-eyebrow">{WEB_ANATOMY.eyebrow}</span>
+        <h2 className="hv-h2">{WEB_ANATOMY.title}</h2>
+        <p className="hv-body">{WEB_ANATOMY.lede}</p>
       </Reveal>
 
-      <ul className="sd-grid">
-        {WEB_GRID.items.map((item, i) => (
+      <ul className="wb-decisions">
+        {WEB_ANATOMY.stages.map((stage, i) => (
+          <Reveal as="li" className="wb-decision" key={stage.num} index={i}>
+            <span className="wb-decision__num" aria-hidden="true">
+              {stage.num}
+            </span>
+
+            <div className="wb-decision__body">
+              <h3>{stage.title}</h3>
+              <p>{stage.body}</p>
+            </div>
+
+            <span className="wb-decision__want">
+              <Icon name="tick" aria-hidden="true" strokeWidth={3} />
+              {stage.want}
+            </span>
+
+            <span className="wb-decision__icon" aria-hidden="true">
+              <Icon name={stage.icon} strokeWidth={1.9} />
+            </span>
+          </Reveal>
+        ))}
+      </ul>
+
+      <Reveal className="wb-anatomy__foot">
+        <Btn to={WEB_ANATOMY.cta.to} variant="primary" size="lg" iconAfter="arrowRight">
+          {WEB_ANATOMY.cta.label}
+        </Btn>
+      </Reveal>
+    </HvSection>
+  );
+}
+
+/** What's included: white cards with an accent top edge, the first spanning
+ *  two columns so the grid reads as composed rather than uniform. */
+function Includes() {
+  return (
+    <HvSection className="wb-includes">
+      <Reveal className="hv-section-head">
+        <span className="hv-eyebrow">{WEB_INCLUDES.eyebrow}</span>
+        <h2 className="hv-h2">{WEB_INCLUDES.title}</h2>
+        <p className="wb-sub">{WEB_INCLUDES.subtitle}</p>
+        <p className="hv-body">{WEB_INCLUDES.lede}</p>
+      </Reveal>
+
+      <ul className="wb-cards">
+        {WEB_INCLUDES.items.map((item, i) => (
           <Reveal as="li" key={item.title} index={i}>
-            <article className="sd-card">
-              <span className="sd-card__icon" aria-hidden="true">
-                <Icon name={item.icon} />
-              </span>
-              <h3>{item.title}</h3>
+            <article className={`wb-card${i === 0 ? " wb-card--wide" : ""}`}>
+              <div className="wb-card__head">
+                <span className="wb-card__icon" aria-hidden="true">
+                  <Icon name={item.icon} />
+                </span>
+                <h3>{item.title}</h3>
+              </div>
               <p>{item.body}</p>
             </article>
           </Reveal>
         ))}
       </ul>
 
-      <Reveal className="sd-cta-row">
-        <Btn to={WEB_GRID.cta.to} variant="primary" size="lg" iconAfter="arrowRight">
-          {WEB_GRID.cta.label}
+      <Reveal className="wb-anatomy__foot">
+        <Btn to={WEB_INCLUDES.cta.to} variant="primary" size="lg" iconAfter="arrowRight">
+          {WEB_INCLUDES.cta.label}
         </Btn>
       </Reveal>
     </HvSection>
   );
 }
 
+/** How it works: a light 2x2 of numbered steps wrapped around a centre
+ *  photo, each step carrying its proof line, chips INSIDE the photo's
+ *  bottom edge. */
 function Process() {
   return (
-    <HvSection dark className="sd-proc">
-      <div className="sd-proc__inner">
-        <Reveal>
-          <span className="hv-eyebrow">{WEB_PROCESS.eyebrow}</span>
-          <h2 className="hv-h2">{WEB_PROCESS.title}</h2>
-          <p className="hv-body">{WEB_PROCESS.lede}</p>
+    <HvSection className="wb-process">
+      <Reveal className="hv-section-head hv-section-head--center">
+        <span className="hv-eyebrow">{WEB_PROCESS.eyebrow}</span>
+        <h2 className="hv-h2">{WEB_PROCESS.title}</h2>
+        <p className="hv-lede">{WEB_PROCESS.lede}</p>
+      </Reveal>
 
-          <ol className="sd-steps">
-            {WEB_PROCESS.steps.map((step, i) => (
-              <Reveal as="li" className="sd-step" key={step.num} index={i}>
-                <span className="sd-step__num" aria-hidden="true">
-                  {step.num}
-                </span>
-                <div>
-                  <h3>{step.title}</h3>
-                  <p>{step.body}</p>
-                </div>
-              </Reveal>
-            ))}
-          </ol>
+      <div className="wb-process__grid">
+        {WEB_PROCESS.steps.map((step, i) => (
+          <Reveal className="wb-step" key={step.num} index={i}>
+            <div className="wb-step__top">
+              <span className="wb-step__num" aria-hidden="true">
+                {step.num}
+              </span>
+              <h3>{step.title}</h3>
+            </div>
 
-          <div className="sd-split__cta">
-            <Btn to={WEB_PROCESS.cta.to} variant="primary" size="lg" iconAfter={WEB_PROCESS.cta.icon}>
-              {WEB_PROCESS.cta.label}
-            </Btn>
-          </div>
-        </Reveal>
+            <p className="wb-step__body">{step.body}</p>
 
-        <Reveal className="sd-proc__media" index={1}>
-          <div className="sd-proc__frame">
+            <p className="wb-step__proof">
+              <Icon name="shieldCheck" aria-hidden="true" />
+              {step.proof}
+            </p>
+          </Reveal>
+        ))}
+
+        <Reveal className="wb-process__media" index={4}>
+          <div className="wb-process__frame">
             <picture>
               <source type="image/webp" srcSet={WEB_PROCESS.imageWebp} />
               <img
@@ -213,9 +337,9 @@ function Process() {
             </picture>
           </div>
 
-          <div className="sd-proc__chips" aria-hidden="true">
+          <div className="wb-process__chips" aria-hidden="true">
             {WEB_PROCESS.chips.map((chip) => (
-              <span className="sd-proc__chip" key={chip.label}>
+              <span className="wb-process__chip" key={chip.label}>
                 <Icon name={chip.icon} />
                 <span>{chip.label}</span>
               </span>
@@ -223,208 +347,78 @@ function Process() {
           </div>
         </Reveal>
       </div>
-    </HvSection>
-  );
-}
 
-/**
- * The four problems. A problem and its fix, paired row by row: the problem in
- * the reader's own terms, the fix as an instruction, so the section reads as
- * a checklist rather than a sales pitch.
- */
-function Leaks() {
-  return (
-    <HvSection className="sd-leaks">
-      <Reveal className="sd-grid-head">
-        <span className="hv-eyebrow">{WEB_FIX.eyebrow}</span>
-        <h2 className="hv-h2">{WEB_FIX.title}</h2>
-        <p className="hv-body">{WEB_FIX.lede}</p>
-      </Reveal>
-
-      <ul className="sd-leaks__rows">
-        {WEB_FIX.rows.map((row, i) => (
-          <Reveal as="li" className="sd-leaks__row" key={row.problem} index={i}>
-            <span className="sd-leaks__problem">
-              <Icon name="close" aria-hidden="true" strokeWidth={2.4} />
-              <span>{row.problem}</span>
-            </span>
-
-            <span className="sd-leaks__arrow" aria-hidden="true">
-              <Icon name="arrowRight" strokeWidth={2.2} />
-            </span>
-
-            <span className="sd-leaks__fix">
-              <Icon name="tick" aria-hidden="true" strokeWidth={3} />
-              <span>{row.fix}</span>
-            </span>
-          </Reveal>
-        ))}
-      </ul>
-
-      <Reveal className="sd-cta-row">
-        <Btn to={WEB_FIX.cta.to} variant="primary" size="lg" iconAfter={WEB_FIX.cta.icon}>
-          {WEB_FIX.cta.label}
+      <Reveal className="wb-process__foot">
+        <Btn to={WEB_PROCESS.cta.to} variant="primary" size="lg" iconAfter={WEB_PROCESS.cta.icon}>
+          {WEB_PROCESS.cta.label}
         </Btn>
       </Reveal>
     </HvSection>
   );
 }
 
-function Intro() {
+/** The journey: a dark band where the six stages are joined by chevrons -
+ *  the arrow between the cells rather than a rail through them. */
+function Journey() {
   return (
-    <HvSection className="sd-intro">
-      <div className="sd-intro__inner">
-        <Reveal className="sd-intro__aside">
-          <span className="hv-eyebrow">{WEB_INTRO.eyebrow}</span>
-          <h2 className="sd-intro__title">{WEB_INTRO.title}</h2>
+    <HvSection dark className="wb-journey">
+      <Reveal className="hv-section-head hv-section-head--center">
+        <span className="hv-eyebrow">{WEB_JOURNEY.eyebrow}</span>
+        <h2 className="hv-h2">{WEB_JOURNEY.title}</h2>
+        <p className="hv-lede">{WEB_JOURNEY.lede}</p>
+      </Reveal>
 
-          <blockquote className="sd-intro__quote">
-            <p>{WEB_INTRO.quote.text}</p>
-            <span>{WEB_INTRO.quote.attribution}</span>
-          </blockquote>
-        </Reveal>
+      <ol className="wb-flow">
+        {WEB_JOURNEY.steps.map((step, i) => (
+          <li className="wb-flow__item" key={step.title}>
+            <Reveal className="wb-flow__cell" index={i}>
+              <span className="wb-flow__icon" aria-hidden="true">
+                <Icon name={step.icon} />
+              </span>
+              <span className="wb-flow__step" aria-hidden="true">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <h3>{step.title}</h3>
+              <p>{step.detail}</p>
+            </Reveal>
 
-        <Reveal className="sd-intro__prose" index={1}>
-          {WEB_INTRO.body.map((para, i) => (
-            <p key={i}>{para}</p>
-          ))}
-        </Reveal>
-      </div>
-
-      <Reveal as="ul" className="sd-facts" index={2}>
-        {WEB_INTRO.facts.map((fact) => (
-          <li key={fact.label}>
-            <b>{fact.num}</b>
-            <strong>{fact.label}</strong>
-            <span>{fact.sub}</span>
+            {i < WEB_JOURNEY.steps.length - 1 && (
+              <span className="wb-flow__arrow" aria-hidden="true">
+                <Icon name="chevronRight" strokeWidth={2.4} />
+              </span>
+            )}
           </li>
         ))}
+      </ol>
+
+      <Reveal className="wb-journey__foot">
+        <Btn to={WEB_JOURNEY.cta.to} variant="primary" size="lg" iconAfter={WEB_JOURNEY.cta.icon}>
+          {WEB_JOURNEY.cta.label}
+        </Btn>
       </Reveal>
     </HvSection>
   );
 }
 
-function Details() {
+/** Who we work with: three columns of quiet tiles - the Funnel page uses
+ *  hairline rows on dark, so this reads as a different section entirely. */
+function Who() {
   return (
-    <HvSection dark>
-      <Reveal className="sd-grid-head">
-        <span className="hv-eyebrow">{WEB_DETAILS.eyebrow}</span>
-        <h2 className="hv-h2">{WEB_DETAILS.title}</h2>
-        <p className="hv-body">{WEB_DETAILS.lede}</p>
+    <HvSection className="wb-who">
+      <Reveal className="hv-section-head">
+        <span className="hv-eyebrow">{WEB_WHO.eyebrow}</span>
+        <h2 className="hv-h2">{WEB_WHO.title}</h2>
+        <p className="hv-body">{WEB_WHO.lede}</p>
       </Reveal>
 
-      <ul className="sd-details">
-        {WEB_DETAILS.groups.map((group, i) => (
-          <Reveal as="li" key={group.title} index={i}>
-            <article className="sd-detail">
-              <span className="sd-card__icon" aria-hidden="true">
-                <Icon name={group.icon} />
-              </span>
-              <h3>{group.title}</h3>
-              <ul>
-                {group.items.map((item) => (
-                  <li key={item}>
-                    <Icon name="check" aria-hidden="true" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </article>
-          </Reveal>
-        ))}
-      </ul>
-    </HvSection>
-  );
-}
-
-function UseCases() {
-  return (
-    <HvSection>
-      <Reveal className="sd-grid-head">
-        <span className="hv-eyebrow">{WEB_USECASES.eyebrow}</span>
-        <h2 className="hv-h2">{WEB_USECASES.title}</h2>
-        <p className="hv-lede">{WEB_USECASES.lede}</p>
-      </Reveal>
-
-      <ul className="sd-grid">
-        {WEB_USECASES.items.map((item, i) => (
+      <ul className="wb-who__grid">
+        {WEB_WHO.items.map((item, i) => (
           <Reveal as="li" key={item.title} index={i}>
-            <article className="sd-card">
-              <span className="sd-card__icon" aria-hidden="true">
+            <div className="wb-who__cell">
+              <span className="wb-who__icon" aria-hidden="true">
                 <Icon name={item.icon} />
               </span>
               <h3>{item.title}</h3>
-              <p>{item.body}</p>
-            </article>
-          </Reveal>
-        ))}
-      </ul>
-    </HvSection>
-  );
-}
-
-/** Representative builds, not client case studies - the note under the grid
- *  says so, and nothing here is attached to a named engagement. */
-function Work() {
-  return (
-    <HvSection mint>
-      <Reveal className="sd-grid-head">
-        <span className="hv-eyebrow">{WEB_WORK.eyebrow}</span>
-        <h2 className="hv-h2">{WEB_WORK.title}</h2>
-        <p className="hv-lede">{WEB_WORK.lede}</p>
-      </Reveal>
-
-      <ul className="sd-work">
-        {WEB_WORK.items.map((item, i) => (
-          <Reveal as="li" key={item.title} index={i}>
-            <article className="sd-work__card">
-              <span className="sd-work__tag">{item.tag}</span>
-              <h3>{item.title}</h3>
-              <p className="sd-work__problem">{item.problem}</p>
-
-              <p className="sd-work__label">What we built</p>
-              <ul className="sd-work__built">
-                {item.built.map((b) => (
-                  <li key={b}>
-                    <Icon name="check" aria-hidden="true" />
-                    {b}
-                  </li>
-                ))}
-              </ul>
-
-              <div className="sd-work__outcome">
-                <p>{item.outcome}</p>
-              </div>
-            </article>
-          </Reveal>
-        ))}
-      </ul>
-
-      <Reveal as="p" className="sd-work__note" index={3}>
-        <Icon name="shieldCheck" aria-hidden="true" />
-        {WEB_WORK.note}
-      </Reveal>
-    </HvSection>
-  );
-}
-
-function Benefits() {
-  return (
-    <HvSection>
-      <Reveal className="sd-grid-head">
-        <span className="hv-eyebrow">{WEB_BENEFITS.eyebrow}</span>
-        <h2 className="hv-h2">{WEB_BENEFITS.title}</h2>
-        <p className="hv-body">{WEB_BENEFITS.lede}</p>
-      </Reveal>
-
-      <ul className="sd-bens">
-        {WEB_BENEFITS.items.map((item, i) => (
-          <Reveal as="li" key={item.title} index={i}>
-            <div className="sd-ben">
-              <span className="sd-ben__icon" aria-hidden="true">
-                <Icon name={item.icon} />
-              </span>
-              <b>{item.title}</b>
               <p>{item.body}</p>
             </div>
           </Reveal>
@@ -434,27 +428,226 @@ function Benefits() {
   );
 }
 
+/** Why GHLevelUp: a sticky intro beside a numbered spec-sheet list. */
+function Why() {
+  return (
+    <HvSection className="wb-why">
+      <div className="wb-why__inner">
+        <Reveal className="wb-why__intro">
+          <span className="hv-eyebrow">{WEB_WHY.eyebrow}</span>
+          <h2 className="hv-h2">{WEB_WHY.title}</h2>
+          <p className="hv-body">{WEB_WHY.lede}</p>
+
+          <div className="wb-why__band">
+            <Btn to={WEB_WHY.cta.to} variant="primary" size="lg" iconAfter={WEB_WHY.cta.icon}>
+              {WEB_WHY.cta.label}
+            </Btn>
+          </div>
+        </Reveal>
+
+        <Reveal as="ul" className="wb-specs" index={1}>
+          {WEB_WHY.items.map((item) => (
+            <li key={item.title}>
+              <div>
+                <h3>
+                  <Icon name={item.icon} aria-hidden="true" />
+                  {item.title}
+                </h3>
+                <p>{item.body}</p>
+              </div>
+            </li>
+          ))}
+        </Reveal>
+      </div>
+    </HvSection>
+  );
+}
+
+/** FAQs on a dark surface with a white contact card beside them - the
+ *  emphasis flipped from the Funnel page's light FAQ with a dark card. */
 function FaqSection() {
   return (
-    <HvSection className="sd-faq">
-      <StructuredData faq={WEB_FAQ.items} />
+    <HvSection className="wb-faq">
+      <StructuredData
+        faq={WEB_FAQ.items}
+        service={SEO}
+        crumbs={[
+          { name: "Home", path: "/" },
+          { name: "Services", path: "/services" },
+          { name: SEO.name, path: `/services/${SEO.slug}` },
+        ]}
+      />
 
-      <div className="sd-faq__inner">
+      <div className="wb-faq__inner">
         <Reveal>
           <span className="hv-eyebrow">{WEB_FAQ.eyebrow}</span>
           <h2 className="hv-h2">{WEB_FAQ.title}</h2>
           <p className="hv-body">{WEB_FAQ.lede}</p>
 
-          <div className="sd-faq__list">
+          <div className="wb-faq__list">
             <Faq items={WEB_FAQ.items} />
           </div>
         </Reveal>
 
-        <ServiceContactCard card={WEB_FAQ.card} />
+        <Reveal className="wb-faq__aside" index={1}>
+          <aside className="wb-contact-card">
+            <span className="wb-contact-card__eyebrow">{WEB_FAQ.card.eyebrow}</span>
+            <h2>{WEB_FAQ.card.title}</h2>
+            <p>{WEB_FAQ.card.body}</p>
+
+            <Btn to={WEB_FAQ.card.cta.to} variant="primary" iconAfter={WEB_FAQ.card.cta.icon}>
+              {WEB_FAQ.card.cta.label}
+            </Btn>
+
+            <ul className="wb-contact-card__list">
+              <li>
+                <Icon name="mail" aria-hidden="true" />
+                <a href={SITE.emailHref}>{SITE.email}</a>
+              </li>
+              <li>
+                <Icon name="phone" aria-hidden="true" />
+                <a href={SITE.phoneHref}>{SITE.phone}</a>
+              </li>
+              <li>
+                <Icon name="clock" aria-hidden="true" />
+                <span>{SITE.hours}</span>
+              </li>
+            </ul>
+
+            <p className="wb-contact-card__links">
+              <Link to="/contact">Contact page</Link>
+              <span aria-hidden="true">·</span>
+              <Link to="/services">All services</Link>
+            </p>
+          </aside>
+        </Reveal>
       </div>
     </HvSection>
   );
 }
+
+/** The client review: one quote as a light card with a star row - the
+ *  Funnel page gives its quote a dark full-width band, so this is the
+ *  opposite treatment. */
+function Review() {
+  return (
+    <HvSection className="wb-review">
+      <Reveal className="wb-review__card">
+        <div className="wb-review__stars" aria-label="Five star review">
+          {Array.from({ length: 5 }, (_, i) => (
+            <Icon key={i} name="star" aria-hidden="true" />
+          ))}
+        </div>
+
+        <blockquote className="wb-review__quote">{WEB_REVIEW.quote}</blockquote>
+
+        <div className="wb-review__person">
+          <div className="wb-review__who">
+            {/* ImageSlot rather than a bare img: until the real avatar file
+                exists it renders a labelled placeholder at the same ratio,
+                the same deal the home page's testimonials get. */}
+            <ImageSlot src={WEB_REVIEW.image} alt="" ratio="1/1" label=" " className="wb-review__avatar" />
+            <span>
+              <strong>{WEB_REVIEW.name}</strong>
+              <em>{WEB_REVIEW.role}</em>
+            </span>
+          </div>
+
+          <Btn to={WEB_REVIEW.cta.to} variant="primary" iconAfter={WEB_REVIEW.cta.icon}>
+            {WEB_REVIEW.cta.label}
+          </Btn>
+        </div>
+      </Reveal>
+    </HvSection>
+  );
+}
+
+/** The closing contact: the Contact page's own components - its section
+ *  head, its GoHighLevel contact form embed, and its CtaBand - reused here
+ *  so the last screen of this page is the same contact experience as
+ *  /contact, not a lookalike. Centred single-column this time, so the two
+ *  pages close differently too. */
+function Closing() {
+  return (
+    <>
+      <Section className="wb-closing">
+        <SectionHead eyebrow="Contact us" title={WEB_CLOSING.title} center>
+          {WEB_CLOSING.body}
+        </SectionHead>
+
+        <LegacyReveal>
+          {/* GHL EMBED - CONTACT US FORM (Form ID: rArd4GpBcPOa3tbsPAO3).
+              The same embed the Contact page uses, so an enquiry from here
+              lands in the same inbox with the same fields. Capped narrower
+              than the Contact page's grid column because this layout is
+              centred rather than split. */}
+          <div className="wb-embed">
+            <GhlEmbed
+              variant="form"
+              iframeProps={{
+                src: "https://api.leadconnectorhq.com/widget/form/rArd4GpBcPOa3tbsPAO3",
+                style: { width: "100%", height: 840, border: "none", borderRadius: 8 },
+                id: "inline-rArd4GpBcPOa3tbsPAO3",
+                "data-layout": "{'id':'INLINE'}",
+                "data-trigger-type": "alwaysShow",
+                "data-trigger-value": "",
+                "data-activation-type": "alwaysActivated",
+                "data-activation-value": "",
+                "data-deactivation-type": "neverDeactivate",
+                "data-deactivation-value": "",
+                "data-form-name": "Contact Us",
+                "data-height": "740",
+                "data-layout-iframe-id": "inline-rArd4GpBcPOa3tbsPAO3",
+                "data-form-id": "rArd4GpBcPOa3tbsPAO3",
+                "data-cookie-consent": "true",
+                "data-cookie-consent-provider": "auto",
+                title: "Contact Us",
+              }}
+            />
+          </div>
+        </LegacyReveal>
+      </Section>
+
+      <Section tight>
+        <CtaBand
+          title="Or just call and ask"
+          actions={
+            <>
+              {WEB_CLOSING.actions.map((action) => (
+                <Button
+                  key={action.label}
+                  to={action.to}
+                  variant={action.variant}
+                  size="lg"
+                  icon={action.icon}
+                >
+                  {action.label}
+                </Button>
+              ))}
+              <Button href={SITE.phoneHref} variant="ghost-light" size="lg" icon="phone">
+                Call {SITE.phone}
+              </Button>
+            </>
+          }
+        >
+          {WEB_CLOSING.note}
+        </CtaBand>
+      </Section>
+    </>
+  );
+}
+
+/* One definition of this page's search identity, read by both its <PageMeta>
+   and its Service structured data below - so the title, the description and
+   the schema can never describe the same page three slightly different ways. */
+const SEO = {
+  slug: "websites-landing-pages",
+  name: "Websites & Landing Pages",
+  description:
+    "Fast, responsive websites and landing pages built to convert - wired to your CRM, calendar and analytics, and tested on real devices before launch.",
+  ogDescription:
+    "Websites and landing pages built around the action you want: one promise above the fold, one obvious next step, speed and accessibility checked at launch.",
+};
 
 export default function ServiceWebsitesLanding() {
   return (
@@ -466,36 +659,20 @@ export default function ServiceWebsitesLanding() {
         </>
       }
     >
-      <PageMeta
-        title="Websites & Landing Pages - GHLevelUp"
-        description="Fast, responsive websites and landing pages built to convert - wired to your CRM, calendar and analytics, and tested on real devices before launch."
-        ogDescription="Websites and landing pages built around the action you want: one promise above the fold, one obvious next step, speed and accessibility checked at launch."
-      />
+      <PageMeta title={`${SEO.name} - GHLevelUp`} description={SEO.description} ogDescription={SEO.ogDescription} />
 
-      <div className="sd-pg">
+      <div className="wb-pg">
         <Hero />
-        <Intro />
+        <Overview />
         <Anatomy />
-        <WhatWeBuild />
+        <Includes />
         <Process />
-        <Details />
-        <UseCases />
-        <Work />
-        <Benefits />
-        <Leaks />
-        <ServiceEnquiryForm
-          service={WEB_ENQUIRY.service}
-          eyebrow={WEB_ENQUIRY.eyebrow}
-          title={WEB_ENQUIRY.title}
-          lede={WEB_ENQUIRY.lede}
-          points={WEB_ENQUIRY.points}
-        />
-        <RelatedServices
-          slug="websites-landing-pages"
-          title="What makes a site earn its keep"
-          lede="Pages bring people in. These decide whether an enquiry gets captured, answered and followed up."
-        />
+        <Journey />
+        <Who />
+        <Why />
         <FaqSection />
+        {/* <Review /> */}
+        {/* <Closing /> */}
       </div>
     </Layout>
   );

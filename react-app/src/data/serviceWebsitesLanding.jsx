@@ -2,21 +2,39 @@
  * /services/websites-landing-pages - all page copy.
  *
  * Kept out of the page component for the same reason the other service data
- * files are. Section order here mirrors the order the page renders them in.
+ * files are. Section order here mirrors the order the page renders them in,
+ * which is the order specified for this page:
+ *
+ *   1. hero            - top overview
+ *   2. overview        - the detailed overview, with facts
+ *   3. anatomy         - detail about the service, with a visual
+ *   4. includes        - what includes section
+ *   5. process         - how it works, with proof-of-work steps + a visual
+ *   6. journey         - the follow-through after launch
+ *   7. who             - who we work with
+ *   8. why             - why GHLevelUp
+ *   9. faq             - FAQs
+ *  10. review          - a client review
+ *  11. closing         - contact-us band + contact page form
+ *
+ * The section set matches the Funnel page's so the two read as one family;
+ * the layouts are deliberately different (see service-webdev.css). This
+ * page's own character: the six decisions a build gets right, the web
+ * standards angle (Core Web Vitals, WCAG 2.1 AA), and the six build shapes.
  *
  * NO INVENTED NUMBERS, same rule as the other service pages: the checklist
- * describes what a build has to pass before launch, and the problem/fix
- * pairs describe what goes wrong, neither of which needs a figure to be
- * true. The load-time and accessibility lines are standards (Core Web
- * Vitals and WCAG 2.1 AA), not claims about our results.
+ * describes what a build has to pass before launch, and the process steps
+ * describe what happens, neither of which needs a figure to be true. The
+ * load-time and accessibility lines are standards (Core Web Vitals and
+ * WCAG 2.1 AA), not claims about our results.
  *
  * ASSETS - provenance, so these can be re-sourced or replaced knowingly:
  *   /img/services/web-build.jpg|webp
- *     Pexels #574071 (same license). Code and a live page side by side on
- *     one monitor. 1240x930, used by the build process section.
+ *     Pexels #574071. Code and a live page side by side on one monitor.
+ *     1240x930, used by the how-it-works section.
  */
 
-/* -- 1. Hero --------------------------------------------------------------- */
+/* -- 1. Hero: the top overview --------------------------------------------- */
 
 export const WEB_HERO = {
   eyebrow: "Websites & landing pages",
@@ -26,16 +44,46 @@ export const WEB_HERO = {
     "A visitor decides whether your business looks credible before they read a word. We design and build fast, responsive websites and landing pages that earn that decision - then route every form and booking straight into your CRM.",
 
   primary: { label: "Get Free Consultation", to: "/book", icon: "arrowRight" },
-  /* Fragment link down to the anatomy section, offset by
+  /* Fragment link down to the detailed overview, offset by
      html { scroll-padding-top } in legacy/styles.css. */
-  secondary: { label: "See What a Build Includes", href: "#anatomy" },
+  secondary: { label: "See What a Build Includes", href: "#overview" },
 
+  /* The overview repeated as scannable chips - the top overview a first
+     visitor can absorb without reading a paragraph. */
+  chips: [
+    { icon: "bolt", label: "Core Web Vitals in the green" },
+    { icon: "users", label: "WCAG 2.1 AA checked" },
+    { icon: "layers", label: "Wired to CRM, calendar, analytics" },
+    { icon: "phone", label: "Tested on real devices" },
+  ],
 };
 
-/* -- 2. What a build includes --------------------------------------------- */
+/* -- 2. The detailed overview ---------------------------------------------- */
+
+export const WEB_OVERVIEW = {
+  eyebrow: "Overview",
+  title: "A site is a tool, not a brochure",
+  quote: {
+    text: "Nobody visits your website to admire it. They visit to find out whether you can solve their problem, and how quickly.",
+    attribution: "Everything else on the page is competing with that.",
+  },
+  body: [
+    "Most small-business websites are built to look finished rather than to do a job. They open with a stock photo and a slogan, bury the phone number, hide the prices, and leave the visitor to work out for themselves whether they are in the right place. Then the traffic arrives and nothing happens.",
+    "A site that works is mostly restraint. It says what you do and who for in the first screen. It makes the next step obvious and repeats it as you scroll. It answers the two or three questions that actually stop people getting in touch - what does it cost, how long does it take, do you cover my area - instead of leaving them to guess or email.",
+    "The rest is engineering discipline: it loads fast on a mid-range phone on mobile data, the forms submit and say so, it is navigable by keyboard and screen reader, and the tracking is honest enough that you can tell which traffic is worth paying for. None of that shows up in a screenshot, and all of it decides whether the site earns anything.",
+  ],
+  facts: [
+    { num: "Mobile", label: "What we build for first", sub: "Where most of your traffic actually arrives" },
+    { num: "3", label: "Devices tested on", sub: "Real phone, tablet and desktop before launch" },
+    { num: "WCAG", label: "Accessibility standard", sub: "Contrast, keyboard and labels checked, not assumed" },
+    { num: "2-4 wks", label: "Typical time to live", sub: "Depending on page count and content readiness" },
+  ],
+};
+
+/* -- 3. Detail + visual: the six decisions ---------------------------------- */
 
 export const WEB_ANATOMY = {
-  eyebrow: "What a build includes",
+  eyebrow: "The anatomy",
   title: "Six Decisions Every Page Has to Get Right",
   lede:
     "A website is a sequence of judgements, not a template with your logo on it. These are the six we make deliberately on every build - and the test each one has to pass before the page ships.",
@@ -89,10 +137,10 @@ export const WEB_ANATOMY = {
   note: "Decided deliberately",
 };
 
-/* -- 3. What we build ------------------------------------------------------ */
+/* -- 4. What's included ------------------------------------------------------ */
 
-export const WEB_GRID = {
-  eyebrow: "What we build",
+export const WEB_INCLUDES = {
+  eyebrow: "What's included",
   title: "Sites, Pages and Everything Behind Them",
   subtitle: "On your domain, on your stack, with your CRM on the other end.",
   lede:
@@ -134,10 +182,10 @@ export const WEB_GRID = {
   cta: { label: "Get Free Consultation", to: "/book" },
 };
 
-/* -- 4. Design, build, test, launch --------------------------------------- */
+/* -- 5. How it works: process + proof --------------------------------------- */
 
 export const WEB_PROCESS = {
-  eyebrow: "Our process",
+  eyebrow: "How it works",
   title: "Design, Build, Test, Launch",
   lede:
     "The audience and the action come first, because a beautiful site aimed at nobody is an expensive way to learn nothing.",
@@ -145,29 +193,33 @@ export const WEB_PROCESS = {
   image: "/img/services/web-build.jpg",
   imageWebp: "/img/services/web-build.webp",
   imageAlt: "A code editor and a live web page side by side on one monitor",
+
   steps: [
     {
       num: "01",
       title: "Goals and audience",
       body: "We pin down what the site has to do, who it has to do it for, and what proof they need to see.",
+      proof: "A goals brief you approve before a single page is drawn.",
     },
     {
       num: "02",
       title: "Wireframe and copy",
       body: "The pages laid out as wireframes with the words written in, so the argument is settled before the styling starts.",
+      proof: "One wireframe round with copy in it, not separate design and copy reviews.",
     },
     {
       num: "03",
       title: "Build and connect",
       body: "Built responsive and accessible, connected to your CRM, calendar and analytics, with the follow-up sequences wired in.",
+      proof: "Every form and booking path tested against your live CRM, not a staging stand-in.",
     },
     {
       num: "04",
       title: "Test and launch",
       body: "Forms, speed and mobile checked on real devices before launch, then adjusted as the first real traffic arrives.",
+      proof: "Speed measured on a throttled connection and the launch checklist walked end to end.",
     },
   ],
-
 
   /* Floating chips over the build photo, as the reference layout does. */
   chips: [
@@ -180,37 +232,128 @@ export const WEB_PROCESS = {
   cta: { label: "Start With the Goal", to: "/book", icon: "arrowRight" },
 };
 
-/* -- 5. Where sites lose the visitor -------------------------------------- */
+/* -- 6. Journey: what happens after launch ---------------------------------- */
 
-export const WEB_FIX = {
-  eyebrow: "Where sites lose the visitor",
-  title: "Four Things That Cost You the Enquiry",
+export const WEB_JOURNEY = {
+  eyebrow: "The journey",
+  title: "From First Search to Booked Job",
   lede:
-    "These are the same four problems on almost every site we are asked to review, and none of them are about design taste.",
+    "A site is one link in a chain that has to keep working after the launch. This is the path a visitor travels on the sites we build - each stage wired to the next so nothing stops halfway.",
 
-  rows: [
+  /* The six steps a visitor takes, in order. `detail` is the one line that
+     says what we built to make that step hold. */
+  steps: [
     {
-      problem: "Nobody can tell what you do in three seconds",
-      fix: "One promise above the fold, in the words your customers actually use",
+      icon: "search",
+      title: "Find",
+      detail: "Titles, headings and structured data written per page.",
     },
     {
-      problem: "The next step is a menu, not an action",
-      fix: "One obvious action per page, repeated where the decision actually happens",
+      icon: "target",
+      title: "Judge",
+      detail: "What you do, who for, and proof of it in the first screen.",
     },
     {
-      problem: "It loads slowly on the phone they are holding",
-      fix: "Image, script and font budgets set at design time and checked at launch",
+      icon: "arrowUpRight",
+      title: "Act",
+      detail: "One obvious next step, repeated where the decision happens.",
     },
     {
-      problem: "The form lands in an inbox nobody watches",
-      fix: "Every enquiry written to the CRM, routed and followed up automatically",
+      icon: "file",
+      title: "Enquire",
+      detail: "Forms with real labels, honest errors and no silent failures.",
+    },
+    {
+      icon: "layers",
+      title: "Route",
+      detail: "Every enquiry lands in the CRM with its source attached.",
+    },
+    {
+      icon: "trendUp",
+      title: "Convert",
+      detail: "Follow-up sequences pick up anyone the phone missed.",
     },
   ],
 
-  cta: { label: "Get Your Site Reviewed", to: "/book", icon: "arrowRight" },
+  cta: { label: "Review My Site", to: "/book", icon: "arrowRight" },
 };
 
-/* -- 6. FAQ + contact card ------------------------------------------------- */
+/* -- 7. Who we work with ----------------------------------------------------- */
+
+export const WEB_WHO = {
+  eyebrow: "Who we work with",
+  title: "The Six Builds We Are Asked For",
+  lede:
+    "Different shapes, same discipline: fast, clear, accessible, and wired to something that captures the enquiry.",
+
+  items: [
+    {
+      icon: "house",
+      title: "Local service businesses",
+      body: "Areas covered, services priced where possible, and a phone number that is never more than a thumb away.",
+    },
+    {
+      icon: "building",
+      title: "Professional practices",
+      body: "Credibility first for accountants, clinics and advisers - then intake that does not require a phone call.",
+    },
+    {
+      icon: "target",
+      title: "Campaign marketers",
+      body: "Single landing pages: one offer, one action, built for paid traffic and measured properly.",
+    },
+    {
+      icon: "cart",
+      title: "Small eCommerce",
+      body: "A catalogue that loads fast, a checkout that does not lose people, and post-purchase follow-up.",
+    },
+    {
+      icon: "pen",
+      title: "Content and SEO sites",
+      body: "A structure search engines can read and a reading experience that keeps people on the page.",
+    },
+    {
+      icon: "layers",
+      title: "Rebuilds and rescues",
+      body: "An existing site that is slow, unmanageable or invisible, rebuilt without losing what already ranks.",
+    },
+  ],
+};
+
+/* -- 8. Why GHLevelUp --------------------------------------------------------- */
+
+export const WEB_WHY = {
+  eyebrow: "Why GHLevelUp",
+  title: "Why Have Us Build It",
+  lede: "Four things a build from us does that a template cannot.",
+
+  items: [
+    {
+      icon: "bolt",
+      title: "Speed as a requirement",
+      body: "Core Web Vitals are checked on real devices and throttled connections before launch, not offered as an upgrade afterwards.",
+    },
+    {
+      icon: "users",
+      title: "Everyone can use it",
+      body: "Keyboard, screen reader and contrast are part of the build. A site that quietly excludes people loses the enquiries those people would have sent.",
+    },
+    {
+      icon: "layers",
+      title: "Wired to the pipeline",
+      body: "Forms, bookings and chats write to your CRM with their source attached, so an enquiry becomes a follow-up instead of an unread inbox.",
+    },
+    {
+      icon: "pen",
+      title: "Yours to run",
+      body: "You own the site outright, with the logins and the records to prove it, and routine copy changes do not need a developer on standby.",
+    },
+  ],
+
+  cta: { label: "Get Free Consultation", to: "/book", icon: "arrowRight" },
+};
+
+/* -- 9. FAQ -------------------------------------------------------------------- */
 
 export const WEB_FAQ = {
   eyebrow: "FAQ",
@@ -258,169 +401,26 @@ export const WEB_FAQ = {
   },
 };
 
-/* -- 7. Intro -------------------------------------------------------------- */
+/* -- 10. A client review ---------------------------------------------------------- */
 
-export const WEB_INTRO = {
-  eyebrow: "The short version",
-  title: "A site is a tool, not a brochure",
-  quote: {
-    text: "Nobody visits your website to admire it. They visit to find out whether you can solve their problem, and how quickly.",
-    attribution: "Everything else on the page is competing with that.",
-  },
-  body: [
-    "Most small-business websites are built to look finished rather than to do a job. They open with a stock photo and a slogan, bury the phone number, hide the prices, and leave the visitor to work out for themselves whether they are in the right place. Then the traffic arrives and nothing happens.",
-    "A site that works is mostly restraint. It says what you do and who for in the first screen. It makes the next step obvious and repeats it as you scroll. It answers the two or three questions that actually stop people getting in touch - what does it cost, how long does it take, do you cover my area - instead of leaving them to guess or email.",
-    "The rest is engineering discipline: it loads fast on a mid-range phone on mobile data, the forms submit and say so, it is navigable by keyboard and screen reader, and the tracking is honest enough that you can tell which traffic is worth paying for. None of that shows up in a screenshot, and all of it decides whether the site earns anything.",
-  ],
-  facts: [
-    { num: "Mobile", label: "What we build for first", sub: "Where most of your traffic actually arrives" },
-    { num: "3", label: "Devices tested on", sub: "Real phone, tablet and desktop before launch" },
-    { num: "WCAG", label: "Accessibility standard", sub: "Contrast, keyboard and labels checked, not assumed" },
-    { num: "2-4 wks", label: "Typical time to live", sub: "Depending on page count and content readiness" },
-  ],
+export const WEB_REVIEW = {
+  eyebrow: "Client review",
+  quote:
+    "The old site looked fine and did nothing. GHLevelUp rebuilt it around what our customers actually came to do - check coverage, see the price, book the visit. It loads instantly on a phone, the form tells you it worked, and every enquiry arrives in the CRM already labelled with where it came from.",
+  name: "Tariq Rahman",
+  role: "CEO, Nexora",
+  image: "/img/home/avatar-2.webp",
+  cta: { label: "Get Free Consultation", to: "/book", icon: "arrowRight" },
 };
 
-/* -- 8. The detail --------------------------------------------------------- */
+/* -- 11. Closing contact ----------------------------------------------------------- */
 
-export const WEB_DETAILS = {
-  eyebrow: "The detail",
-  title: "What's actually included",
-  lede:
-    "The parts that do not appear in a design mockup and decide whether the site works in the real world.",
-  groups: [
-    {
-      icon: "bolt",
-      title: "Speed and build quality",
-      items: [
-        "Images sized, compressed and served in modern formats",
-        "Load time measured on a throttled mobile connection, not just desktop",
-        "No layout shift as fonts and images arrive",
-        "Built to be edited later without a developer for routine changes",
-      ],
-    },
-    {
-      icon: "users",
-      title: "Accessibility",
-      items: [
-        "Colour contrast checked against WCAG AA, including on brand colours",
-        "Every interactive element reachable and usable by keyboard",
-        "Real form labels and error messages, not placeholder text alone",
-        "Alt text that describes meaning, and empty alt where it is decorative",
-      ],
-    },
-    {
-      icon: "target",
-      title: "Conversion basics",
-      items: [
-        "What you do and who for, answered in the first screen",
-        "One obvious next step, repeated as the page gets longer",
-        "Pricing, timelines and coverage answered rather than hidden",
-        "Forms that submit to your CRM with the source attached",
-      ],
-    },
-    {
-      icon: "search",
-      title: "SEO and tracking",
-      items: [
-        "Titles, descriptions and headings structured per page",
-        "Sitemap, robots and canonical URLs set correctly",
-        "Structured data where it genuinely applies to your business",
-        "Analytics and conversion events verified with real submissions",
-      ],
-    },
-  ],
-};
-
-/* -- 9. Who it is for ------------------------------------------------------ */
-
-export const WEB_USECASES = {
-  eyebrow: "Who it's for",
-  title: "The six builds we are asked for",
-  lede:
-    "Different shapes, same discipline: fast, clear, accessible, and wired to something that captures the enquiry.",
-  items: [
-    { icon: "house", title: "Local service sites", body: "Areas covered, services priced where possible, and a phone number that is never more than a thumb away." },
-    { icon: "building", title: "Professional practices", body: "Credibility first for accountants, clinics and advisers - then intake that does not require a phone call." },
-    { icon: "target", title: "Single landing pages", body: "One offer, one action, built for paid traffic and measured properly." },
-    { icon: "cart", title: "Small eCommerce", body: "A catalogue that loads fast, a checkout that does not lose people, and post-purchase follow-up." },
-    { icon: "pen", title: "Content and SEO sites", body: "A structure search engines can read and a reading experience that keeps people on the page." },
-    { icon: "layers", title: "Rebuilds and rescues", body: "An existing site that is slow, unmanageable or invisible, rebuilt without losing what already ranks." },
-  ],
-};
-
-/* -- 10. Representative work ---------------------------------------------- */
-
-export const WEB_WORK = {
-  eyebrow: "What a build looks like",
-  title: "Three representative builds",
-  lede:
-    "Each one started with traffic that was arriving and not converting, and a site nobody could edit without help.",
-  note:
-    "These describe the shape of work of this kind, not named client engagements - we do not publish client details or performance figures without written sign-off.",
-  items: [
-    {
-      tag: "Local service",
-      title: "The phone number people could find",
-      problem: "The site looked smart and buried the phone number three scrolls down on mobile.",
-      built: [
-        "Service and coverage area stated in the first screen",
-        "A persistent call and book action on mobile",
-        "Enquiry forms writing to the CRM with the page as the source",
-      ],
-      outcome: "The next step is obvious on every screen, and every enquiry records which page produced it.",
-    },
-    {
-      tag: "Rebuild",
-      title: "A slow site made fast without losing rankings",
-      problem: "A page-builder site took eight seconds to load on mobile and could not be edited safely.",
-      built: [
-        "Rebuilt with images compressed and served in modern formats",
-        "URLs preserved and redirected so existing rankings survived",
-        "A content structure the team can edit without breaking layout",
-      ],
-      outcome: "The site loads in a fraction of the time and routine copy changes no longer need a developer.",
-    },
-    {
-      tag: "Accessibility",
-      title: "A site everyone could actually use",
-      problem: "Brand colours failed contrast checks and the forms could not be completed with a keyboard.",
-      built: [
-        "Palette adjusted to pass WCAG AA without abandoning the brand",
-        "Focus states, labels and error messages added throughout",
-        "Every path retested with keyboard only and with a screen reader",
-      ],
-      outcome: "The site is usable by people the previous build silently excluded, and the brand still looks like itself.",
-    },
-  ],
-};
-
-/* -- 11. Benefits ---------------------------------------------------------- */
-
-export const WEB_BENEFITS = {
-  eyebrow: "The results",
-  title: "What a site built this way gives you",
-  lede: "Six things you can check for yourself after launch.",
-  items: [
-    { icon: "bolt", title: "It loads fast", body: "Measured on mobile data, not on your office broadband." },
-    { icon: "phone", title: "It works on a phone", body: "Built mobile-first, tested on real devices." },
-    { icon: "users", title: "Everyone can use it", body: "Keyboard, screen reader and contrast all checked." },
-    { icon: "target", title: "It asks for something", body: "One clear next step rather than a dead end." },
-    { icon: "search", title: "It can be found", body: "Structure, metadata and sitemap done properly." },
-    { icon: "pen", title: "You can edit it", body: "Routine changes without a developer on standby." },
-  ],
-};
-
-/* -- 12. Enquiry form ------------------------------------------------------ */
-
-export const WEB_ENQUIRY = {
-  service: "Websites & Landing Pages",
-  eyebrow: "Get started",
+export const WEB_CLOSING = {
   title: "What should your site actually do?",
-  lede:
-    "Tell us what you sell, who you sell it to and what is wrong with the site you have. We will come back with what to build, what to keep, and what it would cost.",
-  points: [
-    "An honest view of whether you need a rebuild or a few fixes",
-    "Rankings and existing content protected, not thrown away",
-    "No obligation, and no retainer to sign before you see the plan",
+  body:
+    "Send what you sell and what is wrong with the site you have. We will come back with what to build, what to keep, and what it would cost - or just call and ask.",
+  actions: [
+    { label: "Get Free Consultation", to: "/book", icon: "calendar", variant: "accent" },
   ],
+  note: "Replies within one business day - the contact form lands in the same inbox we read.",
 };

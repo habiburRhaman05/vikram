@@ -77,8 +77,29 @@
   pointer-events: none;
   transition: opacity var(--hv-dur-slow) var(--hv-ease);
 }
+/* The stuck bar gets the much more opaque glass, for the reason set out on
+   --hv-glass-stuck: at rest the bar sits over a hero we control, and once
+   stuck it sits over whatever the reader has scrolled to. The blur and the
+   lit top edge stay, so it still reads as a surface and not as a painted
+   white strip that appears halfway down every dark page. */
 .home-v2 .site-header.is-stuck::before,
 .home-v2 .site-header.is-stuck::after { opacity: 1; }
+
+.home-v2 .site-header.is-stuck::before { background: var(--hv-glass-stuck); }
+
+/* The hairline under the bar does more work against a solid surface than it
+   did against translucent glass, so it is a little stronger and keeps the
+   bar's bottom edge legible over a dark hero rather than dissolving into it. */
+.home-v2 .site-header.is-stuck::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(10, 127, 82, .28) 18%,
+    rgba(10, 127, 82, .38) 50%,
+    rgba(10, 127, 82, .28) 82%,
+    transparent
+  );
+}
 
 /* Content has to sit above the glass layer. */
 .home-v2 .nav {
@@ -106,10 +127,28 @@
    opt into the v2 header/footer (variant="v2" on Layout) but still use the
    older page-hero component for their own opening section rather than a
    bespoke hv- hero - ServiceComingSoon is the first of these. .sd-hero is
-   the service-detail pages' own bespoke dark hero (styles/service-detail.css).
-   All three share this one rule rather than each getting an identical copy,
-   since the fix is the same for the same reason regardless of which hero
-   markup sits underneath.
+   the service-detail pages' own bespoke dark hero (styles/service-detail.css),
+   .svcs-hero is the /services hub's (styles/services.css), and .ab-hero is
+   /about's (styles/about.css).   .sm-hero (Social Media Marketing) and
+   .es-hero (Email & SMS Campaigns) and .rd-hero (Reporting Dashboards) are
+   each their own bespoke hero built in a deliberately different visual
+   language from .sd-hero - see service-social.css, service-email-sms.css
+   and service-reporting.css. .cs-hero (CRM & Sub-account Setup) and
+   .ai-hero (AI Agents & Chatbots) are the two built from the console/
+   spec-sheet direction - see service-crm-setup.css and
+   service-ai-agents.css. The .sm/.es/.rd/.cs/.ai heroes keep the same
+   background recipe as .sd-hero on purpose; what differs between them is
+   the composition, not the palette. .bl-hero is the blog's own (styles/blog.css),
+   on both /blog and /blog/:slug. .pr-hero is /pricing's own
+   (styles/pricing.css). .wk-hero and .wk-dhero are /work's and
+   /work/:slug's own (styles/work.css). .cs-hero is
+   /services/crm-sub-account-setup's own (styles/service-crm-setup.css).
+   .fnl-hero is the Funnel Design & Builds page's split hero (styles/
+   service-funnels.css) and .wb-hero the Websites & Landing Pages page's
+   centred hero (styles/service-webdev.css). All
+   share this one rule rather than each getting an identical copy, since the
+   fix is the same for the same reason regardless of which hero markup sits
+   underneath.
 
    ANY new page-opening hero that renders inside `.home-v2` has to be added
    here too, or it renders with a white strip where the transparent bar is
@@ -117,7 +156,19 @@
 .home-v2 .hv-hero,
 .home-v2 .page-hero,
 .home-v2 .sd-hero,
-.home-v2 .svcs-hero {
+.home-v2 .ai-hero,
+.home-v2 .svcs-hero,
+.home-v2 .ab-hero,
+.home-v2 .sm-hero,
+.home-v2 .es-hero,
+.home-v2 .bl-hero,
+.home-v2 .rd-hero,
+.home-v2 .pr-hero,
+.home-v2 .cs-hero,
+.home-v2 .wk-hero,
+.home-v2 .wk-dhero,
+.home-v2 .fnl-hero,
+.home-v2 .wb-hero {
   margin-top: calc(-1 * var(--header-h, 80px));
   padding-top: calc(var(--header-h, 80px) + clamp(8px, 1.5vw, 20px));
 }
@@ -301,6 +352,12 @@
    of the page or anywhere else. */
 .home-v2 .site-header:has(.nav__links.is-open)::before,
 .home-v2 .site-header:has(.nav__links.is-open)::after { opacity: 1; }
+
+/* And the open mobile menu gets the same opaque glass as the stuck bar: the
+   panel is inside the header, so this background is what sits behind the
+   whole dropdown. At .62 the menu items were reading through to the page
+   underneath them, which is exactly where a menu cannot afford it. */
+.home-v2 .site-header:has(.nav__links.is-open)::before { background: var(--hv-glass-stuck); }
 
 
 /* 21. Testimonial marquee ================================================= */
