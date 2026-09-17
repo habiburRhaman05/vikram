@@ -1,5 +1,6 @@
 import Layout from "@/components/layout/Layout.jsx";
 import PageMeta from "@/components/common/PageMeta.jsx";
+import StructuredData from "@/components/common/StructuredData.jsx";
 import PageHero from "@/components/common/PageHero.jsx";
 import Section from "@/components/common/Section.jsx";
 import SectionHead from "@/components/common/SectionHead.jsx";
@@ -60,8 +61,28 @@ export default function Contact() {
       }
     >
       <PageMeta
-        title="Contact - GHLevelUp"
+        title="Contact GHLevelUp - Call, Text or Send a Message"
         description="Talk to the team about running your CRM, automation and marketing on one system. Call, text, email, or send a message and we'll come back the same business day."
+        ogDescription="Questions about CRM, automation or pricing? Reach the people who would actually build and run your system - not a call centre - and get an answer the same business day."
+      />
+
+      {/* The contact page is where a search engine should find the business
+          itself, so the full organisation node is published here as well as
+          on the home page. Both carry the same @id, so they merge into one
+          entity rather than reading as two companies (see StructuredData). */}
+      <StructuredData
+        organization
+        page={{
+          type: "ContactPage",
+          name: "Contact GHLevelUp",
+          description:
+            "Call, text, email or send a message about CRM, automation, websites, funnels and reporting.",
+          path: "/contact",
+        }}
+        crumbs={[
+          { name: "Home", path: "/" },
+          { name: "Contact", path: "/contact" },
+        ]}
       />
 
       <PageHero
@@ -143,24 +164,7 @@ export default function Contact() {
         </div>
       </Section>
 
-      <Section tight>
-        <CtaBand
-          title="Or just call and ask"
-          actions={
-            <>
-              <Button href={SITE.phoneHref} variant="accent" size="lg" icon="phone">
-                Call {SITE.phone}
-              </Button>
-              <Button to="/book" variant="ghost-light" size="lg" icon="calendar">
-                Book a call instead
-              </Button>
-            </>
-          }
-        >
-          If a two-minute phone call would settle it faster than a form, use the number below. Outside office
-          hours the receptionist will take it and we'll follow up.
-        </CtaBand>
-      </Section>
+     
     </Layout>
   );
 }

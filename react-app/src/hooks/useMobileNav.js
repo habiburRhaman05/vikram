@@ -44,9 +44,10 @@ export default function useMobileNav() {
   }, [open]);
 
   const toggle = useCallback(() => setOpen((v) => !v), []);
-  // For the one item in the panel that doesn't navigate (the "Get Free
-  // Consultation" button, which opens the lead popup instead) - every
-  // other item closes this via the route-change effect above for free.
+  // For the panel's own "Get Free Consultation" button to close the panel
+  // on tap (it navigates to /book, and the route-change effect above would
+  // catch that too, but closing on click avoids a frame of panel over the
+  // page it is navigating to).
   const close = useCallback(() => setOpen(false), []);
 
   return { open, toggle, close };

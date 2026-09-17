@@ -61,13 +61,56 @@
    upper half of the tile row below it. Trimmed from 80vh per design
    feedback so the hero is a little tighter. min-height, so long copy on
    a narrow phone is never clipped. */
+/* `position: relative` is for the grid field below - it is positioned
+   against this block so it can never bleed into the tile row at the seam. */
 .hv-hero__main {
+  position: relative;
   display: flex;
   align-items: center;
   min-height: calc(74vh - var(--hv-tile) / 2);
   padding-block: clamp(20px, 3vh, 40px) clamp(40px, 6vh, 72px);
 }
+
+/* The grid field behind the hero copy. The same idea as the AI agents
+   hero's (styles/service-detail.css, section 16), so the two pages read as
+   one family - but it is NOT the same rule, and deliberately so: that hero
+   is a two-column layout with its field anchored behind a card on the
+   right, this one is a single centred column and its field is anchored at
+   the centre and fades more tightly, because here every line of copy sits
+   directly over it.
+
+   Two passes, both anchored at 0,0 so the accent lines land on every
+   fourth white line instead of drifting through the cells:
+     - 54px cell in neutral white, the texture
+     - 216px cell (4 x 54) in the teal of .hv-hero__glow, the rhythm
+
+   Confined to this block (inset: 0) and masked from just under the pill
+   outwards, so it is at its strongest behind the headline and has gone
+   completely before the tile row - the tiles and the trust logos below
+   already carry the detail, and a grid running behind them would just be
+   noise. `z-index: 0` puts it above .hv-hero__glow (z-index: -1) and
+   below .hv-hero__inner (z-index: 1). */
+.hv-hero__main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .07) 1px, transparent 1px),
+    linear-gradient(rgba(45, 212, 191, .17) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45, 212, 191, .17) 1px, transparent 1px);
+  background-size: 54px 54px, 54px 54px, 216px 216px, 216px 216px;
+  mask-image: radial-gradient(74% 62% at 50% 44%, #000 14%, transparent 88%);
+  -webkit-mask-image: radial-gradient(74% 62% at 50% 44%, #000 14%, transparent 88%);
+}
+
+/* z-index: 1 lifts the copy above the grid field - it is the only content
+   in this block, and without it the grid would paint over it. */
 .hv-hero__inner {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1502,6 +1545,7 @@
   display: block;
   width: 100%;
   height: 100%;
+  max-width: 100%;
   object-fit: cover;
   transition: transform var(--hv-dur-slow) var(--hv-ease);
 }
@@ -1610,6 +1654,20 @@
    featured tier is the only loud thing on it. */
 .home-v2 .hv-pricing { background: var(--hv-bg); color: var(--hv-text); }
 .home-v2 .hv-pricing .hv-lede { color: var(--hv-text-muted); }
+
+.hv-pricing__compare { text-align: center; margin: calc(var(--hv-s6) * -1) 0 var(--hv-s7); }
+.hv-pricing__compare a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  color: var(--hv-accent-strong);
+  text-decoration: none;
+}
+.hv-pricing__compare a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.hv-pricing__compare a svg { width: 15px; height: 15px; }
 
 .hv-pricing__grid {
   list-style: none;
@@ -1830,6 +1888,7 @@
   display: block;
   width: 100%;
   height: 100%;
+  max-width: 100%;
   border-radius: 22px;
   object-fit: cover;
 }

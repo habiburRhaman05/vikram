@@ -1,0 +1,2740 @@
+/* ==========================================================================
+   /services/:slug - the service detail pages
+   --------------------------------------------------------------------------
+   Shared by every /services/:slug detail page. They all use the SAME brand
+   green - see section 12 for why the old per-page hue system was removed.
+   What makes the pages differ is their layout and their content: which
+   sections they carry and in what order, not a repainted palette.
+   Layout follows the approved reference design, rebuilt on the v2 design
+   system's own tokens and primitives (--hv-*, .hv-btn, .hv-eyebrow,
+   .hv-container, .hv-script-note), which is why this file only describes
+   the sections' own geometry and none of the brand values.
+
+   The reference is a blue/navy design with an orange accent. Everything
+   here resolves to the GHLevelUp palette instead: emerald green accents,
+   --hv-bg-dark for the dark bands, --hv-bg-mint for the tinted one. No hex
+   literal in this file is a brand colour - the few that exist are neutral
+   scrims and the one warm tone used for "no" marks in the comparison.
+
+   Loaded AFTER home-redesign.css and home-chrome.css (see the page) -
+   those define the tokens and the button set, and they restyle the header
+   and footer this page sits inside.
+
+   Scope: every class is prefixed .sd- so nothing here can leak onto another
+   route.
+
+   HERO / HEADER COUPLING: `.sd-hero` is registered in the
+   `.home-v2 .hv-hero, .home-v2 .page-hero, .home-v2 .sd-hero` rule in
+   home-chrome.css, which pulls the hero up under the transparent header and
+   adds the header's height back as padding. If this hero is ever renamed,
+   that rule has to be updated with it, or the page opens with a white strip
+   behind the logo and the light-on-dark nav text disappears into it.
+
+   Contents
+     01. Hero
+     02. Why choose an AI agent
+     03. What we build (card grid)
+     04. Process
+     05. Key benefits
+     06. Real business impact
+     07. FAQ + contact card
+     08. Shared chat-bubble mock
+     09. Responsive
+     10. Reduced motion
+     12. Page hue (the pages built after the first)
+     12. Section blocks: comparison, tiles, timeline, stages, leaks, who
+     13. Responsive for 11 to 12
+   ========================================================================== */
+
+
+/* 01. Hero ================================================================= */
+/* Text-only and centred: crumbs, eyebrow, headline, lede, CTAs and the four
+   chips, in one centred column - no photo or overlay card beside it. The
+   gradient and grid texture carry the visual weight instead. */
+
+.sd-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-bottom: clamp(60px, 6vw, 104px);
+  /* One hero background across every service detail page: the same radial
+     wash the Social Media Marketing hero uses, so the family of pages opens
+     the same way instead of each carrying its own gradient. */
+  background: radial-gradient(120% 140% at 14% -10%, #0E4B3E 0%, var(--hv-bg-dark) 46%, var(--hv-bg-dark-2) 100%);
+  color: #fff;
+}
+
+/* The shared hero grid: the same accent-green cell texture the Social Media
+   Marketing hero draws, so every service detail hero carries an identical
+   background treatment. Masked from the top-left so it fades out before it
+   reaches the visual column. */
+.sd-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(53, 217, 160, .08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(53, 217, 160, .08) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(65% 65% at 20% 10%, #000 0%, transparent 75%);
+  -webkit-mask-image: radial-gradient(65% 65% at 20% 10%, #000 0%, transparent 75%);
+}
+
+/* Text-only hero: one centred column, no visual beside it. `z-index: 1`
+   keeps the copy above the grid texture in .sd-hero::after. */
+/* The hero is a centred single column. `--sd-hero-measure` is the one place
+   its text width is decided, so the headline and the lede stay in
+   proportion to each other instead of each carrying its own magic number.
+   It is deliberately wider than a reading measure would be: at these sizes
+   the headline is display type, not prose, and a narrow column forced it
+   into four short ragged lines. */
+.sd-hero__inner {
+  /* One place decides the hero's text width, so the headline and the lede
+     stay in proportion to each other instead of each carrying its own
+     magic number. Deliberately wider than a prose measure: at these sizes
+     the headline is display type, and a narrow column was breaking it into
+     four short ragged lines. */
+  --sd-hero-measure: 20ch;
+  --sd-hero-lede-measure: 72ch;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.sd-hero__crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 var(--hv-s5);
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-on-dark-muted);
+}
+.sd-hero__crumbs a { color: inherit; text-decoration: none; }
+.sd-hero__crumbs a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.sd-hero__crumbs span { opacity: .45; }
+
+.sd-hero__eyebrow {
+  display: inline-block;
+  padding: 7px 16px;
+  border: 1px solid rgba(53, 217, 160, .38);
+  border-radius: var(--hv-r-pill);
+  background: rgba(53, 217, 160, .12);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+
+.sd-hero__title {
+  margin: var(--hv-s5) 0 0;
+  max-width: var(--sd-hero-measure, 20ch);
+  font-family: var(--hv-font);
+  font-size: clamp(2.15rem, 1.15rem + 3.4vw, 4rem);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -.035em;
+  color: #fff;
+  text-wrap: balance;
+}
+/* Second line in the bright accent - 8.1:1 on this hero's fill. */
+.sd-hero__title span {
+  display: block;
+  color: var(--hv-accent-bright);
+}
+
+.sd-hero__lede {
+  margin: var(--hv-s6) 0 0;
+  max-width: var(--sd-hero-lede-measure, 72ch);
+  font-family: var(--hv-font-body);
+  font-size: clamp(1.02rem, .96rem + .38vw, 1.2rem);
+  line-height: 1.66;
+  color: #CBE3DB;
+  text-wrap: pretty;
+}
+
+/* The button row is now the hero's last element, so it carries the bottom
+   of the block on its own: a little more air above it than the old
+   chips-below layout needed, and it is what `.sd-hero`'s padding-bottom is
+   measured against. */
+.sd-hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--hv-s4);
+  margin-top: var(--hv-s8);
+}
+/* The quiet CTA. Scoped here rather than relying on the global
+   .hv-section--dark treatment, because this hero is not an
+   .hv-section--dark - its background is its own gradient. */
+.sd-hero__ctas .hv-btn--outline {
+  color: #fff;
+  border-color: rgba(255, 255, 255, .42);
+}
+.sd-hero__ctas .hv-btn--outline:hover {
+  background: rgba(255, 255, 255, .14);
+  border-color: rgba(255, 255, 255, .62);
+  color: #fff;
+}
+
+/* The four reassurance chips that used to close this hero (Availability /
+   Engagement / Cost Effective / Scalable) were removed on request: four
+   near-synonymous category claims under the CTAs delayed the first real
+   section without adding anything the page does not go on to prove
+   properly. The hero now ends on the button row, and the spacing above is
+   tuned for that in `.sd-hero__ctas`. */
+
+
+/* 02. Why choose an AI agent ============================================== */
+
+.hv-section.sd-why { background: var(--hv-bg-mint); }
+
+.sd-why__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .92fr);
+  gap: clamp(36px, 4.5vw, 80px);
+  align-items: center;
+}
+
+.sd-why__title {
+  margin: var(--hv-s4) 0 var(--hv-s5);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-h2);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -.03em;
+  color: var(--hv-text);
+}
+.sd-why__title span { display: block; }
+
+.sd-why__list {
+  list-style: none;
+  margin: var(--hv-s7) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--hv-s4);
+}
+.sd-why__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-body);
+  line-height: 1.55;
+  color: var(--hv-text);
+}
+.sd-why__item svg {
+  width: 21px;
+  height: 21px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--hv-accent-strong);
+}
+
+.sd-why__cta { margin-top: var(--hv-s8); }
+
+/* -- The channel visual --------------------------------------------------- */
+
+.sd-why__media {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: clamp(320px, 30vw, 420px);
+}
+
+/* Concentric dotted rings, then the channel bubbles placed on them. */
+.sd-orbit {
+  position: relative;
+  width: min(360px, 100%);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+.sd-orbit::before,
+.sd-orbit::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed var(--hv-border-strong);
+}
+.sd-orbit::before { inset: 4%; }
+.sd-orbit::after { inset: 20%; }
+
+/* The hub - the agent itself. */
+.sd-orbit__hub {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  width: 47%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--hv-grad-accent);
+  color: #fff;
+  box-shadow: var(--hv-sh-accent);
+  text-align: center;
+}
+.sd-orbit__hub svg { width: 30px; height: 30px; }
+.sd-orbit__hub b {
+  font-family: var(--hv-font);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+
+.sd-orbit__node {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 13px 8px 9px;
+  border-radius: var(--hv-r-pill);
+  border: 1px solid var(--hv-border);
+  background: #fff;
+  box-shadow: var(--hv-sh-md);
+  font-family: var(--hv-font);
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--hv-text);
+  white-space: nowrap;
+}
+.sd-orbit__node svg { width: 15px; height: 15px; color: var(--hv-accent-strong); }
+.sd-orbit__node:nth-child(2) { top: 2%;  left: 50%; translate: -50% 0; }
+.sd-orbit__node:nth-child(3) { top: 50%; right: -6%; translate: 0 -50%; }
+.sd-orbit__node:nth-child(4) { bottom: 2%; left: 50%; translate: -50% 0; }
+.sd-orbit__node:nth-child(5) { top: 50%; left: -6%; translate: 0 -50%; }
+
+.sd-why__note {
+  position: absolute;
+  right: -2%;
+  top: 2%;
+  z-index: 4;
+  max-width: 190px;
+}
+
+
+/* 03. What we build (card grid) =========================================== */
+
+.sd-grid-head { max-width: 62ch; margin-bottom: var(--hv-s9); }
+.sd-grid-head .sd-sub {
+  margin: var(--hv-s4) 0 var(--hv-s3);
+  font-family: var(--hv-font);
+  font-size: clamp(1.02rem, .96rem + .3vw, 1.2rem);
+  font-weight: 700;
+  color: var(--hv-text);
+}
+.hv-section--dark .sd-grid-head .sd-sub { color: #fff; }
+
+/* Explicit three columns, not auto-fit. `auto-fit, minmax(280px, 1fr)` fits
+   as many 280px tracks as the container allows - which at this container
+   width is FOUR - so a six-card grid rendered 4 + 2 and left half of the
+   second row empty. Three columns divide six evenly and give each card
+   ~380px, which is what the body copy needs to stop reading as a caption. */
+.sd-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--hv-s5);
+}
+.sd-grid > li { display: flex; }
+
+.sd-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hv-s4);
+  height: 100%;
+  padding: var(--hv-s7);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: var(--hv-bg);
+  transition: transform var(--hv-dur) var(--hv-ease),
+              box-shadow var(--hv-dur) var(--hv-ease),
+              border-color var(--hv-dur) var(--hv-ease);
+}
+.sd-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--hv-sh-accent);
+  border-color: var(--hv-border-strong);
+}
+.sd-card__icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--hv-r-md);
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+}
+.sd-card__icon svg { width: 22px; height: 22px; }
+/* A vendor logo dropped into the same plate a generic icon would sit in,
+   so a card backed by a real partner mark (GoHighLevel, Google Calendar,
+   Twilio, Zocdoc) reads as part of the same grid rhythm rather than a
+   different component. */
+.sd-card__icon img { width: 24px; height: 24px; object-fit: contain; }
+.sd-card h3 {
+  margin: 0;
+  font-family: var(--hv-font);
+  font-size: 1.04rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+}
+.sd-card p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.62;
+  color: var(--hv-text-muted);
+}
+
+
+/* 04. Process ============================================================= */
+
+/* `start`, not `center`. The step list in this section is far taller than
+   the visual beside it, and centring the visual left dead space above AND
+   below it. Aligned to the top, the visual sits with the heading it belongs
+   to and (where it is the routing diagram) sticks as the reader scrolls. */
+.sd-proc__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
+  gap: clamp(36px, 4.5vw, 76px);
+  align-items: start;
+}
+
+.sd-steps {
+  list-style: none;
+  margin: var(--hv-s8) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--hv-s6);
+}
+.sd-step {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--hv-s4);
+  align-items: start;
+}
+/* The numeral is a filled disc with a rail running down to the next one,
+   so the five steps read as one sequence rather than five rows. */
+.sd-step__num {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(53, 217, 160, .14);
+  border: 1px solid rgba(53, 217, 160, .34);
+  font-family: var(--hv-font);
+  font-size: .82rem;
+  font-weight: 800;
+  color: var(--hv-accent-bright);
+}
+.sd-step:not(:last-child) .sd-step__num::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  translate: -50% 0;
+  width: 1px;
+  height: calc(100% + var(--hv-s6));
+  background: linear-gradient(180deg, rgba(53, 217, 160, .38), rgba(53, 217, 160, .06));
+}
+.sd-step h3 {
+  margin: 0 0 5px;
+  font-family: var(--hv-font);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+.sd-step p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.6;
+  color: var(--hv-on-dark-muted);
+}
+
+/* -- Process media: photo with floating chips ---------------------------- */
+
+.sd-proc__media { position: relative; }
+.sd-proc__frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--hv-r-xl);
+  border: 1px solid rgba(255, 255, 255, .14);
+  box-shadow: 0 30px 62px rgba(0, 0, 0, .44);
+  aspect-ratio: 4 / 3;
+}
+.sd-proc__frame img,
+.sd-proc__frame picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* A green scrim, so a warm-toned stock photo still belongs to this palette. */
+.sd-proc__frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(200deg, rgba(4, 36, 31, .28) 0%, rgba(4, 36, 31, .62) 100%);
+  pointer-events: none;
+}
+
+.sd-proc__chips {
+  position: absolute;
+  z-index: 2;
+  right: -4%;
+  top: 12%;
+  display: grid;
+  gap: 9px;
+}
+.sd-proc__chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: var(--hv-r-pill);
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(6, 34, 29, .82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .32);
+  font-family: var(--hv-font);
+  font-size: .78rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+.sd-proc__chip svg { width: 15px; height: 15px; color: var(--hv-accent-bright); }
+
+
+/* 05. Key benefits ======================================================== */
+
+/* Three across, same reasoning as .sd-grid: at minmax(190px, 1fr) this fit
+   all six benefits into ONE row of 190px slivers, which is what made them
+   read as tiny undifferentiated tiles. */
+.sd-bens {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--hv-s5);
+}
+.sd-bens > li { display: flex; }
+.sd-ben {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  padding: var(--hv-s6) var(--hv-s5);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-md);
+  background: var(--hv-bg);
+  transition: border-color var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease);
+}
+.sd-ben:hover { border-color: var(--hv-border-strong); box-shadow: var(--hv-sh-md); }
+.sd-ben__icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--hv-r-sm);
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+}
+.sd-ben__icon svg { width: 18px; height: 18px; }
+.sd-ben b {
+  font-family: var(--hv-font);
+  font-size: .92rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--hv-text);
+}
+.sd-ben p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.58;
+  color: var(--hv-text-muted);
+}
+
+
+/* 06. Real business impact ================================================ */
+
+.sd-impact__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .96fr);
+  gap: clamp(36px, 4.5vw, 76px);
+  align-items: center;
+}
+
+.sd-impact__title {
+  margin: var(--hv-s4) 0 var(--hv-s5);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-h2);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -.03em;
+  color: #fff;
+}
+.sd-impact__title span { display: block; }
+
+.sd-impact__stats {
+  list-style: none;
+  margin: var(--hv-s9) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--hv-s5);
+}
+.sd-impact__stats li { border-left: 1px solid rgba(255, 255, 255, .16); padding-left: var(--hv-s4); }
+.sd-impact__stats b {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.3rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  color: var(--hv-accent-bright);
+  line-height: 1.1;
+}
+.sd-impact__stats span {
+  display: block;
+  margin-top: 6px;
+  font-size: var(--hv-fs-xs);
+  line-height: 1.5;
+  color: var(--hv-on-dark-muted);
+}
+
+/* -- The conversation panel ---------------------------------------------- */
+
+.sd-panel {
+  border-radius: var(--hv-r-xl);
+  border: 1px solid rgba(255, 255, 255, .14);
+  background: rgba(255, 255, 255, .05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 26px 56px rgba(0, 0, 0, .4);
+  overflow: hidden;
+}
+.sd-panel__body { display: flex; flex-direction: column; gap: 9px; padding: var(--hv-s6); }
+.sd-panel__tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid rgba(255, 255, 255, .12);
+}
+.sd-panel__tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 13px 8px;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 700;
+  color: var(--hv-on-dark-muted);
+}
+.sd-panel__tab + .sd-panel__tab { border-left: 1px solid rgba(255, 255, 255, .12); }
+.sd-panel__tab svg { width: 17px; height: 17px; }
+.sd-panel__tab:first-child { color: var(--hv-accent-bright); }
+
+
+/* 07. FAQ + contact card ================================================== */
+
+/* `align-items: stretch` (the grid default, stated here because this used
+   to be `start`) is what makes the card's bottom edge meet the bottom of
+   the FAQ list beside it. `start` sized the card to its own content, which
+   left a wedge of empty space under it on desktop whenever the FAQ column
+   was taller - which it always was.
+   Nothing here sets a height: the row is as tall as the taller column, and
+   the card distributes its own content inside that (see below), so a page
+   with more questions still lays out correctly instead of overflowing. */
+.sd-faq__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.22fr) minmax(0, .88fr);
+  gap: clamp(32px, 4vw, 64px);
+  align-items: stretch;
+}
+
+/* The shared .faq accordion comes from legacy/styles.css; only the wrapper
+   spacing is this page's business. */
+.sd-faq__list { margin-top: var(--hv-s7); }
+
+/* A column, so the contact block at the end can be pushed to the bottom
+   with margin-top:auto and the card reads as deliberately filled rather
+   than top-weighted with a gap under it. */
+.sd-contact-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  padding: var(--hv-s8);
+  border-radius: var(--hv-r-xl);
+  background: linear-gradient(158deg, #063A31 0%, #04241F 100%);
+  color: #fff;
+  box-shadow: var(--hv-sh-lg);
+}
+/* Same faint grid as the hero, for family resemblance. */
+.sd-contact-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(80% 70% at 78% 18%, #000 20%, transparent 100%);
+  -webkit-mask-image: radial-gradient(80% 70% at 78% 18%, #000 20%, transparent 100%);
+}
+.sd-contact-card > * { position: relative; z-index: 1; }
+
+.sd-contact-card__eyebrow {
+  display: inline-block;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-eyebrow);
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+.sd-contact-card h2 {
+  margin: var(--hv-s4) 0 var(--hv-s4);
+  font-family: var(--hv-font);
+  font-size: clamp(1.3rem, 1.1rem + .7vw, 1.65rem);
+  font-weight: 800;
+  line-height: 1.16;
+  letter-spacing: -.025em;
+  color: #fff;
+}
+.sd-contact-card h2 span { display: block; }
+.sd-contact-card p {
+  margin: 0 0 var(--hv-s6);
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.66;
+  color: #CBE3DB;
+}
+
+/* -- "What happens next" -------------------------------------------------- */
+
+.sd-contact-card__next {
+  margin-top: var(--hv-s7);
+  padding-top: var(--hv-s6);
+  border-top: 1px solid rgba(255, 255, 255, .14);
+}
+.sd-contact-card__next h3 {
+  margin: 0 0 var(--hv-s5);
+  font-family: var(--hv-font);
+  font-size: .82rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+.sd-contact-card__next ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--hv-s4);
+  counter-reset: none;
+}
+.sd-contact-card__next li {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+/* The numeral, as a small outlined disc. */
+.sd-contact-card__next li > span:first-child {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid rgba(53, 217, 160, .38);
+  background: rgba(53, 217, 160, .12);
+  font-family: var(--hv-font);
+  font-size: .74rem;
+  font-weight: 800;
+  color: var(--hv-accent-bright);
+}
+.sd-contact-card__next li > span:last-child {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.55;
+  color: #B9D6CC;
+}
+.sd-contact-card__next li b {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: .88rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+/* -- Footer: contact details, pinned to the bottom ------------------------ */
+
+.sd-contact-card__foot {
+  margin-top: auto;
+  padding-top: var(--hv-s7);
+}
+
+.sd-contact-card__list {
+  list-style: none;
+  margin: 0;
+  padding: var(--hv-s6) 0 0;
+  border-top: 1px solid rgba(255, 255, 255, .14);
+  display: grid;
+  gap: var(--hv-s4);
+}
+.sd-contact-card__list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.5;
+  color: #DCEFE8;
+}
+.sd-contact-card__list svg { width: 17px; height: 17px; flex-shrink: 0; margin-top: 2px; color: var(--hv-accent-bright); }
+.sd-contact-card__list a { color: inherit; text-decoration: none; }
+.sd-contact-card__list a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+
+.sd-contact-card__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: var(--hv-s5) 0 0;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 700;
+}
+.sd-contact-card__links a { color: var(--hv-accent-bright); text-decoration: none; }
+.sd-contact-card__links a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.sd-contact-card__links span { opacity: .4; }
+
+
+/* 08. Shared chat-bubble mock ============================================= */
+/* Used by the hero phone and the impact panel. Both sit on a dark surface,
+   so one set of rules covers them. */
+
+.sd-bubble {
+  max-width: 88%;
+  padding: 9px 12px;
+  border-radius: 14px;
+  font-family: var(--hv-font-body);
+  font-size: .76rem;
+  line-height: 1.5;
+}
+.sd-bubble--them {
+  align-self: flex-start;
+  border-bottom-left-radius: 5px;
+  background: rgba(255, 255, 255, .1);
+  color: #E8F4EF;
+}
+.sd-bubble--us {
+  align-self: flex-end;
+  border-bottom-right-radius: 5px;
+  background: var(--hv-grad-accent);
+  color: #fff;
+}
+.sd-bubble__meta {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 3px 0 0;
+  font-size: .64rem;
+  line-height: 1.45;
+  color: var(--hv-accent-bright);
+}
+.sd-bubble__meta svg { width: 12px; height: 12px; flex-shrink: 0; margin-top: 1px; }
+
+/* Typing indicator - three dots that rise in sequence. */
+.sd-typing { display: flex; align-items: center; gap: 4px; align-self: flex-start; padding: 10px 13px; border-radius: 14px; border-bottom-left-radius: 5px; background: rgba(255, 255, 255, .1); }
+.sd-typing i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--hv-accent-bright);
+  animation: sd-typing 1.25s var(--hv-ease) infinite;
+}
+.sd-typing i:nth-child(2) { animation-delay: .16s; }
+.sd-typing i:nth-child(3) { animation-delay: .32s; }
+@keyframes sd-typing {
+  0%, 60%, 100% { opacity: .3; transform: translateY(0); }
+  30%           { opacity: 1;  transform: translateY(-3px); }
+}
+
+
+/* 09. Responsive ========================================================== */
+
+/* The three-column grids step to two, then one. Explicit column counts need
+   explicit breakpoints - that is the trade for not letting auto-fit pick a
+   count that leaves half a row empty. */
+@media (max-width: 1080px) {
+  .sd-why__inner,
+  .sd-proc__inner,
+  .sd-impact__inner { grid-template-columns: minmax(0, 1fr); }
+
+  .sd-hero__lede { max-width: none; }
+
+  .sd-why__media { min-height: 0; margin-top: var(--hv-s8); }
+  .sd-proc__media { margin-top: var(--hv-s8); }
+
+  .sd-faq__inner { grid-template-columns: minmax(0, 1fr); }
+
+  .sd-grid,
+  .sd-bens { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* The note's absolute placement only makes sense beside the orbit; in one
+     column it would sit on top of it. */
+  .sd-why__note { position: static; max-width: none; margin-top: var(--hv-s5); }
+}
+
+@media (max-width: 760px) {
+  .sd-impact__stats { grid-template-columns: minmax(0, 1fr); gap: var(--hv-s4); }
+  .sd-card { padding: var(--hv-s6); }
+  .sd-contact-card { padding: var(--hv-s6); }
+
+  .sd-grid,
+  .sd-bens { grid-template-columns: minmax(0, 1fr); }
+
+  /* The orbit pills are positioned at left/right:-6% so they straddle the
+     ring. At this width that pushed the right-hand pill one pixel past the
+     viewport and gave the whole page a horizontal scrollbar - pull them
+     flush to the ring instead. */
+  .sd-orbit__node:nth-child(3) { right: 0; }
+  .sd-orbit__node:nth-child(5) { left: 0; }
+
+  /* Chips would hang off the viewport at this width; tuck them inside the
+     frame's own edge instead. */
+  .sd-proc__chips { right: auto; left: 50%; translate: -50% 0; top: auto; bottom: -14px; grid-auto-flow: column; gap: 7px; }
+  .sd-proc__chip { font-size: .7rem; padding: 7px 11px; }
+  .sd-proc__chip span { display: none; }
+}
+
+@media (max-width: 520px) {
+  .sd-proc__chips { display: none; }
+
+  /* Narrower than the pills themselves: stack them under the ring rather
+     than overlap it. */
+  .sd-orbit { width: min(300px, 100%); }
+  .sd-orbit__node { font-size: .72rem; padding: 6px 10px 6px 7px; }
+}
+
+
+/* 12. Page palette - ONE brand across every page =========================
+   There used to be a per-page hue system here: `.sd-pg--flow` went blue,
+   `--api` violet, `--funnel` amber, `--ghl` teal, `--web` cyan, each with
+   its own hero gradient and its own tinted icon plates. Five service pages
+   in five different colour schemes read as five different companies rather
+   than one agency with five services, so it has been removed on request.
+
+   Every detail page now uses the brand green. The variation between them
+   comes from layout and content - which sections they have, and in what
+   order - not from repainting the palette.
+
+   `.sd-pg` is kept as the wrapper hook the pages already apply, and simply
+   restates the brand values, so anything still reading --sd-acc /
+   --sd-deep / --sd-deeper resolves to the brand rather than breaking. */
+
+.sd-pg {
+  --sd-acc: #35D9A0;
+  --sd-deep: #063A31;
+  --sd-deeper: #04241F;
+}
+
+.sd-pg .sd-contact-card {
+  background: linear-gradient(158deg, var(--sd-deep) 0%, var(--sd-deeper) 100%);
+}
+
+/* Sections that open a page in the mint tint, matching .hv-section.sd-why. */
+.hv-section.sd-compare,
+.hv-section.sd-truth,
+.hv-section.sd-anatomy-sec,
+.hv-section.sd-setup { background: var(--hv-bg-mint); }
+
+/* The .sd-sub lede-style line is dark by default; on a dark band it is white,
+   the same as .sd-grid-head .sd-sub already resolves to. */
+.hv-section--dark .sd-sub { color: #fff; }
+
+
+/* 13. Section blocks ===================================================== */
+
+/* -- Two column split, used wherever copy sits beside a visual ----------- */
+
+.sd-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(36px, 4.5vw, 80px);
+  align-items: center;
+}
+.sd-split__cta,
+.sd-compare__cta { margin-top: var(--hv-s8); }
+
+/* A call to action at the end of a section that is not a two column split,
+   left aligned with the section head it belongs to. */
+.sd-cta-row { margin-top: var(--hv-s8); }
+
+/* -- The comparison (workflow automation) -------------------------------- */
+
+.sd-compare__media { position: relative; }
+.sd-compare__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: var(--hv-s4);
+  padding: 0 var(--hv-s4) var(--hv-s4);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hv-text-muted);
+}
+.sd-compare__rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--hv-s3);
+}
+.sd-compare__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: var(--hv-s4);
+  align-items: center;
+  padding: var(--hv-s4) var(--hv-s5);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-md);
+  background: var(--hv-bg);
+}
+.sd-compare__before {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.55;
+  color: var(--hv-text-muted);
+}
+.sd-compare__after {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.55;
+  color: var(--hv-text);
+}
+.sd-compare__after svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--hv-accent-strong);
+}
+.sd-compare__note {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--hv-s5);
+}
+
+/* -- The platform tiles (API and tool integrations) ----------------------- */
+
+.sd-truth__media { position: relative; }
+.sd-tiles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  gap: var(--hv-s4);
+}
+.sd-tile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px var(--hv-s4);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-md);
+  background: var(--hv-bg);
+  transition: transform var(--hv-dur) var(--hv-ease),
+              border-color var(--hv-dur) var(--hv-ease),
+              box-shadow var(--hv-dur) var(--hv-ease);
+}
+.sd-tile:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--sd-acc) 40%, var(--hv-border));
+  box-shadow: var(--hv-sh-md);
+}
+.sd-tile img { width: 26px; height: 26px; flex-shrink: 0; }
+.sd-tile span {
+  font-family: var(--hv-font);
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--hv-text);
+}
+.sd-truth__checks { margin-top: var(--hv-s7); }
+.sd-truth__caption {
+  margin: var(--hv-s5) 0 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-text-muted);
+}
+.sd-truth__note { margin-top: var(--hv-s5); }
+.sd-setup__checks {
+  margin-top: var(--hv-s7);
+  columns: 2;
+  column-gap: var(--hv-s6);
+}
+.sd-setup__checks li { break-inside: avoid; }
+.sd-setup__media { position: relative; }
+.sd-setup__note { margin-top: var(--hv-s5); }
+
+/* -- A captioned photograph, on either surface --------------------------- */
+
+.sd-figure { margin: 0; display: grid; gap: var(--hv-s4); }
+.sd-figure__frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--hv-r-xl);
+  border: 1px solid var(--hv-border);
+  box-shadow: var(--hv-sh-lg);
+  aspect-ratio: 4 / 3;
+}
+.hv-section--dark .sd-figure__frame {
+  border-color: rgba(255, 255, 255, .14);
+  box-shadow: 0 30px 62px rgba(0, 0, 0, .44);
+}
+.sd-figure__frame img,
+.sd-figure__frame picture { display: block; width: 100%; height: 100%; object-fit: cover; }
+.sd-figure__caption {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.6;
+  color: var(--hv-text-muted);
+}
+.hv-section--dark .sd-figure__caption { color: var(--hv-on-dark-muted); }
+
+/* -- One lead, start to finish (workflow automation) --------------------- */
+
+.sd-flow__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .92fr);
+  gap: clamp(36px, 4.5vw, 76px);
+  align-items: center;
+}
+.sd-flow__media { position: relative; }
+.sd-flow__cta { margin-top: var(--hv-s8); }
+/* The timings are longer strings than a step number, so the disc widens to
+   fit them rather than the text wrapping inside a fixed circle. */
+.sd-flow .sd-step__num {
+  width: auto;
+  min-width: 56px;
+  padding: 0 12px;
+  border-radius: var(--hv-r-pill);
+  font-size: .72rem;
+}
+
+/* -- Process as one row (workflow automation) --------------------------- */
+
+.sd-steps--row {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--hv-s5);
+}
+.sd-steps--row .sd-step {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--hv-s4);
+  padding: var(--hv-s6);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: var(--hv-bg);
+  transition: transform var(--hv-dur) var(--hv-ease),
+              border-color var(--hv-dur) var(--hv-ease),
+              box-shadow var(--hv-dur) var(--hv-ease);
+}
+.sd-steps--row .sd-step:hover {
+  transform: translateY(-4px);
+  border-color: var(--hv-border-strong);
+  box-shadow: var(--hv-sh-md);
+}
+.sd-steps--row .sd-step__num {
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-size: 1.5rem;
+  letter-spacing: -.04em;
+  color: color-mix(in srgb, var(--sd-acc) 62%, #04241F);
+}
+.sd-steps--row .sd-step:not(:last-child) .sd-step__num::after { display: none; }
+.sd-steps--row .sd-step h3 { color: var(--hv-text); }
+.sd-steps--row .sd-step p { color: var(--hv-text-muted); }
+.sd-step__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--hv-s4);
+  border-radius: var(--hv-r-sm);
+}
+.sd-step__icon svg { width: 19px; height: 19px; }
+
+/* -- The five stages (funnel design and builds) ------------------------- */
+
+.sd-anatomy {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--hv-s3);
+}
+.sd-anatomy__row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(0, .85fr) auto;
+  gap: var(--hv-s5);
+  align-items: center;
+  padding: var(--hv-s5) var(--hv-s6);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: var(--hv-bg);
+  transition: border-color var(--hv-dur) var(--hv-ease),
+              box-shadow var(--hv-dur) var(--hv-ease);
+}
+.sd-anatomy__row:hover { border-color: var(--hv-border-strong); box-shadow: var(--hv-sh-md); }
+.sd-anatomy__num {
+  font-family: var(--hv-font);
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -.04em;
+  color: color-mix(in srgb, var(--sd-acc) 62%, #04241F);
+}
+.sd-anatomy__body h3 {
+  margin: 0 0 4px;
+  font-family: var(--hv-font);
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--hv-text);
+}
+.sd-anatomy__body p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.6;
+  color: var(--hv-text-muted);
+}
+.sd-anatomy__want {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border: 1px dashed var(--hv-border-strong);
+  border-radius: var(--hv-r-pill);
+  font-family: var(--hv-font);
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--hv-text);
+}
+.sd-anatomy__want svg { width: 15px; height: 15px; flex-shrink: 0; color: var(--hv-accent-strong); }
+.sd-anatomy__icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--hv-r-md);
+}
+.sd-anatomy__icon svg { width: 21px; height: 21px; }
+.sd-anatomy__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--hv-s7);
+  flex-wrap: wrap;
+  margin-top: var(--hv-s8);
+}
+.sd-anatomy__note { max-width: 230px; }
+
+/* -- Where funnels leak (funnel design and builds) ---------------------- */
+
+.sd-leaks__rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--hv-s3);
+}
+.sd-leaks__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: var(--hv-s5);
+  align-items: center;
+  padding: var(--hv-s5) var(--hv-s6);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: var(--hv-bg);
+  transition: border-color var(--hv-dur) var(--hv-ease),
+              box-shadow var(--hv-dur) var(--hv-ease);
+}
+.sd-leaks__row:hover { border-color: var(--hv-border-strong); box-shadow: var(--hv-sh-md); }
+.sd-leaks__problem,
+.sd-leaks__fix {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.58;
+}
+.sd-leaks__problem { color: var(--hv-text-muted); }
+.sd-leaks__problem svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  margin-top: 3px;
+  /* The one warm tone in this file, held back for "no" marks only. */
+  color: #B4552A;
+}
+.sd-leaks__fix { color: var(--hv-text); }
+.sd-leaks__fix svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--hv-accent-strong);
+}
+.sd-leaks__arrow {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--sd-acc) 18%, #fff);
+  color: color-mix(in srgb, var(--sd-acc) 62%, #04241F);
+}
+.sd-leaks__arrow svg { width: 16px; height: 16px; }
+
+/* -- Who it is for (GoHighLevel sub-accounts) --------------------------- */
+
+.sd-who__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(276px, 1fr));
+  gap: var(--hv-s5);
+}
+.sd-who__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hv-s4);
+  height: 100%;
+  padding: var(--hv-s7);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: var(--hv-bg);
+  transition: transform var(--hv-dur) var(--hv-ease),
+              border-color var(--hv-dur) var(--hv-ease),
+              box-shadow var(--hv-dur) var(--hv-ease);
+}
+.sd-who__card:hover {
+  transform: translateY(-4px);
+  border-color: var(--hv-border-strong);
+  box-shadow: var(--hv-sh-md);
+}
+.sd-who__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--hv-r-md);
+}
+.sd-who__icon svg { width: 22px; height: 22px; }
+.sd-who__card h3 {
+  margin: 0;
+  font-family: var(--hv-font);
+  font-size: 1.04rem;
+  font-weight: 700;
+  color: var(--hv-text);
+}
+.sd-who__card > p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.62;
+  color: var(--hv-text-muted);
+}
+.sd-who__points {
+  list-style: none;
+  margin: auto 0 0;
+  padding: var(--hv-s4) 0 0;
+  border-top: 1px solid var(--hv-border);
+  display: grid;
+  gap: 9px;
+}
+.sd-who__points li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.5;
+  color: var(--hv-text);
+}
+.sd-who__points svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--hv-accent-strong);
+}
+
+
+/* 14. Responsive for 12 to 13 ============================================ */
+
+@media (max-width: 1080px) {
+  .sd-split,
+  .sd-flow__inner { grid-template-columns: minmax(0, 1fr); }
+  .sd-split > .sd-setup__media { margin-top: var(--hv-s8); }
+  .sd-flow__media { margin-top: var(--hv-s8); }
+  .sd-truth__media { margin-top: var(--hv-s8); }
+
+  /* Stages: the icon moves up beside the number, the acceptance test drops
+     to its own line under the body it belongs to. */
+  .sd-anatomy__row { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .sd-anatomy__num { grid-area: 1 / 1; }
+  .sd-anatomy__body { grid-area: 1 / 2; }
+  .sd-anatomy__icon { grid-area: 1 / 3; }
+  .sd-anatomy__want { grid-area: 2 / 2 / auto / 4; justify-self: start; }
+}
+
+@media (max-width: 860px) {
+  /* The problem, the arrow and the fix stack, and the arrow turns to point
+     down rather than sideways at nothing. */
+  .sd-leaks__row { grid-template-columns: minmax(0, 1fr); }
+  .sd-leaks__arrow { rotate: 90deg; }
+
+  .sd-compare__head { display: none; }
+  .sd-compare__row { grid-template-columns: minmax(0, 1fr); gap: var(--hv-s3); }
+  .sd-compare__before { color: var(--hv-text-muted); }
+
+  .sd-setup__checks { columns: 1; }
+}
+
+@media (max-width: 720px) {
+  .sd-anatomy__row {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--hv-s3) var(--hv-s4);
+  }
+  .sd-anatomy__num { grid-area: 1 / 1; }
+  .sd-anatomy__body { grid-area: 1 / 2; }
+  .sd-anatomy__want { grid-area: 2 / 1 / auto / -1; justify-self: start; }
+  /* The plate repeats what the icon on the step above already says at this
+     width, so it is the first thing to go. */
+  .sd-anatomy__icon { display: none; }
+}
+
+@media (max-width: 520px) {
+  .sd-anatomy__row { padding: var(--hv-s5); }
+  .sd-leaks__row { padding: var(--hv-s5); }
+  .sd-who__card { padding: var(--hv-s6); }
+}
+
+
+/* 14. Related services ==================================================== */
+
+.sd-rel__head { max-width: 62ch; margin-bottom: var(--hv-s9); }
+
+.sd-rel__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--hv-s5);
+}
+.sd-rel__grid > li { display: flex; }
+
+/* The whole card is the link. A column with the "Explore" row pushed to the
+   bottom by margin-top:auto, so three cards with different-length reasons
+   still line their call-to-action up on one baseline. */
+.sd-rel__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hv-s4);
+  width: 100%;
+  padding: var(--hv-s7);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: var(--hv-bg);
+  text-decoration: none;
+  color: inherit;
+  transition: transform var(--hv-dur) var(--hv-ease),
+              box-shadow var(--hv-dur) var(--hv-ease),
+              border-color var(--hv-dur) var(--hv-ease);
+}
+.sd-rel__card:hover,
+.sd-rel__card:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: var(--hv-sh-accent);
+  border-color: var(--hv-border-strong);
+}
+
+.sd-rel__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--hv-r-md);
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+}
+.sd-rel__icon svg { width: 21px; height: 21px; }
+
+.sd-rel__card h3 {
+  margin: 0;
+  font-family: var(--hv-font);
+  font-size: 1.04rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+}
+.sd-rel__why {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.62;
+  color: var(--hv-text-muted);
+}
+
+.sd-rel__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: var(--hv-s2);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  color: var(--hv-accent-strong);
+}
+.sd-rel__go svg {
+  width: 15px;
+  height: 15px;
+  transition: transform var(--hv-dur-fast) var(--hv-ease);
+}
+.sd-rel__card:hover .sd-rel__go svg { transform: translateX(4px); }
+
+.sd-rel__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--hv-s3);
+  margin-top: var(--hv-s9);
+}
+
+/* These live HERE, immediately after the rules they override, not up in the
+   shared responsive block at section 09. That block is earlier in the file
+   than `.sd-rel__grid`, so at equal specificity the base three-column rule
+   won and the grid stayed 3-up at 390px - three 103px tracks whose cards
+   overflowed them and gave the page a horizontal scrollbar. Same lesson as
+   any cascade bug: an override has to come after what it overrides. */
+@media (max-width: 1080px) {
+  .sd-rel__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .sd-rel__grid { grid-template-columns: minmax(0, 1fr); }
+  .sd-rel__card { padding: var(--hv-s6); }
+}
+
+
+/* 16. Split hero (AI page) ================================================
+   The centred text-only hero is the default for the detail pages. The AI
+   page opts into a two-column variant instead, because it has a genuine
+   visual to show - a live call being answered and booked - rather than
+   decoration. One class on the <section> switches it. */
+
+.sd-hero--split .sd-hero__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, .96fr);
+  gap: clamp(36px, 4vw, 72px);
+  /* Copy and visual sit level at the top; the crumbs own the row above. */
+  align-items: start;
+  text-align: left;
+}
+/* The breadcrumb is a full-width row above the two columns, centred across
+   the hero rather than tucked into the copy column. */
+.sd-hero--split .sd-hero__crumbs {
+  grid-column: 1 / -1;
+  justify-content: center;
+  margin: 0 0 var(--hv-s7);
+}
+.sd-hero--split .sd-hero__ctas { justify-content: flex-start; }
+.sd-hero--split .sd-hero__title { max-width: 18ch; }
+.sd-hero--split .sd-hero__lede { max-width: 52ch; }
+
+/* The split hero used to override the shared grid with a stronger, right-
+   anchored field. It now uses the same base grid as every other detail hero
+   (see `.sd-hero::after`), which is the point of the pass that added this
+   breadcrumb row: one consistent hero background across the family. */
+
+/* -- The live-call mock --------------------------------------------------- */
+
+.sd-call {
+  position: relative;
+  border-radius: var(--hv-r-xl);
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: linear-gradient(168deg, rgba(10, 46, 39, .92), rgba(3, 22, 19, .96));
+  box-shadow: 0 34px 68px rgba(0, 0, 0, .46);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.sd-call__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: var(--hv-s5) var(--hv-s6);
+  border-bottom: 1px solid rgba(255, 255, 255, .1);
+}
+.sd-call__ring {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--hv-grad-accent);
+  color: #fff;
+}
+.sd-call__ring svg { width: 19px; height: 19px; }
+.sd-call__who { flex: 1; min-width: 0; }
+.sd-call__who b {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: .92rem;
+  font-weight: 700;
+  color: #fff;
+}
+.sd-call__who span {
+  display: block;
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+}
+.sd-call__timer {
+  font-family: var(--hv-font);
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--hv-accent-bright);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The waveform: bars that rise and fall so the card reads as a call in
+   progress rather than a screenshot of one. */
+.sd-call__wave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 34px;
+  padding: var(--hv-s5) 0 0;
+}
+.sd-call__wave i {
+  width: 3px;
+  height: 30%;
+  border-radius: 2px;
+  background: var(--hv-accent-bright);
+  opacity: .8;
+  animation: sd-wave 1.1s var(--hv-ease) infinite;
+}
+@keyframes sd-wave {
+  0%, 100% { height: 22%; opacity: .5; }
+  50%      { height: 92%; opacity: 1; }
+}
+
+.sd-call__body { display: flex; flex-direction: column; gap: 8px; padding: var(--hv-s5) var(--hv-s6) var(--hv-s6); }
+.sd-call__foot {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 0;
+  padding: 0 var(--hv-s6) var(--hv-s6);
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.5;
+  color: var(--hv-accent-bright);
+}
+.sd-call__foot svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; }
+
+
+/* 16b. Call-routing diagram ===============================================
+   Replaces the stock desk photo that used to sit beside the six-step flow.
+   A photo of a laptop says nothing about routing, and this section's whole
+   point is the decision the system makes - so the visual is the decision,
+   drawn in markup: crisp at any zoom, themable, and no lazy-loading empty
+   frame while it arrives.
+
+   `position: sticky` because the step list beside it is much taller; the
+   diagram stays in view while the reader works down the steps instead of
+   leaving a void at the bottom of the column. */
+
+.sd-route {
+  position: sticky;
+  top: calc(var(--header-h, 80px) + 24px);
+  display: grid;
+  gap: 0;
+  padding: var(--hv-s7);
+  border-radius: var(--hv-r-xl);
+  border: 1px solid rgba(255, 255, 255, .14);
+  background: rgba(255, 255, 255, .04);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.sd-route__cap {
+  margin: 0 0 var(--hv-s6);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-eyebrow);
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+  text-align: center;
+}
+
+.sd-route__node {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 13px 16px;
+  border-radius: var(--hv-r-md);
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(255, 255, 255, .06);
+  font-family: var(--hv-font);
+  font-size: .86rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+}
+.sd-route__node svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--hv-accent-bright); }
+
+/* The decision diamond, rendered as a pill rather than a rotated square -
+   a real diamond forces its label out of the shape at this size. */
+.sd-route__ask {
+  justify-self: center;
+  padding: 11px 20px;
+  border-radius: var(--hv-r-pill);
+  border: 1px dashed var(--hv-accent-bright);
+  background: rgba(53, 217, 160, .12);
+  font-family: var(--hv-font);
+  font-size: .82rem;
+  font-weight: 800;
+  color: var(--hv-accent-bright);
+  white-space: nowrap;
+}
+
+/* Vertical connector between stacked nodes. */
+.sd-route__link {
+  justify-self: center;
+  width: 1px;
+  height: 20px;
+  background: linear-gradient(180deg, rgba(53, 217, 160, .7), rgba(53, 217, 160, .25));
+}
+
+/* The two branches, side by side, each with its own label. */
+.sd-route__split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--hv-s4);
+  position: relative;
+  padding-top: var(--hv-s6);
+}
+/* The fork: a horizontal rule with a drop into each branch. */
+.sd-route__split::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  height: 1px;
+  background: rgba(53, 217, 160, .45);
+}
+.sd-route__branch { display: grid; gap: 9px; position: relative; }
+.sd-route__branch::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--hv-s6) * -1);
+  left: 50%;
+  width: 1px;
+  height: var(--hv-s6);
+  background: rgba(53, 217, 160, .45);
+}
+.sd-route__tag {
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--hv-on-dark-muted);
+  text-align: center;
+}
+
+/* The end state, in the accent - it is the outcome the whole diagram is
+   there to show. */
+.sd-route__end {
+  margin-top: var(--hv-s6);
+  background: var(--hv-grad-accent);
+  border-color: transparent;
+  box-shadow: var(--hv-sh-accent-sm);
+}
+.sd-route__end svg { color: #fff; }
+
+
+/* 16c. Shared hero-card chrome =============================================
+   Every detail page's hero now opts into `.sd-hero--split` with its own
+   right-column visual - the AI page's live-call mock was the first, and
+   this is the same dark glass card used underneath the other five, each
+   with completely different content (a flow, a hub-and-spoke diagram, a
+   funnel shape, a provisioning checklist, a framed photo). One shared
+   chrome class instead of six copies of the same six declarations; the
+   part that makes each page's hero distinct is what's inside it, not the
+   frame. `.sd-heromock__head/__badge/__who/__live` are the small "status
+   bar" pattern two of those visuals (workflow, sub-accounts) both use. */
+
+.sd-heromock {
+  position: relative;
+  border-radius: var(--hv-r-xl);
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: linear-gradient(168deg, rgba(10, 46, 39, .92), rgba(3, 22, 19, .96));
+  box-shadow: 0 34px 68px rgba(0, 0, 0, .46);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.sd-heromock__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: var(--hv-s5) var(--hv-s6);
+  border-bottom: 1px solid rgba(255, 255, 255, .1);
+}
+.sd-heromock__badge {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--hv-grad-accent);
+  color: #fff;
+}
+.sd-heromock__badge svg { width: 19px; height: 19px; }
+.sd-heromock__who { flex: 1; min-width: 0; }
+.sd-heromock__who b {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: .92rem;
+  font-weight: 700;
+  color: #fff;
+}
+.sd-heromock__who span {
+  display: block;
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sd-heromock__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+.sd-heromock__live::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hv-accent-bright);
+  box-shadow: 0 0 0 3px rgba(53, 217, 160, .25);
+}
+
+/* -- Workflow Automation: trigger -> branch -> outcome ---------------------- */
+
+.sd-wfmock__body { padding: var(--hv-s6); display: flex; flex-direction: column; align-items: center; }
+.sd-wfmock__node {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 15px;
+  border-radius: var(--hv-r-md);
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(255, 255, 255, .06);
+  font-family: var(--hv-font);
+  font-size: .84rem;
+  font-weight: 700;
+  color: #fff;
+}
+.sd-wfmock__node svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--hv-accent-bright); }
+.sd-wfmock__node--trigger { border-color: rgba(53, 217, 160, .4); }
+.sd-wfmock__node--done { background: var(--hv-grad-accent); border-color: transparent; }
+.sd-wfmock__node--done svg { color: #fff; }
+
+.sd-wfmock__link { width: 1px; height: 20px; background: linear-gradient(180deg, rgba(53, 217, 160, .7), rgba(53, 217, 160, .25)); }
+
+.sd-wfmock__branches {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--hv-s4);
+  position: relative;
+  padding-top: var(--hv-s6);
+}
+.sd-wfmock__branches::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  height: 1px;
+  background: rgba(53, 217, 160, .45);
+}
+.sd-wfmock__branches > .sd-wfmock__node { position: relative; font-size: .76rem; padding: 10px; text-align: center; }
+.sd-wfmock__branches > .sd-wfmock__node::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--hv-s6) * -1);
+  left: 50%;
+  width: 1px;
+  height: var(--hv-s6);
+  background: rgba(53, 217, 160, .45);
+}
+
+/* -- API & Tool Integrations: hub-and-spoke ---------------------------------- */
+
+.sd-hub { padding: var(--hv-s8) var(--hv-s7) var(--hv-s4); display: grid; place-items: center; }
+.sd-hub__field { position: relative; width: min(320px, 100%); aspect-ratio: 1; }
+.sd-hub__field svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sd-hub__center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  gap: 3px;
+  width: 34%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--hv-grad-accent);
+  color: #fff;
+  box-shadow: var(--hv-sh-accent);
+  text-align: center;
+}
+.sd-hub__center svg { width: 26px; height: 26px; }
+.sd-hub__center b { font-family: var(--hv-font); font-size: .72rem; font-weight: 700; }
+.sd-hub__node {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 13px 8px 9px;
+  border-radius: var(--hv-r-pill);
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(255, 255, 255, .07);
+  font-family: var(--hv-font);
+  font-size: .76rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+.sd-hub__node svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--hv-accent-bright); }
+.sd-hub__node--tl { top: 4%; left: 0; }
+.sd-hub__node--tr { top: 4%; right: 0; }
+.sd-hub__node--bl { bottom: 4%; left: 0; }
+.sd-hub__node--br { bottom: 4%; right: 0; }
+.sd-hub__caption {
+  margin: 0;
+  padding: 0 var(--hv-s7) var(--hv-s7);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+  text-align: center;
+}
+
+/* -- Funnel Design & Builds: the funnel shape --------------------------------- */
+
+.sd-funnelviz { padding: var(--hv-s7) var(--hv-s6) var(--hv-s6); }
+.sd-funnelviz__stages { list-style: none; margin: 0 0 var(--hv-s5); padding: 0; display: flex; flex-direction: column; align-items: center; }
+.sd-funnelviz__stages li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 10px;
+  margin-bottom: 3px;
+  font-family: var(--hv-font);
+  font-size: .84rem;
+  font-weight: 700;
+  color: #fff;
+  clip-path: polygon(6% 0, 94% 0, 88% 100%, 12% 100%);
+}
+.sd-funnelviz__stages li:nth-child(1) { width: 100%; background: linear-gradient(135deg, #35D9A0, #0EA46B); }
+.sd-funnelviz__stages li:nth-child(2) { width: 82%; background: linear-gradient(135deg, #24C592, #0A7F52); }
+.sd-funnelviz__stages li:nth-child(3) { width: 63%; background: linear-gradient(135deg, #14A97E, #0A7F52); }
+.sd-funnelviz__stages li:nth-child(4) { width: 44%; background: linear-gradient(135deg, #0A7F52, #06603E); margin-bottom: 0; }
+.sd-funnelviz__foot {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.5;
+  color: var(--hv-on-dark-muted);
+}
+.sd-funnelviz__foot svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; color: var(--hv-accent-bright); }
+
+/* -- GoHighLevel Sub-accounts: the provisioning checklist ---------------------- */
+
+.sd-provision__list { list-style: none; margin: 0; padding: var(--hv-s5) var(--hv-s6) var(--hv-s6); display: flex; flex-direction: column; gap: 10px; }
+.sd-provision__list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--hv-r-md);
+  border: 1px solid rgba(255, 255, 255, .12);
+  background: rgba(255, 255, 255, .04);
+  font-family: var(--hv-font);
+  font-size: .84rem;
+  font-weight: 600;
+  color: var(--hv-on-dark-muted);
+}
+.sd-provision__list li svg { width: 17px; height: 17px; flex-shrink: 0; }
+.sd-provision__list li.is-done {
+  color: #fff;
+  border-color: rgba(53, 217, 160, .3);
+  background: rgba(53, 217, 160, .08);
+}
+.sd-provision__list li.is-done svg { color: var(--hv-accent-bright); }
+.sd-provision__list li.is-pending svg { color: var(--hv-on-dark-muted); animation: sd-tick 1.8s linear infinite; }
+@keyframes sd-tick { to { transform: rotate(360deg); } }
+
+/* -- Websites & Landing Pages: the framed photo --------------------------------- */
+
+.sd-photoframe { padding: 10px; }
+.sd-photoframe__pic { border-radius: 14px; overflow: hidden; line-height: 0; }
+.sd-photoframe__pic img { width: 100%; height: auto; display: block; aspect-ratio: 4 / 3; object-fit: cover; }
+.sd-photoframe__cap {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: var(--hv-s4) var(--hv-s3) var(--hv-s2);
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+}
+.sd-photoframe__cap svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--hv-accent-bright); }
+
+/* -- API & Tool Integrations hero: GHLevelUp <-> GoHighLevel, syncing -------
+   The central visual anchor Task 1 asked for: our own mark and
+   GoHighLevel's, connected by a line that visibly moves, rather than a
+   static "as seen with" logo strip. Both marks sit in plain white plates so
+   neither reads as more important than the other - the point is the
+   partnership, not a hierarchy between the two. */
+
+.sd-logosync { padding: var(--hv-s9) var(--hv-s7); }
+.sd-logosync__row { display: flex; align-items: center; justify-content: center; gap: 0; }
+.sd-logosync__badge {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  width: 132px;
+  padding: var(--hv-s6) var(--hv-s4);
+  border-radius: var(--hv-r-lg);
+  background: #fff;
+  box-shadow: var(--hv-sh-lg);
+  text-align: center;
+}
+.sd-logosync__badge img { width: 44px; height: 44px; object-fit: contain; }
+.sd-logosync__badge span {
+  font-family: var(--hv-font);
+  font-size: .74rem;
+  font-weight: 700;
+  color: var(--hv-text);
+}
+
+/* The link: a track plus a shorter bright segment that slides along it on
+   a loop, read as data moving between the two marks rather than a static
+   line. Respects prefers-reduced-motion via section 10's blanket rule. */
+.sd-logosync__link { position: relative; width: clamp(70px, 12vw, 130px); height: 2px; margin: 0 -4px; background: rgba(255, 255, 255, .14); }
+.sd-logosync__link::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -30%;
+  width: 30%;
+  height: 100%;
+  background: var(--hv-accent-bright);
+  box-shadow: 0 0 8px 1px rgba(53, 217, 160, .7);
+  animation: sd-sync 2.2s linear infinite;
+}
+@keyframes sd-sync {
+  0%   { left: -30%; }
+  100% { left: 100%; }
+}
+
+.sd-logosync__status {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--hv-s6);
+}
+.sd-logosync__status span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 13px;
+  border-radius: var(--hv-r-pill);
+  border: 1px solid rgba(53, 217, 160, .3);
+  background: rgba(53, 217, 160, .1);
+  font-family: var(--hv-font);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+.sd-logosync__status span::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hv-accent-bright);
+  box-shadow: 0 0 0 3px rgba(53, 217, 160, .25);
+}
+
+/* -- Connection hub: what syncs, category by category ------------------------ */
+
+.sd-hub-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--hv-s5);
+}
+.sd-hub-card {
+  padding: var(--hv-s6);
+  border-radius: var(--hv-r-lg);
+  border: 1px solid var(--hv-border);
+  background: #fff;
+  transition: border-color var(--hv-dur) var(--hv-ease), transform var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease);
+}
+.sd-hub-card:hover { border-color: var(--hv-accent-bright); transform: translateY(-3px); box-shadow: var(--hv-sh-md); }
+
+.sd-hub-card__pair { display: flex; align-items: center; gap: 8px; margin-bottom: var(--hv-s5); }
+.sd-hub-card__mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+  flex-shrink: 0;
+}
+.sd-hub-card__mark img { width: 18px; height: 18px; object-fit: contain; }
+.sd-hub-card__mark svg { width: 17px; height: 17px; }
+.sd-hub-card__plus { color: var(--hv-border-strong); font-weight: 700; flex-shrink: 0; }
+
+.sd-hub-card h3 { font-size: 1rem; font-weight: 700; margin: 0 0 4px; }
+.sd-hub-card__with { display: block; font-size: var(--hv-fs-xs); font-weight: 600; color: var(--hv-accent-strong); margin-bottom: var(--hv-s3); }
+.sd-hub-card p { font-size: var(--hv-fs-sm); line-height: 1.55; color: var(--hv-text-muted); margin: 0; }
+
+@media (max-width: 1000px) { .sd-hub-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .sd-hub-cards { grid-template-columns: 1fr; } }
+
+/* -- The credential-connection mock (Setup Guide / Process section) ---------
+   Replaces a generic stock desk photo with an illustrative screen of what
+   authorizing the connection looks like - clearly a mockup (labelled as
+   one), not a reproduction of GoHighLevel's real product UI. */
+
+.sd-authmock { max-width: 400px; margin-left: auto; }
+.sd-authmock__head { padding: var(--hv-s5) var(--hv-s6); border-bottom: 1px solid rgba(255, 255, 255, .1); }
+.sd-authmock__head b { display: block; font-family: var(--hv-font); font-size: .92rem; font-weight: 700; color: #fff; }
+.sd-authmock__head span { display: block; font-size: var(--hv-fs-xs); color: var(--hv-on-dark-muted); margin-top: 2px; }
+
+.sd-authmock__body { padding: var(--hv-s6); display: flex; flex-direction: column; gap: var(--hv-s4); }
+.sd-authmock__field label {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--hv-on-dark-muted);
+  margin-bottom: 6px;
+}
+.sd-authmock__field div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 13px;
+  border-radius: var(--hv-r-md);
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(255, 255, 255, .05);
+  font-family: var(--hv-font);
+  font-size: .84rem;
+  color: var(--hv-on-dark-muted);
+}
+.sd-authmock__field div svg { width: 15px; height: 15px; flex-shrink: 0; color: var(--hv-accent-bright); }
+.sd-authmock__dots { letter-spacing: 3px; }
+
+.sd-authmock__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: var(--hv-r-md);
+  background: var(--hv-grad-accent);
+  color: #fff;
+  font-family: var(--hv-font);
+  font-size: .86rem;
+  font-weight: 700;
+}
+.sd-authmock__btn svg { width: 16px; height: 16px; }
+
+.sd-authmock__tag {
+  display: block;
+  padding: var(--hv-s3) var(--hv-s6) var(--hv-s5);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+  text-align: center;
+}
+
+/* -- Developer / API documentation: tabbed code box --------------------------- */
+
+.sd-docs { padding: var(--hv-s7); }
+.sd-docs__tabs { display: flex; gap: 4px; padding: 4px; border-radius: var(--hv-r-md); background: rgba(255, 255, 255, .05); margin-bottom: var(--hv-s5); }
+.sd-docs__tabs button {
+  flex: 1;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  font-family: var(--hv-font);
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--hv-on-dark-muted);
+  cursor: pointer;
+  transition: background var(--hv-dur) var(--hv-ease), color var(--hv-dur) var(--hv-ease);
+}
+.sd-docs__tabs button:hover { color: var(--hv-on-dark); }
+.sd-docs__tabs button.is-active { background: var(--hv-grad-accent); color: #fff; }
+
+.sd-docs__panel {
+  margin: 0;
+  padding: var(--hv-s5) var(--hv-s6);
+  border-radius: var(--hv-r-md);
+  background: rgba(0, 0, 0, .28);
+  border: 1px solid rgba(255, 255, 255, .08);
+  overflow-x: auto;
+}
+.sd-docs__panel code {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  font-family: "SFMono-Regular", "Consolas", "Liberation Mono", Menlo, monospace;
+  font-size: .82rem;
+  line-height: 1.65;
+  color: var(--hv-on-dark);
+  white-space: pre;
+}
+
+.sd-docs__note {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: var(--hv-s5) 0 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.5;
+  color: var(--hv-on-dark-muted);
+}
+.sd-docs__note svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; color: var(--hv-accent-bright); }
+
+@media (max-width: 560px) {
+  .sd-docs__tabs { flex-wrap: wrap; }
+  .sd-docs__tabs button { flex: 1 1 calc(50% - 4px); }
+}
+
+
+/* 17. Intro + facts ======================================================= */
+
+/* The left column used to hold nothing but an eyebrow and a heading, which
+   left roughly two thirds of it empty next to three paragraphs of prose -
+   the single emptiest block on the page. It now carries a sticky heading
+   plus a pull-quote card, so the column has a job all the way down and the
+   section reads as deliberate rather than unfinished. */
+.sd-intro__inner {
+  display: grid;
+  grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
+  gap: clamp(32px, 4vw, 72px);
+  align-items: start;
+}
+
+.sd-intro__aside { position: sticky; top: calc(var(--header-h, 80px) + 28px); }
+
+/* The one line worth remembering from the prose beside it, set as a quote
+   rather than repeated as another paragraph. */
+.sd-intro__quote {
+  margin: var(--hv-s7) 0 0;
+  padding: var(--hv-s6) var(--hv-s6) var(--hv-s6) var(--hv-s7);
+  border-left: 3px solid var(--hv-accent-strong);
+  border-radius: 0 var(--hv-r-md) var(--hv-r-md) 0;
+  background: var(--hv-bg-mint);
+}
+.sd-intro__quote p {
+  margin: 0;
+  font-family: var(--hv-font);
+  font-size: 1.06rem;
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: -.015em;
+  color: var(--hv-text);
+}
+.sd-intro__quote span {
+  display: block;
+  margin-top: var(--hv-s4);
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--hv-text-muted);
+}
+.sd-intro__title {
+  margin: var(--hv-s4) 0 0;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-h2);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -.03em;
+  color: var(--hv-text);
+  text-wrap: balance;
+}
+.sd-intro__prose p {
+  margin: 0 0 var(--hv-s5);
+  font-family: var(--hv-font-body);
+  font-size: 1.02rem;
+  line-height: 1.75;
+  color: var(--hv-text-muted);
+}
+.sd-intro__prose p:last-child { margin-bottom: 0; }
+/* The opening paragraph carries a little more weight - it is the one most
+   readers will actually finish. */
+.sd-intro__prose p:first-child {
+  font-size: 1.1rem;
+  color: var(--hv-text);
+}
+
+.sd-facts {
+  list-style: none;
+  margin: var(--hv-s10) 0 0;
+  padding: var(--hv-s7) 0 0;
+  border-top: 1px solid var(--hv-border);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--hv-s6);
+}
+.sd-facts b {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.05;
+  color: var(--hv-accent-strong);
+}
+.sd-facts strong {
+  display: block;
+  margin-top: 8px;
+  font-family: var(--hv-font);
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--hv-text);
+}
+.sd-facts span {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.5;
+  color: var(--hv-text-muted);
+}
+
+
+/* 18. Offerings =========================================================== */
+
+.sd-offers {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--hv-s6);
+}
+.sd-offers > li { display: flex; }
+
+.sd-offer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--hv-s7);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: var(--hv-bg);
+  transition: border-color var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease);
+}
+.sd-offer:hover { border-color: var(--hv-border-strong); box-shadow: var(--hv-sh-md); }
+
+.sd-offer__head { display: flex; align-items: center; gap: var(--hv-s4); }
+.sd-offer__tag {
+  margin-left: auto;
+  padding: 5px 11px;
+  border-radius: var(--hv-r-pill);
+  background: var(--hv-bg-mint-deep);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 700;
+  color: var(--hv-accent-deep);
+  white-space: nowrap;
+}
+.sd-offer h3 {
+  margin: 0;
+  font-family: var(--hv-font);
+  font-size: 1.12rem;
+  font-weight: 800;
+  letter-spacing: -.015em;
+  color: var(--hv-text);
+}
+.sd-offer__body {
+  margin: var(--hv-s5) 0 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-body);
+  line-height: 1.66;
+  color: var(--hv-text-muted);
+}
+.sd-offer__points {
+  list-style: none;
+  margin: var(--hv-s6) 0 0;
+  padding: var(--hv-s5) 0 0;
+  border-top: 1px solid var(--hv-border);
+  display: grid;
+  gap: 10px;
+}
+.sd-offer__points li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.5;
+  color: var(--hv-text);
+}
+.sd-offer__points svg { width: 17px; height: 17px; flex-shrink: 0; margin-top: 1px; color: var(--hv-accent-strong); }
+
+
+/* 19. Detail groups ======================================================= */
+
+.sd-details {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--hv-s6);
+}
+.sd-details > li { display: flex; }
+
+.sd-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hv-s5);
+  width: 100%;
+  padding: var(--hv-s7);
+  border-radius: var(--hv-r-lg);
+  border: 1px solid rgba(255, 255, 255, .12);
+  background: rgba(255, 255, 255, .04);
+}
+.sd-detail h3 {
+  margin: 0;
+  font-family: var(--hv-font);
+  font-size: 1.06rem;
+  font-weight: 700;
+  color: #fff;
+}
+.sd-detail ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; }
+.sd-detail li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.55;
+  color: var(--hv-on-dark-muted);
+}
+.sd-detail li svg { width: 17px; height: 17px; flex-shrink: 0; margin-top: 1px; color: var(--hv-accent-bright); }
+
+
+/* 20. Representative work ================================================= */
+
+.sd-work {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--hv-s5);
+}
+.sd-work > li { display: flex; }
+
+.sd-work__card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--hv-s7);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: var(--hv-bg);
+}
+.sd-work__tag {
+  align-self: flex-start;
+  padding: 5px 12px;
+  border-radius: var(--hv-r-pill);
+  background: var(--hv-bg-mint-deep);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--hv-accent-deep);
+}
+.sd-work__card h3 {
+  margin: var(--hv-s5) 0 var(--hv-s4);
+  font-family: var(--hv-font);
+  font-size: 1.06rem;
+  font-weight: 800;
+  line-height: 1.28;
+  letter-spacing: -.015em;
+  color: var(--hv-text);
+}
+.sd-work__problem {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.62;
+  color: var(--hv-text-muted);
+}
+.sd-work__label {
+  margin: var(--hv-s6) 0 var(--hv-s4);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-eyebrow);
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hv-accent-strong);
+}
+.sd-work__built { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.sd-work__built li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.5;
+  color: var(--hv-text);
+}
+.sd-work__built svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; color: var(--hv-accent-strong); }
+
+.sd-work__outcome {
+  margin: auto 0 0;
+  padding-top: var(--hv-s6);
+}
+.sd-work__outcome p {
+  margin: var(--hv-s4) 0 0;
+  padding: var(--hv-s5);
+  border-radius: var(--hv-r-md);
+  background: var(--hv-bg-mint);
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.58;
+  color: var(--hv-text);
+}
+
+/* The honesty label under the grid - these are representative builds, not
+   named client case studies, and the page says so where it cannot be
+   missed. */
+.sd-work__note {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  max-width: 78ch;
+  margin: var(--hv-s8) 0 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.6;
+  color: var(--hv-text-muted);
+}
+.sd-work__note svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; color: var(--hv-accent-strong); }
+
+
+/* 21. Responsive for 16 to 20 ============================================= */
+
+@media (max-width: 1080px) {
+  .sd-hero--split .sd-hero__inner { grid-template-columns: minmax(0, 1fr); }
+  .sd-hero--split .sd-hero__title,
+  .sd-hero--split .sd-hero__lede { max-width: none; }
+
+  .sd-intro__inner { grid-template-columns: minmax(0, 1fr); }
+  /* Nothing tall beside it to stick against once this is one column. */
+  .sd-intro__aside { position: static; }
+  .sd-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--hv-s6) var(--hv-s5); }
+  .sd-work { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* Sticky only makes sense while there is a tall column beside it. */
+  .sd-route { position: static; margin-top: var(--hv-s8); }
+}
+
+@media (max-width: 860px) {
+  .sd-offers,
+  .sd-details { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 760px) {
+  .sd-work { grid-template-columns: minmax(0, 1fr); }
+  .sd-offer,
+  .sd-detail,
+  .sd-work__card { padding: var(--hv-s6); }
+  /* The tag would push the heading into two awkward lines at this width. */
+  .sd-offer__head { flex-wrap: wrap; }
+  .sd-offer__tag { margin-left: 0; order: -1; }
+}
+
+@media (max-width: 520px) {
+  .sd-facts { grid-template-columns: minmax(0, 1fr); }
+  .sd-call__head { padding: var(--hv-s4) var(--hv-s5); }
+  .sd-call__body { padding: var(--hv-s4) var(--hv-s5) var(--hv-s5); }
+  .sd-call__foot { padding: 0 var(--hv-s5) var(--hv-s5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sd-call__wave i { animation: none; height: 45%; }
+  .sd-offer, .sd-offer:hover { transition: none; }
+  .sd-logosync__link::after { animation: none; left: 35%; }
+  .sd-provision__list li.is-pending svg { animation: none; }
+}
+
+
+/* 15. Icon plates - ONE system ============================================
+   These grew independently, section by section, and ended up at six
+   different sizes (38 / 40 / 44 / 46 / 46 / 48px), two different radii and
+   five different glyph sizes. Side by side down one page that reads as
+   carelessness, not variety.
+
+   This normalises every plate onto two deliberate sizes:
+     default  46px plate / 22px glyph  - section cards
+     --sm     38px plate / 18px glyph  - dense rows and compact tiles
+   Declared here, after the section blocks above, so it wins on equal
+   specificity without each of those rules needing to be edited. Anything
+   that genuinely needs to differ should opt out explicitly and say why.
+   ========================================================================== */
+
+.sd-card__icon,
+.sd-rel__icon,
+.sd-anatomy__icon,
+.sd-who__icon,
+.sd-step__icon,
+.sd-ben__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--hv-r-md);
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+}
+.sd-card__icon svg,
+.sd-rel__icon svg,
+.sd-anatomy__icon svg,
+.sd-who__icon svg,
+.sd-step__icon svg,
+.sd-ben__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* The compact variant: the benefit tiles and the numbered process rows sit
+   in denser layouts where a 46px plate crowds the text beside it. */
+.sd-ben__icon,
+.sd-step__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--hv-r-sm);
+}
+.sd-ben__icon svg,
+.sd-step__icon svg { width: 18px; height: 18px; }
+
+/* On the dark bands the mint plate has nothing to sit on, so those get the
+   translucent-accent treatment instead. Keyed off the dark surface rather
+   than the section, so a dark card inside a light section is right too. */
+.hv-section--dark .sd-card__icon,
+.hv-section--dark .sd-step__icon,
+.hv-section--dark .sd-anatomy__icon,
+.hv-section--dark .sd-who__icon,
+.hv-section--dark .sd-ben__icon {
+  background: rgba(53, 217, 160, .14);
+  color: var(--hv-accent-bright);
+}
+
+
+/* 10. Reduced motion ====================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .sd-card, .sd-card:hover, .sd-ben:hover { transform: none; transition: none; }
+  .sd-typing i { animation: none; opacity: .75; }
+  .sd-tile, .sd-tile:hover,
+  .sd-steps--row .sd-step, .sd-steps--row .sd-step:hover,
+  .sd-who__card, .sd-who__card:hover { transform: none; transition: none; }
+  .sd-rel__card, .sd-rel__card:hover, .sd-rel__card:focus-visible { transform: none; transition: none; }
+  .sd-rel__card:hover .sd-rel__go svg { transform: none; }
+}

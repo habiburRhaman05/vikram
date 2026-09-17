@@ -33,7 +33,6 @@ export const NAV_MENUS = [
       service("AI Agents & Chatbots", "Answer, qualify and book around the clock, in your own tone of voice"),
       service("Workflow Automation", "Hand-offs between your tools that keep running once they are configured"),
       service("API & Tool Integrations", "CRM, calendar, billing and site all reading from one source of truth"),
-      service("AI Content Systems", "Briefs, drafts and repurposing on a cadence you set and control"),
     ],
   },
   {
@@ -42,7 +41,6 @@ export const NAV_MENUS = [
     to: `/services/${slugify("Marketing")}`,
     items: [
       service("CRM & Sub-account Setup", "Numbers, calendars, domains and A2P registration configured end to end"),
-      service("Pipeline & Funnel Build", "Stages, forms and booking flows mapped to how you actually sell"),
       service("Email & SMS Campaigns", "Sequences that follow up on every lead without anyone having to remember"),
       service("Social Media Marketing", "Grow your brand with strategic, scheduled social media campaigns"),
       service("Reporting Dashboards", "Source, conversion and revenue visible without exporting a spreadsheet"),
@@ -52,11 +50,20 @@ export const NAV_MENUS = [
     id: "development",
     label: "Funnels, Websites & GHL",
     to: `/services/${slugify("Funnels, Websites & GHL")}`,
+    /* "GoHighLevel Sub-accounts" and "eCommerce Builds" were removed from
+       this menu on request. Two things worth knowing before either comes
+       back:
+         - eCommerce Builds existed ONLY as this menu item. It never had a
+           page, so deleting the row removes the last link to
+           /services/ecommerce-builds and the slug drops out of
+           SERVICE_ROUTES below. Nothing else references it.
+         - GoHighLevel Sub-accounts still has its real page and route
+           (/services/gohighlevel-sub-accounts in App.jsx), and the other
+           service pages still cross-link to it from serviceLinks.js. It is
+           simply no longer listed in this dropdown. */
     items: [
       service("Funnel Design & Builds", "Conversion-first funnels mapped to your offer and your pipeline stages"),
       service("Websites & Landing Pages", "Built for speed and conversion, not just to look good in a screenshot"),
-      service("GoHighLevel Sub-accounts", "Domains, calendars, forms and automations configured end to end"),
-      service("eCommerce Builds", "Catalogue, checkout and post-purchase automation wired together"),
     ],
   },
 ];

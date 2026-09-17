@@ -143,7 +143,10 @@ export default function SiteFooterV2() {
               <Link to="/terms">Terms &amp; Conditions</Link>
             </li>
             <li>
-              <Link to="/sitemap">Sitemap</Link>
+              {/* Points straight at the XML sitemap rather than an HTML
+                  page - there's no visual /sitemap route, just the file
+                  search engines already read via robots.txt. */}
+              <a href="/sitemap.xml">Sitemap</a>
             </li>
           </ul>
         </div>

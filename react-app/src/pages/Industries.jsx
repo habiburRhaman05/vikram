@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout.jsx";
 import PageMeta from "@/components/common/PageMeta.jsx";
+import StructuredData from "@/components/common/StructuredData.jsx";
 import PageHero from "@/components/common/PageHero.jsx";
 import Section from "@/components/common/Section.jsx";
 import SectionHead from "@/components/common/SectionHead.jsx";
@@ -76,8 +77,23 @@ export default function Industries() {
       topbar={<>Tax practices are live today - <a href="/contact">tell us which industry you want next</a></>}
     >
       <PageMeta
-        title="Industries - GHLevelUp"
+        title="Industries We Serve: Tax, Accounting, Legal & More - GHLevelUp"
         description="Built for tax preparers first, then the trades around them - accounting, bookkeeping, notary, mortgage, real estate, insurance, financial advice and legal practices. Tell us your profession and we'll say what's live today."
+        ogDescription="One industry at a time: the profession picks the pipelines, the deadlines and the paperwork the system is built around, rather than a blank CRM asking you to configure it."
+      />
+
+      <StructuredData
+        page={{
+          type: "WebPage",
+          name: "Industries we serve",
+          description:
+            "The professions GHLevelUp builds CRM, automation and marketing systems for, starting with tax preparers.",
+          path: "/industries",
+        }}
+        crumbs={[
+          { name: "Home", path: "/" },
+          { name: "Industries", path: "/industries" },
+        ]}
       />
 
       {/* center: true - matches the page-hero--center fix applied earlier
@@ -113,7 +129,7 @@ export default function Industries() {
               </p>
               <Checklist items={TAX_CHECKLIST} />
               <BtnRow>
-                <Button to="/platform" variant="accent" icon="arrowRight">
+                <Button to="/book" variant="accent" icon="arrowRight">
                   See the tax build
                 </Button>
               </BtnRow>
@@ -243,8 +259,8 @@ export default function Industries() {
               <Button to="/book" variant="accent" size="lg" icon="calendar">
                 Book a demo
               </Button>
-              <Button to="/platform" variant="ghost-light" size="lg" icon="arrowRight">
-                See the platform
+              <Button href="/#services" variant="ghost-light" size="lg" icon="arrowRight">
+                See our services
               </Button>
             </>
           }

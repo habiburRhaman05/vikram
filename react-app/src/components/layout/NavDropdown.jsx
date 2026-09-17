@@ -65,17 +65,7 @@ export default function NavDropdown({ menu, active, onNavigate }) {
             ))}
           </ul>
 
-          <Link
-            className="navdrop__all"
-            to={menu.to}
-            onClick={() => {
-              drop.close();
-              onNavigate?.();
-            }}
-          >
-            All {menu.label.toLowerCase()} services
-            <Icon name="arrowRight" aria-hidden="true" />
-          </Link>
+         
         </div>
       </div>
     </div>

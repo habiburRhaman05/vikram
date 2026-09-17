@@ -67,6 +67,13 @@ export default function Pricing() {
         {PRICING.lede}
       </SectionHead>
 
+      <p className="hv-pricing__compare">
+        <Link to="/pricing">
+          Compare every feature side by side
+          <Icon name="arrowRight" aria-hidden="true" />
+        </Link>
+      </p>
+
       <ul className="hv-pricing__grid">
         {PRICING.tiers.map((tier, i) => (
           <Reveal

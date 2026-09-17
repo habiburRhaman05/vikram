@@ -7,9 +7,25 @@
     <!-- Per-page <title>/<meta description>/canonical/og: tags are rendered
          by each page component (React 19 hoists <title>/<meta>/<link>
          rendered anywhere in the tree up into <head> automatically) - see
-         src/hooks/usePageMeta.js. This is just the fallback shown before
-         the app mounts. -->
-    <title>GHLevelUp - The complete operating system for your tax practice</title>
+         src/components/common/PageMeta.jsx.
+
+         THE TITLE BELOW IS A FALLBACK, AND THERE WILL BE TWO OF THEM.
+         React's hoisted <title> is inserted ahead of this one, so it is what
+         the tab, the history entry and a JS-rendering crawler use on every
+         route; this line only decides what is shown before the bundle
+         executes and to a crawler that runs no JavaScript at all. It is
+         written for the home page because that is the page a crawler with
+         no JS is overwhelmingly likely to be asking about.
+
+         DO NOT ADD A STATIC <meta name="description"> HERE. That was tried:
+         it produces two description tags on every route, and because this
+         one is parsed first, every page's own description was shadowed by
+         the generic one. The per-page description comes only from React.
+         Crawlers that run no JavaScript therefore get no description - that
+         is a real limitation of shipping a client-rendered app, and the fix
+         for it is prerendering the routes at build time, not a second tag
+         here. -->
+    <title>GHLevelUp - CRM, AI Automation &amp; Web Development for Growing Businesses</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -39,22 +55,8 @@
 
     <!-- GHL CHAT WIDGET (site-wide, identical on every page - kept as a
          plain script tag here rather than injected by React, since it is
-         genuinely global and not tied to any one route/component).
-
-         `defer` is load-bearing, not tidiness. Without it this is a
-         PARSER-BLOCKING classic script: while the browser is still fetching
-         it, parsing stops, so the deferred `/src/main.jsx` module below never
-         executes and React never mounts - #root stays empty and the visitor
-         gets a blank white page for as long as the request hangs. It is a
-         third-party host, so "hangs" is not hypothetical: an ad blocker, a
-         corporate DNS/proxy, or a slow network will all do it, and it fails
-         on that visitor's machine only - the site looks completely fine
-         anywhere the request happens to resolve. `defer` downloads it in
-         parallel and runs it after parsing, so the page paints on its own
-         timeline and the widget simply appears when it arrives. The inline
-         script below does not depend on this having run first - it already
-         polls with a MutationObserver for the widget to show up. -->
-    <script defer src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6aa3ebfbf095905710c4d288"></script>
+         genuinely global and not tied to any one route/component). -->
+    <script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6aa3ebfbf095905710c4d288"></script>
  <script>
 (function () {
   function injectGlassCSS(shadowRoot) {

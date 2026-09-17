@@ -1,0 +1,1649 @@
+{
+  "$comment": "Blog posts. This file is the blog's data layer and nothing else: no imports, no comments inside records, no derived values. src/data/blog.js reads it and exposes the lookups the pages use, which is the seam a database or CMS would slot into. Images reuse the home page's supplied, Pexels-licensed photography (provenance in servicesV2.jsx) rather than sourcing more.",
+  "posts": [
+    {
+      "slug": "lead-pipeline-follow-up",
+      "category": "GoHighLevel",
+      "title": "How to build a lead pipeline that actually follows up",
+      "excerpt": "Most pipelines stall because the follow-up lives in someone's head. Here is the stage-by-stage setup we use so nothing goes quiet after day three.",
+      "date": "2026-09-02",
+      "dateLabel": "Sep 2, 2026",
+      "updated": "2026-09-14",
+      "readMins": 6,
+      "image": "/img/home/post-pipeline.jpg",
+      "imageWebp": "/img/home/post-pipeline.webp",
+      "imageAlt": "A team reviewing a sales pipeline on a laptop at a desk",
+      "tags": [
+        "GoHighLevel",
+        "CRM",
+        "Follow-up",
+        "Sales process"
+      ],
+      "summary": "A working pipeline is four decisions made once: what each stage means, what happens when a lead lands in it, who owns the exit, and what the system does with no human input. This guide covers all four, plus the settings that quietly break follow-up after launch.",
+      "keypoints": {
+        "title": "Key takeaways",
+        "items": [
+          "Name a stage after the action it demands, not after a feeling. \"Contacted\" is a memory. \"Spoke, no booking yet\" is an instruction.",
+          "Every stage needs an exit condition and an owner. A stage without both is where leads go to be forgotten.",
+          "The first reply matters more than the next ten. Answer in minutes, then let a sequence carry the rest.",
+          "Automate the steps with a fixed next move. Keep a person on pricing, complaints and anything a customer would feel was fobbed off.",
+          "Test the full path as a real lead before switching it on, including the no-show branch. That branch is the one nobody tests and everybody needs."
+        ]
+      },
+      "body": [
+        {
+          "type": "lead",
+          "text": "A pipeline is not a list of leads. It is a set of decisions about what happens next, and in most businesses those decisions were never written down anywhere. The CRM is therefore organised around how someone felt about a lead last Tuesday, which is why Monday's tidy board is Friday's graveyard."
+        },
+        {
+          "type": "h2",
+          "text": "Why pipelines stall, and it is not the software"
+        },
+        {
+          "type": "p",
+          "text": "We get asked to \"fix the CRM\" a lot. When you open the account, the CRM is usually fine. What is missing is the hand-off. Four specific things tend to be absent, and they are the same four every time."
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Follow-up depends on a person remembering. That is not a process, it is a personality trait, and it does not survive a busy week or a holiday.",
+            "The stage names describe a feeling rather than an action. Nobody knows what to do with a card that says \"Warm\".",
+            "No single owner per stage. When everyone is watching a column, nobody is working it.",
+            "Nothing fires on its own. If moving a card is the only thing that triggers the next step, then every step waits on a human to get to it."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Stage names are the whole design"
+        },
+        {
+          "type": "p",
+          "text": "The quickest audit of any pipeline is to read the column headers out loud and ask what a new hire would do with a card sitting in each one. If the answer is a shrug, the column is decorative. A stage name should state the situation and imply the next move, and it should be specific enough that two people sorting the same board would agree on where a card belongs."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Weak stage",
+            "What it hides",
+            "Stage that works"
+          ],
+          "rows": [
+            [
+              "New Lead",
+              "Everything from a junk form fill to a booked job",
+              "Enquiry received, not yet contacted"
+            ],
+            [
+              "Warm",
+              "Anybody's guess",
+              "Spoke once, no booking yet"
+            ],
+            [
+              "Follow Up",
+              "A promise with no date on it",
+              "Quoted, awaiting decision"
+            ],
+            [
+              "Interested",
+              "A feeling, not a fact",
+              "Booked, awaiting appointment"
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "text": "That third column reads longer, and that is the point. A stage name that takes eight words to say is doing eight words of work. It tells the reader what happened, what has not happened yet, and roughly what to do about it."
+        },
+        {
+          "type": "h2",
+          "text": "The five stages that survive a real sales week"
+        },
+        {
+          "type": "p",
+          "text": "Five is not a magic number, but it is the smallest set that separates the genuinely different situations a lead can be in. Fewer than five and two very different situations share a column. More than seven and nobody sorts the board accurately any more."
+        },
+        {
+          "type": "ol",
+          "items": [
+            "Enquiry received, not yet contacted. The lead exists and has heard nothing. The only job here is to make contact, and it should be measured in minutes.",
+            "Contacted, no decision yet. You have spoken or written, and the lead has not said yes or no. This is where a sequence runs, not a person.",
+            "Qualified, fits what you sell. Budget, area, timing and the service itself all line up. Entering this stage should require a fact, not an opinion.",
+            "Booked, awaiting appointment. There is a real event on a real calendar. This stage owns reminders, confirmations and the no-show branch.",
+            "Won or Lost, with a reason. Closed work and closed-lost leads both leave the active board, and the lost ones carry a reason so the pattern is visible later."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Each of those has an entry condition and an exit condition. \"Contacted, no decision yet\" is entered by making contact and exited by either an explicit no or a booking. If a lead has sat in it for three weeks, that is not a lead in a stage, it is a task nobody did, and the sequence should have handled it."
+        },
+        {
+          "type": "h2",
+          "text": "The first five minutes matter more than the next five weeks"
+        },
+        {
+          "type": "p",
+          "text": "There is no honest way to promise a revenue number for replying faster, because the result depends on what you sell, who you sell it to and how many leads you get. What can be said without hedging is the direction: the gap between a reply in five minutes and a reply the next morning is the single largest lever most local businesses have, and it is usually the cheapest to pull. The competitor who wins the job is frequently just the one who answered while the enquiry was still on the person's mind."
+        },
+        {
+          "type": "note",
+          "title": "The uncomfortable test",
+          "text": "Fill in your own website's contact form at 8pm on a Tuesday, as a customer, using a number you do not recognise. Note the exact time the first reply arrives and what it says. That timestamp is your real speed to lead, and it is the number that matters more than anything else on this page."
+        },
+        {
+          "type": "h2",
+          "text": "Three touches that do the work"
+        },
+        {
+          "type": "p",
+          "text": "Most lead follow-up fails in one of two directions: too little, which loses the lead, or a machine-gun of near-identical messages, which loses the lead and the brand. Three touches, properly spaced, beat twelve desperate ones. The shape that works is the same across trades, clinics and professional services."
+        },
+        {
+          "type": "h3",
+          "text": "One: the instant acknowledgement"
+        },
+        {
+          "type": "p",
+          "text": "Within seconds, confirm the enquiry landed and set an expectation. This is the least ambitious message in the sequence and the most important one: it tells a human being that a human being is coming. It should say when someone will call, and it should be true when it says it."
+        },
+        {
+          "type": "h3",
+          "text": "Two: the first few days"
+        },
+        {
+          "type": "p",
+          "text": "Days one to three, alternate a call attempt with a short message. Keep it useful rather than needy: answer the question they actually asked, offer two specific times, or send the thing they asked about. Each attempt should be able to stand alone, because nobody reads the whole thread in order."
+        },
+        {
+          "type": "h3",
+          "text": "Three: the long tail"
+        },
+        {
+          "type": "p",
+          "text": "Day four to day thirty, drop to roughly weekly, and make each message carry something new. A price change, a cancelled slot, a relevant piece of advice, a question about whether the timing has shifted. A lead who has gone quiet has not necessarily gone away; they have gone busy. The job of the long tail is to be easy to find when they stop being busy."
+        },
+        {
+          "type": "h2",
+          "text": "What to automate, and what to leave to a person"
+        },
+        {
+          "type": "p",
+          "text": "The dividing line is judgement. Anything with a fixed next move should fire without a human, because a human doing it adds delay and no value. Anything requiring a decision should reach a person with the context already attached. Trying to automate the second category is how businesses end up with a chat bot arguing about a refund."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Automate it",
+            "Keep a person on it"
+          ],
+          "rows": [
+            [
+              "Speed-to-lead text and email",
+              "Price negotiation and discounts"
+            ],
+            [
+              "Appointment reminders and confirmations",
+              "Complaints and anything emotional"
+            ],
+            [
+              "Sending a quote or intake form",
+              "Deciding whether a job is worth taking"
+            ],
+            [
+              "Re-engaging a lead after thirty days",
+              "Writing the proposal that wins the work"
+            ],
+            [
+              "Flagging a card that has gone stale",
+              "Choosing which leads to prioritise this week"
+            ]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "The settings that quietly break follow-up"
+        },
+        {
+          "type": "p",
+          "text": "A sequence that is correctly designed and incorrectly configured is worse than no sequence, because it looks like it is working. These are the six settings we check on every build, and every one of them has caused a real business real lost leads."
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Timezone and quiet hours. A message sent at 2am reads as a robot, and in some markets it is a compliance problem.",
+            "The sending number. If it is a number nobody monitors, every reply the sequence earns goes into a void.",
+            "The stop condition. A workflow that keeps texting someone who has already booked, or already said stop, undoes everything the first touch built.",
+            "The stage trigger. Automations anchored to \"stage changed\" break silently when someone renames or reorders a stage six months later.",
+            "The no-show branch. If nothing happens when an appointment is missed, the booked column becomes a waiting room with no doctor.",
+            "Consent and opt-out handling. Keep a record of consent, make STOP work everywhere, and treat it as a legal requirement rather than a nicety."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Test the whole path before you switch it on"
+        },
+        {
+          "type": "p",
+          "text": "The last hour of a build is the most valuable one, and it is the hour most builds skip. Run the pathway as a lead rather than as the person who built it, on a real phone, at a real hour, and follow it all the way to the calendar entry."
+        },
+        {
+          "type": "ol",
+          "items": [
+            "Submit the form as a stranger would, with a phone number you control.",
+            "Watch the card land in the first stage, and confirm the automatic first message arrives and reads correctly.",
+            "Reply to that message and confirm the reply reaches a real inbox, not a void.",
+            "Book an appointment and check it lands on the right calendar in the right timezone, with the confirmation email attached.",
+            "Miss the appointment on purpose, and confirm the no-show branch actually fires.",
+            "Mark the contact as opted out, then confirm the sequence stops dead."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "What good looks like thirty days later"
+        },
+        {
+          "type": "p",
+          "text": "You do not need a dashboard to know whether this is working. You need to be able to answer six questions without opening a spreadsheet or asking anyone."
+        },
+        {
+          "type": "ul",
+          "items": [
+            "How many enquiries came in last month, and how many got a reply in under five minutes?",
+            "How many are still sitting in the first stage right now?",
+            "What is the average number of touches a lead gets before it is marked lost?",
+            "Which stage do most leads die in?",
+            "What is your no-show rate, and what happens after one?",
+            "Which lost leads have a reason attached, and what is the most common reason?"
+          ]
+        },
+        {
+          "type": "p",
+          "text": "If those are answerable and the answers are improving, the system is doing its job. If they are not answerable, the pipeline is a picture of the process rather than a substitute for it. That distinction is the whole difference between a CRM that earns its subscription and one that just holds a list."
+        }
+      ],
+      "faq": [
+        {
+          "question": "How many follow-up touches should a lead get before I stop?",
+          "answer": "Three well spaced touches in the first week and a weekly touch out to thirty days covers almost every business we build for. The number matters less than the spacing and the content: each touch should be able to stand alone and should carry something new. A sequence of twelve near-identical reminders mostly trains people to ignore you."
+        },
+        {
+          "question": "Do I need GoHighLevel for any of this?",
+          "answer": "No. The pipeline design, the stage names and the follow-up shape work in any CRM that supports stages, automations and a calendar, and we build in whatever platform you already pay for when it can do the job. GoHighLevel is simply the one that covers most of it in a single subscription, which is why it comes up so often."
+        },
+        {
+          "question": "How long does a pipeline build take?",
+          "answer": "A single pipeline with three sequences is typically one to two weeks of elapsed time, most of which is waiting on domains, numbers and compliance registration rather than on the build itself. Multi-location businesses with different offers per location take longer, because the stages usually need to differ per location too."
+        },
+        {
+          "question": "My pipeline is half working already. Do we start over?",
+          "answer": "Rarely. We normally keep the history, rename and re-order the stages, add the missing exit conditions and automations, and leave the data where it is. Rebuilding from scratch costs you the historical reporting, which is the only part of a CRM that gets more valuable over time."
+        },
+        {
+          "question": "What is the most common reason a good sequence still fails?",
+          "answer": "The reply route. The sequence generates a response and the response lands in a number, inbox or social account that nobody has open. It is the least technical problem on this page and the one that costs the most leads, which is why we check every one of them by hand during testing."
+        }
+      ],
+      "relatedServices": [
+        {
+          "slug": "workflow-automation",
+          "why": "The engine behind everything on this page: the triggers, the sequences and the hand-offs that keep a lead moving without anyone remembering to move it."
+        },
+        {
+          "slug": "ai-agents-chatbots",
+          "why": "What handles the first five minutes when no one is at a desk, so an evening enquiry gets answered instead of waiting for the morning."
+        },
+        {
+          "slug": "api-tool-integrations",
+          "why": "How the CRM learns what the calendar, the phone system and your accounts package already know, so follow-up reacts to reality rather than to a form fill."
+        }
+      ]
+    },
+    {
+      "slug": "where-ai-agents-actually-save-time",
+      "category": "AI Automation",
+      "title": "Where AI agents genuinely save time, and where they do not",
+      "excerpt": "Intake, qualifying and booking are worth automating today. Judgement calls and anything with a refund attached are not. A practical dividing line.",
+      "date": "2026-08-21",
+      "dateLabel": "Aug 21, 2026",
+      "updated": "2026-09-11",
+      "readMins": 8,
+      "image": "/img/home/post-ai.jpg",
+      "imageWebp": "/img/home/post-ai.webp",
+      "imageAlt": "An agent dashboard showing an answered call and a booked appointment",
+      "tags": [
+        "AI agents",
+        "AI voice",
+        "Automation",
+        "Customer service"
+      ],
+      "summary": "The useful question is not whether AI can handle a conversation, because it can. It is which conversations are safe to hand over, what has to be true before you do, and how a customer gets to a human when they want one. This is the dividing line we use.",
+      "keypoints": {
+        "title": "Key takeaways",
+        "items": [
+          "Automate work that is reversible, low stakes and high frequency. Keep people on work that is expensive or emotional to get wrong.",
+          "Four jobs pay for an agent on their own: answering, qualifying, booking and rescheduling, and the missed-call text back.",
+          "Three jobs should stay human: price negotiation, complaints, and any regulated or clinical advice.",
+          "An agent with no handoff rule is worse than voicemail, because it wastes the caller's time before losing them.",
+          "Measure calls answered, bookings, handoffs and no-shows from day one. Do not accept a vendor's numbers in place of your own."
+        ]
+      },
+      "body": [
+        {
+          "type": "lead",
+          "text": "The argument about whether AI can hold a conversation is over, and it was never the interesting one. A voice agent can answer a phone, understand an accent, look up a diary and book an appointment. The question worth arguing about is which conversations you are willing to hand over, because the cost of getting that wrong is measured in customers rather than in minutes saved."
+        },
+        {
+          "type": "h2",
+          "text": "The dividing line: reversible, low stakes, high frequency"
+        },
+        {
+          "type": "p",
+          "text": "Three properties decide whether a job is a good fit for an agent. Is it reversible? Is it low stakes? Does it happen often enough to be worth configuring? A job that is reversible, low stakes and high frequency should almost always be automated, because a person doing it adds delay and judgement the task does not need. A job that fails any one of those tests needs a different answer."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Job",
+            "Reversible?",
+            "Stakes",
+            "Frequency",
+            "Verdict"
+          ],
+          "rows": [
+            [
+              "Answering an enquiry out of hours",
+              "Yes",
+              "Low",
+              "High",
+              "Automate"
+            ],
+            [
+              "Booking an appointment into a live calendar",
+              "Yes",
+              "Low",
+              "High",
+              "Automate"
+            ],
+            [
+              "Confirming an address or opening hours",
+              "Yes",
+              "Low",
+              "Very high",
+              "Automate"
+            ],
+            [
+              "Agreeing a discount on a large job",
+              "No",
+              "High",
+              "Low",
+              "Human"
+            ],
+            [
+              "Handling a complaint",
+              "No",
+              "High",
+              "Low",
+              "Human"
+            ],
+            [
+              "Clinical, legal or financial advice",
+              "No",
+              "Regulated",
+              "Varies",
+              "Human"
+            ]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Four jobs worth automating this quarter"
+        },
+        {
+          "type": "p",
+          "text": "If you do only these four, an agent has usually paid for itself before you get to the rest of the list. They share a property that matters: each one has a defined success state, so you can tell whether it worked without asking anyone's opinion."
+        },
+        {
+          "type": "h3",
+          "text": "One: answering every enquiry, at any hour"
+        },
+        {
+          "type": "p",
+          "text": "This is the job most businesses buy an agent for, and it is the one with the clearest before and after. The test is simple: what happens today when someone calls at 7pm and nobody picks up? If the answer is that they call your competitor, the cost of not answering is already on your books every week."
+        },
+        {
+          "type": "h3",
+          "text": "Two: qualifying against your own criteria"
+        },
+        {
+          "type": "p",
+          "text": "A good agent asks the four or five questions you would ask, in your words, and records the answers on the contact. Service area, timing, budget range, type of work. The value is not that it saves a call. It is that every lead arrives with the same information attached, so your team stops starting every conversation from zero."
+        },
+        {
+          "type": "h3",
+          "text": "Three: booking and rescheduling into the real calendar"
+        },
+        {
+          "type": "p",
+          "text": "This is where the design has to be honest about your actual diary. If your team blocks out travel time, keeps a lunch hour, or only does certain work on certain days, those constraints have to be in the calendar the agent reads, or it will book appointments you cannot keep. Rescheduling matters as much as booking: an agent that can only create appointments makes your calendar fuller and your no-show problem worse."
+        },
+        {
+          "type": "h3",
+          "text": "Four: the missed-call text back"
+        },
+        {
+          "type": "p",
+          "text": "The cheapest automation on this list and often the highest return. Someone calls, you cannot pick up, so the system texts them within seconds to say you will call straight back and offers to book them in now instead. It converts a missed call from a lost lead into a scheduled one, and it works whether or not you ever turn on anything else."
+        },
+        {
+          "type": "h2",
+          "text": "Three jobs you should not hand to an agent"
+        },
+        {
+          "type": "p",
+          "text": "This section is the reason this post exists. Every failed AI deployment we have been called in to rescue failed here rather than on the technology."
+        },
+        {
+          "type": "ol",
+          "items": [
+            "Price negotiation and concessions. An agent that can be talked into a discount will be, usually within a fortnight, and usually by the customers you least want trained on it. Quote the standard price and route anything else to a person.",
+            "Complaints, refunds and anything emotional. Someone who is already unhappy needs to hear that a human being has taken ownership. An agent that keeps offering options is heard as being fobbed off, and the review that follows costs more than the refund.",
+            "Regulated advice. Clinical, legal, financial and insurance questions have answers that are specific to a person's circumstances and a licensing regime. Automate the booking of that conversation, never the conversation itself."
+          ]
+        },
+        {
+          "type": "note",
+          "title": "The test that saves you a rebuild",
+          "text": "Before you automate any conversation, ask what the worst plausible outcome is. If the answer is a mild inconvenience and a rebooking, automate it. If the answer involves money back, a regulator, or someone feeling dismissed, keep a person in the loop and automate the routing instead."
+        },
+        {
+          "type": "h2",
+          "text": "What \"trained on your business\" actually means"
+        },
+        {
+          "type": "p",
+          "text": "It is not a model that has somehow learned your trade. It is your information, held in a form the agent can retrieve while it talks, plus a set of rules about what it must never say. That is less magical and far more useful, because it is something you can inspect, correct and hand to a colleague."
+        },
+        {
+          "type": "ul",
+          "items": [
+            "What you sell, in the words customers use for it, including the names of packages and the difference between them.",
+            "What a job costs, at least as a starting range, and what changes the price.",
+            "Where you work, and where you do not, because the second list prevents wasted appointments.",
+            "Your hours, including holidays, travel time and the last appointment you will take.",
+            "The questions you always ask, and the answers that mean a lead is not a fit.",
+            "Everything the agent must hand to a person, written as explicit triggers rather than left to its judgement."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Expect the first draft to be wrong in two specific ways: too formal, and too keen to help with things you do not offer. Both are fixed by reading real transcripts from the first week and editing the source material, not by adding more instructions."
+        },
+        {
+          "type": "h2",
+          "text": "The handoff rule"
+        },
+        {
+          "type": "p",
+          "text": "An agent that cannot hand off is worse than voicemail, because it costs the caller time before losing them. The handoff has to be designed as carefully as the conversation, and it needs to be something the caller can trigger deliberately rather than only something the agent decides."
+        },
+        {
+          "type": "ul",
+          "items": [
+            "The caller asks for a person. Immediately, on the first request, without a second attempt to help.",
+            "The conversation reaches a topic on the never-say list: pricing negotiation, a complaint, anything regulated.",
+            "The agent cannot answer after one attempt, or the caller repeats themselves.",
+            "The caller uses language that indicates urgency or distress, which is worth listing explicitly rather than hoping it is inferred."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Where the handoff goes matters as much as when. A voicemail box is not a handoff. It should reach a monitored inbox or a person, with a transcript and the contact record attached, and someone should be accountable for answering it inside your working hours."
+        },
+        {
+          "type": "h2",
+          "text": "Measuring it without inventing numbers"
+        },
+        {
+          "type": "p",
+          "text": "You will be offered benchmarks by whoever is selling. Ignore them and measure your own, because the only numbers that mean anything are the ones from your diary and your phone bill. Five are enough, and all five should be readable in the first week."
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Enquiries received and enquiries answered, counted separately, so a quiet month cannot hide a missed one.",
+            "Time to first response, measured in minutes rather than hours, because the useful resolution is finer than hours.",
+            "Bookings made by the agent, and bookings it made that a person would have declined.",
+            "Handoffs triggered, and how many of those got a human reply inside your working hours.",
+            "No-show rate, which is the number that quietly decides whether any of this was worth it."
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Why we will not quote you a percentage uplift",
+          "text": "Any figure we gave you would be an average of someone else's business dressed up as a forecast for yours. Your baseline, your hours and your lead quality decide the outcome far more than the tooling does. We would rather set the five measurements above, run for thirty days, and show you your own numbers."
+        },
+        {
+          "type": "h2",
+          "text": "A thirty day rollout that does not gamble the phones"
+        },
+        {
+          "type": "ol",
+          "items": [
+            "Week one: record and write. Listen back to twenty real calls, write down the questions that actually get asked, and list the triggers that should reach a person.",
+            "Week two: build and break it. Configure the agent, then try to make it say something wrong. Call it from a number it does not know and be deliberately difficult.",
+            "Week three: run it in parallel. Let it handle after-hours and overflow while a person handles everything else, and read every transcript at the end of each day.",
+            "Week four: switch over, keep the escape hatch. Move the main number across, and keep a human available during working hours until you have seen two weeks of clean transcripts."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Where to start if you are doing this yourself"
+        },
+        {
+          "type": "p",
+          "text": "Start with the missed-call text back and a single evening answering window. Both are cheap, both are reversible, and together they will tell you more about how your customers behave after hours than any amount of planning. Add qualifying once the transcripts are clean, and leave pricing, complaints and anything regulated with a person permanently. That is not a limitation of the technology. It is the design working as intended."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Will callers know they are talking to an AI?",
+          "answer": "Usually within a few seconds, and that is fine. The failure is not being recognised, it is being misled. An agent that identifies itself, answers the question and books the appointment gets better transcripts than one imitating a receptionist, and it avoids the awkward moment when a caller asks a direct question and gets a vague answer."
+        },
+        {
+          "question": "What happens to calls the agent cannot handle?",
+          "answer": "They follow the handoff rule: the contact record, a transcript and a summary land in a monitored inbox, and someone owns replying within your working hours. If nobody owns that inbox, the agent is not ready to answer your main number, however good its transcripts look."
+        },
+        {
+          "question": "Can it book into the calendar we already use?",
+          "answer": "In almost every case, yes, including Google Calendar, Outlook and the calendar inside GoHighLevel. What matters more than the integration is whether your real constraints are in that calendar. Travel time, buffers and last-appointment rules have to exist as rules, or the agent will book jobs you cannot physically get to."
+        },
+        {
+          "question": "Do you need a big call volume for this to be worth it?",
+          "answer": "No, but the shape of the case changes. At low volume the argument is not labour saved, it is leads not lost after hours. At high volume the argument is overflow and consistency. Both are real, and the second one is usually easier to show on a spreadsheet."
+        },
+        {
+          "question": "How much work is it to keep the agent accurate?",
+          "answer": "Expect a proper review after week one, another after month one, and then something small whenever your prices, hours or services change. If your offer changes monthly, budget for that. An agent quoting last quarter's prices confidently is worse than one that admits it does not know."
+        }
+      ],
+      "relatedServices": [
+        {
+          "slug": "ai-agents-chatbots",
+          "why": "The build itself: a voice and chat agent that answers in seconds, qualifies against your criteria and books into your real calendar."
+        },
+        {
+          "slug": "api-tool-integrations",
+          "why": "What gives an agent something true to say. Live availability, pricing and customer history read from the tools you already run."
+        },
+        {
+          "slug": "workflow-automation",
+          "why": "What happens after the booking: confirmations, reminders, intake forms and the follow-up that catches a no-show."
+        }
+      ]
+    },
+    {
+      "slug": "landing-page-conversion-checklist",
+      "category": "Web & Conversion",
+      "title": "Why your landing page converts worse than your competitor's",
+      "excerpt": "It is rarely the headline. Nine times out of ten it is load time, an unclear next step, or a form asking for things you do not need yet.",
+      "date": "2026-08-07",
+      "dateLabel": "Aug 7, 2026",
+      "updated": "2026-09-08",
+      "readMins": 5,
+      "image": "/img/home/post-landing.jpg",
+      "imageWebp": "/img/home/post-landing.webp",
+      "imageAlt": "A landing page layout being reviewed on a laptop screen",
+      "tags": [
+        "Landing pages",
+        "Conversion",
+        "Web design",
+        "Core Web Vitals"
+      ],
+      "summary": "A page that gets traffic and does not convert is almost always failing on one of three things: it loads too slowly, it does not say what to do next, or it asks for too much before it has earned anything. Here is the order to fix them in.",
+      "keypoints": {
+        "title": "Key takeaways",
+        "items": [
+          "Run the eight second test on your own page: in eight seconds, a stranger should know what you do, who it is for, and what to do next.",
+          "Speed is a conversion feature, not a technical detail. Google's Core Web Vitals threshold for Largest Contentful Paint is 2.5 seconds, and most pages fail it on images and third-party scripts alone.",
+          "One page, one action. Every extra link, button and offer on a landing page divides the same attention.",
+          "Cut the form to the fields you will genuinely act on. Every field you add costs you completions you will never see.",
+          "Proof beats adjectives. Named work, real photos and a specific process outperform any claim you cannot substantiate."
+        ]
+      },
+      "body": [
+        {
+          "type": "lead",
+          "text": "A landing page that gets traffic and does not convert is a specific kind of frustrating, because the money is visibly arriving and then leaving. The instinct is to rewrite the headline. In our experience that is fourth or fifth on the list of things worth changing, and it is usually not the cause."
+        },
+        {
+          "type": "h2",
+          "text": "Start with the eight second test"
+        },
+        {
+          "type": "p",
+          "text": "Show your page to someone who does not know your business and give them eight seconds. Then take it away and ask three questions: what does this company do, who is it for, and what were you supposed to do next? If any of the three answers is vague, the problem is above the fold, and no amount of work further down the page will fix it."
+        },
+        {
+          "type": "ul",
+          "items": [
+            "What we do has to be legible from the headline alone, without the subheading doing the real work.",
+            "Who it is for has to be specific enough to exclude someone. A page for everybody converts nobody.",
+            "What to do next has to be one thing, visible without scrolling on a phone."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "The three failure modes behind almost every underperforming page"
+        },
+        {
+          "type": "ol",
+          "items": [
+            "The next step is unclear or contested. There are four buttons, three of them are equally weighted, and two go to the same place.",
+            "The page loads slowly on a phone on mobile data, so a meaningful share of visitors leave before they see anything at all.",
+            "The form asks for information the business has not earned yet: budget, company size, a phone number, a preferred time slot, all before the visitor knows whether you can help."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Fix those three and most pages improve without touching a word of copy or a single colour. It is worth saying plainly: if you only have budget for one change, fix the next step. It is the cheapest of the three and the most common cause."
+        },
+        {
+          "type": "h2",
+          "text": "Load time is a conversion feature"
+        },
+        {
+          "type": "p",
+          "text": "Speed is treated as a technical concern and it is a commercial one. Google publishes the thresholds it uses for Core Web Vitals, and Largest Contentful Paint, the moment the main content appears, is measured against a 2.5 second target. That figure comes from Google's own documentation rather than from us, and it is worth checking your own page against it before you change anything else."
+        },
+        {
+          "type": "p",
+          "text": "In practice, three things cause almost all of the slowness we find, and all three are fixable without a redesign."
+        },
+        {
+          "type": "table",
+          "head": [
+            "What slows the page",
+            "What to do about it",
+            "Effort"
+          ],
+          "rows": [
+            [
+              "Uncompressed hero images",
+              "Serve WebP or AVIF, size the file to the largest slot it fills, and set width and height on the tag",
+              "Low"
+            ],
+            [
+              "Third-party scripts",
+              "Audit the tags in the head, remove anything nobody still reads, and defer the rest",
+              "Low"
+            ],
+            [
+              "Web fonts",
+              "Two weights maximum, self-hosted, with a system font fallback so text paints immediately",
+              "Medium"
+            ],
+            [
+              "An animation library for one effect",
+              "Do it in CSS, or drop the effect",
+              "Medium"
+            ],
+            [
+              "Large sliders and video backgrounds",
+              "Static image with a play control the visitor chooses to press",
+              "Medium"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Test on a phone, on mobile data, with a cold cache",
+          "text": "A laptop on office wifi is not a fair test and will make almost any page look fast. Load the page on a phone, with mobile data rather than wifi, in a private tab, and watch it rather than measuring it. Your visitors are not using your connection."
+        },
+        {
+          "type": "h2",
+          "text": "One page, one action"
+        },
+        {
+          "type": "p",
+          "text": "A landing page has one job. Every additional link, offer, testimonial carousel and navigation item is a decision you have handed to someone who is already deciding whether to trust you. The practical version of this is simple: if a visitor can leave your page by clicking something, ask whether you are happy for them to do it."
+        },
+        {
+          "type": "ul",
+          "items": [
+            "One primary call to action, repeated as the page scrolls rather than replaced by a different one.",
+            "Secondary actions that support the primary one. \"See a sample\" and \"Book a call\" can coexist; \"Book a call\", \"Subscribe\", \"Download\" and \"Chat now\" cannot.",
+            "Navigation either removed or reduced to a logo that goes home. On a paid-traffic page, it is usually removed.",
+            "The button label should say what happens next. \"Submit\" describes your form; \"Get my quote\" describes their benefit."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "The form is where the sale is lost"
+        },
+        {
+          "type": "p",
+          "text": "The form is the last thing between you and the lead, which makes it the highest leverage element on the page and the one most often designed for the sales team's convenience rather than the visitor's. Every field you add has a cost, and the cost is paid in people who close the tab rather than in people who fill it in badly."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Field",
+            "Worth asking for",
+            "Why"
+          ],
+          "rows": [
+            [
+              "Name",
+              "Yes",
+              "You need something to put in the reply greeting"
+            ],
+            [
+              "Email",
+              "Yes",
+              "The only channel that reliably survives"
+            ],
+            [
+              "Phone",
+              "Only if you will call",
+              "A phone number nobody rings is a field that only reduces completions"
+            ],
+            [
+              "Budget",
+              "Not on the first form",
+              "Nobody knows yet, so the answer is either false or a reason to leave"
+            ],
+            [
+              "Company size",
+              "Not on the first form",
+              "Qualifying information belongs in the conversation, not the form"
+            ],
+            [
+              "Message",
+              "Yes, and keep it short",
+              "Two lines of their own words is worth more than any dropdown"
+            ]
+          ]
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Labels above the input, always visible. Placeholder text is not a label, and it disappears exactly when someone needs to check what the field wanted.",
+            "Validate on submit, not while typing. Flagging an email address as invalid before someone has finished it is the fastest way to make a form feel hostile.",
+            "Correct errors politely and explain what is wrong, next to the field that is wrong.",
+            "A thank-you state that confirms what happens next and when. A blank screen after submission makes people re-send the form, which is how you get duplicate leads."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Proof without inventing numbers"
+        },
+        {
+          "type": "p",
+          "text": "The obvious move here is a row of impressive statistics. We would argue against it, and not only on grounds of honesty. Numbers nobody can verify are read as marketing, while a specific and checkable detail is read as evidence. One named local job with a photograph does more work than a padded statistic, and it cannot be picked apart by a sceptical reader."
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Named work with real photographs. Even three examples beats a wall of anonymous logos.",
+            "A process described in the order it happens, so the visitor knows what the next fortnight looks like.",
+            "Named people who will actually do the work, with a face and a role.",
+            "A clear statement of what you do not do, which reads as confidence and saves wasted calls.",
+            "A real address and a phone number. Local businesses convert better when they look local."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Mobile is not a smaller desktop"
+        },
+        {
+          "type": "p",
+          "text": "Most local traffic is mobile and most landing pages are designed on a laptop. That mismatch shows up in three predictable places: the call to action sits below the fold, tap targets are smaller than a fingertip, and the phone number is text rather than something you can press."
+        },
+        {
+          "type": "ul",
+          "items": [
+            "The primary action visible without scrolling, and repeated in a sticky bar if the page is long.",
+            "Tap targets of at least 44 by 44 pixels, which is the WCAG 2.5.5 minimum and also roughly the size of a fingertip.",
+            "Every phone number a real tel link, and every email address a mailto link.",
+            "Forms that use the right keyboard for each field, with inputmode set so a phone number brings up numbers.",
+            "Nothing important in a hover state, because on a touch screen there is no hover."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "The checklist, in the order we work through it"
+        },
+        {
+          "type": "ol",
+          "items": [
+            "Write down the single action the page exists to produce, and remove every element that competes with it.",
+            "Run the eight second test with someone outside the business, and fix the top of the page until all three questions are answerable.",
+            "Compress and correctly size the images, then re-measure on a phone on mobile data.",
+            "Reduce the form to the fields you will genuinely act on within a day, and rewrite the button label to describe the benefit.",
+            "Replace any statistic you cannot substantiate with a specific, checkable example.",
+            "Check the whole path on a real phone, including the confirmation email and the thank-you screen."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "None of that requires a redesign, and the first four steps are usually a day or two of work. What it does require is deciding what the page is for, which is the step most builds skip because it is the one that forces a conversation about priorities rather than a conversation about colours."
+        }
+      ],
+      "faq": [
+        {
+          "question": "How do I know which of these problems my page has?",
+          "answer": "Measured speed first, because it is objective: check the page on a phone on mobile data in a private tab. Then the eight second test, which is subjective but decisive. If someone cannot say what you do and what to do next after eight seconds, that outranks anything a speed test will tell you."
+        },
+        {
+          "question": "Should I remove the navigation from my landing page?",
+          "answer": "On a page built for paid traffic, almost always. If you are spending money to get someone to one page with one action, a menu is a set of exits. On a page that is part of the main site, keep the navigation. The distinction is whether the visitor arrived deliberately or was sent there."
+        },
+        {
+          "question": "How many form fields is too many?",
+          "answer": "More than you will act on within one working day. If nobody calls the phone number, the phone field is costing you completions for no benefit. Start with name, email and a short message, and qualify on the call rather than in the form."
+        },
+        {
+          "question": "Do I need a separate landing page for every campaign?",
+          "answer": "If the offer, the audience or the intent differs, yes. One page trying to serve a Google search for a specific service and a social ad for a discount will be mediocre at both, because the promise in the headline cannot match both sources."
+        },
+        {
+          "question": "Does a faster page really change anything if my traffic is small?",
+          "answer": "At small volume, speed mostly protects the traffic you already pay for, which is still worth doing because it is a one-off fix. The bigger lever at small volume is usually the follow-up after the form, since that is where the leads you already have get lost."
+        }
+      ],
+      "relatedServices": [
+        {
+          "slug": "websites-landing-pages",
+          "why": "Where this checklist gets applied properly: fast, responsive pages built to convert rather than to look good in a screenshot."
+        },
+        {
+          "slug": "funnel-design-builds",
+          "why": "A page is one step of a path. This is the offer, the stages and the follow-up that turn a single page into a booked appointment."
+        },
+        {
+          "slug": "workflow-automation",
+          "why": "What happens the moment the form is submitted, so the lead gets a reply while they are still on your site rather than tomorrow."
+        }
+      ]
+    },
+    {
+      "slug": "missed-call-text-back-setup",
+      "category": "AI Automation",
+      "title": "The missed call is the cheapest lead you will ever lose",
+      "excerpt": "Someone rang you and nobody picked up. Texting them back inside a minute is the highest-return automation in most local businesses.",
+      "date": "2026-07-24",
+      "dateLabel": "Jul 24, 2026",
+      "updated": "2026-09-05",
+      "readMins": 5,
+      "image": "/img/home/svc-ai.jpg",
+      "imageWebp": "/img/home/svc-ai.webp",
+      "imageAlt": "A phone showing an automated reply to a missed call",
+      "tags": [
+        "Missed calls",
+        "Speed to lead",
+        "Automation",
+        "Local business"
+      ],
+      "summary": "A missed call is a person who was ready to talk to you, at the moment they were ready. This covers the arithmetic of leaving them hanging, why voicemail is not the answer, what to actually write, and the compliance parts that are not optional.",
+      "keypoints": {
+        "title": "Key takeaways",
+        "items": [
+          "A missed call is not a lost lead until you fail to respond to it. The text back is the cheapest recovery there is.",
+          "Voicemail is not an answer: most people do not leave one, and the ones who do are not your best leads.",
+          "Three rules: send it within seconds, say who you are, and offer a booking rather than a callback request.",
+          "Consent, quiet hours and working STOP handling are legal requirements, not goodwill gestures.",
+          "Measure jobs from textbacks, not textbacks sent. Replies feel good; bookings pay."
+        ]
+      },
+      "body": [
+        {
+          "type": "lead",
+          "text": "Someone found you, chose you over the three other results, and rang. Nobody picked up, because you were on a roof, with a client, or driving. That is not a failure of effort. It is a failure of system, and it is the cheapest one in your business to fix because the person has already done the hard part."
+        },
+        {
+          "type": "h2",
+          "text": "The arithmetic nobody runs"
+        },
+        {
+          "type": "p",
+          "text": "We are not going to tell you what percentage of leads you are losing, because anybody quoting you a percentage is describing somebody else's business. Run your own arithmetic instead. As an illustration only: if your average job is worth $600, you miss four calls a week, and one in four of those people would have booked, that is roughly $31,000 a year going to whoever answered next. Change the three numbers to yours. The shape of the answer rarely changes."
+        },
+        {
+          "type": "note",
+          "title": "Do this before you read on",
+          "text": "Open your call log and count the incoming calls you missed last week. Not the ones you returned later, the ones you never spoke to. That number is the size of the problem, and most owners have never looked at it."
+        },
+        {
+          "type": "h2",
+          "text": "Why voicemail is not the answer"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Most people do not leave a message. Leaving one feels like a commitment, and they are still comparing three businesses.",
+            "A message assumes they will answer when you ring back, which means the two of you now have to be free at the same time twice.",
+            "The message gives you no channel to reply on until they have already moved on to the next tab.",
+            "By the time you listen to it, they have usually spoken to somebody else."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Voicemail is a place where enquiries go to be forgotten politely. It is not a system, and it is not a reason to leave the missed call alone."
+        },
+        {
+          "type": "h2",
+          "text": "Three rules for a text back that works"
+        },
+        {
+          "type": "ol",
+          "items": [
+            "Seconds, not minutes. The message has to arrive while the caller is still holding the phone, not after they have started their next search.",
+            "Say who you are and what you are. Their phone shows a number they do not recognise, so an unsigned message reads as spam.",
+            "Offer a booking, not a callback request. Asking them to ring again hands the work back to the person who already tried once."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "What to actually write"
+        },
+        {
+          "type": "p",
+          "text": "Short, specific, and it should sound like a person rather than a platform. Two messages are all you need: one for when you can call back, one for when you cannot."
+        },
+        {
+          "type": "quote",
+          "text": "Sorry we missed you. This is Bright HVAC, you just rang us. What is the job? Reply here or grab a slot that suits you: [booking link]",
+          "cite": "During working hours"
+        },
+        {
+          "type": "quote",
+          "text": "Sorry we missed you, this is Bright HVAC. We are closed until 8am and you are first on the list. If you would rather pick a time now: [booking link]",
+          "cite": "After hours"
+        },
+        {
+          "type": "p",
+          "text": "No marketing language, no exclamation marks, no wall of service descriptions. The only job of the message is to keep the conversation alive and give them something to click."
+        },
+        {
+          "type": "h2",
+          "text": "The compliance parts that are not optional"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "STOP has to work, on every number, including replies that arrive outside your automation.",
+            "Respect quiet hours. A reply at 2am reads as a robot and is a regulatory problem in some markets.",
+            "Keep a record of consent. A text back to a missed call is a response, but adding that person to a marketing list is a different thing that needs its own permission.",
+            "Send from a registered number, or your messages get filtered before they arrive. This is the subject of its own post."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "What to measure"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Missed calls per week, which is the number nobody looks at and the one that sizes the problem.",
+            "Textbacks sent versus delivered, so a filtering problem cannot masquerade as a no-interest problem.",
+            "Replies, and how quickly a human takes over once one arrives.",
+            "Jobs booked from a text back. This is the only one that pays, and it is worth attributing deliberately rather than assuming."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "When a text back is not enough"
+        },
+        {
+          "type": "p",
+          "text": "A text back is the floor, not the ceiling. It recovers the caller who is willing to type. It does nothing for the one who wanted to speak to somebody at 7pm and will not wait until the morning, and it does nothing for the person who rings twice and then gives up. That is the case for an agent that answers: the text back is what you switch on tonight, and answering properly is what you build next."
+        },
+        {
+          "type": "h2",
+          "text": "Switch it on in an evening"
+        },
+        {
+          "type": "ol",
+          "items": [
+            "Write the two messages above in your own words, with your real booking link.",
+            "Turn on a missed-call trigger, and set it to fire within seconds rather than minutes.",
+            "Test it by ringing your own number from a phone you do not recognise and hanging up.",
+            "Add the STOP handling and the quiet hours before you let it near a customer.",
+            "Check it weekly for a month, and read every reply yourself rather than trusting a dashboard number."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Will a text back annoy people who did not want a text?",
+          "answer": "Some will ignore it, which costs you nothing. In our experience the annoyance risk is far lower than the risk of silence, and it disappears almost entirely if the message identifies the business, is short, and offers something useful rather than chasing. If someone replies STOP, the system has to honour it immediately and permanently."
+        },
+        {
+          "question": "Should the text back come from the same number that was called?",
+          "answer": "Yes. A message from a different number looks like a third party who bought your missed-call log, which is a hard first impression to recover from. It also breaks the reply path, because the caller's phone groups the conversation with the number they rang."
+        },
+        {
+          "question": "How fast does it need to be, realistically?",
+          "answer": "Under a minute, and under ten seconds is achievable. The point is to arrive while the caller is still holding the phone and deciding whether to ring the next business. A text back that arrives forty minutes later is a follow-up, and follow-ups do a different job."
+        },
+        {
+          "question": "Do I need an AI agent for this, or is a simple automation enough?",
+          "answer": "A simple trigger and a text is enough to start, and it is where we tell most businesses to begin. An agent earns its place when callers want an actual conversation after hours, or when the volume of replies exceeds what a person can answer promptly."
+        },
+        {
+          "question": "What if we genuinely cannot answer texts during the day?",
+          "answer": "Then route the replies somewhere a person will see them, and be honest in the message about when. A reply that sits unanswered for a day undoes the goodwill the first message earned. If nobody can own that inbox, fix the ownership before you switch the automation on."
+        }
+      ],
+      "relatedServices": [
+        {
+          "slug": "ai-agents-chatbots",
+          "why": "The step after texting back: an agent that answers the call properly when nobody is free, qualifying the caller and booking the slot."
+        },
+        {
+          "slug": "workflow-automation",
+          "why": "Everything that has to happen after the reply: routing it to a person, chasing the ones who go quiet, and keeping the record straight."
+        },
+        {
+          "slug": "api-tool-integrations",
+          "why": "How your phone system, calendar and CRM agree on what a missed call is, so the text back fires from the right number at the right moment."
+        }
+      ]
+    },
+    {
+      "slug": "a2p-registration-and-text-deliverability",
+      "category": "GoHighLevel",
+      "title": "Why your texts stopped sending: A2P, numbers and the settings nobody reads",
+      "excerpt": "Your messages are not failing. They are being filtered, and the cause is almost always registration or a setting nobody has opened.",
+      "date": "2026-07-10",
+      "dateLabel": "Jul 10, 2026",
+      "updated": "2026-09-01",
+      "readMins": 7,
+      "image": "/img/home/svc-crm.jpg",
+      "imageWebp": "/img/home/svc-crm.webp",
+      "imageAlt": "A CRM contact record showing a message history",
+      "tags": [
+        "A2P",
+        "SMS",
+        "Compliance",
+        "Deliverability",
+        "GoHighLevel"
+      ],
+      "summary": "Texting is the most reliable channel a local business has, right up until it silently stops working. This is what A2P registration actually is, what gets a campaign rejected, the settings that quietly block delivery, and the order to check things in when messages stop arriving.",
+      "keypoints": {
+        "title": "Key takeaways",
+        "items": [
+          "A2P registration is a carrier requirement, not a platform one. Unregistered traffic is filtered rather than banned, which is why it fails quietly.",
+          "Most rejections are caused by opt-in descriptions that do not match reality, or sample messages that do not match the registered use case.",
+          "Quiet hours, per-number throughput and unregistered sending numbers stop more messages than content ever does.",
+          "Register before you announce a launch date. Approval is the long pole in every messaging build.",
+          "Test delivery on a different carrier from your own. Passing on your network proves nothing about your customers'."
+        ]
+      },
+      "body": [
+        {
+          "type": "lead",
+          "text": "The worst kind of broken is the kind that looks fine. Your sequence ran, the platform shows every message as sent, and the customer never received it. When this happens, it is almost never the platform failing. It is a carrier deciding your traffic does not meet the bar, and filtering it before anyone sees it."
+        },
+        {
+          "type": "h2",
+          "text": "What A2P actually is"
+        },
+        {
+          "type": "p",
+          "text": "A2P stands for application-to-person: messages sent from software rather than typed by a human on a handset. Carriers treat that traffic differently from person-to-person messaging, because it is the route most bulk and fraudulent messaging takes. To send it, a business registers its legal identity and the kind of messages it intends to send. That registration is what tells the carriers you are a real business sending something people asked for."
+        },
+        {
+          "type": "p",
+          "text": "It is a carrier requirement rather than a GoHighLevel one. The platform is where you fill it in because that is where you send from, but the rule comes from the networks, and moving platforms does not remove it."
+        },
+        {
+          "type": "table",
+          "head": [
+            "What gets checked",
+            "What it decides"
+          ],
+          "rows": [
+            [
+              "Brand identity",
+              "Whether the registered business matches a real, findable entity"
+            ],
+            [
+              "Campaign use case",
+              "Whether the messaging you describe is permitted on that number type"
+            ],
+            [
+              "Opt-in description",
+              "Whether you can explain how people agreed to hear from you"
+            ],
+            [
+              "Sample messages",
+              "Whether what you say you will send matches the campaign you registered"
+            ],
+            [
+              "Website and privacy policy",
+              "Whether a person could find you and read how their number is used"
+            ]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "What actually causes a campaign to be rejected"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "An opt-in description that does not match how people really opt in. If the form says one thing and the campaign description claims another, that is the rejection.",
+            "A website that does not exist, is behind a login, or has no privacy policy mentioning messages.",
+            "Sample messages that do not match the registered use case. Appointment reminders registered as marketing, or a promotion registered as customer care, is a mismatch.",
+            "Brand details that do not match the legal entity: a trading name against an EIN registered to a different company.",
+            "An inbox nobody answers. Registration asks how people can stop hearing from you, and an unmonitored address is not an answer."
+          ]
+        },
+        {
+          "type": "note",
+          "title": "The description is where builds go wrong",
+          "text": "The single most common cause of a rejected campaign that we see is an opt-in description written to sound impressive rather than to describe the actual form. Write it as a description of the real page, and mention where the consent checkbox or the contact form lives. Approval is usually fast when the description is boring and accurate."
+        },
+        {
+          "type": "h2",
+          "text": "The settings that quietly stop messages"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Quiet hours and timezone. A workflow configured in the wrong timezone sends at the wrong local hour, which is both a delivery and a compliance problem.",
+            "The sending number. Landline numbers, unregistered numbers and numbers on the wrong number type will not carry A2P traffic properly.",
+            "Throughput limits per number. A burst above what the number is provisioned for gets throttled, and throttled messages are the ones that arrive hours late.",
+            "Missing or broken STOP handling. Carriers watch for it, and so do recipients.",
+            "A message that reads like marketing on a campaign registered as conversational. The content has to match the registration, every time."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Prepare these before you register"
+        },
+        {
+          "type": "ol",
+          "items": [
+            "The legal entity name and its registration number, matching the paperwork exactly.",
+            "The exact website, live, with a privacy policy that mentions messaging and a way to contact you.",
+            "The two or three messages you will actually send, written out, not summarised.",
+            "The precise place where people opt in, described plainly.",
+            "A monitored email address for opt-out requests and replies."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Assemble that before you start, not after a rejection. Every piece already exists in your business; the work is collecting it in one sitting rather than an hour a day across two weeks of back and forth."
+        },
+        {
+          "type": "h2",
+          "text": "Test delivery without spamming your customers"
+        },
+        {
+          "type": "ol",
+          "items": [
+            "Send to a number on a different carrier from your own. Passing on your network tells you nothing about your customers'.",
+            "Check the first message of a campaign specifically. First messages carry more scrutiny than replies, and a shortened link is a common trigger.",
+            "Send STOP and HELP from a test handset and confirm both behave, rather than assuming.",
+            "Watch the first week's delivery closely, hour by hour, rather than checking once at the end."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "When messages stop and nothing changed"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Check the campaign and brand status first. Registrations can be suspended after a complaint, and the platform does not always shout about it.",
+            "Check whether you changed the sending number or added a new one that is not registered.",
+            "Check quiet hours and timezone, especially after a daylight saving change.",
+            "Check whether a recent edit moved the message out of the registered use case.",
+            "Only then look at the message content, and check for a link in the first message of a sequence."
+          ]
+        },
+        {
+          "type": "note",
+          "title": "This is configuration guidance, not legal advice",
+          "text": "We configure messaging systems and we will get your registration through. Whether your specific consent language satisfies your obligations is a question for your own adviser, because it depends on where your customers are and what you sell them. If a provider tells you a compliance question is not worth asking, that is a reason to ask it."
+        },
+        {
+          "type": "h2",
+          "text": "How long this takes"
+        },
+        {
+          "type": "p",
+          "text": "Registration is the long pole in every messaging project, and it is why we ask for the paperwork in week one even when messages will not go out until week four. Everything else in a build can be built and tested while a registration is pending. A launch date that assumes same-day approval is a launch date that will move."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Do I need A2P registration if I only text people who rang me first?",
+          "answer": "In practice yes, if the messages are sent from software. The exemption conversation is about how the message is generated, not about whether the recipient initiated contact. A reply sent by a person on a handset is person-to-person messaging, which is a different category."
+        },
+        {
+          "question": "How long does approval take?",
+          "answer": "It varies by carrier and by how complete the submission is. A clean submission is usually days rather than weeks. The delays we see are almost always caused by information that does not match the public record, and each round trip costs another cycle."
+        },
+        {
+          "question": "Can I just use a different number to get around a suspension?",
+          "answer": "Technically you can register a new number, and it is a bad idea. A suspension usually follows a complaint, and the complaint does not go away with the number. Fix the cause, then register cleanly, or you will be doing it again next month."
+        },
+        {
+          "question": "Why do my messages show as sent but never arrive?",
+          "answer": "Because sent means the platform handed the message to the carrier, not that the carrier delivered it. Filtering happens after that handoff. Delivery receipts and testing on a second carrier are the only reliable way to tell the difference between a delivery problem and a no-interest problem."
+        },
+        {
+          "question": "Does this affect email too?",
+          "answer": "They are separate systems with the same shape of problem. Email has its own authentication and reputation requirements, and the same principle applies: a channel shows success at handoff, and reputation decides what happens next. If email is failing, the questions to ask are about domain authentication and complaint rates."
+        }
+      ],
+      "relatedServices": [
+        {
+          "slug": "gohighlevel-sub-accounts",
+          "why": "Registration, numbers and compliance are part of the sub-account build, filed early precisely because they are the slowest step."
+        },
+        {
+          "slug": "email-sms-campaigns",
+          "why": "What to send once you can send reliably: the sequences that follow up on every lead without anyone having to remember."
+        },
+        {
+          "slug": "workflow-automation",
+          "why": "The triggers and quiet hours around the messages, so nothing fires at the wrong hour or to the wrong person."
+        }
+      ]
+    },
+    {
+      "slug": "website-funnel-or-landing-page",
+      "category": "Web & Conversion",
+      "title": "Website, funnel or landing page: which one your offer actually needs",
+      "excerpt": "They are not tiers of the same thing, and buying the wrong one is why a build can feel expensive and still not sell.",
+      "date": "2026-06-26",
+      "dateLabel": "Jun 26, 2026",
+      "updated": "2026-08-29",
+      "readMins": 6,
+      "image": "/img/home/svc-development.jpg",
+      "imageWebp": "/img/home/svc-development.webp",
+      "imageAlt": "A website layout being built on a laptop screen",
+      "tags": [
+        "Websites",
+        "Funnels",
+        "Landing pages",
+        "Strategy"
+      ],
+      "summary": "Three words that get used interchangeably and mean genuinely different things. This is what each one is for, the three questions that decide which you need, and why building all three at once is the most expensive way to start.",
+      "keypoints": {
+        "title": "Key takeaways",
+        "items": [
+          "A website establishes who you are. A landing page converts one offer. A funnel sequences several steps towards one decision.",
+          "Decide by three questions: how many offers, how deliberate the visitor is, and how much explanation the offer needs.",
+          "If you can describe the next step in one sentence, you need a page rather than a funnel.",
+          "Building all three at once usually means none of them gets enough attention to work.",
+          "Start where the leak is. Traffic is almost never the problem a business actually has."
+        ]
+      },
+      "body": [
+        {
+          "type": "lead",
+          "text": "These three words are used as if they were a ladder: a landing page for when you are small, a funnel when you are serious, a website when you have arrived. They are not a ladder. They do different jobs, and a business with the wrong one will spend money on traffic that has nowhere sensible to land."
+        },
+        {
+          "type": "h2",
+          "text": "They do different jobs"
+        },
+        {
+          "type": "table",
+          "head": [
+            "",
+            "Website",
+            "Landing page",
+            "Funnel"
+          ],
+          "rows": [
+            [
+              "Its job",
+              "Establish who you are and what you offer",
+              "Convert one offer, one audience, one action",
+              "Sequence several steps towards one decision"
+            ],
+            [
+              "Who arrives",
+              "People checking whether you are real",
+              "People sent there deliberately",
+              "People being taken through a process"
+            ],
+            [
+              "Typical source",
+              "Search, referrals, word of mouth",
+              "Ads, email, a social post, a QR code",
+              "Ads into a lead magnet, then nurture"
+            ],
+            [
+              "Success looks like",
+              "They understand you and make contact",
+              "They take the one action",
+              "They reach the booked call at the end"
+            ],
+            [
+              "Fails when",
+              "It is the only thing you have for a specific offer",
+              "It has more than one action on it",
+              "The offer did not need a sequence"
+            ]
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "The three questions that decide it"
+        },
+        {
+          "type": "ol",
+          "items": [
+            "How many distinct things do you sell? One clear offer points at a page. Several need somewhere to hold them, which is a site.",
+            "How deliberate is the visitor? Someone who searched your business name wants a website. Someone who clicked an ad about one specific thing wants a page about that one thing.",
+            "How much explanation does the offer need? If a paragraph and a price settles it, it does not need a sequence. If it needs a conversation, a comparison or a proof stage, a funnel earns its keep."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "When a website is right"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "People are looking you up rather than being sent to you, which is most local search and most referrals.",
+            "You sell several services that need explaining separately, with their own pages.",
+            "You need somewhere credible to send a proposal, a quote or a partner.",
+            "You want the business to be findable for the things you actually do, which is a search problem before it is a design problem."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "When a single landing page is right"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "One offer, one audience, one action. If you cannot say what the action is in one sentence, it is not ready.",
+            "You are paying for the traffic. Paid visitors do not browse; a menu full of exits is money spent on comparisons you did not ask for.",
+            "The offer is time sensitive, seasonal, or tied to one campaign that will end.",
+            "You want to test whether an offer works before committing to a whole site around it."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "When a funnel is right"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "The decision genuinely cannot happen in one visit. High-ticket services, anything requiring a consultation, anything where trust is the bottleneck.",
+            "There is a real sequence: something to capture attention, something to prove competence, then the ask.",
+            "The follow-up exists. A funnel without automation behind it is a series of pages nobody returns to.",
+            "You can name what happens at each stage. A funnel is a process, and a process you cannot describe is a set of pages with a nicer name."
+          ]
+        },
+        {
+          "type": "note",
+          "title": "The one-line test",
+          "text": "Write down what you want the visitor to do next, in one sentence. If it comes out as one clear action, build a page. If you need a paragraph, or the words and then, you are describing a funnel and you need the follow-up to go with it."
+        },
+        {
+          "type": "h2",
+          "text": "The mistake of building all three at once"
+        },
+        {
+          "type": "p",
+          "text": "It is the most common version of this mistake we get called in to fix: a new site, a new funnel and three landing pages, all in flight together, all half finished. The problem is not the budget. It is that each one needs a decision about the offer, and three simultaneous builds means those decisions get made once, badly, in a hurry. Two things then go live that contradict each other."
+        },
+        {
+          "type": "p",
+          "text": "The sequence that works is unglamorous. Pick the offer with the money attached to it. Build the one page it needs. Get the follow-up working behind it. Only then decide whether the business needs the wider site, and by then you will know which parts of it actually matter."
+        },
+        {
+          "type": "h2",
+          "text": "What to do with the site you already have"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Keep it. A site that exists and is indexed is worth more than a rebuild that is three months away.",
+            "Fix the top three things on it: what you do above the fold, how fast it loads on a phone, and where each page actually sends people.",
+            "Add a landing page for the offer you are paying to advertise, rather than sending paid traffic to the homepage.",
+            "Point the offer's pages at the same booking path, so the follow-up is one system rather than three."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "None of that requires throwing away what you have, and all of it can be done in the order the business needs it rather than in one large launch. That is the whole argument against the big-bang rebuild: it turns ten small decisions into one enormous one, made by everyone at once, under time pressure."
+        }
+      ],
+      "faq": [
+        {
+          "question": "Do I need a website if I have a funnel?",
+          "answer": "If people look you up before buying, yes, because they will search your business name and find nothing. A funnel converts traffic you send it; it does not establish that you exist. For warm, referred, high-trust purchases a site often matters more than the funnel does."
+        },
+        {
+          "question": "Is a landing page just a one-page website?",
+          "answer": "No, and the difference matters. A one-page website still has to establish who you are and answer every question a browsing visitor has. A landing page has one job and one action, and it can ignore everything else. Confusing the two is why so many one-page sites convert badly."
+        },
+        {
+          "question": "How much traffic do I need before a funnel makes sense?",
+          "answer": "Traffic is the wrong variable. The right question is whether a single visit can carry the decision. If the offer needs a conversation, a proof stage or a comparison, the sequence is doing real work regardless of volume. If it does not, a funnel just adds steps between a buyer and a button."
+        },
+        {
+          "question": "Can we start with the landing page and build the site later?",
+          "answer": "That is usually the right order, and it is what we recommend when a business is paying for traffic. A landing page tests the offer cheaply. If the offer works, you know what the site is for; if it does not, you have learned that for the cost of a page rather than a whole build."
+        },
+        {
+          "question": "What about e-commerce?",
+          "answer": "Selling a catalogue online is a different build with different requirements: products, payments, tax, shipping and post-purchase automation. It is not a variant of a landing page, and the decision to do it turns on how many products you have and whether people need to buy without speaking to you first."
+        }
+      ],
+      "relatedServices": [
+        {
+          "slug": "websites-landing-pages",
+          "why": "The build itself: fast, responsive pages written to convert rather than to look right in a screenshot."
+        },
+        {
+          "slug": "funnel-design-builds",
+          "why": "When the offer needs a sequence rather than a page, this is the offer, the stages and the follow-up behind them."
+        },
+        {
+          "slug": "ai-agents-chatbots",
+          "why": "What answers the people your pages generate, at the hour they arrive, so the traffic you paid for does not wait until morning."
+        }
+      ]
+    },
+    {
+      "slug": "five-numbers-worth-a-dashboard",
+      "category": "Reporting",
+      "title": "The five numbers worth a dashboard, and the ones that are decoration",
+      "excerpt": "Most dashboards track things nobody makes a decision with. Five numbers change what you do next week; the rest are reassurance.",
+      "date": "2026-06-12",
+      "dateLabel": "Jun 12, 2026",
+      "updated": "2026-08-22",
+      "readMins": 6,
+      "image": "/img/home/svc-marketing.jpg",
+      "imageWebp": "/img/home/svc-marketing.webp",
+      "imageAlt": "A marketing performance dashboard on a laptop",
+      "tags": [
+        "Reporting",
+        "Dashboards",
+        "Attribution",
+        "Measurement"
+      ],
+      "summary": "A dashboard is a decision tool, not a wall of charts. These are the five numbers that change what a business does next week, why cost per booked appointment beats cost per lead, and the popular metrics that quietly waste everyone's attention.",
+      "keypoints": {
+        "title": "Key takeaways",
+        "items": [
+          "Add a number to a dashboard only if you can name the decision it would change. If you cannot, it is decoration.",
+          "Track enquiries, time to first response, booking rate, no-show rate and cost per booked appointment. Between them they locate almost any problem.",
+          "Cost per booked appointment is the number that survives contact with reality, because it puts channel spend against outcomes rather than activity.",
+          "Attribution is genuinely hard for local businesses, so ask every lead one question instead of trusting a last-click report.",
+          "A dashboard that nobody opens weekly is worse than none, because it feels like measurement."
+        ]
+      },
+      "body": [
+        {
+          "type": "lead",
+          "text": "Almost every dashboard we are shown has the same problem, and it is not the design. It tracks things the business has no intention of acting on. Impressions, followers, page views and open rates feel like progress because they go up when you spend money, and they sit on the screen next to the numbers that would actually tell somebody what to do differently on Monday."
+        },
+        {
+          "type": "h2",
+          "text": "A dashboard is a decision tool"
+        },
+        {
+          "type": "p",
+          "text": "The test for any metric is one question: if this moved ten percent, what would we do? If the honest answer is nothing, or watch it for another month, it does not belong on the screen. Six numbers that each have a decision attached will change a business within a quarter. Thirty numbers do not, and they make the important ones harder to find because they are buried in company."
+        },
+        {
+          "type": "h2",
+          "text": "The five that change decisions"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Number",
+            "What it tells you",
+            "What to do when it moves the wrong way"
+          ],
+          "rows": [
+            [
+              "Enquiries received",
+              "Whether there is enough demand to work with at all",
+              "Fix traffic and offer before touching the sales process"
+            ],
+            [
+              "Time to first response",
+              "Whether you are losing leads you already paid for",
+              "Turn on a missed-call text back and finish the follow-up sequence"
+            ],
+            [
+              "Booking rate",
+              "Whether the conversation turns into a commitment",
+              "Look at the ask: who makes it, how long it takes, what gets offered"
+            ],
+            [
+              "No-show rate",
+              "Whether the calendar reflects real commitments",
+              "Add confirmations, reminders and a branch for the ones who miss"
+            ],
+            [
+              "Cost per booked appointment",
+              "Which channel is actually worth the spend",
+              "Move budget to the cheaper channel, or fix the expensive one"
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Read in that order, those five locate almost any problem. If enquiries are low, nothing downstream matters yet. If enquiries are healthy and bookings are not, the problem is in the conversation. If bookings are healthy and no-shows are high, the problem is in the confirmation rather than in the selling."
+        },
+        {
+          "type": "h2",
+          "text": "Why cost per booked appointment beats cost per lead"
+        },
+        {
+          "type": "p",
+          "text": "Cost per lead is the metric that lets a bad channel look acceptable. A cheap lead that never books is more expensive than an expensive lead that does, and only one of those two numbers survives the comparison. When you divide spend by booked appointments, the channels that produced enquiries but not work stop looking like value, and the ones that quietly convert get the budget they deserved all along. The other reason to prefer it is that it is hard to argue with, which is useful when a decision involves moving money between things."
+        },
+        {
+          "type": "h2",
+          "text": "The numbers that are decoration"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Impressions, which measure that an advertisement was displayed and nothing about whether it did anything.",
+            "Follower counts, which only ever move in one direction and have no decision attached.",
+            "Page views without a next step. A page that gets traffic and produces no enquiry is a page whose job is wrong.",
+            "Open rate on its own, which is increasingly unreliable as a measurement and says nothing about what happens after the click.",
+            "A total number of leads with no source attached, which is a count rather than a diagnosis."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Attribution is genuinely hard, so ask instead"
+        },
+        {
+          "type": "p",
+          "text": "Software attribution for a local business is a maze of blocked cookies, cross-device behaviour and phone calls that leave no trace. Rather than trying to reconstruct it perfectly, ask. One question at the point of booking, addressed a human way, gets you most of the answer: how did you hear about us? Add a required field to the form and a list to the call script. A fortnight of asking beats a report that claims a precision it does not have."
+        },
+        {
+          "type": "note",
+          "title": "The question has to be open",
+          "text": "If the options are paid search, social, referral and other, people tick the one they remember seeing rather than the one that caused the call. Ask in a free-text field, or ask out loud, and take the answer as a hint rather than a verdict."
+        },
+        {
+          "type": "h2",
+          "text": "Make it survive a busy month"
+        },
+        {
+          "type": "ol",
+          "items": [
+            "One screen, no scrolling and no hunting. If it needs explaining, it will not be read.",
+            "Fifteen minutes a week, at a fixed time, with the same person looking at it.",
+            "An owner per number. A metric nobody owns is a metric nobody moves.",
+            "A threshold that triggers a task rather than a feeling. Decide in advance what response a number going the wrong way produces.",
+            "Keep it where you already are. A dashboard in a tool nobody logs into is a report, and reports get filed rather than read."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "The last point is the one most builds get wrong. It is more valuable to have five numbers in the CRM everybody already opens than thirty in a reporting platform that gets visited when someone remembers. Convenience beats completeness, every time."
+        },
+        {
+          "type": "h2",
+          "text": "What to do this week"
+        },
+        {
+          "type": "ol",
+          "items": [
+            "Write down the five numbers above and fill in what you honestly do not know. The gaps are the job.",
+            "Pick the first unknown and find a way to record it, even in a spreadsheet, from today.",
+            "Put the one question at the point of booking and start collecting answers.",
+            "Diary a fifteen minute review, with a name against it, for the same slot every week."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "We do not have enough data for a dashboard yet. Where do we start?",
+          "answer": "Start with a spreadsheet and two columns: when an enquiry came in, and when it got a reply. That single pair of numbers tells you more about lost revenue than most reporting platforms will, and it takes a week to collect. Add the rest once answering those two is a habit."
+        },
+        {
+          "question": "How do we measure response time if leads come in by phone?",
+          "answer": "Missed call logs and call recordings, or a text-back automation that timestamps both the call and the reply. What you are looking for is a number in minutes rather than a general sense that the team is quick, because the general sense is usually generous."
+        },
+        {
+          "question": "Should we track revenue per channel?",
+          "answer": "Eventually, yes, because it is the number that decides actual budget. It requires the channel to be recorded on the job rather than only on the lead, so it is usually the second pass. Start with cost per booked appointment, then attribute closed work once that has become reliable."
+        },
+        {
+          "question": "Our numbers look fine. Why does the business not feel fine?",
+          "answer": "Usually because the aggregate is hiding two different stories: a good channel and a bad one averaged into a respectable total, or a strong month covering two weak ones. Break the same five numbers down by source or location, and the average stops being comforting."
+        },
+        {
+          "question": "How often should a dashboard be rebulit?",
+          "answer": "The metrics should be stable; the questions around them change. Revisit the five when the business changes what it is trying to do, and otherwise leave them alone so that a rise or fall means something. A dashboard whose numbers keep changing cannot be compared to anything."
+        }
+      ],
+      "relatedServices": [
+        {
+          "slug": "reporting-dashboards",
+          "why": "The build itself: source, conversion and revenue visible in one place, from the tools you already run."
+        },
+        {
+          "slug": "workflow-automation",
+          "why": "Most of these numbers are only recordable because the sequence timestamps what it did and when."
+        },
+        {
+          "slug": "gohighlevel-sub-accounts",
+          "why": "Where the pipeline, the calendars and the reporting all live, set up so the numbers mean the same thing month to month."
+        }
+      ]
+    }
+  ]
+}

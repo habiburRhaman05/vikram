@@ -1,5 +1,6 @@
 import Layout from "@/components/layout/Layout.jsx";
 import PageMeta from "@/components/common/PageMeta.jsx";
+import StructuredData from "@/components/common/StructuredData.jsx";
 import PageHero from "@/components/common/PageHero.jsx";
 import Section from "@/components/common/Section.jsx";
 import Button from "@/components/common/Button.jsx";
@@ -28,6 +29,21 @@ export default function Book() {
       <PageMeta
         title="Book a Demo - GHLevelUp"
         description="Book a 20-minute walkthrough of the platform: the AI receptionist answering live, a client uploading documents, and a return moving through the board."
+        ogDescription="Twenty minutes, screen shared, no slide deck. Tell us how your office runs today and we'll show you the same setup handling it."
+      />
+
+      <StructuredData
+        page={{
+          type: "WebPage",
+          name: "Book a demo",
+          description:
+            "Book a 20-minute walkthrough of the GHLevelUp platform, with real pricing on the call.",
+          path: "/book",
+        }}
+        crumbs={[
+          { name: "Home", path: "/" },
+          { name: "Book a demo", path: "/book" },
+        ]}
       />
 
       <PageHero

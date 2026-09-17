@@ -1,0 +1,1062 @@
+/* ==========================================================================
+   /services/funnel-design-builds - the Funnel Design & Builds page
+   --------------------------------------------------------------------------
+   One of the two "Funnels, Websites & GHL" detail pages. This file is the
+   Funnel page's OWN layout, deliberately composed differently from every
+   other service detail page and from the Websites page (service-webdev.css):
+
+   - hero: split composition, text left, portrait photo right (every other
+     service hero is centred text-only, a coded mock, or a console)
+   - overview: editorial - a two-column prose block with a pull-quote aside
+     and a full-width fact strip under it
+   - anatomy: dark horizontal five-stage film-strip (not a card grid)
+   - includes: mint, numbered three-column cards
+   - process: dark band, horizontal step cards with proof lines, wide photo
+   - journey: light, six stages on one connecting path
+   - who: dark label-led rows (not tiles)
+   - why: mint 2x2 with a wide CTA footer band
+   - faq: two-column with a sticky contact card
+   - review: dark full-width quote band
+   - closing: contact-grid + CtaBand from the Contact page components
+
+   Built on the v2 tokens (--hv-*) and primitives (.hv-btn, .hv-eyebrow,
+   .hv-container). Scope: every class is prefixed .fnl- so nothing here can
+   leak onto another route.
+
+   HERO / HEADER COUPLING: `.fnl-hero` is registered in the
+   `.home-v2 .hv-hero, .home-v2 .page-hero, .home-v2 .sd-hero, .home-v2
+   .fnl-hero, ...` rule in home-chrome.css, which pulls the hero up under
+   the transparent header and adds the header's height back as padding. If
+   this hero is ever renamed, that rule has to be updated with it, or the
+   page opens with a white strip behind the logo.
+
+   Contents
+     01. Hero (split: text + portrait photo)
+     02. Overview (editorial prose + facts)
+     03. Anatomy (dark film-strip)
+     04. Includes (mint numbered cards)
+     05. Process (dark steps + proof + photo)
+     06. Journey (light path)
+     07. Who (label rows)
+     08. Why (mint 2x2 + CTA band)
+     09. FAQ (+ sticky contact card)
+     10. Review (dark quote band)
+     11. Closing (contact grid + CtaBand)
+     12. Responsive
+     13. Reduced motion
+   ========================================================================== */
+
+
+/* 01. Hero ================================================================== */
+
+.fnl-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-bottom: clamp(60px, 6vw, 104px);
+  /* The one hero background shared by every service detail page, so the
+     family of pages still opens as one family - what differs here is the
+     composition, not the palette. */
+  background: radial-gradient(120% 140% at 14% -10%, #0E4B3E 0%, var(--hv-bg-dark) 46%, var(--hv-bg-dark-2) 100%);
+  color: #fff;
+}
+
+/* The shared accent-green cell texture, masked from the top-left so it
+   fades before it reaches the photo column. */
+.fnl-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(53, 217, 160, .08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(53, 217, 160, .08) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(65% 65% at 20% 10%, #000 0%, transparent 75%);
+  -webkit-mask-image: radial-gradient(65% 65% at 20% 10%, #000 0%, transparent 75%);
+}
+
+.fnl-hero__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+  gap: clamp(36px, 5vw, 80px);
+  align-items: center;
+}
+
+.fnl-hero__crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 var(--hv-s5);
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-on-dark-muted);
+}
+.fnl-hero__crumbs a { color: inherit; text-decoration: none; }
+.fnl-hero__crumbs a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.fnl-hero__crumbs span[aria-hidden] { opacity: .6; }
+
+.fnl-hero__eyebrow {
+  display: inline-block;
+  margin-bottom: var(--hv-s4);
+  font-size: var(--hv-fs-eyebrow);
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+
+.fnl-hero__title {
+  margin: 0 0 var(--hv-s5);
+  font-family: var(--hv-font);
+  font-size: clamp(2.3rem, 1.5rem + 3vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -.03em;
+  text-wrap: balance;
+}
+.fnl-hero__title span { display: block; color: var(--hv-accent-bright); }
+
+.fnl-hero__lede {
+  margin: 0 0 var(--hv-s7);
+  max-width: 54ch;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-lede);
+  line-height: 1.65;
+  color: var(--hv-on-dark);
+}
+
+.fnl-hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hv-s4);
+}
+
+/* The top overview as scannable chips, under the CTAs - a first visitor
+   gets the shape of the service without reading a paragraph. */
+.fnl-hero__chips {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hv-s3) var(--hv-s5);
+  margin: var(--hv-s8) 0 0;
+  padding: var(--hv-s5) 0 0;
+  border-top: 1px solid var(--hv-border-dark);
+}
+.fnl-hero__chips li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 600;
+  color: var(--hv-on-dark);
+}
+.fnl-hero__chips svg { width: 16px; height: 16px; color: var(--hv-accent-bright); flex-shrink: 0; }
+
+/* The portrait photo panel: rounded frame, hairline ring, and a caption
+   strip that repeats the one-job promise. */
+.fnl-hero__photo {
+  border-radius: var(--hv-r-xl);
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, .38);
+  outline: 1px solid var(--hv-border-dark);
+}
+.fnl-hero__photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.fnl-hero__cap {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  padding: var(--hv-s4) var(--hv-s5);
+  background: rgba(3, 33, 30, .88);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 600;
+  color: var(--hv-on-dark);
+}
+.fnl-hero__cap svg { width: 16px; height: 16px; color: var(--hv-accent-bright); flex-shrink: 0; }
+
+
+/* 02. Overview ============================================================== */
+
+.fnl-overview { padding-block: var(--hv-section-y); }
+
+.fnl-overview__inner {
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  gap: clamp(36px, 5vw, 80px);
+  align-items: start;
+  margin-bottom: var(--hv-s9);
+}
+
+.fnl-overview__quote {
+  margin: var(--hv-s5) 0 0;
+  padding: var(--hv-s5) 0 0;
+  border-top: 3px solid var(--hv-accent);
+}
+.fnl-overview__quote p {
+  margin: 0 0 var(--hv-s4);
+  font-family: var(--hv-font);
+  font-size: clamp(1.15rem, 1rem + .8vw, 1.45rem);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -.02em;
+  color: var(--hv-text);
+  text-wrap: balance;
+}
+.fnl-overview__quote span {
+  display: block;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-text-muted);
+}
+
+.fnl-overview__prose p {
+  margin: 0 0 var(--hv-s5);
+  font-family: var(--hv-font-body);
+  font-size: 1.02rem;
+  line-height: 1.75;
+  color: var(--hv-text);
+}
+.fnl-overview__prose p:last-child { margin-bottom: 0; }
+
+/* The fact strip: the overview's numbers, full width under the prose. */
+.fnl-facts {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--hv-s4);
+  margin: 0;
+  padding: 0;
+}
+.fnl-facts li {
+  padding: var(--hv-s5) var(--hv-s5);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-md);
+  background: #fff;
+  box-shadow: var(--hv-sh-sm);
+}
+.fnl-facts b {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: clamp(1.6rem, 1.3rem + 1vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--hv-accent-strong);
+}
+.fnl-facts strong {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  color: var(--hv-text);
+}
+.fnl-facts span {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.45;
+  color: var(--hv-text-muted);
+}
+
+
+/* 03. Anatomy: dark film-strip ============================================== */
+
+.fnl-anatomy {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: var(--hv-section-y);
+  background: var(--hv-bg-dark);
+  color: #fff;
+}
+.fnl-anatomy::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .04) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(70% 80% at 50% 0%, #000 0%, transparent 80%);
+  -webkit-mask-image: radial-gradient(70% 80% at 50% 0%, #000 0%, transparent 80%);
+}
+.fnl-anatomy > .hv-container { position: relative; z-index: 1; }
+
+.fnl-anatomy .hv-eyebrow { color: var(--hv-accent-bright); }
+.fnl-anatomy .hv-h2 { color: #fff; }
+.fnl-anatomy .hv-body { color: var(--hv-on-dark-muted); }
+
+/* The film-strip: five stages in one horizontal row, joined by a rail.
+   Not a card grid - the rail is the point: it is a sequence. */
+.fnl-strip {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--hv-s5);
+  margin: var(--hv-s9) 0 0;
+  padding: 0;
+  counter-reset: fnl-stage;
+}
+
+.fnl-strip__cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--hv-s6);
+}
+
+/* The rail and node: a horizontal line through the row with a numbered
+   dot per stage. The line sits behind the dots. */
+.fnl-strip__cell::before {
+  content: "";
+  position: absolute;
+  top: 13px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--hv-border-dark);
+}
+.fnl-strip__cell:first-child::before { left: 50%; }
+.fnl-strip__cell:last-child::before { right: 50%; }
+
+.fnl-strip__node {
+  position: relative;
+  z-index: 1;
+  align-self: flex-start;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--hv-accent-strong);
+  font-family: var(--hv-font);
+  font-size: .72rem;
+  font-weight: 800;
+  color: #fff;
+  box-shadow: 0 0 0 5px var(--hv-bg-dark);
+}
+.fnl-strip__cell:last-child .fnl-strip__node { background: var(--hv-accent-bright); color: var(--hv-bg-dark); }
+
+.fnl-strip__icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin-top: var(--hv-s5);
+  border-radius: 12px;
+  background: rgba(53, 217, 160, .12);
+  color: var(--hv-accent-bright);
+}
+.fnl-strip__icon svg { width: 21px; height: 21px; }
+
+.fnl-strip__cell h3 {
+  margin: var(--hv-s4) 0 var(--hv-s3);
+  font-family: var(--hv-font);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: #fff;
+}
+.fnl-strip__cell p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.6;
+  color: var(--hv-on-dark-muted);
+}
+
+/* The "what it has to do" line: the acceptance test for the stage, not
+   more description. */
+.fnl-strip__want {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--hv-s4);
+  padding: 5px 10px;
+  border-radius: var(--hv-r-pill);
+  border: 1px solid rgba(53, 217, 160, .35);
+  font-family: var(--hv-font);
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--hv-accent-bright);
+}
+.fnl-strip__want svg { width: 13px; height: 13px; }
+
+.fnl-anatomy__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--hv-s5);
+  margin-top: var(--hv-s9);
+}
+
+
+/* 04. Includes: mint numbered cards ========================================= */
+
+.fnl-includes { padding-block: var(--hv-section-y); }
+
+.fnl-sub { margin: var(--hv-s3) 0 0; font-family: var(--hv-font); font-weight: 700; color: var(--hv-accent-strong); }
+
+.fnl-cards {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--hv-s5);
+  margin: var(--hv-s8) 0 0;
+  padding: 0;
+  counter-reset: fnl-card;
+}
+
+.fnl-card {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--hv-s6);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-lg);
+  background: #fff;
+  box-shadow: var(--hv-sh-sm);
+  counter-increment: fnl-card;
+  transition: transform var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease);
+}
+.fnl-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--hv-sh-accent);
+}
+
+/* The number sits as a big ghost numeral in the card's corner. */
+.fnl-card::before {
+  content: "0" counter(fnl-card);
+  position: absolute;
+  top: var(--hv-s4);
+  right: var(--hv-s5);
+  font-family: var(--hv-font);
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -.04em;
+  color: var(--hv-bg-mint-deep);
+}
+
+.fnl-card__icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+}
+.fnl-card__icon svg { width: 22px; height: 22px; }
+
+.fnl-card h3 {
+  margin: var(--hv-s5) 0 var(--hv-s3);
+  font-family: var(--hv-font);
+  font-size: 1.08rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+}
+.fnl-card p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.62;
+  color: var(--hv-text-muted);
+}
+
+.fnl-cta-row {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--hv-s8);
+}
+
+
+/* 05. Process: dark steps + proof + photo ==================================== */
+
+.fnl-process {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: var(--hv-section-y);
+  background:
+    radial-gradient(60% 50% at 90% 8%, rgba(14, 164, 107, .22) 0%, rgba(14, 164, 107, 0) 60%),
+    var(--hv-bg-dark-2);
+  color: #fff;
+}
+.fnl-process > .hv-container { position: relative; z-index: 1; }
+
+.fnl-process .hv-eyebrow { color: var(--hv-accent-bright); }
+.fnl-process .hv-h2 { color: #fff; }
+.fnl-process .hv-body { color: var(--hv-on-dark-muted); }
+
+/* Four horizontal step cards, each with a proof line pinned at the bottom. */
+.fnl-steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--hv-s5);
+  margin: var(--hv-s8) 0 0;
+  padding: 0;
+}
+
+.fnl-step {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--hv-s6);
+  border: 1px solid var(--hv-border-dark);
+  border-radius: var(--hv-r-lg);
+  background: rgba(255, 255, 255, .04);
+}
+
+.fnl-step__head {
+  display: flex;
+  align-items: center;
+  gap: var(--hv-s4);
+  margin-bottom: var(--hv-s4);
+}
+.fnl-step__num {
+  font-family: var(--hv-font);
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -.04em;
+  color: var(--hv-accent-bright);
+}
+.fnl-step__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-left: auto;
+  border-radius: 12px;
+  background: rgba(53, 217, 160, .12);
+  color: var(--hv-accent-bright);
+}
+.fnl-step__icon svg { width: 19px; height: 19px; }
+
+.fnl-step h3 {
+  margin: 0 0 var(--hv-s3);
+  font-family: var(--hv-font);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: #fff;
+}
+.fnl-step > div > p,
+.fnl-step__body {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.62;
+  color: var(--hv-on-dark-muted);
+}
+
+/* The proof line: what shows the step actually happened, pinned to the
+   card's bottom so four cards of uneven copy still line up. */
+.fnl-step__proof {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: var(--hv-s5);
+  font-family: var(--hv-font);
+  font-size: .8rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--hv-accent-bright);
+}
+.fnl-step__proof svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 2px; }
+
+/* The wide photo under the steps, with the chips overlapping its top edge. */
+.fnl-process__media {
+  position: relative;
+  margin-top: var(--hv-s8);
+}
+.fnl-process__frame {
+  border-radius: var(--hv-r-xl);
+  overflow: hidden;
+  outline: 1px solid var(--hv-border-dark);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, .38);
+}
+.fnl-process__frame img { display: block; width: 100%; height: auto; }
+
+.fnl-process__chips {
+  position: absolute;
+  top: calc(-1 * var(--hv-s4));
+  left: var(--hv-s6);
+  right: var(--hv-s6);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hv-s3);
+}
+.fnl-process__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: var(--hv-r-pill);
+  background: var(--hv-accent-strong);
+  font-family: var(--hv-font);
+  font-size: .78rem;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: var(--hv-sh-accent-sm);
+}
+.fnl-process__chip svg { width: 15px; height: 15px; }
+
+.fnl-process__foot {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--hv-s8);
+}
+
+
+/* 06. Journey: light path ==================================================== */
+
+.fnl-journey { padding-block: var(--hv-section-y); }
+
+/* Six stages on one connecting path: a numbered rail across the top of the
+   row on desktop, one column on a phone. */
+.fnl-path {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--hv-s4);
+  margin: var(--hv-s8) 0 0;
+  padding: 0;
+}
+
+.fnl-path__cell {
+  position: relative;
+  padding: var(--hv-s5) var(--hv-s4) var(--hv-s5);
+  border: 1px solid var(--hv-border);
+  border-radius: var(--hv-r-md);
+  background: var(--hv-bg-mint);
+}
+
+.fnl-path__num {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-bottom: var(--hv-s4);
+  border-radius: 50%;
+  background: var(--hv-accent-strong);
+  color: #fff;
+  font-family: var(--hv-font);
+  font-size: .8rem;
+  font-weight: 800;
+}
+.fnl-path__icon {
+  position: absolute;
+  top: var(--hv-s5);
+  right: var(--hv-s4);
+  color: var(--hv-accent-strong);
+}
+.fnl-path__icon svg { width: 18px; height: 18px; }
+
+.fnl-path__cell h3 {
+  margin: 0 0 var(--hv-s2);
+  font-family: var(--hv-font);
+  font-size: .98rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+}
+.fnl-path__cell p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: .82rem;
+  line-height: 1.55;
+  color: var(--hv-text-muted);
+}
+
+.fnl-journey__foot {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--hv-s8);
+}
+
+
+/* 07. Who: label rows ======================================================== */
+
+.fnl-who {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: var(--hv-section-y);
+  background: var(--hv-bg-dark);
+  color: #fff;
+}
+.fnl-who > .hv-container { position: relative; z-index: 1; }
+
+.fnl-who .hv-eyebrow { color: var(--hv-accent-bright); }
+.fnl-who .hv-h2 { color: #fff; }
+.fnl-who .hv-body { color: var(--hv-on-dark-muted); }
+
+/* Two-column list of rows: icon + bold label + one line, divided by
+   hairlines instead of boxed into cards - the deliberate contrast with
+   the includes grid above. */
+.fnl-who__list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--hv-s9);
+  margin: var(--hv-s8) 0 0;
+  padding: 0;
+}
+
+.fnl-who__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--hv-s5);
+  padding: var(--hv-s5) 0;
+  border-bottom: 1px solid var(--hv-border-dark);
+}
+
+.fnl-who__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: rgba(53, 217, 160, .12);
+  color: var(--hv-accent-bright);
+}
+.fnl-who__icon svg { width: 20px; height: 20px; }
+
+.fnl-who__row h3 {
+  margin: 0 0 4px;
+  font-family: var(--hv-font);
+  font-size: 1.02rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: #fff;
+}
+.fnl-who__row p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.6;
+  color: var(--hv-on-dark-muted);
+}
+
+
+/* 08. Why: mint 2x2 + CTA band =============================================== */
+
+.fnl-why { padding-block: var(--hv-section-y); }
+
+.fnl-why__grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--hv-s5);
+  margin: var(--hv-s8) 0 0;
+  padding: 0;
+}
+
+.fnl-why__cell {
+  height: 100%;
+  display: flex;
+  gap: var(--hv-s5);
+  padding: var(--hv-s6);
+  border-radius: var(--hv-r-lg);
+  background: #fff;
+  border: 1px solid var(--hv-border);
+  box-shadow: var(--hv-sh-sm);
+}
+
+.fnl-why__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+}
+.fnl-why__icon svg { width: 22px; height: 22px; }
+
+.fnl-why__cell h3 {
+  margin: 0 0 var(--hv-s3);
+  font-family: var(--hv-font);
+  font-size: 1.12rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+}
+.fnl-why__cell p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.65;
+  color: var(--hv-text-muted);
+}
+
+.fnl-why__band {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--hv-s5);
+  margin-top: var(--hv-s7);
+  padding: var(--hv-s6) var(--hv-s7);
+  border-radius: var(--hv-r-lg);
+  background: var(--hv-grad-accent);
+  color: #fff;
+}
+.fnl-why__band p {
+  margin: 0;
+  font-family: var(--hv-font);
+  font-size: 1.08rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+
+
+/* 09. FAQ + sticky contact card ============================================== */
+
+.fnl-faq { padding-block: var(--hv-section-y); }
+
+.fnl-faq__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, .65fr);
+  gap: clamp(36px, 5vw, 72px);
+  align-items: start;
+}
+
+/* The legacy .faq accordion inside this layout: its answers pad
+   `0 60px 28px 0`, which reads fine on a full-width page but pinches the
+   narrow column here, so the gutter is pulled back to the padding this
+   layout actually has. */
+.fnl-faq__inner .faq__a > div { padding: 0 28px 24px 0; }
+
+.fnl-faq__aside {
+  position: sticky;
+  top: calc(var(--header-h, 80px) + var(--hv-s6));
+}
+
+.fnl-contact-card {
+  padding: var(--hv-s6);
+  border-radius: var(--hv-r-lg);
+  background: var(--hv-bg-dark);
+  color: #fff;
+  box-shadow: var(--hv-sh-lg);
+}
+.fnl-contact-card__eyebrow {
+  display: block;
+  margin-bottom: var(--hv-s3);
+  font-size: var(--hv-fs-eyebrow);
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+.fnl-contact-card h2 {
+  margin: 0 0 var(--hv-s4);
+  font-family: var(--hv-font);
+  font-size: clamp(1.3rem, 1.1rem + .7vw, 1.6rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  color: #fff;
+  text-wrap: balance;
+}
+.fnl-contact-card > div > p {
+  margin: 0 0 var(--hv-s6);
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.65;
+  color: var(--hv-on-dark-muted);
+}
+
+.fnl-contact-card__list {
+  list-style: none;
+  display: grid;
+  gap: var(--hv-s3);
+  margin: var(--hv-s6) 0 0;
+  padding: var(--hv-s5) 0 0;
+  border-top: 1px solid var(--hv-border-dark);
+}
+.fnl-contact-card__list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-on-dark);
+}
+.fnl-contact-card__list a { color: inherit; text-decoration: none; }
+.fnl-contact-card__list a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.fnl-contact-card__list svg { width: 16px; height: 16px; color: var(--hv-accent-bright); flex-shrink: 0; }
+
+.fnl-contact-card__links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: var(--hv-s5) 0 0;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 600;
+}
+.fnl-contact-card__links a { color: var(--hv-accent-bright); text-decoration: none; }
+.fnl-contact-card__links a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.fnl-contact-card__links span[aria-hidden] { color: var(--hv-on-dark-muted); }
+
+
+/* 10. Review: dark quote band ================================================ */
+
+.fnl-review {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: var(--hv-section-y);
+  background:
+    radial-gradient(55% 60% at 12% 0%, rgba(14, 164, 107, .25) 0%, rgba(14, 164, 107, 0) 60%),
+    var(--hv-bg-dark-2);
+  color: #fff;
+}
+.fnl-review > .hv-container { position: relative; z-index: 1; }
+
+.fnl-review__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 320px);
+  gap: clamp(36px, 5vw, 80px);
+  align-items: center;
+}
+
+.fnl-review__mark { color: var(--hv-accent-bright); }
+.fnl-review__mark svg { width: 40px; height: 40px; }
+
+.fnl-review__quote {
+  margin: var(--hv-s5) 0 0;
+  font-family: var(--hv-font);
+  font-size: clamp(1.2rem, 1rem + 1vw, 1.7rem);
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: -.015em;
+  color: #fff;
+  text-wrap: balance;
+}
+
+.fnl-review__person {
+  display: flex;
+  align-items: center;
+  gap: var(--hv-s4);
+  margin-top: var(--hv-s7);
+}
+.fnl-review__person img,
+.fnl-review__person .hv-imgslot {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  outline: 2px solid rgba(53, 217, 160, .4);
+}
+.fnl-review__person img { object-fit: cover; }
+.fnl-review__person strong {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: #fff;
+}
+.fnl-review__person em {
+  display: block;
+  font-style: normal;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  color: var(--hv-on-dark-muted);
+}
+
+/* The right rail: the one CTA, in a glass card so it reads as the action
+   the quote is leading to. */
+.fnl-review__aside {
+  padding: var(--hv-s6);
+  border-radius: var(--hv-r-lg);
+  background: rgba(255, 255, 255, .06);
+  outline: 1px solid var(--hv-border-dark);
+}
+.fnl-review__aside p {
+  margin: 0 0 var(--hv-s5);
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.6;
+  color: var(--hv-on-dark);
+}
+
+
+/* 11. Closing: contact grid + CtaBand ======================================== */
+
+.fnl-closing { padding-block: var(--hv-section-y); }
+
+.fnl-closing .cta-band {
+  margin: 0;
+}
+.fnl-closing .contact-grid {
+  margin-top: 0;
+}
+
+
+/* 12. Responsive ============================================================= */
+
+@media (max-width: 1060px) {
+  .fnl-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--hv-s6) var(--hv-s5); }
+  /* With a wrapped grid the rail through the middle no longer reads as a
+     sequence - drop it and let the numbered nodes carry the order. */
+  .fnl-strip__cell::before { display: none; }
+
+  .fnl-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fnl-path { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .fnl-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  .fnl-hero__inner { grid-template-columns: minmax(0, 1fr); }
+  /* The photo follows the copy on a phone. */
+  .fnl-hero__photo { max-width: 520px; }
+
+  .fnl-overview__inner { grid-template-columns: minmax(0, 1fr); }
+  /* Quote after prose on narrow screens: it reads as a summary there. */
+  .fnl-overview__quote { order: 2; }
+
+  .fnl-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .fnl-faq__inner { grid-template-columns: minmax(0, 1fr); }
+  .fnl-faq__aside { position: static; }
+
+  .fnl-review__grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .fnl-strip { grid-template-columns: minmax(0, 1fr); }
+  .fnl-steps { grid-template-columns: minmax(0, 1fr); }
+  .fnl-path { grid-template-columns: minmax(0, 1fr); }
+  .fnl-cards { grid-template-columns: minmax(0, 1fr); }
+  .fnl-who__list { grid-template-columns: minmax(0, 1fr); }
+  .fnl-why__grid { grid-template-columns: minmax(0, 1fr); }
+  .fnl-facts { grid-template-columns: minmax(0, 1fr); }
+
+  .fnl-why__band { padding: var(--hv-s6); }
+  .fnl-process__chips { position: static; margin-bottom: var(--hv-s4); }
+}
+
+
+/* 13. Reduced motion ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .fnl-card,
+  .fnl-card:hover { transition: none; transform: none; }
+}
