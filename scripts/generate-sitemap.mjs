@@ -57,22 +57,25 @@ const routes = [
      the file actually published). */
   { path: "/services/reporting-dashboards", priority: "0.8", changefreq: "monthly" },
   { path: "/services/crm-sub-account-setup", priority: "0.8", changefreq: "monthly" },
+  { path: "/services/white-label-support", priority: "0.8", changefreq: "monthly" },
   { path: "/pricing", priority: "0.8", changefreq: "monthly" },
 
-  /* /work and its case studies.
+  /* /work.
 
-     The five slugs are MIRRORED from WORK_PROJECTS in src/data/work.jsx -
-     the file the hub, the home page teaser and each detail page all read -
-     because that module is .jsx and Node's ESM loader will not import it
-     from here, and a regex over source is a worse contract than a list with
-     a pointer. Add a project to WORK_PROJECTS and add its id here; the
-     number of entries in this file is the one thing to keep level. */
+     The five /work/<slug> case studies used to be listed here too. The hub
+     and the home page teaser no longer link to them - the cards are plain
+     display cards now, see the note atop pages/Work.jsx - and a sitemap is
+     for pages the site actually links to. The route and WorkDetail.jsx
+     still exist and still render for anyone holding a URL; submitting
+     orphans is the part that was removed.
+
+     If the cards ever become links again, the five ids come from
+     WORK_PROJECTS in src/data/work.jsx and go back here alongside it:
+     clinic, home-services, real-estate, agency-reporting,
+     retail-automation. That module is .jsx and Node's ESM loader will not
+     import it from this script, which is why the list was hand-mirrored
+     rather than derived. */
   { path: "/work", priority: "0.7", changefreq: "monthly" },
-  { path: "/work/clinic", priority: "0.6", changefreq: "yearly" },
-  { path: "/work/home-services", priority: "0.6", changefreq: "yearly" },
-  { path: "/work/real-estate", priority: "0.6", changefreq: "yearly" },
-  { path: "/work/agency-reporting", priority: "0.6", changefreq: "yearly" },
-  { path: "/work/retail-automation", priority: "0.6", changefreq: "yearly" },
 
   { path: "/industries", priority: "0.8", changefreq: "monthly" },
   { path: "/about", priority: "0.7", changefreq: "monthly" },

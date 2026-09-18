@@ -25,6 +25,7 @@ const ServiceEmailSmsCampaigns = lazy(() => import("@/pages/ServiceEmailSmsCampa
 const ServiceReportingDashboards = lazy(() => import("@/pages/ServiceReportingDashboards.jsx"));
 const ServiceCrmSubaccountSetup = lazy(() => import("@/pages/ServiceCrmSubaccountSetup.jsx"));
 const ServiceWhiteLabel = lazy(() => import("@/pages/ServiceWhiteLabel.jsx"));
+const ServiceWhiteLabelSupport = lazy(() => import("@/pages/ServiceWhiteLabelSupport.jsx"));
 const Pricing = lazy(() => import("@/pages/Pricing.jsx"));
 const Work = lazy(() => import("@/pages/Work.jsx"));
 const WorkDetail = lazy(() => import("@/pages/WorkDetail.jsx"));
@@ -63,12 +64,12 @@ export default function App() {
         <Route path="/services/ai-agents-chatbots" element={<ServiceAiAgentsChatbots />} />
         <Route path="/services/workflow-automation" element={<ServiceWorkflowAutomation />} />
         <Route path="/services/funnel-design-builds" element={<ServiceFunnelBuilds />} />
-        <Route path="/services/gohighlevel-sub-accounts" element={<ServiceGhlSubaccounts />} />
+        {/* <Route path="/services/gohighlevel-sub-accounts" element={<ServiceGhlSubaccounts />} /> */}
         <Route path="/services/social-media-marketing" element={<ServiceSocialMediaMarketing />} />
         <Route path="/services/email-sms-campaigns" element={<ServiceEmailSmsCampaigns />} />
         <Route path="/services/reporting-dashboards" element={<ServiceReportingDashboards />} />
         <Route path="/services/crm-sub-account-setup" element={<ServiceCrmSubaccountSetup />} />
-        <Route path="/services/white-label-platform" element={<ServiceWhiteLabel />} />
+        <Route path="/services/white-label-support" element={<ServiceWhiteLabelSupport />} />
         <Route path="/pricing" element={<Pricing />} />
         {/* Static route above the dynamic one, same reasoning as every
             other real-slug-above-:slug-catch-all route in this file. */}

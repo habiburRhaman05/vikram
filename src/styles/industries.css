@@ -153,7 +153,6 @@
 }
 .hv-prof__note svg { width: 17px; height: 17px; color: var(--hv-accent-strong); }
 
-
 /* 04. Reduced motion ===================================================== */
 
 @media (prefers-reduced-motion: reduce) {
@@ -162,4 +161,325 @@
   .hv-prof__card:focus-visible { transform: none; }
   .hv-prof__card:hover .hv-prof__go,
   .hv-prof__card:focus-visible .hv-prof__go { transform: none; }
+}
+
+
+/* 04b. Industry Card Grid =================================================
+   These base styles are shared with the Services page (where they sit inside
+   services.css). On the Industries page, services.css is NOT loaded, so the
+   card primitives are duplicated here for self-containment.
+   ========================================================================== */
+
+/* Dark section background for the professions picker */
+.ind-professions {
+  background:
+    radial-gradient(60% 50% at 84% 18%, rgba(14, 164, 107, .28) 0%, rgba(14, 164, 107, 0) 62%),
+    radial-gradient(48% 44% at 8% 92%, rgba(53, 217, 160, .14) 0%, rgba(53, 217, 160, 0) 60%),
+    linear-gradient(160deg, #052E29 0%, #04241F 100%);
+  overflow: hidden;
+}
+
+/* Flexible grid to accommodate 18 items cleanly */
+.svcs-industry-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--hv-s4);
+  margin: var(--hv-s8) 0 0;
+  padding: 0;
+}
+
+.svcs-industry-card {
+  --tone: var(--hv-accent);
+  --tone-ink: color-mix(in srgb, var(--tone) 74%, #04241F);
+  
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--hv-s3);
+  min-height: 120px;
+  padding: var(--hv-s4) var(--hv-s3);
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: var(--hv-r-lg);
+  background: rgba(255, 255, 255, .05);
+  text-align: center;
+  transition: transform var(--hv-dur) var(--hv-ease), border-color var(--hv-dur) var(--hv-ease), background var(--hv-dur) var(--hv-ease);
+}
+.svcs-industry-card:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, .1);
+  border-color: color-mix(in srgb, var(--tone) 60%, rgba(255, 255, 255, 0.4));
+}
+
+.svcs-industry-name {
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  line-height: 1.3;
+  color: #E4F5EE;
+}
+
+/* Colorful icon plates based on the card's tone */
+.svcs-industry-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(150deg, var(--tone-ink) 0%, color-mix(in srgb, var(--tone) 74%, #04241F) 100%);
+  color: #fff;
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--tone) 40%, transparent);
+}
+.svcs-industry-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* Responsive override: at narrow widths, 2 columns instead of auto-fill */
+@media (max-width: 720px) {
+  .svcs-industry-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+
+/* 05. Industry Modal ===================================================== */
+
+.ind-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  transition: opacity 300ms ease;
+}
+.ind-modal-overlay.is-closing {
+  opacity: 0;
+  pointer-events: none;
+}
+.ind-modal-overlay:not(.is-closing) {
+  animation: modalFadeIn 300ms ease-out;
+}
+
+.ind-modal-content {
+  background: #04241F;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--hv-r-lg);
+  width: 100%;
+  max-width: 600px;
+  position: relative;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  animation: modalSlideUp 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.ind-modal-overlay.is-closing .ind-modal-content {
+  animation: modalSlideDown 300ms ease-in forwards;
+}
+
+.ind-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  transition: all var(--hv-dur) ease;
+  z-index: 2;
+}
+.ind-modal-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.ind-modal-header {
+  padding: 2.5rem 2rem 2rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--tone) 20%, transparent) 0%, transparent 100%);
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ind-modal-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--tone) 74%, #04241F) 0%, var(--tone) 100%);
+  color: #fff;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--tone) 40%, transparent);
+  margin-bottom: 1rem;
+}
+.ind-modal-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.ind-modal-header h3 {
+  font-family: var(--hv-font);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.ind-modal-body {
+  padding: 2rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.ind-modal-section {
+  margin-bottom: 1.5rem;
+}
+.ind-modal-section h4 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 0.5rem;
+}
+.ind-modal-section p {
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.ind-modal-features {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.ind-modal-features li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #E4F5EE;
+  font-size: 0.9rem;
+}
+.ind-modal-features li svg {
+  color: var(--hv-accent);
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Modal Services Grid */
+.ind-modal-services {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.5rem;
+}
+.ind-modal-services__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--hv-r-pill);
+  font-size: 0.85rem;
+  color: #E4F5EE;
+  white-space: nowrap;
+}
+.ind-modal-services__item svg {
+  color: var(--hv-accent);
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.ind-modal-roi {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--hv-r-md);
+  border-left: 3px solid var(--hv-accent);
+  color: #E4F5EE;
+  font-size: 0.95rem;
+}
+.ind-modal-roi strong {
+  color: #fff;
+}
+
+.ind-modal-footer {
+  padding: 1.5rem 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Interactive industry cards on the Industries page */
+.svcs-industry-card--interactive {
+  cursor: pointer;
+}
+.svcs-industry-card--interactive:hover {
+  animation: pulseCard 2s infinite;
+}
+@keyframes pulseCard {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+.svcs-industry-desc {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 2px;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes modalSlideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes modalSlideDown {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(20px) scale(0.95); }
+}
+
+@media (max-width: 600px) {
+  /* Mobile: bottom-sheet style */
+  .ind-modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .ind-modal-content {
+    border-radius: var(--hv-r-lg) var(--hv-r-lg) 0 0;
+    margin: 0;
+    max-height: 90vh;
+    animation: bottomSheetSlideUp 400ms cubic-bezier(0.175, 0.885, 0.32, 1);
+  }
+  .ind-modal-overlay.is-closing .ind-modal-content {
+    animation: bottomSheetSlideDown 300ms ease-in forwards;
+  }
+
+  .ind-modal-features { grid-template-columns: 1fr; }
+  .ind-modal-header { padding: 2rem 1rem 1.5rem; }
+  .ind-modal-body { padding: 1.5rem 1rem; max-height: calc(90vh - 180px); }
+  .ind-modal-footer { padding: 1rem; }
+}
+
+@keyframes bottomSheetSlideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes bottomSheetSlideDown {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
 }

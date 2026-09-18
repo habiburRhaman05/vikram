@@ -105,11 +105,10 @@
   padding: clamp(18px, 2vw, 24px);
   border-radius: var(--wk-radius);
   color: #fff;
-  text-decoration: none;
-  transition: transform var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease);
 }
-.wk-card:hover { transform: translateY(-4px); box-shadow: var(--hv-sh-lg); }
-.wk-card:focus-visible { outline: 3px solid var(--hv-accent-strong); outline-offset: 3px; }
+/* No hover lift and no focus ring: the card is an <article>, not a link.
+   A tile that rises under the pointer is the strongest "click me" signal
+   there is, and there is nothing here to click. */
 
 .wk-card__img { position: absolute; inset: 0; z-index: -2; }
 .wk-card__img img { width: 100%; height: 100%; object-fit: cover; }
@@ -129,18 +128,6 @@
   font-size: .74rem;
   font-weight: 700;
 }
-.wk-card__go {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--tone);
-  color: #06231d;
-  flex-shrink: 0;
-}
-.wk-card__go svg { width: 15px; height: 15px; }
-
 .wk-card__result {
   display: inline-block;
   font-size: .72rem;

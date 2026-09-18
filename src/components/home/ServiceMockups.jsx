@@ -17,8 +17,9 @@
  *
  * Screens: software (code editor) / ai (workflow canvas) / funnel
  * (drag-and-drop builder) / marketing (dashboard) / crm (GHL pipeline) /
- * voice (AI call) / whitelabel (agency-branded system). Reporting
- * reuses marketing (it reads as a dashboard).
+ * voice (AI call) / whitelabel (agency-branded system) / support (a
+ * branded helpdesk queue). Reporting reuses marketing (it reads as a
+ * dashboard).
  */
 
 /* -- Frames ---------------------------------------------------------------- */
@@ -540,6 +541,81 @@ function VoiceMock() {
   );
 }
 
+/* -- 8. White-label support: the branded helpdesk ---------------------------- */
+
+/* A ticket queue under someone else's brand, which is the whole of what
+   this service is. The two brand chips at the corner are the same desk
+   running under two more agency names - white-label shown rather than
+   stated, the same device WhiteLabelMock uses, and the reason this scene
+   is not just another inbox: the CRM card's phone is a list of MESSAGES
+   arriving, this is a list of REQUESTS being closed.
+
+   Row = [subject width %, tag width %, is-open]. Three resolved and one
+   still open, so the status colour has something to contrast against. */
+const SD_ROWS = [
+  [72, 26, false],
+  [58, 22, false],
+  [66, 30, true],
+  [50, 24, false],
+];
+
+function SupportDeskMock() {
+  return (
+    <div className="hv-mk-scene">
+      <Laptop>
+        <div className="hv-mk-sd">
+          <div className="hv-mk-sd__top">
+            <span className="hv-mk-sd__logo" />
+            <Bar w={22} c="is-strong" />
+            <span className="hv-mk-sd__live">
+              <i />
+              <Bar w={60} />
+            </span>
+          </div>
+
+          <div className="hv-mk-sd__list">
+            {SD_ROWS.map(([sub, tag, open], i) => (
+              <div key={i} className={`hv-mk-sd__row ${open ? "is-open" : ""}`}>
+                <span className="hv-mk-sd__dot" />
+                <span className="hv-mk-sd__txt">
+                  <Bar w={sub} c="is-strong" />
+                </span>
+                <span className="hv-mk-sd__tag" style={{ width: `${tag}%` }} />
+              </div>
+            ))}
+          </div>
+
+          <div className="hv-mk-sd__meters">
+            {["47m", "23", "98%"].map((v) => (
+              <div key={v} className="hv-mk-card">
+                <b>{v}</b>
+                <Bar w={62} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </Laptop>
+
+      {/* The same desk, two more brands. */}
+      <div className="hv-mk-wl__brands">
+        {["#3E8EF7", "#F59E0B"].map((brand) => (
+          <span key={brand} className="hv-mk-wl__brandcard" style={{ "--brand": brand }}>
+            <span className="hv-mk-wl__brandtop">
+              <i className="hv-mk-wl__brandlogo" />
+              <Bar w={54} />
+            </span>
+            <span className="hv-mk-wl__brandbars">
+              {[64, 46, 80, 58].map((h, i) => (
+                <i key={i} style={{ height: `${h}%` }} />
+              ))}
+            </span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const MOCKS = {
   software: SoftwareMock,
   ai: GhlWorkflowMock,
@@ -548,6 +624,7 @@ const MOCKS = {
   whitelabel: WhiteLabelMock,
   crm: CrmMock,
   voice: VoiceMock,
+  support: SupportDeskMock,
 };
 
 export default function ServiceMockup({ kind }) {

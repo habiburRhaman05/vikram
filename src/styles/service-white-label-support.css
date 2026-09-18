@@ -1,0 +1,919 @@
+/**
+ * /services/white-label-support - this page's own section styles.
+ *
+ * Own prefix (wls-), own layout grammar, and deliberately NOT a reuse of
+ * any other service page's shapes. service-detail.css is imported by the
+ * page only for RelatedServices' .sd-rel classes.
+ *
+ * The language here is "the support desk":
+ *   - a TICKET QUEUE panel in the hero, with a stat band welded to the
+ *     hero's bottom edge rather than floated as its own section
+ *   - a ONE TICKET / TWO VIEWS panel for the overview - the same request
+ *     as the client sees it and as it is actually worked
+ *   - a HAIRLINE GRID for what's included: eight cells divided by single
+ *     rules, so it reads as one desk with eight lanes rather than eight
+ *     separate floating cards
+ *   - a horizontal RAIL for the process, the numbered nodes sitting on it
+ *   - WIDE PROFILE ROWS for who we work with
+ *   - a dark SPLIT for why us
+ *
+ * Same brand tokens and the single accent green as every other page. The
+ * hero shares the exact background recipe of .cs-hero / .ai-hero on
+ * purpose: what differs between the service pages is the composition, not
+ * the palette. .wls-hero is registered in the hero rule in home-chrome.css
+ * - without that it renders with a white strip behind the transparent
+ * header. If this hero is ever renamed, rename it there too.
+ */
+
+.wls-pg { --wls-radius: 18px; }
+
+.wls-head { max-width: 62ch; margin-bottom: var(--hv-s9); }
+.wls-head--center { max-width: 58ch; margin-inline: auto; text-align: center; }
+.wls-head .hv-h2 { margin: var(--hv-s3) 0 var(--hv-s4); }
+
+
+/* 01. Hero ================================================================ */
+
+.wls-hero {
+  position: relative;
+  background: radial-gradient(120% 140% at 14% -10%, #0E4B3E 0%, var(--hv-bg-dark) 46%, var(--hv-bg-dark-2) 100%);
+  color: var(--hv-on-dark);
+  padding-bottom: clamp(56px, 6vw, 84px);
+  overflow: clip;
+}
+/* The same faint accent grid the other service heroes carry, masked to the
+   side the visual sits on so it never runs under the headline. */
+.wls-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(53, 217, 160, .08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(53, 217, 160, .08) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(90% 80% at 74% 22%, #000 10%, transparent 88%);
+  -webkit-mask-image: radial-gradient(90% 80% at 74% 22%, #000 10%, transparent 88%);
+  pointer-events: none;
+}
+
+.wls-hero__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
+  column-gap: clamp(32px, 5vw, 68px);
+  row-gap: var(--hv-s3);
+  align-items: center;
+}
+
+.wls-hero__crumbs {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: var(--hv-s2);
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+  margin: var(--hv-s4) 0 0;
+}
+.wls-hero__crumbs a { color: inherit; text-decoration: none; }
+.wls-hero__crumbs a:hover { color: var(--hv-on-dark); }
+
+.wls-hero__eyebrow {
+  display: inline-flex;
+  font-size: var(--hv-fs-eyebrow);
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+  margin-bottom: var(--hv-s4);
+}
+.wls-hero__title {
+  font-family: var(--hv-font);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  font-size: clamp(2rem, 1.35rem + 2.3vw, 2.95rem);
+  line-height: 1.09;
+  margin: 0 0 var(--hv-s5);
+  max-width: 17ch;
+}
+.wls-hero__title span { display: block; color: var(--hv-accent-bright); }
+.wls-hero__lede {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-lede);
+  line-height: 1.65;
+  color: var(--hv-on-dark-muted);
+  max-width: 52ch;
+  margin: 0 0 var(--hv-s7);
+}
+.wls-hero__ctas { display: flex; flex-wrap: wrap; gap: var(--hv-s4); }
+
+/* Proof chips. Small, quiet, and on one line each - they are read in
+   passing on the way to the buttons, not studied. */
+.wls-hero__badges {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hv-s3);
+  margin: var(--hv-s6) 0 0;
+  padding: 0;
+}
+.wls-hero__badges li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border-radius: var(--hv-r-pill);
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(255, 255, 255, .06);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 600;
+  color: var(--hv-on-dark);
+}
+.wls-hero__badges svg { width: 14px; height: 14px; color: var(--hv-accent-bright); }
+
+
+/* -- The ticket queue panel ------------------------------------------------ */
+
+.wls-desk {
+  border-radius: var(--hv-r-xl);
+  border: 1px solid rgba(255, 255, 255, .14);
+  background: rgba(4, 30, 25, .62);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 32px 64px -28px rgba(0, 0, 0, .6);
+  overflow: hidden;
+}
+
+.wls-desk__bar {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  gap: var(--hv-s3);
+  align-items: center;
+  padding: var(--hv-s4) var(--hv-s5);
+  border-bottom: 1px solid rgba(255, 255, 255, .1);
+  background: rgba(255, 255, 255, .04);
+}
+.wls-desk__avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: var(--hv-grad-accent);
+  color: #fff;
+  font-family: var(--hv-font);
+  font-weight: 800;
+  font-size: .95rem;
+}
+.wls-desk__id { display: grid; gap: 2px; min-width: 0; }
+.wls-desk__id b {
+  font-family: var(--hv-font);
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--hv-on-dark);
+}
+.wls-desk__id i {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-style: normal;
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-on-dark-muted);
+}
+/* The "online" dot. It breathes rather than blinks - a blink at this size
+   reads as an error state. */
+.wls-desk__pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--hv-accent-bright);
+  box-shadow: 0 0 0 0 rgba(53, 217, 160, .55);
+  animation: wls-pulse 2.4s var(--hv-ease) infinite;
+}
+@keyframes wls-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(53, 217, 160, .5); }
+  70%  { box-shadow: 0 0 0 7px rgba(53, 217, 160, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(53, 217, 160, 0); }
+}
+/* Says on the panel's own face that the rows below are not a real queue. */
+.wls-desk__sample {
+  padding: 4px 9px;
+  border-radius: var(--hv-r-pill);
+  border: 1px solid rgba(255, 255, 255, .14);
+  font-family: var(--hv-font);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--hv-on-dark-muted);
+  white-space: nowrap;
+}
+
+.wls-desk__list { list-style: none; margin: 0; padding: 0; }
+
+/* Five columns on a wide panel; the subject is the only one that flexes,
+   so the ids, tags and states stay in vertical register down the list. */
+.wls-ticket {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto auto 62px;
+  gap: var(--hv-s3);
+  align-items: center;
+  padding: 13px var(--hv-s5);
+  border-bottom: 1px solid rgba(255, 255, 255, .07);
+  font-family: var(--hv-font-body);
+  font-size: .8rem;
+}
+.wls-ticket:last-child { border-bottom: 0; }
+.wls-ticket__id {
+  font-family: var(--hv-font);
+  font-weight: 700;
+  font-size: .72rem;
+  color: rgba(255, 255, 255, .45);
+}
+.wls-ticket__subject {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--hv-on-dark);
+}
+.wls-ticket__tag {
+  padding: 3px 9px;
+  border-radius: var(--hv-r-pill);
+  background: rgba(255, 255, 255, .08);
+  font-size: .68rem;
+  font-weight: 600;
+  color: var(--hv-on-dark-muted);
+  white-space: nowrap;
+}
+.wls-ticket__state {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--hv-font);
+  font-size: .68rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+/* The status dot is drawn rather than shipped as a character, so the two
+   states differ by colour and by the word beside them - never by colour
+   alone. */
+.wls-ticket__state::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.wls-ticket.is-resolved .wls-ticket__state { color: var(--hv-accent-bright); }
+.wls-ticket.is-open .wls-ticket__state { color: #F5B544; }
+.wls-ticket.is-open { background: rgba(245, 181, 68, .07); }
+.wls-ticket__age {
+  text-align: right;
+  font-size: .68rem;
+  color: rgba(255, 255, 255, .4);
+  white-space: nowrap;
+}
+
+.wls-desk__meters {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  background: rgba(255, 255, 255, .08);
+}
+.wls-desk__meters li {
+  display: grid;
+  gap: 2px;
+  padding: var(--hv-s4) var(--hv-s3);
+  background: rgba(4, 30, 25, .86);
+  text-align: center;
+}
+.wls-desk__meters b {
+  font-family: var(--hv-font);
+  font-size: .95rem;
+  font-weight: 800;
+  color: var(--hv-accent-bright);
+}
+.wls-desk__meters span {
+  font-family: var(--hv-font-body);
+  font-size: .66rem;
+  letter-spacing: .02em;
+  color: var(--hv-on-dark-muted);
+}
+
+/* The annotation under the panel, pointing back up at the brand name. */
+.wls-desk__note {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 0;
+  padding: var(--hv-s4) var(--hv-s5);
+  border-top: 1px solid rgba(255, 255, 255, .08);
+  background: rgba(53, 217, 160, .07);
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.5;
+  color: var(--hv-on-dark);
+}
+.wls-desk__note svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px; color: var(--hv-accent-bright); }
+
+
+/* -- The stat band --------------------------------------------------------- */
+
+.wls-stats {
+  grid-column: 1 / -1;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: clamp(40px, 5vw, 64px) 0 0;
+  padding: 0;
+  border-radius: var(--hv-r-lg);
+  border: 1px solid rgba(255, 255, 255, .13);
+  background: rgba(255, 255, 255, .12);
+  overflow: hidden;
+}
+.wls-stats li {
+  display: grid;
+  gap: 6px;
+  padding: var(--hv-s6) var(--hv-s5);
+  background: rgba(4, 30, 25, .55);
+  text-align: center;
+}
+.wls-stats b {
+  font-family: var(--hv-font);
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 1.9rem);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--hv-accent-bright);
+}
+.wls-stats span {
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.45;
+  color: var(--hv-on-dark-muted);
+}
+
+
+/* 02. Overview: one ticket, two views ===================================== */
+
+.wls-overview__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.04fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+.wls-overview__copy .hv-body + .hv-body { margin-top: var(--hv-s5); }
+.wls-overview__copy .hv-h2 { margin: var(--hv-s3) 0 var(--hv-s5); }
+.wls-overview__cta { margin-top: var(--hv-s8); }
+
+/* The ticket both panes below are answering. Centred over them, with the
+   connector drawn as its own ::after so the two panes stay plain grid
+   children. */
+.wls-split { position: relative; }
+.wls-split__ticket {
+  position: relative;
+  z-index: 1;
+  max-width: 34ch;
+  margin: 0 auto var(--hv-s8);
+  padding: var(--hv-s5) var(--hv-s6);
+  border-radius: var(--wls-radius);
+  border: 1px solid var(--hv-border);
+  background: #fff;
+  box-shadow: var(--hv-sh-md);
+  text-align: center;
+}
+.wls-split__ticket::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 1px;
+  height: var(--hv-s8);
+  background: linear-gradient(var(--hv-border-strong), transparent);
+}
+.wls-split__ticket-label {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--hv-accent-strong);
+  margin-bottom: 6px;
+}
+.wls-split__ticket p {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: .95rem;
+  line-height: 1.5;
+  color: var(--hv-text);
+}
+.wls-split__ticket p::before { content: "\201C"; }
+.wls-split__ticket p::after { content: "\201D"; }
+
+.wls-split__panes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--hv-s5);
+}
+
+.wls-pane {
+  display: flex;
+  flex-direction: column;
+  padding: var(--hv-s6);
+  border-radius: var(--wls-radius);
+  border: 1px solid var(--hv-border);
+  background: #fff;
+}
+/* The client's view is the one the whole service is selling, so it is the
+   one that carries the accent. The working view is deliberately plainer -
+   it is the back of house. */
+.wls-pane--client {
+  border-color: color-mix(in srgb, var(--hv-accent) 34%, var(--hv-border));
+  background: linear-gradient(180deg, #fff 0%, color-mix(in srgb, var(--hv-accent) 6%, #fff) 100%);
+  box-shadow: 0 18px 40px -22px rgba(10, 127, 82, .45);
+}
+.wls-pane--us { background: var(--hv-bg-mint); }
+
+.wls-pane__head { margin-bottom: var(--hv-s5); }
+.wls-pane__eye {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--hv-text-muted);
+  margin-bottom: 4px;
+}
+.wls-pane--client .wls-pane__eye { color: var(--hv-accent-strong); }
+.wls-pane__brand {
+  font-family: var(--hv-font);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--hv-text);
+}
+
+.wls-pane__rows { list-style: none; display: grid; gap: var(--hv-s4); margin: 0; padding: 0; }
+.wls-pane__rows li {
+  display: grid;
+  grid-template-columns: 15px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  font-family: var(--hv-font-body);
+  font-size: .855rem;
+  line-height: 1.5;
+  color: var(--hv-text-muted);
+}
+.wls-pane__rows svg { width: 13px; height: 13px; margin-top: .25em; color: var(--hv-accent-strong); }
+.wls-pane--us .wls-pane__rows svg { color: var(--hv-text-muted); }
+
+
+/* 03. What is included: the hairline grid ================================= */
+
+.wls-included { background: var(--hv-bg-mint); }
+
+/* The 1px gaps are the container's background showing through, so no cell
+   ever carries a border of its own and two neighbours never double up. */
+.wls-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--wls-radius);
+  border: 1px solid var(--hv-border);
+  background: var(--hv-border);
+  overflow: hidden;
+}
+.wls-cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hv-s3);
+  padding: var(--hv-s7) var(--hv-s6);
+  background: #fff;
+  transition: background var(--hv-dur-fast) var(--hv-ease);
+}
+.wls-cell:hover { background: color-mix(in srgb, var(--hv-accent) 5%, #fff); }
+.wls-cell__icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--hv-accent) 12%, #fff);
+  color: var(--hv-accent-strong);
+  margin-bottom: var(--hv-s2);
+}
+.wls-cell__icon svg { width: 20px; height: 20px; }
+.wls-cell__title {
+  margin: 0;
+  font-family: var(--hv-font);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -.015em;
+  color: var(--hv-text);
+}
+.wls-cell__body {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: .875rem;
+  line-height: 1.6;
+  color: var(--hv-text-muted);
+}
+
+
+/* 04. The process: a rail with four nodes ================================= */
+
+/* The rail is the <ol>'s own ::before, drawn behind the nodes and stopped
+   an eighth of the way in from each end so it starts and finishes at the
+   first and last node rather than at the edge of the screen. */
+.wls-rail {
+  position: relative;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--hv-s5);
+  margin: 0;
+  padding: 0;
+}
+.wls-rail::before {
+  content: "";
+  position: absolute;
+  left: 12.5%;
+  right: 12.5%;
+  top: 22px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--hv-accent-bright) 0%,
+    rgba(53, 217, 160, .35) 50%,
+    rgba(53, 217, 160, .18) 100%
+  );
+}
+
+.wls-step { position: relative; display: flex; flex-direction: column; align-items: center; }
+.wls-step__node {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--hv-accent-bright);
+  background: var(--hv-bg-dark);
+  font-family: var(--hv-font);
+  font-size: .85rem;
+  font-weight: 800;
+  color: var(--hv-accent-bright);
+  transition: transform var(--hv-dur-fast) var(--hv-ease), box-shadow var(--hv-dur-fast) var(--hv-ease);
+}
+.wls-step:hover .wls-step__node {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px -8px rgba(53, 217, 160, .6);
+}
+
+.wls-step__card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: var(--hv-s6);
+  padding: var(--hv-s6);
+  border-radius: var(--wls-radius);
+  border: 1px solid rgba(255, 255, 255, .12);
+  background: rgba(255, 255, 255, .045);
+  text-align: center;
+}
+.wls-step__title {
+  margin: 0 0 var(--hv-s3);
+  font-family: var(--hv-font);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -.015em;
+  color: var(--hv-on-dark);
+}
+.wls-step__body {
+  flex: 1;
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: .865rem;
+  line-height: 1.6;
+  color: var(--hv-on-dark-muted);
+}
+/* The chip is pushed to the bottom of every card, so the four sit level
+   however long the four paragraphs above them run. */
+.wls-step__meta {
+  margin-top: var(--hv-s5);
+  padding: 7px 12px;
+  border-radius: var(--hv-r-pill);
+  background: rgba(53, 217, 160, .12);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 600;
+  color: var(--hv-accent-bright);
+}
+
+
+/* 05. Who we work with: wide profile rows ================================= */
+
+.wls-who__list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--hv-s5);
+  margin: 0;
+  padding: 0;
+}
+.wls-profile {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: var(--hv-s5);
+  align-items: start;
+  padding: var(--hv-s6) var(--hv-s7) var(--hv-s6) var(--hv-s6);
+  border-radius: var(--wls-radius);
+  border: 1px solid var(--hv-border);
+  background: #fff;
+  /* The rail down the left edge: flat until hover, when it fills with the
+     accent and the row lifts. One gesture, two marks. */
+  box-shadow: inset 3px 0 0 0 var(--hv-border);
+  transition:
+    transform var(--hv-dur-fast) var(--hv-ease),
+    box-shadow var(--hv-dur-fast) var(--hv-ease),
+    border-color var(--hv-dur-fast) var(--hv-ease);
+}
+.wls-profile:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--hv-accent) 30%, var(--hv-border));
+  box-shadow: inset 3px 0 0 0 var(--hv-accent), 0 18px 36px -20px rgba(6, 40, 34, .3);
+}
+.wls-profile__icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--hv-accent) 11%, #fff);
+  color: var(--hv-accent-strong);
+}
+.wls-profile__icon svg { width: 23px; height: 23px; }
+.wls-profile__title {
+  margin: 0 0 var(--hv-s3);
+  font-family: var(--hv-font);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.015em;
+  color: var(--hv-text);
+}
+.wls-profile__body {
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: .89rem;
+  line-height: 1.62;
+  color: var(--hv-text-muted);
+}
+
+
+/* 06. Why us ============================================================== */
+
+.wls-why { background: var(--hv-bg-mint); }
+.wls-why__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+.wls-why__copy .hv-h2 { margin: var(--hv-s3) 0 var(--hv-s5); }
+.wls-why__cta { margin-top: var(--hv-s8); }
+
+.wls-why__list {
+  list-style: none;
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--wls-radius);
+  border: 1px solid var(--hv-border);
+  background: var(--hv-border);
+  overflow: hidden;
+}
+.wls-why__list li {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: var(--hv-s4);
+  align-items: center;
+  padding: var(--hv-s5) var(--hv-s6);
+  background: #fff;
+  font-family: var(--hv-font-body);
+  font-size: .92rem;
+  line-height: 1.55;
+  color: var(--hv-text);
+}
+.wls-why__list li > span {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--hv-accent) 14%, #fff);
+  color: var(--hv-accent-strong);
+}
+.wls-why__list svg { width: 13px; height: 13px; }
+
+
+/* 07. FAQ ================================================================= */
+
+.wls-faq__list { max-width: 880px; margin-inline: auto; }
+
+
+/* 08. Reviews ============================================================= */
+
+.wls-reviews__grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--hv-s5);
+  margin: 0;
+  padding: 0;
+}
+.wls-review {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0;
+  padding: var(--hv-s7) var(--hv-s6) var(--hv-s6);
+  border-radius: var(--wls-radius);
+  border: 1px solid rgba(255, 255, 255, .12);
+  background: rgba(255, 255, 255, .045);
+}
+.wls-review__mark { color: var(--hv-accent-bright); margin-bottom: var(--hv-s4); }
+.wls-review__mark svg { width: 24px; height: 24px; }
+.wls-review blockquote {
+  flex: 1;
+  margin: 0 0 var(--hv-s5);
+  font-family: var(--hv-font-body);
+  font-size: .93rem;
+  line-height: 1.66;
+  color: var(--hv-on-dark);
+}
+.wls-review figcaption { display: grid; gap: 2px; padding-top: var(--hv-s4); border-top: 1px solid rgba(255, 255, 255, .1); }
+.wls-review figcaption b { font-family: var(--hv-font); font-size: .9rem; color: var(--hv-on-dark); }
+.wls-review figcaption span { font-family: var(--hv-font-body); font-size: var(--hv-fs-xs); color: var(--hv-on-dark-muted); }
+
+
+/* 09. Closing + contact =================================================== */
+
+.wls-closing__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .92fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+.wls-closing__copy .hv-h2 { margin: var(--hv-s3) 0 var(--hv-s5); max-width: 18ch; }
+.wls-closing__ctas { display: flex; flex-wrap: wrap; gap: var(--hv-s4); margin-top: var(--hv-s8); }
+
+.wls-contact {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--hv-s5);
+  margin: 0;
+  padding: 0;
+}
+.wls-contact li {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: var(--hv-s4);
+  align-items: start;
+  padding: var(--hv-s5);
+  border-radius: var(--wls-radius);
+  border: 1px solid var(--hv-border);
+  background: #fff;
+}
+.wls-contact li > span {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--hv-accent) 11%, #fff);
+  color: var(--hv-accent-strong);
+}
+.wls-contact li > span svg { width: 18px; height: 18px; }
+.wls-contact b {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--hv-text-muted);
+  margin-bottom: 3px;
+}
+.wls-contact a,
+.wls-contact__plain {
+  display: block;
+  font-family: var(--hv-font);
+  font-size: .93rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--hv-text);
+  text-decoration: none;
+}
+.wls-contact a:hover { color: var(--hv-accent-strong); }
+.wls-contact small {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.45;
+  color: var(--hv-text-muted);
+}
+
+
+/* 10. Responsive ==========================================================
+   Four bands, and each one is a layout decision rather than a shrink. The
+   order things give up in: the four-across rows go to two, then the two
+   two-column sections stack, then everything becomes a single column and
+   the process rail turns from a horizontal track into a vertical one.
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 1180px) {
+  .wls-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wls-ticket { grid-template-columns: 48px minmax(0, 1fr) auto auto; }
+  /* The relative age is the first thing to go: it is the least load-bearing
+     column in a panel that is decorative anyway. */
+  .wls-ticket__age { display: none; }
+}
+
+@media (max-width: 1040px) {
+  .wls-hero__inner,
+  .wls-overview__grid,
+  .wls-why__grid,
+  .wls-closing__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .wls-hero__viz { margin-top: var(--hv-s8); }
+  .wls-hero__title,
+  .wls-hero__lede { max-width: none; }
+
+  /* Two columns of steps is no longer one track, so the rail goes with it. */
+  .wls-rail { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--hv-s8); }
+  .wls-rail::before { content: none; }
+}
+
+@media (max-width: 820px) {
+  .wls-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wls-who__list { grid-template-columns: minmax(0, 1fr); }
+  .wls-contact { grid-template-columns: minmax(0, 1fr); }
+  .wls-split__panes { grid-template-columns: minmax(0, 1fr); }
+  .wls-desk__meters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+  .wls-grid { grid-template-columns: minmax(0, 1fr); }
+  .wls-rail { grid-template-columns: minmax(0, 1fr); row-gap: var(--hv-s7); }
+  .wls-reviews__grid { grid-template-columns: minmax(0, 1fr); }
+
+  /* The step becomes a row: node on the left, card beside it, so four
+     stacked steps do not become four full-width centred blocks with a
+     circle floating over each one. */
+  .wls-step {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: var(--hv-s4);
+    align-items: start;
+  }
+  .wls-step__card { margin-top: 0; text-align: left; }
+  .wls-step__meta { align-self: flex-start; }
+
+  /* The ticket rows drop to two lines rather than squeezing five columns
+     into 360px: subject on top, everything else under it. */
+  .wls-ticket {
+    grid-template-columns: auto minmax(0, 1fr);
+    row-gap: 6px;
+    padding-inline: var(--hv-s4);
+  }
+  .wls-ticket__subject { grid-column: 1 / -1; white-space: normal; }
+  .wls-ticket__tag { justify-self: start; }
+  .wls-ticket__state { justify-self: end; }
+
+  .wls-hero__badges li { font-size: 11px; padding: 6px 11px; }
+  .wls-cell,
+  .wls-profile { padding-inline: var(--hv-s5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wls-desk__pulse { animation: none; }
+  .wls-profile:hover,
+  .wls-step:hover .wls-step__node { transform: none; }
+}

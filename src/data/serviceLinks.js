@@ -60,6 +60,12 @@ export const SERVICES = {
     icon: "lineChart",
     blurb: "Source, conversion and revenue visible in one place, without exporting a spreadsheet.",
   },
+  "white-label-support": {
+    slug: "white-label-support",
+    title: "White-Label Support",
+    icon: "chatWindow",
+    blurb: "A 24/7 GoHighLevel helpdesk that answers your clients under your brand, not ours.",
+  },
   "crm-sub-account-setup": {
     slug: "crm-sub-account-setup",
     title: "CRM & Sub-account Setup",
@@ -101,6 +107,10 @@ export const RELATED = {
   ],
 
   "funnel-design-builds": [
+    {
+      slug: "reporting-dashboards",
+      why: "The other half of the same job: the funnel decides what a visitor is asked to do, this is where you see how many of them did it, and from which source.",
+    },
     {
       slug: "workflow-automation",
       why: "The opt-in is the start, not the finish. This is the follow-up sequence that turns a captured lead into a booked call.",
@@ -160,6 +170,21 @@ export const RELATED = {
     {
       slug: "workflow-automation",
       why: "A dashboard tells you what's happening. This is what acts on it automatically once you've seen it.",
+    },
+  ],
+
+  "white-label-support": [
+    {
+      slug: "crm-sub-account-setup",
+      why: "A desk can only be as good as the account behind it. Clean pipelines and calendars are what let a ticket be fixed instead of escalated.",
+    },
+    {
+      slug: "ai-agents-chatbots",
+      why: "The layer in front of the desk: it answers the repeat questions instantly, so a human only picks up the ones that need one.",
+    },
+    {
+      slug: "workflow-automation",
+      why: "Most recurring tickets are a missing automation. This is where they stop recurring.",
     },
   ],
 

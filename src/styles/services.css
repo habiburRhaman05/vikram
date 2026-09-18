@@ -266,33 +266,35 @@
 
 .svcs-grid-sec { background: #F7F9F8; }
 
+/* Two per row, at every width down to the phone band. Four services, two
+   rows of two - and at half the row instead of a quarter of it, the photo is
+   big enough to be looked at rather than glanced past, which is the whole
+   reason the card carries one. The gap grows with the cards so two large
+   panels still read as two panels. */
 .svcs-grid {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--hv-s5);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--hv-s6);
   margin: 0;
   padding: 0;
 }
 
 /* -- The card -------------------------------------------------------------
-   Photo art on top, copy below, one hue per card carried in --tone from
-   servicesV2.jsx. Only the bright end of the hue ships in the data; the two
-   ends CSS needs are mixed from it here, and that is what keeps a card
-   legible whether its hue is the green (dark enough for white text) or the
-   amber (nowhere near it):
+   A product mockup on top, copy below, one hue per card carried in --tone
+   from servicesV2.jsx. Only the bright end of the hue ships in the data;
+   --tone-soft is mixed from it here - the hue taken almost all the way to
+   white, which is the wash behind the copy and the pale end of the art
+   stage's gradient.
 
-     --tone-ink   the hue mixed most of the way to the brand ink - the only
-                  form used for anything that has to be read (the icon).
-     --tone-soft  the hue mixed almost all the way to white - the flat wash
-                  behind the name and the body copy.
-
-   The photo sits under a tone gradient, which is what makes eight photos
-   from different shoots read as one set instead of eight stock pictures.
+   The hue never touches text. The amber is 2.2:1 on white, so a card whose
+   tone ran through its words would be unreadable on one of the four; the
+   tick marks and the button are the brand green on every card instead, and
+   --tone lives in the art stage, the hover border and the hover shadow.
+   That is also what makes four different drawings read as one set.
    ------------------------------------------------------------------------- */
 .svcs-card {
   --tone: var(--hv-accent);
-  --tone-ink: color-mix(in srgb, var(--tone) 74%, #04241F);
   --tone-soft: color-mix(in srgb, var(--tone) 5%, #fff);
 
   position: relative;
@@ -320,85 +322,98 @@
     0 8px 16px -4px rgba(6, 40, 34, .08);
 }
 
+/* -- The wide card --------------------------------------------------------
+   White-Label Support sits across the full row under the four builds: it
+   is the one retainer on the grid, and five cards in a two-column layout
+   would otherwise leave a widow. Side by side rather than stacked, so the
+   band is a band and not a very tall fifth card - the art takes the
+   smaller half, because at full width a 528/316 stage would be enormous.
+
+   Everything else about it is the ordinary card: same tone plumbing, same
+   tick list, same button.
+   ------------------------------------------------------------------------- */
+.svcs-cell--wide { grid-column: 1 / -1; }
+
+/* Side by side from the same width the grid itself is two columns, so this
+   card is never a full-width stage with a 480px-tall picture on it. The
+   art has no aspect-ratio here - it stretches to whatever the copy beside
+   it needs, and the mockup inside sizes off the width either way. */
+@media (min-width: 721px) {
+  .svcs-card--wide { flex-direction: row; align-items: stretch; }
+  .svcs-card--wide .svcs-card__media {
+    flex: 0 0 42%;
+    aspect-ratio: auto;
+    border-bottom: 0;
+    border-right: 1px solid color-mix(in srgb, var(--tone) 16%, var(--hv-border));
+  }
+  .svcs-card--wide .svcs-card__content {
+    justify-content: center;
+    padding-block: var(--hv-s8);
+    background: linear-gradient(100deg, var(--tone-soft) 0%, #fff 62%);
+  }
+}
+
+/* Three columns of ticks only once the copy column is genuinely wide. In
+   the band below this it stays at two, which is what the tablet width can
+   actually fit without every phrase wrapping. */
+@media (min-width: 1000px) {
+  .svcs-card--wide .svcs-card__subs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .svcs-card--wide .svcs-card__body { max-width: 74ch; }
+}
+
+/* -- The art stage --------------------------------------------------------
+   A ServiceMockup scene, not a photograph. The scene positions itself
+   absolutely against this box and sizes everything inside it in cqw, so
+   `container-type: inline-size` here is what makes the whole mockup scale
+   with the card - without it the devices collapse. 528/316 is the ratio the
+   scenes are drawn for; changing it crops them.
+
+   The background is the card's own hue, washed out: a soft vertical tint
+   with a brighter pool behind the device, so the mockup sits on colour
+   rather than on flat white, and the four cards read as one set even though
+   the four scenes are different drawings.
+   ------------------------------------------------------------------------- */
 .svcs-card__media {
   position: relative;
   display: block;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 528 / 316;
   overflow: hidden;
-  background: var(--tone-soft);
-}
-/* Pinned to the frame rather than stretched to it, same as the page's other
-   photo frames - one less percentage height that has to resolve against an
-   aspect-ratio box to work. */
-.svcs-card__media picture {
-  position: absolute;
-  inset: 0;
-  display: block;
-}
-.svcs-card__media img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform var(--hv-dur-slow) var(--hv-ease);
-}
-.svcs-card:hover .svcs-card__media img,
-.svcs-card:focus-visible .svcs-card__media img { transform: scale(1.06); }
-
-/* The tint. Heavier top and bottom than in the middle: the top of the frame
-   is where the hue is read as the card's colour, the bottom is what the
-   white plate has to sit on, and the middle stays the photograph. */
-.svcs-card__media::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    170deg,
-    color-mix(in srgb, var(--tone) 60%, transparent) 0%,
-    color-mix(in srgb, var(--tone) 14%, transparent) 46%,
-    rgba(4, 36, 31, .5) 100%
-  );
-  pointer-events: none;
+  container-type: inline-size;
+  background:
+    radial-gradient(120% 82% at 50% 104%, color-mix(in srgb, var(--tone) 26%, transparent) 0%, transparent 72%),
+    linear-gradient(180deg, color-mix(in srgb, var(--tone) 16%, #fff) 0%, color-mix(in srgb, var(--tone) 5%, #fff) 100%);
+  border-bottom: 1px solid color-mix(in srgb, var(--tone) 16%, var(--hv-border));
 }
 
-.svcs-card__plate {
-  position: absolute;
-  z-index: 2;
-  left: var(--hv-s5);
-  bottom: calc(var(--hv-s5) * -1 + 8px); /* Let it overlap slightly with content */
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  color: var(--tone-ink);
-  box-shadow: 0 8px 16px rgba(3, 26, 22, .12);
-  transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 400ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-.svcs-card:hover .svcs-card__plate {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(3, 26, 22, .18);
-}
-.svcs-card__plate svg { width: 22px; height: 22px; }
+/* The device rises into the card on hover. home-whatwedo.css carries the
+   same motion scoped to .hv-wwd__card, which is the home page's card and
+   not this one - these are this page's copies of the few hover rules the
+   scenes rely on. Everything else about the mockups is unscoped and comes
+   from that stylesheet as-is. */
+.svcs-card:hover .hv-mk-scene,
+.svcs-card:focus-visible .hv-mk-scene { transform: translateY(-2.6cqw) scale(1.035); }
+.svcs-card:hover .hv-mk-crm__card,
+.svcs-card:focus-visible .hv-mk-crm__card { transform: translateY(-.7cqw); }
+.svcs-card:hover .hv-mk-fun__node,
+.svcs-card:focus-visible .hv-mk-fun__node { transform: translateY(-.5cqw); }
+.svcs-card:hover .hv-mk-fun__edges path,
+.svcs-card:focus-visible .hv-mk-fun__edges path { animation-play-state: running; }
 
 .svcs-card__content {
   display: flex;
   flex-direction: column;
   gap: var(--hv-s3);
   flex: 1;
-  padding: var(--hv-s6) var(--hv-s6) var(--hv-s7);
+  padding: var(--hv-s6) var(--hv-s7) var(--hv-s7);
   /* A few percent of the card's own hue behind the copy, so the lower half
      belongs to the upper half instead of being plain white under a tinted
-     photo. */
+     stage. */
   background: linear-gradient(180deg, #fff 0%, var(--tone-soft) 100%);
 }
 
 .svcs-card__name {
   font-family: var(--hv-font);
-  font-size: 1.06rem;
+  font-size: clamp(1.12rem, 1rem + .35vw, 1.3rem);
   font-weight: 700;
   letter-spacing: -.015em;
   color: var(--hv-text);
@@ -406,29 +421,91 @@
 
 .svcs-card__body {
   display: block;
-  flex: 1;
   font-family: var(--hv-font-body);
-  font-size: .9rem;
-  line-height: 1.62;
+  font-size: .95rem;
+  line-height: 1.66;
+  max-width: 54ch;
   color: var(--hv-text-muted);
 }
 
-/* Deliberately not the card's tone: that can be the amber, which is 2.2:1 on
-   white and would make this label - the card's only actual link text -
-   unreadable. The brand green is the single text accent on this page. */
-.svcs-card__link {
+/* -- What the engagement includes -----------------------------------------
+   Two columns while the card is wide enough for two readable ones, because
+   six items in a single column is a long scroll for something the reader
+   is skimming rather than reading. The column count is the only thing that
+   changes at the narrow band; the items themselves are the same.
+
+   `flex: 1` is on this rather than on the body copy, so the button is
+   pushed to the bottom edge of every card and the four buttons line up
+   across the row even though the four paragraphs are different lengths.
+   ------------------------------------------------------------------------- */
+.svcs-card__subs {
+  flex: 1;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px var(--hv-s5);
+  margin: var(--hv-s2) 0 0;
+  padding: var(--hv-s4) 0 0;
+  border-top: 1px dashed var(--hv-border);
+  align-content: start;
+}
+.svcs-card__sub {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: 9px;
+  align-items: start;
+  font-family: var(--hv-font-body);
+  font-size: .855rem;
+  line-height: 1.45;
+  color: var(--hv-text);
+}
+/* Green on all four cards, like the button below: the tone belongs to the
+   picture and the hover state, and the copy stays one colour across the
+   row so six ticks never compete with the thing you are meant to click. */
+.svcs-card__sub svg {
+  width: 13px;
+  height: 13px;
+  margin-top: .3em;
+  justify-self: center;
+  color: var(--hv-accent-strong);
+}
+
+/* -- The call to action ---------------------------------------------------
+   The page's primary button, and the same green on every card - a button
+   that changed colour per service would read as four different kinds of
+   action. It matches .hv-btn--primary in home-redesign.css (the gradient,
+   the pill, the 44px minimum target, the shadow) and deliberately is not
+   that class: .hv-btn's rules are written for a real <a>/<button>, and this
+   is a span inside the card's own link.
+
+   The lift on hover is the card's, not the button's - the whole card moves,
+   so a second translate in here would double it.
+   ------------------------------------------------------------------------- */
+.svcs-card__cta {
   display: inline-flex;
+  align-self: flex-start;
   align-items: center;
-  gap: 7px;
-  margin-top: var(--hv-s2);
+  justify-content: center;
+  gap: var(--hv-s2);
+  min-height: 44px;
+  margin-top: var(--hv-s4);
+  padding: 13px 22px;
+  border-radius: var(--hv-r-pill);
+  background: var(--hv-grad-accent);
+  color: #fff;
   font-family: var(--hv-font);
   font-size: var(--hv-fs-sm);
   font-weight: 700;
-  color: var(--hv-accent-strong);
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(10, 127, 82, .25);
+  transition: box-shadow var(--hv-dur-fast) var(--hv-ease);
 }
-.svcs-card__link svg { width: 15px; height: 15px; transition: transform var(--hv-dur-fast) var(--hv-ease); }
-.svcs-card:hover .svcs-card__link svg,
-.svcs-card:focus-visible .svcs-card__link svg { transform: translateX(4px); }
+.svcs-card:hover .svcs-card__cta,
+.svcs-card:focus-visible .svcs-card__cta { box-shadow: 0 12px 28px rgba(10, 127, 82, .32); }
+.svcs-card__cta svg { width: 15px; height: 15px; transition: transform var(--hv-dur-fast) var(--hv-ease); }
+.svcs-card:hover .svcs-card__cta svg,
+.svcs-card:focus-visible .svcs-card__cta svg { transform: translateX(4px); }
 
 
 /* 04. Platforms & integrations ============================================ */
@@ -458,55 +535,83 @@
 }
 .svcs-int__title span { display: block; }
 
-/* 2 rows x 4 columns, as in the reference - the tiles are a list of names,
-   so a fixed 4-up grid reads as one block rather than a ragged auto-fit. */
-.svcs-int__tiles {
+/* Flexible grid to accommodate 16 items cleanly */
+.svcs-industry-grid {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--hv-s3);
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--hv-s4);
   margin: var(--hv-s8) 0 0;
   padding: 0;
 }
-.svcs-int__tile {
+
+.svcs-industry-card {
+  --tone: var(--hv-accent);
+  --tone-ink: color-mix(in srgb, var(--tone) 74%, #04241F);
+  
   display: grid;
   justify-items: center;
   align-content: center;
-  gap: var(--hv-s2);
-  min-height: 92px;
-  padding: var(--hv-s3) var(--hv-s2);
+  gap: var(--hv-s3);
+  min-height: 120px;
+  padding: var(--hv-s4) var(--hv-s3);
   border: 1px solid rgba(255, 255, 255, .12);
-  border-radius: var(--hv-r-md);
-  background: rgba(255, 255, 255, .07);
+  border-radius: var(--hv-r-lg);
+  background: rgba(255, 255, 255, .05);
   text-align: center;
-  transition: background var(--hv-dur) var(--hv-ease), border-color var(--hv-dur) var(--hv-ease);
+  transition: transform var(--hv-dur) var(--hv-ease), border-color var(--hv-dur) var(--hv-ease), background var(--hv-dur) var(--hv-ease);
 }
-.svcs-int__tile:hover {
-  background: rgba(255, 255, 255, .13);
-  border-color: rgba(53, 217, 160, .45);
+.svcs-industry-card:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, .1);
+  border-color: color-mix(in srgb, var(--tone) 60%, rgba(255, 255, 255, 0.4));
 }
-.svcs-int__tile span {
+
+.svcs-industry-name {
   font-family: var(--hv-font);
-  font-size: var(--hv-fs-xs);
+  font-size: var(--hv-fs-sm);
   font-weight: 700;
   line-height: 1.3;
   color: #E4F5EE;
 }
 
-/* Every vendor mark sits on its own white chip: the marks arrive with their
-   own (sometimes dark, sometimes transparent) backgrounds, and a white plate
-   is the only treatment that keeps all eight legible on the dark tile. */
-.svcs-logo {
+/* Colorful icon plates based on the card's tone */
+.svcs-industry-icon {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  padding: 5px;
-  border-radius: 11px;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, .22);
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(150deg, var(--tone-ink) 0%, color-mix(in srgb, var(--tone) 74%, #04241F) 100%);
+  color: #fff;
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--tone) 40%, transparent);
 }
-.svcs-logo img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.svcs-industry-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* Interactive industry cards on the Industries page */
+.svcs-industry-card--interactive {
+  cursor: pointer;
+}
+.svcs-industry-card--interactive:hover {
+  animation: pulseCard 2s infinite;
+}
+@keyframes pulseCard {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+.svcs-industry-desc {
+  /* Small muted description text below the industry name */
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-xs);
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 2px;
+}
 
 .svcs-int__cta { margin-top: var(--hv-s8); }
 
@@ -725,6 +830,154 @@
 }
 .svcs-step:last-child::after { content: none; }
 
+/* -- Process Tabs --------------------------------------------------------- */
+
+.svcs-process-tabs {
+  margin-top: var(--hv-s6);
+}
+
+.svcs-process-tabs__nav {
+  display: flex;
+  position: relative;
+  border-bottom: 1px solid var(--hv-border);
+  margin-bottom: var(--hv-s8);
+}
+
+.svcs-process-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--hv-s2);
+  padding: var(--hv-s4) var(--hv-s2);
+  background: none;
+  border: none;
+  border-bottom: 4px solid transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: all var(--hv-dur) var(--hv-ease);
+  opacity: 0.6;
+}
+
+.svcs-process-tab:hover {
+  opacity: 0.8;
+}
+
+.svcs-process-tab.is-active {
+  opacity: 1;
+  border-bottom-color: var(--tone);
+  transform: scale(1.02);
+}
+
+.svcs-process-tab__num {
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-sm);
+  font-weight: 700;
+  color: var(--hv-text-muted);
+  transition: color var(--hv-dur) var(--hv-ease);
+}
+
+.svcs-process-tab.is-active .svcs-process-tab__num {
+  color: var(--tone);
+}
+
+.svcs-process-tab__title {
+  font-family: var(--hv-font);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--hv-text);
+}
+
+.svcs-process-tabs__content {
+  position: relative;
+}
+
+.svcs-process-pane {
+  display: none;
+  --tone-ink: color-mix(in srgb, var(--tone) 74%, #04241F);
+  --tone-tint: color-mix(in srgb, var(--tone) 4%, transparent);
+  
+  position: relative;
+  background: linear-gradient(135deg, var(--tone-tint) 0%, transparent 100%);
+  border: 1px solid color-mix(in srgb, var(--tone) 15%, var(--hv-border));
+  border-radius: var(--hv-r-lg);
+  padding: var(--hv-s8);
+  grid-template-columns: auto 1fr;
+  gap: var(--hv-s6);
+  align-items: center;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 400ms var(--hv-ease), transform 400ms var(--hv-ease);
+}
+
+.svcs-process-pane.is-active {
+  display: grid;
+  animation: svcs-fade-up 400ms var(--hv-ease) forwards;
+}
+
+@keyframes svcs-fade-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.svcs-process-pane__ghost {
+  position: absolute;
+  top: -10%;
+  right: -5%;
+  font-family: var(--hv-font);
+  font-size: 12rem;
+  font-weight: 800;
+  line-height: 1;
+  color: color-mix(in srgb, var(--tone) 6%, transparent);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.svcs-process-pane__icon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 24px;
+  background: linear-gradient(150deg, var(--tone-ink) 0%, color-mix(in srgb, var(--tone) 74%, #04241F) 100%);
+  color: #fff;
+  box-shadow: 0 16px 32px color-mix(in srgb, var(--tone) 25%, transparent);
+}
+.svcs-process-pane__icon svg { width: 36px; height: 36px; }
+
+.svcs-process-pane__text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.svcs-process-pane h3 {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 var(--hv-s3);
+  font-family: var(--hv-font);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--hv-text);
+}
+
+.svcs-process-pane p {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-family: var(--hv-font-body);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--hv-text-muted);
+}
+
 
 /* 06. The results ========================================================= */
 
@@ -840,7 +1093,7 @@
 
 .svcs-closing { background: #fff; }
 
-.svcs-closing__band {
+.svcs-closing__glass {
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -850,11 +1103,74 @@
   gap: clamp(28px, 4vw, 56px);
   padding: clamp(30px, 3.6vw, 52px) clamp(26px, 3.6vw, 54px);
   border-radius: var(--hv-r-xl);
-  background:
-    radial-gradient(52% 90% at 88% 12%, rgba(14, 164, 107, .5) 0%, rgba(14, 164, 107, 0) 64%),
-    linear-gradient(120deg, #052E29 0%, #06382F 52%, #04241F 100%);
+  background: rgba(4, 36, 31, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.04);
   color: #fff;
 }
+
+/* Floating decorative dots */
+.svcs-closing__glass::before,
+.svcs-closing__glass::after {
+  content: "";
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  z-index: 1;
+}
+.svcs-closing__glass::before { top: 24px; left: 24px; }
+.svcs-closing__glass::after { bottom: 24px; right: 24px; }
+
+/* Animated glow orbs */
+.svcs-closing__orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  z-index: -1;
+  pointer-events: none;
+}
+.svcs-closing__orb--1 {
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(53, 217, 160, 0.3) 0%, transparent 70%);
+  top: -50px;
+  left: -100px;
+  animation: svcs-orb1 8s infinite alternate ease-in-out;
+}
+.svcs-closing__orb--2 {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(62, 142, 247, 0.2) 0%, transparent 70%);
+  bottom: -50px;
+  right: 10%;
+  animation: svcs-orb2 10s infinite alternate ease-in-out;
+}
+.svcs-closing__orb--3 {
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(124, 92, 252, 0.15) 0%, transparent 70%);
+  top: 10%;
+  right: -50px;
+  animation: svcs-orb3 12s infinite alternate ease-in-out;
+}
+
+@keyframes svcs-orb1 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, 30px) scale(1.1); }
+}
+@keyframes svcs-orb2 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-40px, -20px) scale(1.2); }
+}
+@keyframes svcs-orb3 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-20px, 40px) scale(1.1); }
+}
+
 .svcs-closing__title {
   margin: 0;
   max-width: 22ch;
@@ -863,6 +1179,13 @@
   letter-spacing: -.03em;
   line-height: 1.18;
   color: #fff;
+}
+.svcs-closing__accent {
+  background: linear-gradient(120deg, #35D9A0, #3E8EF7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
 }
 .svcs-closing__lede {
   margin: var(--hv-s4) 0 0;
@@ -876,6 +1199,12 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--hv-s3);
+}
+.svcs-closing__actions .hv-btn--primary {
+  box-shadow: 0 8px 24px rgba(53, 217, 160, 0.25);
+}
+.svcs-closing__actions .hv-btn--primary:hover {
+  box-shadow: 0 12px 32px rgba(53, 217, 160, 0.35);
 }
 .svcs-closing__actions .hv-btn--outline {
   color: #fff;
@@ -905,19 +1234,8 @@
 .svcs-faq { background: #F7F9F8; }
 
 .svcs-faq__inner {
-  display: grid;
-  grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
-  gap: clamp(28px, 4vw, 64px);
-  align-items: start;
-}
-
-.svcs-faq__title {
-  margin: 0;
-  font-size: var(--hv-fs-h2);
-  font-weight: 800;
-  letter-spacing: -.03em;
-  line-height: 1.16;
-  color: var(--hv-text);
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .svcs-faq__list {
@@ -970,18 +1288,20 @@
 
 /* 09. Responsive ==========================================================
    Three bands below the desktop layout, and each one is a layout decision
-   rather than a shrink: 4-up becomes 2-up becomes stacked, on the service
-   grid and the process row alike. Anything that only works while the row is
-   still a row - the step connectors - is removed at the band where the row
-   breaks, instead of being squeezed into a gap that no longer faces the
-   right way.
+   rather than a shrink. The process row goes 4-up, 2-up, stacked; the
+   service grid is 2-up by design and only has the one step left to take, to
+   a single column at 720px where half a row is too narrow for a photo and a
+   paragraph. Anything that only works while the row is still a row - the
+   step connectors - is removed at the band where the row breaks, instead of
+   being squeezed into a gap that no longer faces the right way.
 
    The hero is a single centred column at every width, so it has no band of
    its own here; only its button row changes (below).
    ------------------------------------------------------------------------- */
 
 @media (max-width: 1120px) {
-  .svcs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* The grid is already two columns at every width, so it has no band here;
+     only the process row still has a 4-up to give up. */
   /* Two columns of steps is no longer one sequence across the row. */
   .svcs-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .svcs-step::after { content: none; }
@@ -990,8 +1310,7 @@
 @media (max-width: 980px) {
   .svcs-why__inner,
   .svcs-int__inner,
-  .svcs-results__inner,
-  .svcs-faq__inner {
+  .svcs-results__inner {
     grid-template-columns: minmax(0, 1fr);
   }
   /* Copy first, picture second, on every one of them. */
@@ -999,15 +1318,27 @@
   .svcs-int__map { margin-top: var(--hv-s8); }
   .svcs-results__media { margin-top: var(--hv-s8); }
 
-  .svcs-closing__band { grid-template-columns: minmax(0, 1fr); }
+  .svcs-closing__glass { grid-template-columns: minmax(0, 1fr); }
   .svcs-closing__scribble { display: none; }
 }
 
 @media (max-width: 720px) {
   .svcs-grid { grid-template-columns: minmax(0, 1fr); }
+  /* One card per row is not two readable columns of six short phrases -
+     several of them wrap to a second line at that width, and a wrapped
+     two-column list reads as neither. */
+  .svcs-card__subs { grid-template-columns: minmax(0, 1fr); }
   .svcs-steps { grid-template-columns: minmax(0, 1fr); }
+  
+  .svcs-process-tabs__nav { flex-direction: column; border-bottom: none; gap: 0; }
+  .svcs-process-tab { border-bottom: none; border-left: 4px solid transparent; padding: var(--hv-s3) var(--hv-s4); }
+  .svcs-process-tab.is-active { border-left-color: var(--tone); transform: scale(1.01); transform-origin: left; }
+  .svcs-process-pane { grid-template-columns: minmax(0, 1fr); text-align: left; }
+  .svcs-process-pane__icon { width: 64px; height: 64px; border-radius: 18px; margin-bottom: var(--hv-s2); }
+  .svcs-process-pane__icon svg { width: 28px; height: 28px; }
+
   .svcs-why__list { grid-template-columns: minmax(0, 1fr); }
-  .svcs-int__tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .svcs-industry-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
   /* The floating cards and orbiting marks need width to sit around what
      they annotate. Rather than shrink them into the photo, the photo
@@ -1047,6 +1378,12 @@
      an eighth of the card. */
   .svcs-card__content,
   .svcs-step { padding-inline: var(--hv-s5); }
+  
+  .svcs-process-pane { padding: var(--hv-s5); }
+  .svcs-process-pane h3 { font-size: 1.25rem; }
+  .svcs-process-pane p { font-size: 1rem; }
+  /* Full-width target on a phone rather than a pill floating left. */
+  .svcs-card__cta { align-self: stretch; }
   .svcs-step__ghost { font-size: 2.9rem; }
 }
 
@@ -1055,6 +1392,14 @@
   .svcs-card:hover,
   .svcs-card:focus-visible,
   .svcs-step:hover { transform: none; }
-  .svcs-card:hover .svcs-card__media img,
-  .svcs-card:focus-visible .svcs-card__media img { transform: none; }
+  /* The mockup scenes move on hover too - the lift, the deal cards and the
+     funnel nodes. All three are held still here. */
+  .svcs-card:hover .hv-mk-scene,
+  .svcs-card:focus-visible .hv-mk-scene,
+  .svcs-card:hover .hv-mk-crm__card,
+  .svcs-card:focus-visible .hv-mk-crm__card,
+  .svcs-card:hover .hv-mk-fun__node,
+  .svcs-card:focus-visible .hv-mk-fun__node { transform: none; }
+  .svcs-card:hover .svcs-card__cta svg,
+  .svcs-card:focus-visible .svcs-card__cta svg { transform: none; }
 }

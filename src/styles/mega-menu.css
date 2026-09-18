@@ -122,13 +122,21 @@
   flex-shrink: 0;
 }
 .megadrop__cat-icon svg { width: 15px; height: 15px; }
-/* Three shades of the SAME brand teal/green, not unrelated hues - each
+/* Four shades of the SAME brand teal/green, not unrelated hues - each
    category reads apart from the others without breaking from the app's own
    palette (--aqua-* / --hv-accent-* tokens, see legacy/styles.css and
-   home-redesign.css). */
+   home-redesign.css). The glyph does most of the work of telling four
+   rows apart; these carry the rest, which is why four shades of one hue
+   is enough and a fourth unrelated colour would be too much. */
 .megadrop__cat-icon--bright { background: linear-gradient(135deg, #35D9A0 0%, #0EA46B 100%); }
 .megadrop__cat-icon--mid    { background: linear-gradient(135deg, #1FC7AC 0%, #0B7A67 100%); }
 .megadrop__cat-icon--deep   { background: linear-gradient(135deg, #12A791 0%, #06603E 100%); }
+/* White-Label. The only one that sits on the teal side of the ramp rather
+   than the green, so it reads as the odd category out - which is what it
+   is. Its light end is kept level with the other three rather than going
+   lighter still: the glyph on top is white, and #5EEAD4 or paler would
+   lose it. */
+.megadrop__cat-icon--soft   { background: linear-gradient(135deg, #2DD4BF 0%, #0B7A6E 100%); }
 
 .megadrop__cat-label {
   font-family: var(--font-display);

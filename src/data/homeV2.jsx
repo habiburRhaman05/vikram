@@ -180,7 +180,7 @@ export const WHAT_WE_DO = {
       title: "White-Label Platform",
       body: "Your logo, your domain, your colors - the full GoHighLevel system rebranded under your agency, ready to resell.",
       mock: "whitelabel",
-      to: `/services/${slugify("GoHighLevel Sub-accounts")}`,
+      to: `/services/white-label-support`,
     },
     {
       id: "reporting",

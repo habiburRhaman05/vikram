@@ -193,8 +193,9 @@
    of the form now has. */
 .sd-form__card-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--hv-s4);
+  gap: var(--hv-s3) var(--hv-s4);
   margin: 0 0 var(--hv-s6);
   padding-bottom: var(--hv-s5);
   border-bottom: 1px solid var(--hv-border);
@@ -230,7 +231,126 @@
   color: var(--hv-accent-strong);
 }
 
-.sd-form__field--interest { margin-bottom: var(--hv-s5); }
+/* -- The two-step chrome -------------------------------------------------- */
+
+/* "Step 1 of 2" in the card head, opposite the service name. */
+.sd-form__stepcount {
+  flex-shrink: 0;
+  align-self: center;
+  margin-left: auto;
+  padding: 5px 11px;
+  border-radius: var(--hv-r-pill);
+  background: var(--hv-bg-mint-deep);
+  font-family: var(--hv-font);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--hv-accent-strong);
+  white-space: nowrap;
+}
+.sd-form__stepcount i { font-style: normal; font-weight: 600; opacity: .72; }
+
+/* The rail. Each item is a dot plus its label, and the connector between
+   two dots is the item's own ::before rather than an element - so the
+   number of steps is decided entirely by the data in the JSX. */
+.sd-form__progress {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: var(--hv-s3);
+  margin: 0 0 var(--hv-s6);
+  padding: 0;
+}
+.sd-form__progress-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+/* The connector, drawn to the LEFT of every item but the first. */
+.sd-form__progress-item + .sd-form__progress-item::before {
+  content: "";
+  flex: 1 1 18px;
+  min-width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--hv-border);
+  transition: background var(--hv-dur-fast) var(--hv-ease);
+}
+.sd-form__progress-item.is-current::before,
+.sd-form__progress-item.is-done::before { background: var(--hv-accent); }
+
+.sd-form__progress-dot {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid var(--hv-border-strong);
+  background: #fff;
+  font-family: var(--hv-font);
+  font-size: .78rem;
+  font-weight: 800;
+  color: var(--hv-text-muted);
+  transition:
+    border-color var(--hv-dur-fast) var(--hv-ease),
+    background var(--hv-dur-fast) var(--hv-ease),
+    color var(--hv-dur-fast) var(--hv-ease);
+}
+.sd-form__progress-dot svg { width: 13px; height: 13px; }
+.sd-form__progress-item.is-current .sd-form__progress-dot {
+  border-color: var(--hv-accent);
+  color: var(--hv-accent-strong);
+  box-shadow: 0 0 0 4px rgba(10, 127, 82, .12);
+}
+.sd-form__progress-item.is-done .sd-form__progress-dot {
+  border-color: var(--hv-accent);
+  background: var(--hv-accent);
+  color: #fff;
+}
+
+.sd-form__progress-label {
+  font-family: var(--hv-font);
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--hv-text-muted);
+  white-space: nowrap;
+}
+.sd-form__progress-item.is-current .sd-form__progress-label { color: var(--hv-text); }
+
+/* The step's own heading. Focus moves here on a step change, so it has to
+   show a focus ring - but only a keyboard one, since a mouse user who
+   clicked Continue does not need to be told where focus went. */
+.sd-form__steptitle {
+  margin: 0 0 var(--hv-s5);
+  font-family: var(--hv-font);
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: -.015em;
+  color: var(--hv-text);
+}
+.sd-form__steptitle:focus { outline: none; }
+.sd-form__steptitle:focus-visible {
+  outline: 3px solid var(--hv-accent);
+  outline-offset: 4px;
+  border-radius: var(--hv-r-sm);
+}
+
+/* Back + forward. Forward is last in the DOM and pinned right, so on a
+   wide card the two read left-to-right as back, then on. */
+.sd-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--hv-s3);
+  margin-top: var(--hv-s6);
+}
+.sd-form__actions .sd-form__submit { flex: 1 1 auto; margin-top: 0; }
+.sd-form__back { flex: 0 0 auto; }
+.sd-form__back svg { margin-right: -2px; }
+
+/* Spacing is the step's flex gap now - see .sd-form__step above. */
 .sd-form__hint {
   margin: 6px 0 0;
   font-family: var(--hv-font-body);
@@ -239,17 +359,32 @@
   color: var(--hv-text-muted);
 }
 
+/* THE VERTICAL RHYTHM LIVES HERE, AND ONLY HERE.
+   Every gap between two fields is this one flex gap. It used to be four
+   adjacent-sibling margin rules, and one of them - `.sd-form__field +
+   .sd-form__field` - also matched the two fields INSIDE a row, because
+   they are adjacent siblings too. That pushed the second field of every
+   row (Business name, Phone) 20px below the first, which is why those two
+   labels never lined up with the ones beside them. A stray inline
+   marginTop:0 in the JSX was papering over it on the phone field only.
+
+   A gap cannot do that: it is spacing between children, not spacing added
+   to one of them, so it has no way to move a field relative to its own
+   row. It also means the stacked case below needs no special rule - when
+   .sd-form__row drops to one column, its own row-gap takes over. */
+.sd-form__step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hv-s5);
+}
+
 /* Two fields per row on desktop, one per row on narrow screens. */
 .sd-form__row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--hv-s4);
-  color:balck
+  align-items: start;
 }
-.sd-form__row + .sd-form__row,
-.sd-form__row + .sd-form__field,
-.sd-form__field + .sd-form__row,
-.sd-form__field + .sd-form__field { margin-top: var(--hv-s5); }
 
 .sd-form__field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
 .sd-form__field label {
@@ -427,7 +562,7 @@
   opacity: 0;
 }
 
-.sd-form__consent { margin-top: var(--hv-s6); }
+.sd-form__consent { margin-top: var(--hv-s1); }
 .sd-form__consent label {
   display: flex;
   align-items: flex-start;
@@ -449,7 +584,10 @@
 .sd-form__consent--error label { color: #C2410C; }
 .sd-form__consent .sd-form__err { margin-top: 7px; margin-left: 29px; }
 
-.sd-form__submit { width: 100%; justify-content: center; margin-top: var(--hv-s6); }
+/* No width or margin of its own: it always lives inside .sd-form__actions
+   now, which owns both. A width:100% here would win on source order and
+   squash the Back button next to it. */
+.sd-form__submit { justify-content: center; }
 
 /* Small reassurance row under the submit button - not a claim, just what's
    already true elsewhere on the site (privacy policy, one-business-day
@@ -560,15 +698,48 @@
 }
 
 @media (max-width: 620px) {
+  /* One field per row. No margin patches needed - the row's own gap
+     becomes the vertical gap the moment it has more than one row. */
   .sd-form__row { grid-template-columns: minmax(0, 1fr); }
-  .sd-form__row + .sd-form__row,
-  .sd-form__row + .sd-form__field,
-  .sd-form__field + .sd-form__row { margin-top: var(--hv-s4); }
   .sd-form__card { padding: var(--hv-s5); }
+  .sd-form__step { gap: var(--hv-s4); }
+
+  /* The forward action goes on top, where the thumb is and where the eye
+     lands first; Back sits under it. Both full width - a 44px pill floated
+     left is a small target on a phone. */
+  .sd-form__actions { flex-direction: column-reverse; }
+  .sd-form__actions .hv-btn { width: 100%; }
+
+  /* The rail keeps the dots and drops the words: "About you" and "What you
+     need" do not fit beside two dots at 360px, and the step heading right
+     underneath says the same thing in full. */
+  .sd-form__progress-label { display: none; }
+  .sd-form__progress { gap: var(--hv-s2); }
 }
+
+/* Very narrow phones. Nothing here is a new layout - it is the last few
+   places where a fixed minimum would push the card wider than the screen
+   and give the page a horizontal scrollbar. */
+@media (max-width: 400px) {
+  /* The number field's 110px floor exists so it is not crushed beside the
+     country select while they share a row with Email. Below this width
+     they no longer share a row with anything, so the floor is what would
+     overflow instead. */
+  .sd-form__phone input { flex-basis: 0; min-width: 0; }
+  .sd-form__stepcount { margin-left: 0; }
+  .sd-form__card-head strong,
+  .sd-form__steptitle { font-size: 1rem; }
+}
+
+/* An address someone typed is the one string on this card with no spaces
+   in it, so it is the one that can push the panel wider than the card. */
+.sd-form__result-next,
+.sd-form__result p { overflow-wrap: anywhere; }
 
 @media (prefers-reduced-motion: reduce) {
   .sd-form__field input,
   .sd-form__field textarea,
-  .sd-form__field select { transition: none; }
+  .sd-form__field select,
+  .sd-form__progress-dot,
+  .sd-form__progress-item + .sd-form__progress-item::before { transition: none; }
 }

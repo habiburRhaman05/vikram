@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout.jsx";
 import PageMeta from "@/components/common/PageMeta.jsx";
@@ -16,7 +17,7 @@ import CtaBand from "@/components/common/CtaBand.jsx";
 import Reveal from "@/components/common/Reveal.jsx";
 import Icon from "@/components/common/Icon.jsx";
 import { openLeadPopup } from "@/components/common/LeadPopup.jsx";
-import { TAX_TAGS, TAX_CHECKLIST, ROADMAP_CARDS, ROLLOUT_STEPS, PROFESSIONS } from "@/data/industries";
+import { TAX_TAGS, TAX_CHECKLIST, ROADMAP_CARDS, ROLLOUT_STEPS, INDUSTRY_DETAILS } from "@/data/industries";
 
 /* The v2 chrome (same header and footer every other redesigned page uses - see
    ServiceComingSoon.jsx for why both stylesheets are needed). The profession
@@ -71,14 +72,39 @@ function ProfessionCard({ icon, label, body, other = false, index = 0, to }) {
 }
 
 export default function Industries() {
+  const [modalIndustry, setModalIndustry] = useState(null);
+  const [isClosing, setIsClosing] = useState(false);
+  const modalRef = useRef(null);
+  const triggerRef = useRef(null);
+
+  useEffect(() => {
+    if (modalIndustry && !isClosing) {
+      document.body.style.overflow = 'hidden';
+      modalRef.current?.focus();
+    } else if (!modalIndustry) {
+      document.body.style.overflow = '';
+      triggerRef.current?.focus();
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [modalIndustry, isClosing]);
+
+  const closeModal = useCallback(() => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setModalIndustry(null);
+      setIsClosing(false);
+    }, 300);
+  }, []);
+
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === 'Escape') closeModal();
+  }, [closeModal]);
+
   return (
-    <Layout
-      variant="v2"
-      topbar={<>Tax practices are live today - <a href="/contact">tell us which industry you want next</a></>}
-    >
+    <Layout variant="v2">
       <PageMeta
-        title="Industries We Serve: Tax, Accounting, Legal & More - GHLevelUp"
-        description="Built for tax preparers first, then the trades around them - accounting, bookkeeping, notary, mortgage, real estate, insurance, financial advice and legal practices. Tell us your profession and we'll say what's live today."
+        title="Industries We Serve - GHLevelUp"
+        description="Built for businesses across all trades - accounting, bookkeeping, notary, mortgage, real estate, insurance, financial advice and legal practices. Tell us your profession and we'll show you what a custom build looks like."
         ogDescription="One industry at a time: the profession picks the pipelines, the deadlines and the paperwork the system is built around, rather than a blank CRM asking you to configure it."
       />
 
@@ -87,7 +113,7 @@ export default function Industries() {
           type: "WebPage",
           name: "Industries we serve",
           description:
-            "The professions GHLevelUp builds CRM, automation and marketing systems for, starting with tax preparers.",
+            "The professions GHLevelUp builds CRM, automation and marketing systems for.",
           path: "/industries",
         }}
         crumbs={[
@@ -102,9 +128,9 @@ export default function Industries() {
           migration doesn't want to reintroduce). */}
       <PageHero
         crumb="Industries"
-        title="One industry at a time, properly"
+        title="Custom systems for every trade"
         center
-        lede="A general-purpose CRM arrives empty and asks you to become a systems administrator. We do the opposite: we go deep on one trade until the system knows its language, its deadlines and its paperwork - then we move to the next."
+        lede="A general-purpose CRM arrives empty and asks you to become a systems administrator. We do the opposite: we tailor the system so it knows your language, your deadlines, and your paperwork."
       >
         <BtnRow style={{ marginTop: 32 }}>
           <Button to="/book" variant="accent" icon="calendar">
@@ -116,78 +142,42 @@ export default function Industries() {
         </BtnRow>
       </PageHero>
 
-      {/* ── Tax preparers ─────────────────────────────────────────────── */}
+      {/* ── High-Converting Websites ─────────────────────────────────────────────── */}
       <Section>
         <Spotlight
           copy={
             <>
-              <StatusPill style={{ marginBottom: 18 }}>Available now</StatusPill>
-              <h2 className="balance">Tax preparers &amp; e-file providers</h2>
+              <StatusPill style={{ marginBottom: 18 }}>Websites &amp; Funnels</StatusPill>
+              <h2 className="balance">High-Converting Websites Built for Your Industry</h2>
               <p>
-                Our first and deepest build. Everything is shaped around a filing season: the intake questions,
-                the document checklists, the pipeline stages and the reminders that go out when a client stalls.
+                A beautiful website is only half the battle. We build complete conversion systems—from the landing page design all the way through to the automated follow-up sequences that turn visitors into booked appointments.
               </p>
-              <Checklist items={TAX_CHECKLIST} />
+              <Checklist items={["Custom Branding & Design", "SEO Optimized", "Mobile Responsive", "Lightning Fast Hosting", "Integrated Lead Forms"]} />
               <BtnRow>
                 <Button to="/book" variant="accent" icon="arrowRight">
-                  See the tax build
+                  See a live demo
                 </Button>
               </BtnRow>
             </>
           }
           media={
-            <Panel title="Configured out of the box">
+            <Panel title="Built-in Automation">
               <div className="tags">
-                {TAX_TAGS.map((tag) => (
-                  <span className="tag" key={tag}>
-                    {tag}
-                  </span>
-                ))}
+                <span className="tag">Lead Capture</span>
+                <span className="tag">Instant Alerts</span>
+                <span className="tag">Automated Follow-ups</span>
+                <span className="tag">Calendar Booking</span>
               </div>
               <p style={{ marginTop: 22, fontSize: ".9rem", color: "var(--muted)" }}>
-                Each return type arrives with its own client-document checklist and reminder sequence.
+                Every website we build is directly integrated into your CRM for seamless lead management and follow-up automation.
               </p>
             </Panel>
           }
         />
       </Section>
 
-      {/* ── Other industries ─────────────────────────────────────────── */}
-      <Section mist>
-        <SectionHead center eyebrow="The roadmap" title="Where we're building next">
-          The underlying platform is the same. What changes is the vocabulary, the workflow stages, the
-          documents collected and the questions the receptionist knows how to answer.
-        </SectionHead>
-
-        <div className="grid grid--2">
-          {ROADMAP_CARDS.map((card, i) => (
-            <Card icon={card.icon} title={card.title} key={i} revealIndex={i}>
-              {card.body}
-            </Card>
-          ))}
-        </div>
-
-        <Reveal style={{ textAlign: "center", marginTop: 56 }}>
-          <p style={{ color: "var(--text-mid)", maxWidth: "56ch", marginInline: "auto" }}>
-            Running a different kind of practice? If the shape of the problem is the same - calls you can't
-            answer, documents you have to chase, clients you can't track - tell us and we'll say honestly
-            whether we're the right fit yet.
-          </p>
-          <BtnRow center style={{ marginTop: 26 }}>
-            <Button to="/contact" variant="outline" icon="message">
-              Tell us about your practice
-            </Button>
-          </BtnRow>
-        </Reveal>
-      </Section>
-
       {/* ── What is your Profession or Service? ──────────────────────── */}
-      {/* Directly after the roadmap: a visitor has just read which trades are
-          ready, next and further out, so this is the moment to ask the
-          question the whole page is answering. The section's own note below
-          the grid repeats that promise, so 14 cards can't read as "all of
-          this ships today". */}
-      <section id="professions" className="hv-section">
+      <section id="professions" className="hv-section hv-section--dark ind-professions">
         <div className="hv-container">
           <Reveal className="hv-section-head hv-section-head--center">
             <span className="hv-eyebrow">Who we build for</span>
@@ -199,58 +189,109 @@ export default function Industries() {
             </p>
           </Reveal>
 
-          <ul className="hv-grid hv-grid--auto-3 hv-prof">
-            {PROFESSIONS.map((p, i) => (
-              <ProfessionCard icon={p.icon} label={p.label} body={p.body} index={i} key={p.label} />
+          <ul className="svcs-industry-grid">
+            {INDUSTRY_DETAILS.map((ind, i) => (
+              <Reveal 
+                as="li" 
+                className="svcs-industry-card svcs-industry-card--interactive" 
+                key={ind.name} 
+                index={i} 
+                style={{ "--tone": ind.tone }}
+                onClick={(e) => { 
+                  triggerRef.current = e.currentTarget; 
+                  setModalIndustry(ind); 
+                }}
+              >
+                <span className="svcs-industry-icon">
+                  <Icon name={ind.icon} strokeWidth={2} />
+                </span>
+                <span className="svcs-industry-name">{ind.name}</span>
+                <p className="svcs-industry-desc">{ind.body}</p>
+              </Reveal>
             ))}
-            <ProfessionCard
-              other
-              to="/contact"
-              index={PROFESSIONS.length}
-              label="Something else"
-              body="Running a different kind of practice? Tell us and we'll say honestly whether we're the right fit yet."
-            />
           </ul>
 
-          <p className="hv-prof__note">
+          <p className="hv-prof__note" style={{ marginTop: 'var(--hv-s6)', textAlign: 'center' }}>
             <Icon name="check" aria-hidden="true" />
-            Tax preparers are live today. Bookkeeping is next - you'll get a straight answer on your own trade
-            either way.
+            Pick your industry above to see a custom plan for your business.
           </p>
         </div>
       </section>
 
-      {/* ── Why one at a time ────────────────────────────────────────── */}
-      <Section ink>
-        <div className="grid grid--2" style={{ gap: 64, alignItems: "center" }}>
-          <Reveal>
-            <span className="eyebrow">Our approach</span>
-            <h2 className="balance">Why we don't launch five industries at once</h2>
-            <p style={{ color: "var(--on-dark-muted)", fontSize: "1.05rem", marginTop: 18 }}>
-              Every trade has details that decide whether a system is useful or merely present. A tax office
-              needs to know that a 1095-A blocks a return. A freight broker needs to know a rate confirmation
-              blocks a load. Software that treats those as the same generic "missing document" saves nobody any
-              time.
-            </p>
-            <p style={{ color: "var(--on-dark-muted)", fontSize: "1.05rem" }}>
-              So we finish one industry before starting the next - and the practices already running on it keep
-              getting the improvements we learn along the way.
-            </p>
-          </Reveal>
-          <Reveal>
-            <div className="steps steps--2col">
-              {ROLLOUT_STEPS.map((step, i) => (
-                <div className={`step ${step.on ? "step--on" : ""}`.trim()} key={i}>
-                  <span className="step__num">{step.num}</span>
-                  <h4>{step.title}</h4>
-                  <p>{step.body}</p>
-                </div>
-              ))}
+      {/* Modal Overlay */}
+      {modalIndustry && (
+        <div 
+          className={`ind-modal-overlay ${isClosing ? 'is-closing' : ''}`} 
+          onClick={closeModal}
+          onKeyDown={handleKeyDown}
+          ref={modalRef}
+          tabIndex={-1}
+        >
+          <div className="ind-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="ind-modal-close" onClick={closeModal}>
+              <Icon name="close" />
+            </button>
+            <div className="ind-modal-header" style={{ "--tone": modalIndustry.tone }}>
+              <span className="ind-modal-icon">
+                <Icon name={modalIndustry.icon} strokeWidth={2} />
+              </span>
+              <h3>{modalIndustry.name} Setup</h3>
             </div>
-          </Reveal>
-        </div>
-      </Section>
+            
+            <div className="ind-modal-body">
+              <div className="ind-modal-section">
+                <h4>The Problem</h4>
+                <p>{modalIndustry.modal.problem}</p>
+              </div>
+              <div className="ind-modal-section">
+                <h4>How We Help {modalIndustry.name.endsWith('s') || modalIndustry.name.endsWith('ing') || modalIndustry.name.endsWith('tion') || modalIndustry.name.endsWith('ment') || modalIndustry.name.endsWith('cs') ? modalIndustry.name : modalIndustry.name === 'Notary' ? 'Notaries' : modalIndustry.name + 's'}</h4>
+                <p>{modalIndustry.modal.solution}</p>
+              </div>
+              
+              <div className="ind-modal-section">
+                <h4>Key Features</h4>
+                <ul className="ind-modal-features">
+                  {modalIndustry.modal.features.map(f => (
+                    <li key={f}><Icon name="check" width={20} height={20} /> {f}</li>
+                  ))}
+                  <li><Icon name="check" width={20} height={20} /> Lead &amp; Pipeline Management</li>
+                  <li><Icon name="check" width={20} height={20} /> SMS &amp; Email Follow-up</li>
+                  <li><Icon name="check" width={20} height={20} /> Instant New Lead Alerts</li>
+                  <li><Icon name="check" width={20} height={20} /> Missed Call Text-Back</li>
+                </ul>
+              </div>
 
+              {modalIndustry.modal.services && (
+                <div className="ind-modal-section">
+                  <h4>Services We Provide</h4>
+                  <div className="ind-modal-services">
+                    {modalIndustry.modal.services.map(s => (
+                      <span className="ind-modal-services__item" key={s}>
+                        <Icon name="check" size={14} /> {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="ind-modal-roi">
+                <strong>Impact:</strong> {modalIndustry.modal.roi}
+              </div>
+            </div>
+
+            <div className="ind-modal-footer">
+              <Button to="/book" variant="accent" icon="calendar">
+                Book a Demo
+              </Button>
+              <Button to="/contact" variant="ghost-light" icon="message">
+                Contact Us
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+  
       <Section tight>
         <CtaBand
           title="Start with the industry that's ready"

@@ -40,12 +40,18 @@ export function openLeadPopup(payload) {
   window.dispatchEvent(new CustomEvent(OPEN_EVENT, { detail: payload || null }));
 }
 
-/* Where submissions go: a GoHighLevel "Inbound Webhook" workflow trigger
-   (Automation > Workflows > Inbound Webhook). Set it in .env as
-   VITE_LEAD_WEBHOOK_URL. Until it is set, the form does NOT pretend to
-   succeed - it sends the visitor to the booking page instead, so a lead is
-   never silently dropped. */
-const WEBHOOK = import.meta.env.VITE_LEAD_WEBHOOK_URL;
+/* Where submissions go: this popup's own GoHighLevel "Inbound Webhook"
+   workflow trigger (Automation > Workflows > Inbound Webhook), set in .env
+   as VITE_POPUP_WEBHOOK_URL. It is a different trigger from the service
+   pages' consultation form, so popup leads and consultation requests can
+   be worked as two separate workflows; VITE_LEAD_WEBHOOK_URL is the older
+   shared trigger, kept as a fallback so a build missing the new variable
+   still delivers somewhere real.
+
+   If neither is set the form does NOT pretend to succeed - it sends the
+   visitor to the booking page instead, so a lead is never silently
+   dropped. */
+const WEBHOOK = import.meta.env.VITE_POPUP_WEBHOOK_URL || import.meta.env.VITE_LEAD_WEBHOOK_URL;
 
 const SERVICES = [
   "CRM & GoHighLevel",
@@ -111,7 +117,17 @@ function isForced() {
  * and hands focus back to wherever it was when it closes.
  *
  * Shown once per visit at most; closing it snoozes it for SNOOZE_DAYS, and
- * submitting stops it for good.
+ * SUBMITTING STOPS THE TIMED POPUP FOR GOOD - writeState("submitted") is
+ * written the moment the form is submitted and shouldShow() never returns
+ * true again after it. Somebody who has handed over their name and email
+ * does not get interrupted a second time.
+ *
+ * Two things still open it after that, both deliberately: openLeadPopup()
+ * from an explicit CTA (a button the visitor pressed is a request, not an
+ * interruption - silently doing nothing would make that button look
+ * broken), and ?leadpopup, which is the review tool. Neither is the timed
+ * popup. If a submitted visitor should not be able to reach the form at
+ * all, the check belongs in the OPEN_EVENT listener, not here.
  */
 export default function LeadPopup() {
   const { pathname } = useLocation();
@@ -119,6 +135,13 @@ export default function LeadPopup() {
   const [leaving, setLeaving] = useState(false);
   const [status, setStatus] = useState("idle"); // idle | sending | done | fallback
   const [firstName, setFirstName] = useState("");
+  const [email, setEmail] = useState("");
+  /* Set the moment the form is submitted, and never cleared. It is what
+     stops close() from overwriting the "submitted" flag with "dismissed"
+     when someone closes the panel while the request is still in flight, or
+     from the fallback screen. A ref, not state: close() is called from a
+     stale-closure keydown handler, and this must be correct there too. */
+  const submittedRef = useRef(false);
   /* The trade the visitor clicked through from ("Realtor", "CPA"), if any.
      Shown back to them as a removable chip and carried into the submitted
      lead, so the answer survives the click and reaches the CRM. */
@@ -156,7 +179,7 @@ export default function LeadPopup() {
   }, []);
 
   const close = () => {
-    if (status !== "done") writeState("dismissed");
+    if (!submittedRef.current) writeState("dismissed");
     setLeaving(true);
     setTimeout(() => {
       setOpen(false);
@@ -230,9 +253,20 @@ export default function LeadPopup() {
       submitted_at: new Date().toISOString(),
     };
     setFirstName(lead.first_name);
+    setEmail(lead.email);
+
+    /* THE FLAG IS WRITTEN HERE, BEFORE THE REQUEST, AND ON PURPOSE.
+       It used to be written only after a 2xx came back, which meant a
+       visitor whose POST failed - offline, blocked, CORS - got the popup
+       again on their next visit even though they had already handed over
+       their name, email and phone. From their side they submitted; that is
+       the thing the flag records. Delivery is a separate problem, and the
+       fallback panel below is how it is handled. */
+    submittedRef.current = true;
+    writeState("submitted");
 
     if (!WEBHOOK) {
-      if (import.meta.env.DEV) console.warn("[LeadPopup] VITE_LEAD_WEBHOOK_URL is not set - lead was not sent.");
+      if (import.meta.env.DEV) console.warn("[LeadPopup] No popup webhook configured - lead was not sent.");
       setStatus("fallback");
       return;
     }
@@ -245,7 +279,6 @@ export default function LeadPopup() {
         body: JSON.stringify(lead),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      writeState("submitted");
       setStatus("done");
     } catch {
       setStatus("fallback");
@@ -319,11 +352,51 @@ export default function LeadPopup() {
                   <path d="M5 12.5l4.2 4.2L19 7" />
                 </svg>
               </span>
-              <h3>You're in{firstName ? `, ${firstName}` : ""}!</h3>
-              <p>Thanks for reaching out. Someone from our team will contact you within one business day.</p>
+              <h3>Thank you{firstName ? `, ${firstName}` : ""}!</h3>
+              <p>
+                We've got your details and someone from the team will reach out personally - no bots, no call
+                centre.
+              </p>
+
+              {/* What actually happens next, so "we'll be in touch" has a
+                  shape. The email line is only useful if we have one to
+                  name, and it is the field they most want to see echoed
+                  back - a typo in it is the one mistake that loses them
+                  the reply. */}
+              <ul className="lp__next">
+                {email && (
+                  <li>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M3 7l9 6 9-6M3 7v10h18V7H3z" />
+                    </svg>
+                    A confirmation is on its way to <strong>{email}</strong>
+                  </li>
+                )}
+                <li>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+                  </svg>
+                  We reply within one business day
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 12.5l4.2 4.2L19 7" />
+                  </svg>
+                  No contracts and no hard sell - you decide after
+                </li>
+              </ul>
+
+              <p className="lp__next-lede">Would rather not wait? Pick a slot and we'll talk today.</p>
+
               <div className="lp__result-actions">
                 <Link to="/book" className="lp__submit" onClick={close}>
-                  Pick a time now
+                  Book my free call
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </Link>
+                <Link to="/services" className="lp__text-btn" onClick={close}>
+                  Browse what we build
                 </Link>
                 <button type="button" className="lp__text-btn" onClick={close}>
                   Keep browsing

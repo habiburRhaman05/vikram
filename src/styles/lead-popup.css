@@ -312,7 +312,52 @@
 @keyframes lp-draw { from { stroke-dashoffset: 24; } to { stroke-dashoffset: 0; } }
 .lp__result h3 { margin: 0; font-size: 1.4rem; font-weight: 700; letter-spacing: -.02em; color: #0B1F1A; }
 .lp__result p { margin: 0; max-width: 34ch; font-size: .92rem; line-height: 1.6; color: #5F7772; }
-.lp__result-actions { display: grid; gap: 6px; margin-top: 12px; }
+.lp__result-actions { display: grid; gap: 6px; margin-top: 12px; width: 100%; }
+
+/* What happens next. Left-aligned inside a centred panel on purpose: three
+   lines of centred body text with icons in front of them is a shape nobody
+   can scan, and these are meant to be read one at a time. */
+.lp__next {
+  list-style: none;
+  display: grid;
+  gap: 9px;
+  width: 100%;
+  margin: 6px 0 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #F2F7F5;
+  text-align: left;
+}
+.lp__next li {
+  display: grid;
+  grid-template-columns: 17px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  font-size: .855rem;
+  line-height: 1.5;
+  color: #35544D;
+  /* An address someone typed is the one string here with no spaces in it,
+     so it is the one that can push the panel wider than the dialog. */
+  overflow-wrap: anywhere;
+}
+.lp__next svg {
+  width: 17px;
+  height: 17px;
+  margin-top: .12em;
+  fill: none;
+  stroke: #0EA46B;
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.lp__next strong { color: #0B1F1A; font-weight: 700; }
+
+.lp__next-lede { margin-top: 4px !important; font-size: .86rem !important; }
+
+/* The secondary actions are <Link>s and a <button> side by side, so they
+   need the same box - .lp__text-btn is written for a button. */
+a.lp__text-btn { display: block; text-align: center; text-decoration: none; }
+a.lp__text-btn:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 /* -- Phone ------------------------------------------------------------------- */
 

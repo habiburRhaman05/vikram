@@ -10,12 +10,13 @@ import StructuredData from "@/components/common/StructuredData.jsx";
    applies inside the .home-v2 scope that Layout's variant="v2" sets up. */
 import { HvSection, Reveal, SectionHead, Btn, Checks } from "@/components/home/primitives.jsx";
 import ScriptNote from "@/components/home/ScriptNote.jsx";
+import ServiceMockup from "@/components/home/ServiceMockups.jsx";
 
 import {
   SVC_HERO,
   SVC_WHY,
   SVC_GRID,
-  SVC_INTEGRATIONS,
+  SVC_INDUSTRIES,
   SVC_PROCESS,
   SVC_RESULTS,
   SVC_CLOSING,
@@ -27,6 +28,11 @@ import {
    services.css only adds this page's own sections on top. */
 import "@/styles/home-redesign.css";
 import "@/styles/home-chrome.css";
+/* The service cards draw ServiceMockup scenes, and every .hv-mk-* rule they
+   need lives in this stylesheet. It is the same file the home page loads for
+   the same components; only the hover animations in it are scoped to
+   .hv-wwd__card, so services.css supplies this page's own. */
+import "@/styles/home-whatwedo.css";
 import "@/styles/services.css";
 
 /* The hub's own ItemList: exactly the cards the page shows, in the order it
@@ -84,7 +90,7 @@ function Orbits({ className }) {
  * visual. The laptop mockup, the floating capability card, the orbiting tiles
  * and the handwritten note that used to fill the right column are gone - on
  * a page whose whole job is to list services, a picture of a laptop was
- * decoration competing with the eight things the reader came for.
+ * decoration competing with the services the reader came for.
  *
  * What replaces that column is the background: three soft colour washes
  * (green, blue, violet) plus the dotted orbits, so the centred block still
@@ -181,35 +187,67 @@ function WhyChooseUs() {
 }
 
 /**
- * One service card. The whole card is the link - one destination, so there
- * is no reason to make the reader aim at a "Learn more" of its own - and
- * the visible label carries a visually hidden service name so a screen
- * reader's links list shows eight distinguishable entries instead of eight
- * identical "Learn more"s.
+ * One service card: the product mockup, the name, what the service is for,
+ * what the engagement includes, and the button through to the detail page.
+ *
+ * The whole card is the link, and the "Learn more" button inside it is a
+ * span rather than a second link - one destination means one tab stop, and
+ * the reader can click the button, the picture or the heading and land in
+ * the same place. The label carries a visually hidden service name so a
+ * screen reader's links list shows four distinguishable entries instead of
+ * four identical "Learn more"s.
  */
 function ServiceCard({ item, index }) {
-  /* alt="" (decorative) on the card art: the card's own title and body name
-     the service and say what it does, so a description of the photo would be
-     a second, vaguer announcement of the same link. The tone is handed to
-     CSS as a custom property - the stylesheet derives the deep and soft ends
-     of it from that one value. */
+  /* The art is a drawn mockup of the product, not a photograph - which slug
+     is drawn comes from `mock` in servicesV2.jsx, and the scenes themselves
+     are in ServiceMockups.jsx. It is decoration either way: aria-hidden, and
+     the card's own title, body and list carry every word of the meaning.
+
+     There is no icon plate floating over it any more. It was one more mark
+     to read on a card that already carries a picture, a title, a paragraph,
+     six list items and a button, and it sat half over the join between the
+     art and the copy - so at two cards per row, where the art is large
+     enough to be looked at, it was covering the thing it decorated.
+
+     The tone is handed to CSS as a custom property; the stylesheet derives
+     the deep and soft ends of it from that one value. It colours the art
+     stage and the hover state only - the tick marks and the button are the
+     brand green on all four cards, so the thing you click looks the same
+     everywhere rather than changing colour per service. */
   return (
-    <Reveal as="li" index={index}>
-      <Link className="svcs-card" to={item.to} style={{ "--tone": item.tone }}>
-        <span className="svcs-card__media">
-          <picture>
-            <source type="image/webp" srcSet={item.imageWebp} />
-            <img src={item.image} alt="" width={840} height={525} loading="lazy" decoding="async" />
-          </picture>
-          <span className="svcs-card__plate" aria-hidden="true">
-            <Icon name={item.icon} strokeWidth={2} />
-          </span>
+    <Reveal as="li" index={index} className={item.wide ? "svcs-cell--wide" : undefined}>
+      <Link
+        className={`svcs-card${item.wide ? " svcs-card--wide" : ""}`}
+        to={item.to}
+        style={{ "--tone": item.tone }}
+      >
+        <span className="svcs-card__media" aria-hidden="true">
+          <ServiceMockup kind={item.mock} />
         </span>
 
         <span className="svcs-card__content">
           <span className="svcs-card__name">{item.title}</span>
           <span className="svcs-card__body">{item.body}</span>
-          <span className="svcs-card__link">
+
+          {/* A real list, so a screen reader announces "6 items" and the
+              reader can skim it the way the eye does on screen. */}
+          <ul className="svcs-card__subs">
+            {item.subs.map((sub) => (
+              <li className="svcs-card__sub" key={sub}>
+                <Icon name="check" aria-hidden="true" strokeWidth={3} />
+                {sub}
+              </li>
+            ))}
+          </ul>
+
+          {/* Styled as the page's primary button rather than a text link -
+              it is the card's call to action, so it should look like the
+              other calls to action on the page. It is a <span>, not a
+              button or a second <a>: the whole card is already the link,
+              and nesting an interactive element inside one is invalid and
+              would put a second stop in the tab order for the same
+              destination. */}
+          <span className="svcs-card__cta">
             {SVC_GRID.learnLabel}
             <span className="hv-sr-only"> about {item.title}</span>
             <Icon name="arrowRight" aria-hidden="true" strokeWidth={2.4} />
@@ -246,64 +284,28 @@ function ServiceGrid() {
  * aria-hidden, because the hub repeats in prose what the tile list beside
  * it already states.
  */
-function Integrations() {
-  const { hub } = SVC_INTEGRATIONS;
-
+function Industries() {
   return (
     <HvSection dark className="svcs-int">
-      <div className="svcs-int__inner">
-        <Reveal>
-          <span className="hv-eyebrow">{SVC_INTEGRATIONS.eyebrow}</span>
-          <h2 className="svcs-int__title">
-            {SVC_INTEGRATIONS.titleLines.map((line) => (
-              <span key={line}>{line}</span>
-            ))}
-          </h2>
-          <p className="hv-lede">{SVC_INTEGRATIONS.lede}</p>
+      <SectionHead eyebrow={SVC_INDUSTRIES.eyebrow} title={SVC_INDUSTRIES.title} center>
+        {SVC_INDUSTRIES.lede}
+      </SectionHead>
 
-          <ul className="svcs-int__tiles">
-            {SVC_INTEGRATIONS.items.map((tool, i) => (
-              <Reveal as="li" className="svcs-int__tile" key={tool.name} index={i}>
-                <span className="svcs-logo">
-                  <img src={`/img/integrations/${tool.logo}.png`} alt="" width={96} height={96} loading="lazy" decoding="async" />
-                </span>
-                <span>{tool.name}</span>
-              </Reveal>
-            ))}
-          </ul>
-
-          <div className="svcs-int__cta">
-            <Btn to={SVC_INTEGRATIONS.cta.to} variant="primary" iconAfter="arrowRight">
-              {SVC_INTEGRATIONS.cta.label}
-            </Btn>
-          </div>
-        </Reveal>
-
-        <Reveal className="svcs-int__map" index={1}>
-          <Orbits className="svcs-int__orbits" />
-
-          {hub.logos.map((logo, i) => (
-            <span className={`svcs-int__node svcs-int__node--${i + 1}`} key={logo}>
-              <img src={`/img/integrations/${logo}.png`} alt="" width={96} height={96} loading="lazy" decoding="async" />
+      <ul className="svcs-industry-grid">
+        {SVC_INDUSTRIES.items.map((ind, i) => (
+          <Reveal as="li" className="svcs-industry-card" key={ind.name} index={i} style={{ "--tone": ind.tone }}>
+            <span className="svcs-industry-icon">
+              <Icon name={ind.icon} strokeWidth={2} />
             </span>
-          ))}
+            <span className="svcs-industry-name">{ind.name}</span>
+          </Reveal>
+        ))}
+      </ul>
 
-          <ul className="svcs-hub" aria-hidden="true">
-            {hub.rows.map((row) => (
-              <li className="svcs-hub__row" key={row}>
-                <span className="svcs-hub__dot" />
-                <span className="svcs-hub__label">{row}</span>
-                <span className="svcs-hub__check">
-                  <Icon name="check" strokeWidth={2.6} />
-                </span>
-              </li>
-            ))}
-          </ul>
-
-          <div className="svcs-int__note" aria-hidden="true">
-            <ScriptNote direction="down-right">{SVC_INTEGRATIONS.note}</ScriptNote>
-          </div>
-        </Reveal>
+      <div style={{ textAlign: "center", marginTop: "var(--hv-s8)" }}>
+        <Btn to={SVC_INDUSTRIES.cta.to} variant="primary" iconAfter="arrowRight">
+          {SVC_INDUSTRIES.cta.label}
+        </Btn>
       </div>
     </HvSection>
   );
@@ -331,28 +333,55 @@ function Integrations() {
  * the words "step 1" are not what the numbered mark is for on screen.
  */
 function Process() {
+  const [activeStep, setActiveStep] = useState(0);
+
   return (
     <HvSection className="svcs-process">
       <SectionHead eyebrow={SVC_PROCESS.eyebrow} title={SVC_PROCESS.title} center>
         {SVC_PROCESS.lede}
       </SectionHead>
 
-      <ol className="svcs-steps">
-        {SVC_PROCESS.steps.map((step, i) => (
-          <Reveal as="li" className="svcs-step" key={step.num} index={i} style={{ "--tone": step.tone }}>
-            <span className="svcs-step__ghost" aria-hidden="true">
-              {step.num}
-            </span>
-
-            <span className="svcs-step__icon" aria-hidden="true">
-              <Icon name={step.icon} strokeWidth={1.9} />
-            </span>
-
-            <h3 className="svcs-step__title">{step.title}</h3>
-            <p className="svcs-step__body">{step.body}</p>
-          </Reveal>
-        ))}
-      </ol>
+      <div className="svcs-process-tabs">
+        <div className="svcs-process-tabs__nav" role="tablist">
+          {SVC_PROCESS.steps.map((step, i) => (
+            <button 
+              key={step.num}
+              id={`svcs-tab-${step.num}`}
+              role="tab"
+              aria-selected={activeStep === i}
+              aria-controls={`svcs-pane-${step.num}`}
+              className={`svcs-process-tab ${activeStep === i ? 'is-active' : ''}`}
+              style={{ "--tone": step.tone }}
+              onClick={() => setActiveStep(i)}
+            >
+              <span className="svcs-process-tab__num">0{step.num}</span>
+              <span className="svcs-process-tab__title">{step.title}</span>
+            </button>
+          ))}
+        </div>
+        
+        <div className="svcs-process-tabs__content">
+          {SVC_PROCESS.steps.map((step, i) => (
+            <div 
+              key={step.num}
+              id={`svcs-pane-${step.num}`}
+              role="tabpanel"
+              aria-labelledby={`svcs-tab-${step.num}`}
+              className={`svcs-process-pane ${activeStep === i ? 'is-active' : ''}`}
+              style={{ "--tone": step.tone }}
+            >
+              <span className="svcs-process-pane__ghost" aria-hidden="true">0{step.num}</span>
+              <span className="svcs-process-pane__icon">
+                <Icon name={step.icon} strokeWidth={2} />
+              </span>
+              <div className="svcs-process-pane__text">
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </HvSection>
   );
 }
@@ -405,9 +434,15 @@ function Results() {
 function Closing() {
   return (
     <HvSection tight className="svcs-closing">
-      <Reveal className="svcs-closing__band">
-        <div>
-          <h2 className="svcs-closing__title">{SVC_CLOSING.title}</h2>
+      <Reveal className="svcs-closing__glass">
+        <span className="svcs-closing__orb svcs-closing__orb--1" aria-hidden="true" />
+        <span className="svcs-closing__orb svcs-closing__orb--2" aria-hidden="true" />
+        <span className="svcs-closing__orb svcs-closing__orb--3" aria-hidden="true" />
+
+        <div className="svcs-closing__content">
+          <h2 className="svcs-closing__title">
+            Ready to Take Your Business to the <span className="svcs-closing__accent">Next Level?</span>
+          </h2>
           <p className="svcs-closing__lede">{SVC_CLOSING.lede}</p>
         </div>
 
@@ -419,17 +454,6 @@ function Closing() {
             {SVC_CLOSING.secondary.label}
           </Btn>
         </div>
-
-        <svg className="svcs-closing__scribble" viewBox="0 0 120 70" fill="none" aria-hidden="true" focusable="false">
-          <path
-            d="M4 6c22 4 44 14 62 30 8 7 15 15 21 26"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeDasharray="7 7"
-          />
-          <path d="M78 54c3 5 6 9 9 12 2-4 3-9 3-14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
       </Reveal>
     </HvSection>
   );
@@ -460,13 +484,11 @@ function Faq() {
         ]}
       />
 
-      <div className="svcs-faq__inner">
-        <Reveal>
-          <span className="hv-eyebrow">{SVC_FAQ.eyebrow}</span>
-          <h2 className="svcs-faq__title">{SVC_FAQ.title}</h2>
-          <p className="hv-lede">{SVC_FAQ.lede}</p>
-        </Reveal>
+      <SectionHead eyebrow={SVC_FAQ.eyebrow} title={SVC_FAQ.title} center>
+        {SVC_FAQ.lede}
+      </SectionHead>
 
+      <div className="svcs-faq__inner">
         <Reveal className="svcs-faq__list" index={1}>
           {SVC_FAQ.items.map((item, i) => (
             <details
@@ -508,7 +530,7 @@ export default function Services() {
       <Hero />
       <WhyChooseUs />
       <ServiceGrid />
-      <Integrations />
+      <Industries />
       <Process />
       <Results />
       <Closing />

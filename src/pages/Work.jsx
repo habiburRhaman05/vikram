@@ -21,10 +21,17 @@ import "@/styles/work.css";
  * component, since a dedicated hub needs more per-card content (the result
  * line) than a homepage teaser does.
  *
- * Every card now links to a real /work/:slug page - the home page's own
- * teaser section previously pointed every card at /contact because no
- * detail template existed yet; see Work.jsx in components/home/sections
- * for that note, now out of date.
+ * THE CARDS ARE NOT LINKS. They used to open a /work/:slug detail page;
+ * those pages carried little more than the card already shows, so the card
+ * now simply shows it. Each one is an <article>, with no arrow badge, no
+ * hover lift and no focus ring - nothing that promises a destination it
+ * does not have.
+ *
+ * The /work/:slug route and WorkDetail.jsx still exist and still render:
+ * this removes the links, not the pages. Nothing in the site points at
+ * them any more, so they are also no longer published in the sitemap or
+ * in this page's structured data - put the <Link> back and both should go
+ * back with it.
  */
 export default function Work() {
   const [filter, setFilter] = useState("all");
@@ -39,15 +46,14 @@ export default function Work() {
         ogDescription="A look at the kind of work we deliver, built to fit how each business actually runs."
       />
 
+      {/* No `items`: an ItemList publishes a URL per entry, and the only
+          URLs it could publish are detail pages this page no longer links
+          to. The CollectionPage itself still describes /work. */}
       <StructuredData
         collection={{
           name: WORK_HUB.title,
           description: WORK_HUB.lede,
           path: "/work",
-          items: WORK_PROJECTS.map((project) => ({
-            name: project.title,
-            path: `/work/${project.id}`,
-          })),
         }}
         crumbs={[
           { name: "Home", path: "/" },
@@ -93,7 +99,7 @@ export default function Work() {
           <ul key={filter} className={`wk-grid${bento ? " is-bento" : ""}`}>
             {projects.map((p, i) => (
               <li key={p.id} className="wk-cell" style={{ "--d": `${i * 70}ms` }}>
-                <Link to={`/work/${p.id}`} className="wk-card" style={{ "--tone": p.tone }}>
+                <article className="wk-card" style={{ "--tone": p.tone }}>
                   <picture className="wk-card__img">
                     <source type="image/webp" srcSet={`${p.image}.webp`} />
                     <img src={`${p.image}.jpg`} alt="" width="960" height="600" loading="lazy" decoding="async" />
@@ -102,9 +108,6 @@ export default function Work() {
 
                   <div className="wk-card__top">
                     <span className="wk-card__chip">{p.industry}</span>
-                    <span className="wk-card__go" aria-hidden="true">
-                      <Icon name="arrowUpRight" />
-                    </span>
                   </div>
 
                   <div className="wk-card__body">
@@ -117,7 +120,7 @@ export default function Work() {
                       ))}
                     </ul>
                   </div>
-                </Link>
+                </article>
               </li>
             ))}
           </ul>

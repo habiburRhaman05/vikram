@@ -1,23 +1,35 @@
 /**
  * Services mega menu: one "Services" trigger in the bar (see MegaMenu.jsx),
- * holding these three categories as a master-detail panel - a left sidebar
+ * holding these four categories as a master-detail panel - a left sidebar
  * of categories (icon + label + chevron) next to a right-hand grid of that
  * category's service cards. This replaced three separate top-level nav
  * triggers (one dropdown per category); `icon` and `accent` below are what
  * give each sidebar row its own colour/icon in that panel.
  *
- * DESTINATIONS: every item now gets its own route, `/services/<slug>`,
- * with the slug derived from its own title via slugify() rather than
+ * DESTINATIONS: every item gets its own route, `/services/<slug>`, with
+ * the slug derived from its own title via slugify() rather than
  * hand-written - one less place a URL and its title can drift apart.
- * None of these have a dedicated page built yet (that's a separate,
- * per-service content project), so /services/:slug currently always
- * resolves to ServiceComingSoon, which looks the title back up from
- * SERVICE_ROUTES below and shows a friendly "in progress" page instead of
- * a dead link or a silent redirect to /platform (which is what every item
- * here used to point at - genuinely indistinguishable from four separate
- * things being the same page). Giving a specific service a real page
- * later is just adding `<Route path="/services/that-slug" .../>` above
- * the :slug catch-all in App.jsx - nothing here needs to change.
+ *
+ * EVERY ITEM BELOW NOW HAS A REAL PAGE. That was not true when this file
+ * was written; each title used to fall through to the `/services/:slug`
+ * catch-all and render ServiceComingSoon. Two things follow from it:
+ *   - Adding a title here that has no <Route> in App.jsx quietly ships a
+ *     "coming soon" page into a menu where every neighbour is real. Build
+ *     the page first, or leave the row out.
+ *   - The CATEGORY rows (`to` on each menu below) still have no pages of
+ *     their own, and that is deliberate: MegaMenu.jsx renders them as
+ *     <button> tab switchers, never as links, so nobody can navigate to
+ *     one. `to` exists only so Header.jsx can tell whether the current
+ *     route belongs to the Services menu.
+ *
+ * NOT LISTED HERE, ON PURPOSE:
+ *   - GoHighLevel Sub-accounts (/services/gohighlevel-sub-accounts) has a
+ *     real page and is cross-linked from serviceLinks.js, but was removed
+ *     from this menu on request - see the note in the funnels category.
+ *   - Reporting Dashboards stays listed even though the /services hub now
+ *     folds it into one card with Funnels. The hub is a pitch; this menu
+ *     is the catalogue, and this row is the main way a reader reaches that
+ *     page directly.
  */
 import { slugify } from "@/lib/slugify.js";
 
@@ -55,7 +67,7 @@ export const NAV_MENUS = [
        the mega menu's narrow sidebar column. `label` itself stays
        unchanged since it also drives this category's route slug
        (slugify(menu.label) below) and SERVICE_ROUTES - only MegaMenu.jsx
-       reads navLabel, falling back to label for the other two categories. */
+       reads navLabel, falling back to label for the other three. */
     navLabel: "Funnel Design",
     to: `/services/${slugify("Funnels, Websites & GHL")}`,
     icon: "globe",
@@ -73,6 +85,25 @@ export const NAV_MENUS = [
            simply no longer listed in this dropdown. */
     items: [
       service("Funnel Design & Builds", "Conversion-first funnels mapped to your offer and your pipeline stages"),
+    ],
+  },
+  {
+    /* The agency/reseller lane. Both of these are sold to someone who
+       resells what we build rather than uses it themselves, which is why
+       they are their own category instead of being filed under the three
+       above - a reader looking for either one is not browsing "Marketing".
+
+       They are also the two services most often confused with each other,
+       so the two bodies below are written to be read side by side: one
+       puts your brand on the SOFTWARE, the other puts it on the PEOPLE. */
+    id: "whitelabel",
+    label: "White-Label",
+    to: `/services/${slugify("White-Label")}`,
+    icon: "key",
+    accent: "soft",
+    items: [
+      service("White-Label Support", "A 24/7 helpdesk answering your clients under your brand, never ours"),
+
     ],
   },
 ];

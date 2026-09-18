@@ -172,7 +172,8 @@
    /work/:slug's own (styles/work.css). .cs-hero is
    /services/crm-sub-account-setup's own (styles/service-crm-setup.css).
    .fnl-hero is the Funnel Design & Builds page's split hero (styles/
-   service-funnels.css). All
+   service-funnels.css). .wls-hero is White-Label Support's ticket-queue
+   hero (styles/service-white-label-support.css). All
    share this one rule rather than each getting an identical copy, since the
    fix is the same for the same reason regardless of which hero markup sits
    underneath.
@@ -194,7 +195,8 @@
 .home-v2 .cs-hero,
 .home-v2 .wk-hero,
 .home-v2 .wk-dhero,
-.home-v2 .fnl-hero {
+.home-v2 .fnl-hero,
+.home-v2 .wls-hero {
   margin-top: calc(-1 * var(--header-h, 80px));
   padding-top: calc(var(--header-h, 80px) + clamp(8px, 1.5vw, 20px));
 }

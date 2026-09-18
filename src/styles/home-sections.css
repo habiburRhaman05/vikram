@@ -932,8 +932,11 @@
   box-shadow: var(--hv-sh-md);
   transition: transform 520ms var(--hv-ease), box-shadow 520ms var(--hv-ease);
 }
+/* Deliberately no translate here. The card is not a link any more, and a
+   tile that rises under the pointer reads as one; the rim, the image zoom
+   and the description opening below are enough to show the card is the one
+   being looked at. */
 .hv-works__card:hover {
-  transform: translateY(-6px);
   box-shadow: 0 30px 60px -24px color-mix(in srgb, var(--tone) 55%, rgba(6, 40, 34, .5));
 }
 /* Tone-coloured rim that lights up on hover. */
@@ -997,21 +1000,6 @@
   background: var(--tone);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--tone) 30%, transparent);
 }
-.hv-works__go {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, .14);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  transition: background 420ms var(--hv-ease), color 420ms var(--hv-ease), transform 520ms var(--hv-ease-spring);
-}
-.hv-works__go svg { width: 18px; height: 18px; }
-.hv-works__card:hover .hv-works__go { background: #fff; color: #062E2A; transform: rotate(45deg) scale(1.06); }
 
 .hv-works__body { position: relative; }
 .home-v2 .hv-works__name {
@@ -1024,12 +1012,6 @@
 }
 .hv-works__grid.is-bento .hv-works__cell:nth-child(1) .hv-works__name { font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.2rem); }
 
-/* Stretched link: the whole card is the title's link. */
-.hv-works__link { color: inherit; text-decoration: none; }
-.hv-works__link::after { content: ""; position: absolute; inset: 0; z-index: 4; }
-.hv-works__card:has(.hv-works__link:focus-visible) { outline: 3px solid var(--hv-accent-strong); outline-offset: 3px; }
-.hv-works__link:focus-visible { outline: none; }
-
 /* Description + tags slide open on hover (always open on the feature card
    and on touch screens, which have no hover). */
 .hv-works__more {
@@ -1039,6 +1021,9 @@
   transition: grid-template-rows 520ms var(--hv-ease), opacity 420ms var(--hv-ease);
 }
 .hv-works__more > div { overflow: hidden; }
+/* :focus-within is kept even though the card holds no focusable element
+   today - it costs nothing and is the rule that would matter again the
+   moment anything inside a card becomes focusable. */
 .hv-works__card:hover .hv-works__more,
 .hv-works__card:focus-within .hv-works__more,
 .hv-works__grid.is-bento .hv-works__cell:nth-child(1) .hv-works__more { grid-template-rows: 1fr; opacity: 1; }
@@ -1090,8 +1075,7 @@
 @media (prefers-reduced-motion: reduce) {
   .home-v2 .hv-works__cell { animation-duration: 640ms !important; }
   .home-v2 .hv-works__card,
-  .home-v2 .hv-works__more,
-  .home-v2 .hv-works__go { transition-duration: 480ms !important; }
+  .home-v2 .hv-works__more { transition-duration: 480ms !important; }
 }
 
 

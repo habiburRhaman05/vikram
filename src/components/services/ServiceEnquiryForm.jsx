@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,22 +16,57 @@ import "@/styles/service-form.css";
  * shared component, so a design or validation change here is a change
  * everywhere it's dropped in.
  *
- * Posts to the same GoHighLevel inbound webhook the lead popup uses
- * (VITE_LEAD_WEBHOOK_URL), so both entry points land in one workflow. The
- * difference is `service` and `source`: this form knows which page it was
- * submitted from and sends that with the lead, so nobody has to guess what
- * it was about. On a service page that is the service; on a blog post it is
- * the article, which is the only way the reply can be written by someone
- * who has read what the visitor just read.
+ * TWO STEPS. Step 1 is who you are (service, name, business, email,
+ * phone); step 2 is what you need (role, brief, consent) and the submit.
+ * Nine required fields in one column is a wall, and the fields that are
+ * cheap to answer are the ones that should be asked first - somebody who
+ * has filled in step 1 is far more likely to finish step 2 than somebody
+ * who is looking at all nine at once.
+ *
+ * Both steps live in one <form> and one useForm(), so nothing is submitted
+ * until the last step and nothing is lost going back. React Hook Form
+ * keeps the values of unmounted fields (shouldUnregister defaults to
+ * false), which is what lets step 1 be unmounted rather than hidden -
+ * hidden fields stay in the tab order unless every stylesheet agrees not
+ * to show them, and unmounting is the version that cannot be got wrong.
  *
  * Validated with react-hook-form + zod: every field is required (see
  * `schema` below), the phone number is checked against the digit count the
  * selected country actually uses, and the whole form re-validates on
  * change once a field has been touched, not only on submit - so a mistake
- * gets corrected before someone submits a second time.
+ * gets corrected before someone submits a second time. Step 1 validates
+ * its OWN fields before it will advance (see STEP_FIELDS), so an error is
+ * never carried into a step where the field that caused it is off screen.
+ *
+ * Posts to a GoHighLevel inbound webhook. This form has its own trigger,
+ * separate from the lead popup's, so consultation requests and popup leads
+ * can be worked as two different workflows - see WEBHOOK below. It sends
+ * `service` and `source` with the lead, so nobody has to guess what the
+ * request was about: on a service page that is the service, on a blog post
+ * it is the article, which is the only way the reply can be written by
+ * someone who has read what the visitor just read.
  */
 
-const WEBHOOK = import.meta.env.VITE_LEAD_WEBHOOK_URL;
+/* This form's own GoHighLevel trigger. VITE_CONSULT_WEBHOOK_URL is the
+   one to set; it falls back to the lead popup's trigger only so that a
+   build with the new variable missing still delivers the lead somewhere
+   real rather than dropping it. Both are committed in .env for the reason
+   documented at the top of that file. */
+const WEBHOOK = import.meta.env.VITE_CONSULT_WEBHOOK_URL || import.meta.env.VITE_LEAD_WEBHOOK_URL;
+
+/* Which fields belong to which step. Step 1 is validated against this list
+   before it will advance; the schema itself still validates everything on
+   the final submit. `country` rides with `phone` because the phone rule is
+   a cross-field check between the two. */
+const STEP_FIELDS = {
+  1: ["interest", "name", "business", "email", "country", "phone"],
+  2: ["role", "message", "consent"],
+};
+
+const STEPS = [
+  { n: 1, label: "About you" },
+  { n: 2, label: "What you need" },
+];
 
 const ROLES = ["Owner / Founder", "CEO / President", "Manager", "Marketing lead", "Other"];
 
@@ -78,10 +113,17 @@ export default function ServiceEnquiryForm({
   const source = sourceLabel || `Service page consultation request - ${service}`;
   const options = serviceOptions(service);
   const [status, setStatus] = useState("idle"); // idle | sending | done | fallback
+  const [step, setStep] = useState(1);
+  const stepHeadRef = useRef(null);
+  /* The step the focus effect below last acted on. Starts equal to the
+     initial step, so no focus moves until the visitor actually changes
+     step - see the effect for why the guard is shaped like this. */
+  const prevStep = useRef(step);
 
   const {
     register,
     handleSubmit,
+    trigger,
     watch,
     formState: { errors },
   } = useForm({
@@ -105,6 +147,48 @@ export default function ServiceEnquiryForm({
   const name = watch("name");
   const email = watch("email");
 
+  /* Moving between steps replaces everything the visitor was looking at, so
+     focus goes to the new step's heading. Without this, focus stays on the
+     Continue button - which no longer exists - and a keyboard or screen
+     reader user is dropped back at the top of the document.
+
+     THE GUARD COMPARES THE PREVIOUS STEP, not whether this is the first
+     render, and it has to stay that way. Focusing an element scrolls it
+     into view, so anything that lets this run when the step did NOT change
+     drags the whole page down to the form - which is what a "have I
+     mounted yet" flag did: StrictMode invokes an effect twice on mount, the
+     first run set the flag and the second sailed past it, so every service
+     page opened scrolled to the consultation form instead of at the top.
+
+     Written this way the effect is idempotent: a second invocation with
+     the same step finds prev === step and does nothing, whether it comes
+     from StrictMode, a re-render or a future concurrent replay. */
+  useEffect(() => {
+    if (prevStep.current === step) return;
+    prevStep.current = step;
+    stepHeadRef.current?.focus();
+  }, [step]);
+
+  /* Step 1's own fields only. `shouldFocus` puts the cursor in the first
+     one that failed, which is the whole point of validating here rather
+     than letting someone press Continue into a step that will be rejected
+     by fields they can no longer see. */
+  const goNext = async () => {
+    if (await trigger(STEP_FIELDS[1], { shouldFocus: true })) setStep(2);
+  };
+
+  /* One <form>, two behaviours. Enter inside step 1 has to advance rather
+     than submit - a browser fires submit on Enter in any text input, and
+     without this the first step would try to send a half-filled lead. */
+  const onFormSubmit = (ev) => {
+    if (step === 1) {
+      ev.preventDefault();
+      goNext();
+      return;
+    }
+    handleSubmit(onValid)(ev);
+  };
+
   const onValid = async (data, ev) => {
     /* Honeypot: hidden from people and screen readers, filled by bots. Not
        part of the zod schema - it isn't a real field, just a trap. */
@@ -126,9 +210,13 @@ export default function ServiceEnquiryForm({
       submitted_at: new Date().toISOString(),
     };
 
+    /* Only reachable if BOTH webhook variables are missing from the build.
+       It never pretends the lead was sent - it shows the phone and email
+       instead, which is the one thing worse than an error message to get
+       wrong here. */
     if (!WEBHOOK) {
       if (import.meta.env.DEV) {
-        console.warn("[ServiceEnquiryForm] VITE_LEAD_WEBHOOK_URL is not set - the request was not sent.");
+        console.warn("[ServiceEnquiryForm] No consultation webhook configured - the request was not sent.");
       }
       setStatus("fallback");
       return;
@@ -278,207 +366,269 @@ export default function ServiceEnquiryForm({
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleSubmit(onValid)} noValidate>
+              <form onSubmit={onFormSubmit} noValidate>
                 <div className="sd-form__card-head">
-             
                   <div>
                     <span>Free consultation for</span>
                     <strong>{interest}</strong>
                   </div>
+                  <span className="sd-form__stepcount">
+                    Step {step} <i>of {STEPS.length}</i>
+                  </span>
                 </div>
 
-                {/* Auto-detected from the page this form is on, and always
-                    editable - a visitor reading about one service can still
-                    redirect the request to a different one before sending. */}
-                <div className={`${field("interest")} sd-form__field--interest`}>
-                  <label htmlFor={`${id}-interest`}>
-                    Which service do you need? <span aria-hidden="true">*</span>
-                  </label>
-                  <div className="sd-form__control">
-                    <Icon name="layers" className="sd-form__control-icon" aria-hidden="true" />
-                    <select id={`${id}-interest`} {...register("interest")}>
-                      {options.map((o) => (
-                        <option key={o} value={o}>
-                          {o}
-                        </option>
-                      ))}
-                    </select>
-                    <Icon name="chevronDown" className="sd-form__chevron" aria-hidden="true" />
-                  </div>
-                  <p className="sd-form__hint">Auto-detected from this page - change it if you're after something else.</p>
-                </div>
+                {/* The progress rail. aria-hidden because the same thing is
+                    said in real words by the step heading below it and by
+                    the live region - three announcements of "step 2 of 2"
+                    is two too many. */}
+                <ol className="sd-form__progress" aria-hidden="true">
+                  {STEPS.map((s) => (
+                    <li
+                      key={s.n}
+                      className={`sd-form__progress-item${
+                        s.n === step ? " is-current" : s.n < step ? " is-done" : ""
+                      }`}
+                    >
+                      <span className="sd-form__progress-dot">
+                        {s.n < step ? <Icon name="check" strokeWidth={3} /> : s.n}
+                      </span>
+                      <span className="sd-form__progress-label">{s.label}</span>
+                    </li>
+                  ))}
+                </ol>
 
-                <div className="sd-form__row">
-                  <div className={field("name")}>
-                    <label htmlFor={`${id}-name`}>
-                      Your name <span aria-hidden="true">*</span>
-                    </label>
-                    <div className="sd-form__control">
-                      <Icon name="users" className="sd-form__control-icon" aria-hidden="true" />
-                      <input
-                        id={`${id}-name`}
-                        {...register("name")}
-                        autoComplete="name"
-                        placeholder="Jordan Reid"
-                        aria-invalid={!!errors.name}
-                      />
-                    </div>
-                    {errors.name && (
-                      <p className="sd-form__err" role="alert">
-                        {errors.name.message}
-                      </p>
-                    )}
-                  </div>
+                {/* The one announcement of the change, for anyone who
+                    cannot see the rail above. tabIndex -1 so the effect
+                    above can move focus here without adding a tab stop. */}
+                <h3 className="sd-form__steptitle" ref={stepHeadRef} tabIndex={-1}>
+                  {step === 1 ? "About you" : "What you need"}
+                  <span className="hv-sr-only"> - step {step} of {STEPS.length}</span>
+                </h3>
 
-                  <div className={field("business")}>
-                    <label htmlFor={`${id}-business`}>
-                      Business name <span aria-hidden="true">*</span>
-                    </label>
-                    <div className="sd-form__control">
-                      <Icon name="building" className="sd-form__control-icon" aria-hidden="true" />
-                      <input
-                        id={`${id}-business`}
-                        {...register("business")}
-                        autoComplete="organization"
-                        placeholder="Bright HVAC"
-                        aria-invalid={!!errors.business}
-                      />
-                    </div>
-                    {errors.business && (
-                      <p className="sd-form__err" role="alert">
-                        {errors.business.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="sd-form__row">
-                  <div className={field("email")}>
-                    <label htmlFor={`${id}-email`}>
-                      Email <span aria-hidden="true">*</span>
-                    </label>
-                    <div className="sd-form__control">
-                      <Icon name="mail" className="sd-form__control-icon" aria-hidden="true" />
-                      <input
-                        id={`${id}-email`}
-                        type="email"
-                        {...register("email")}
-                        autoComplete="email"
-                        placeholder="you@business.com"
-                        aria-invalid={!!errors.email}
-                      />
-                    </div>
-                    {errors.email && (
-                      <p className="sd-form__err" role="alert">
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className={field("phone")} style={{marginTop:"0px"}}>
-                    <label htmlFor={`${id}-phone`} style={{color:"black"}}>
-                      Phone <span aria-hidden="true">*</span>
-                    </label>
-                    <div className="sd-form__phone">
-                      <div className="sd-form__phone-country">
-                        <span
-                          className="sd-form__phone-badge"
-                          aria-hidden="true"
-                          style={{ "--badge-tint": country.tint }}
-                        >
-                          {country.code}
-                        </span>
-                        <select aria-label="Country" {...register("country")}>
-                          {COUNTRIES.map((c) => (
-                            <option key={c.code} value={c.code} title={c.name}>
-                              {c.dial}
+                {step === 1 && (
+                  <div className="sd-form__step">
+                    {/* Auto-detected from the page this form is on, and always
+                        editable - a visitor reading about one service can still
+                        redirect the request to a different one before sending. */}
+                    <div className={`${field("interest")} sd-form__field--interest`}>
+                      <label htmlFor={`${id}-interest`}>
+                        Which service do you need? <span aria-hidden="true">*</span>
+                      </label>
+                      <div className="sd-form__control">
+                        <Icon name="layers" className="sd-form__control-icon" aria-hidden="true" />
+                        <select id={`${id}-interest`} {...register("interest")}>
+                          {options.map((o) => (
+                            <option key={o} value={o}>
+                              {o}
                             </option>
                           ))}
                         </select>
                         <Icon name="chevronDown" className="sd-form__chevron" aria-hidden="true" />
                       </div>
-                      <input
-                        id={`${id}-phone`}
-                        type="tel"
-                        inputMode="tel"
-                        {...register("phone")}
-                        autoComplete="tel"
-                        placeholder="(518) 555-0123"
-                        aria-invalid={!!errors.phone}
-                      />
+                      <p className="sd-form__hint">Auto-detected from this page - change it if you're after something else.</p>
                     </div>
-                    {errors.phone && (
-                      <p className="sd-form__err" role="alert">
-                        {errors.phone.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
 
-                <div className={field("role")}>
-                  <label htmlFor={`${id}-role`}>
-                    Your role <span aria-hidden="true">*</span>
-                  </label>
-                  <div className="sd-form__control">
-                    <Icon name="star" className="sd-form__control-icon" aria-hidden="true" />
-                    <select id={`${id}-role`} {...register("role")}>
-                      <option value="">Select your role</option>
-                      {ROLES.map((r) => (
-                        <option key={r} value={r}>
-                          {r}
-                        </option>
-                      ))}
-                    </select>
-                    <Icon name="chevronDown" className="sd-form__chevron" aria-hidden="true" />
-                  </div>
-                  {errors.role && (
-                    <p className="sd-form__err" role="alert">
-                      {errors.role.message}
-                    </p>
-                  )}
-                </div>
+                    <div className="sd-form__row">
+                      <div className={field("name")}>
+                        <label htmlFor={`${id}-name`}>
+                          Your name <span aria-hidden="true">*</span>
+                        </label>
+                        <div className="sd-form__control">
+                          <Icon name="users" className="sd-form__control-icon" aria-hidden="true" />
+                          <input
+                            id={`${id}-name`}
+                            {...register("name")}
+                            autoComplete="name"
+                            placeholder="Jordan Reid"
+                            aria-invalid={!!errors.name}
+                          />
+                        </div>
+                        {errors.name && (
+                          <p className="sd-form__err" role="alert">
+                            {errors.name.message}
+                          </p>
+                        )}
+                      </div>
 
-                <div className={field("message")}>
-                  <label htmlFor={`${id}-message`}>
-                    What do you need? <span aria-hidden="true">*</span>
-                  </label>
-                  <textarea
-                    id={`${id}-message`}
-                    rows={4}
-                    {...register("message")}
-                    placeholder="e.g. We miss most calls after 5pm and at weekends, and we want them booked instead of going to voicemail."
-                    aria-invalid={!!errors.message}
-                  />
-                  {errors.message && (
-                    <p className="sd-form__err" role="alert">
-                      {errors.message.message}
-                    </p>
-                  )}
-                </div>
+                      <div className={field("business")}>
+                        <label htmlFor={`${id}-business`}>
+                          Business name <span aria-hidden="true">*</span>
+                        </label>
+                        <div className="sd-form__control">
+                          <Icon name="building" className="sd-form__control-icon" aria-hidden="true" />
+                          <input
+                            id={`${id}-business`}
+                            {...register("business")}
+                            autoComplete="organization"
+                            placeholder="Bright HVAC"
+                            aria-invalid={!!errors.business}
+                          />
+                        </div>
+                        {errors.business && (
+                          <p className="sd-form__err" role="alert">
+                            {errors.business.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="sd-form__row">
+                      <div className={field("email")}>
+                        <label htmlFor={`${id}-email`}>
+                          Email <span aria-hidden="true">*</span>
+                        </label>
+                        <div className="sd-form__control">
+                          <Icon name="mail" className="sd-form__control-icon" aria-hidden="true" />
+                          <input
+                            id={`${id}-email`}
+                            type="email"
+                            {...register("email")}
+                            autoComplete="email"
+                            placeholder="you@business.com"
+                            aria-invalid={!!errors.email}
+                          />
+                        </div>
+                        {errors.email && (
+                          <p className="sd-form__err" role="alert">
+                            {errors.email.message}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className={field("phone")}>
+                        <label htmlFor={`${id}-phone`}>
+                          Phone <span aria-hidden="true">*</span>
+                        </label>
+                        <div className="sd-form__phone">
+                          <div className="sd-form__phone-country">
+                            <span
+                              className="sd-form__phone-badge"
+                              aria-hidden="true"
+                              style={{ "--badge-tint": country.tint }}
+                            >
+                              {country.code}
+                            </span>
+                            <select aria-label="Country" {...register("country")}>
+                              {COUNTRIES.map((c) => (
+                                <option key={c.code} value={c.code} title={c.name}>
+                                  {c.dial}
+                                </option>
+                              ))}
+                            </select>
+                            <Icon name="chevronDown" className="sd-form__chevron" aria-hidden="true" />
+                          </div>
+                          <input
+                            id={`${id}-phone`}
+                            type="tel"
+                            inputMode="tel"
+                            {...register("phone")}
+                            autoComplete="tel"
+                            placeholder="(518) 555-0123"
+                            aria-invalid={!!errors.phone}
+                          />
+                        </div>
+                        {errors.phone && (
+                          <p className="sd-form__err" role="alert">
+                            {errors.phone.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {step === 2 && (
+                  <div className="sd-form__step">
+                    <div className={field("role")}>
+                      <label htmlFor={`${id}-role`}>
+                        Your role <span aria-hidden="true">*</span>
+                      </label>
+                      <div className="sd-form__control">
+                        <Icon name="star" className="sd-form__control-icon" aria-hidden="true" />
+                        <select id={`${id}-role`} {...register("role")}>
+                          <option value="">Select your role</option>
+                          {ROLES.map((r) => (
+                            <option key={r} value={r}>
+                              {r}
+                            </option>
+                          ))}
+                        </select>
+                        <Icon name="chevronDown" className="sd-form__chevron" aria-hidden="true" />
+                      </div>
+                      {errors.role && (
+                        <p className="sd-form__err" role="alert">
+                          {errors.role.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className={field("message")}>
+                      <label htmlFor={`${id}-message`}>
+                        What do you need? <span aria-hidden="true">*</span>
+                      </label>
+                      <textarea
+                        id={`${id}-message`}
+                        rows={4}
+                        {...register("message")}
+                        placeholder="e.g. We miss most calls after 5pm and at weekends, and we want them booked instead of going to voicemail."
+                        aria-invalid={!!errors.message}
+                      />
+                      {errors.message && (
+                        <p className="sd-form__err" role="alert">
+                          {errors.message.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className={`sd-form__consent${errors.consent ? " sd-form__consent--error" : ""}`}>
+                      <label>
+                        <input type="checkbox" {...register("consent")} aria-invalid={!!errors.consent} />
+                        <span>
+                          I agree to be contacted by GHLevelUp about this request. Msg &amp; data rates may apply; reply
+                          STOP to opt out. See our <Link to="/privacy">Privacy Policy</Link>.
+                        </span>
+                      </label>
+                      {errors.consent && (
+                        <p className="sd-form__err" role="alert">
+                          {errors.consent.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {/* Honeypot - hidden from people and assistive tech, not a
-                    registered react-hook-form field. */}
+                    registered react-hook-form field. Outside both steps, so
+                    it is in the DOM for the whole time a bot is filling the
+                    form in rather than only during the last step. */}
                 <input className="sd-form__hp" name="company_website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
 
-                <div className={`sd-form__consent${errors.consent ? " sd-form__consent--error" : ""}`}>
-                  <label>
-                    <input type="checkbox" {...register("consent")} aria-invalid={!!errors.consent} />
-                    <span>
-                      I agree to be contacted by GHLevelUp about this request. Msg &amp; data rates may apply; reply
-                      STOP to opt out. See our <Link to="/privacy">Privacy Policy</Link>.
-                    </span>
-                  </label>
-                  {errors.consent && (
-                    <p className="sd-form__err" role="alert">
-                      {errors.consent.message}
-                    </p>
+                {/* Back is a real button, not a link, and comes first in the
+                    DOM so the tab order runs back-then-forward the way the
+                    two buttons are read. On a phone they stack with the
+                    forward action on top - see service-form.css. */}
+                <div className="sd-form__actions">
+                  {step === 2 && (
+                    <button
+                      type="button"
+                      className="hv-btn hv-btn--outline hv-btn--lg sd-form__back"
+                      onClick={() => setStep(1)}
+                      disabled={status === "sending"}
+                    >
+                      <Icon name="chevronLeft" aria-hidden="true" />
+                      Back
+                    </button>
                   )}
-                </div>
 
-                <button type="submit" className="hv-btn hv-btn--primary hv-btn--lg sd-form__submit" disabled={status === "sending"}>
-                  {status === "sending" ? "Sending..." : "Get Free Consultation"}
-                  {status !== "sending" && <Icon name="arrowRight" />}
-                </button>
+                  <button
+                    type="submit"
+                    className="hv-btn hv-btn--primary hv-btn--lg sd-form__submit"
+                    disabled={status === "sending"}
+                  >
+                    {step === 1 ? "Continue" : status === "sending" ? "Sending..." : "Get Free Consultation"}
+                    {status !== "sending" && <Icon name="arrowRight" aria-hidden="true" />}
+                  </button>
+                </div>
 
                 <ul className="sd-form__trust">
                   <li>

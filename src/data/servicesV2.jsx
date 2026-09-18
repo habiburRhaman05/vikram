@@ -112,60 +112,125 @@ export const SVC_WHY = {
 export const SVC_GRID = {
   eyebrow: "Our services",
   title: "Complete Solutions for Your Business",
-  lede: "From CRM and automation to marketing, websites and reporting, we offer everything you need to attract, engage and convert more customers - all in one place.",
+  /* Names the four cards below and nothing else. The old line promised
+     marketing and websites too, which are real services but are not on this
+     grid - a lede that lists things the reader then cannot find reads as a
+     page that is missing something. */
+  lede: "CRM, automation, AI and the funnels and reporting around them - four builds that cover everything you need to attract, engage and convert more customers, plus a support desk that answers your clients under your own brand.",
 
   learnLabel: "Learn more",
 
-  /* Each card's art: a real photo, its own tone, and the icon that goes on
-     the plate over the photo. The photos are decorative (the card's own
-     title and body name the service), so they are rendered with alt="" -
-     the reason is in Services.jsx, beside the markup. */
+  /* Each card's art is a drawn mockup of the actual product, not a photo:
+     `mock` names a scene in components/home/ServiceMockups.jsx and the card
+     renders it live.
+
+       crm     GoHighLevel pipeline board - stages, deal cards, and the
+               conversation inbox the pipeline feeds
+       ai      the workflow builder canvas - trigger node, action nodes and
+               the action settings panel open beside them
+       voice   an AI agent mid-conversation, with the live/booked chips
+       funnel  the drag-and-drop funnel builder, its conversion rail, and
+               the opt-in page it publishes
+
+     The photos these replaced were the problem the whole card had: a team
+     round a laptop is a picture of an office, and it was the same picture
+     whichever service it sat on. A pipeline board is only a pipeline board.
+     The mockups are markup, so they also stay sharp at any size, pick up
+     the brand palette, and cost a few hundred bytes instead of ~60KB each.
+
+     Four builds laid out two per row, then White-Label Support across the
+     full width beneath them - see .svcs-grid and .svcs-cell--wide. Funnels and
+     reporting are one card because they are one engagement: the pages that
+     capture the lead and the view that tells you whether they converted.
+     Both detail pages still exist; this card opens the funnels one, and
+     that page's related shelf carries the reader on to reporting.
+
+     `subs` is what the engagement actually includes. The body says what the
+     service is for; the list says what you get, which is the question the
+     reader has next and the one a one-line card never answered. */
   items: [
     {
-      icon: "target",
       title: "CRM & Sub-account Setup",
-      body: "Leads, pipelines and calendars configured end to end, with numbers, domains and A2P registration handled for you.",
+      body: "Your whole account built before you log in - pipeline stages that match how you really sell, calendars that respect your team's actual availability, and contact records that stay clean as the volume grows.",
+      subs: [
+        "Pipelines & deal stages",
+        "Contacts, tags & custom fields",
+        "Calendars & booking rules",
+        "Numbers, domains & A2P 10DLC",
+        "Migration from your old CRM",
+        "User roles & permissions",
+      ],
       to: "/services/crm-sub-account-setup",
       tone: "#3E8EF7",
-      image: "/img/home/svc-crm.jpg",
-      imageWebp: "/img/home/svc-crm.webp",
+      mock: "crm",
     },
     {
-      icon: "sliders",
       title: "Workflow Automation",
-      body: "Hand-offs between your tools that keep running once they're configured, so the repeat work stops landing on a person.",
+      body: "The hand-offs your team does by hand, rebuilt in the workflow builder - triggers, waits and conditions that keep running on time whether or not anyone remembers.",
+      subs: [
+        "Trigger & action workflows",
+        "Lead routing and assignment",
+        "Appointment reminders & no-show follow-up",
+        "Review and referral requests",
+        "Two-way sync with your other tools",
+        "Internal alerts and task creation",
+      ],
       to: "/services/workflow-automation",
       tone: "#0EA46B",
-      image: "/img/home/why-4.jpg",
-      imageWebp: "/img/home/why-4.webp",
+      mock: "ai",
     },
     {
-      icon: "brain",
       title: "AI Agents & Chatbots",
-      body: "Answer, qualify and book around the clock, in your own tone of voice, with every conversation written back to the CRM.",
+      body: "An agent that picks up the calls, texts and chats you currently miss - qualifying in your own tone of voice, booking straight into the calendar, and writing every conversation back to the contact record.",
+      subs: [
+        "Website & Facebook chat widget",
+        "SMS and missed-call text-back",
+        "Voice AI receptionist",
+        "Qualifying questions & lead scoring",
+        "Live booking into your calendar",
+        "Hand-over to a human on request",
+      ],
       to: "/services/ai-agents-chatbots",
       tone: "#7C5CFC",
-      image: "/img/home/svc-ai.jpg",
-      imageWebp: "/img/home/svc-ai.webp",
+      mock: "voice",
     },
     {
-      icon: "layers",
-      title: "Funnel Design & Builds",
-      body: "High-converting funnels and landing pages mapped to your offer and your pipeline stages.",
+      title: "Funnels & Reporting Dashboards",
+      body: "The pages that capture the lead and the view that tells you whether it worked, built as one job - so every form field lands on a pipeline stage and every stage shows up in the numbers.",
+      subs: [
+        "Landing pages & opt-in funnels",
+        "Order forms, upsells & checkout",
+        "Forms, surveys & quizzes",
+        "Source and campaign attribution",
+        "Conversion & revenue dashboards",
+        "Scheduled reports to your inbox",
+      ],
       to: "/services/funnel-design-builds",
       tone: "#F59E0B",
-      image: "/img/home/post-landing.jpg",
-      imageWebp: "/img/home/post-landing.webp",
+      mock: "funnel",
     },
-
     {
-      icon: "lineChart",
-      title: "Reporting Dashboards",
-      body: "Source, conversion and revenue visible in one place, without anyone exporting a spreadsheet to find out.",
-      to: "/services/reporting-dashboards",
+      /* `wide` puts this one across the full row instead of in a half.
+         Two reasons, and the layout one is the lesser: five cards in a
+         two-column grid leaves a widow. The real reason is that this is
+         the only retainer on the grid - the other four are builds with an
+         end date, this is a team that answers your clients every day - so
+         it reads better as its own band under them than as a fifth peer.
+         See .svcs-cell--wide in services.css. */
+      wide: true,
+      title: "White-Label Support",
+      body: "A 24/7 GoHighLevel helpdesk that answers as your agency. Certified specialists on chat, email, phone and screen-share, under your brand and your support address - so your clients never wait, and never learn we exist.",
+      subs: [
+        "Live chat & email coverage",
+        "New-client onboarding",
+        "Technical GHL troubleshooting",
+        "Call & screen-share support",
+        "Account health monitoring",
+        "Weekly reporting",
+      ],
+      to: "/services/white-label-support",
       tone: "#14B8A6",
-      image: "/img/home/why-3.jpg",
-      imageWebp: "/img/home/why-3.webp",
+      mock: "support",
     },
   ],
 };
@@ -198,6 +263,45 @@ export const SVC_INTEGRATIONS = {
     rows: ["New Lead", "Appointment Booked", "SMS Sent", "Follow Up"],
     /* Marks orbiting the hub. GoHighLevel is the system of record; the
        rest are where a lead arrives from or is written back to. */
+    logos: ["gohighlevel", "twilio", "google-calendar", "google", "zocdoc"],
+  },
+
+  note: "Keep everything in sync",
+};
+
+/* -- 5. Industries we serve ------------------------------------------------ */
+
+export const SVC_INDUSTRIES = {
+  eyebrow: "Industries We Serve",
+  title: "What is your Profession or Service?",
+  lede: "We custom-build systems that fit exactly how your business operates. From tracking leads to handling complex follow-ups, we design for your industry.",
+
+  items: [
+    { name: "Tax Preparation", icon: "calculator", tone: "#3E8EF7" },
+    { name: "Accounting", icon: "barChart", tone: "#0EA46B" },
+    { name: "Bookkeeper", icon: "book", tone: "#F59E0B" },
+    { name: "Notary", icon: "penTool", tone: "#7C5CFC" },
+    { name: "Mortgage Broker", icon: "house", tone: "#E83A59" },
+    { name: "Realtor", icon: "house", tone: "#3E8EF7" },
+    { name: "Insurance Agent", icon: "shield", tone: "#0EA46B" },
+    { name: "Financial Advisor", icon: "trendUp", tone: "#F59E0B" },
+    { name: "Investment Banker", icon: "building", tone: "#7C5CFC" },
+    { name: "Credit Specialist", icon: "creditCard", tone: "#E83A59" },
+    { name: "Consultant", icon: "briefcase", tone: "#3E8EF7" },
+    { name: "Attorney", icon: "scale", tone: "#0EA46B" },
+    { name: "CPA", icon: "calculator", tone: "#F59E0B" },
+    { name: "Roofer", icon: "hammer", tone: "#7C5CFC" },
+    { name: "Retailer", icon: "store", tone: "#E83A59" },
+    { name: "Medical", icon: "activity", tone: "#3E8EF7" },
+    { name: "Marketing Agency", icon: "megaphone", tone: "#F59E0B" },
+    { name: "Logistics", icon: "truck", tone: "#0EA46B" },
+  ],
+
+  cta: { label: "View All Industries", to: "/industries" },
+
+  hub: {
+    title: "Every step, once",
+    rows: ["New Lead", "Appointment Booked", "SMS Sent", "Follow Up"],
     logos: ["gohighlevel", "twilio", "google-calendar", "google", "zocdoc"],
   },
 

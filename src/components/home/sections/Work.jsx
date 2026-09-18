@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import Icon from "@/components/common/Icon.jsx";
 import HaloButton from "../HaloButton.jsx";
 import { HvSection, Reveal } from "../primitives.jsx";
 import { WORK } from "@/data/homeV2";
@@ -16,10 +14,19 @@ import { WORK } from "@/data/homeV2";
  * The list is keyed on the active filter, so switching remounts it and
  * the cards replay their staggered entrance instead of snapping.
  *
- * Each card is one link (the title, stretched over the card), so there is
- * one tab stop per project and its accessible name is the project title.
- * Cards link to that project's own /work/:slug page - see data/work.jsx,
- * which extends these same five projects with the detail-page content.
+ * THE CARDS ARE NOT LINKS. The title used to carry a stretched link over
+ * the whole card, opening that project's /work/:slug page; those pages
+ * carried little more than the card already shows, so the card now simply
+ * shows it. The arrow badge went with the link - an arrow that rotates on
+ * hover and goes nowhere is worse than no arrow.
+ *
+ * The grid therefore has no tab stops in it at all now. The filter buttons
+ * above it and the CTA below it are the only interactive things in the
+ * section, which is what the keyboard order should look like.
+ *
+ * Hover still opens each card's description and tags. That is a reveal,
+ * not a destination - and it is always open on the feature card and on
+ * touch screens, which have no hover (see .hv-works__more).
  */
 export default function Work() {
   const [filter, setFilter] = useState("all");
@@ -65,17 +72,10 @@ export default function Work() {
                   <i aria-hidden="true" />
                   {p.industry}
                 </span>
-                <span className="hv-works__go" aria-hidden="true">
-                  <Icon name="arrowUpRight" />
-                </span>
               </div>
 
               <div className="hv-works__body">
-                <h3 className="hv-works__name">
-                  <Link to={`/work/${p.id}`} className="hv-works__link">
-                    {p.title}
-                  </Link>
-                </h3>
+                <h3 className="hv-works__name">{p.title}</h3>
                 <div className="hv-works__more">
                   <div>
                     <p className="hv-works__desc">{p.body}</p>

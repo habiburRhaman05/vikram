@@ -851,6 +851,96 @@
 /* Two resold copies of the same dashboard, each in another agency's
    colour, fanned at the corner. --brand is set per card from the JSX, so
    the two differ only in hue - which is the point being made. */
+/* -- Support desk: a branded helpdesk queue (ServiceMockups SupportDeskMock)
+   Reuses .hv-mk-wl__brands below for the two rebranded chips at the corner,
+   which is the whole reason this block sits directly above it. Everything
+   here is cqw, like every other scene, so it scales with whatever card or
+   art stage it is dropped into. ------------------------------------------ */
+
+.hv-mk-sd {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6cqw;
+  height: 100%;
+  padding: 2cqw;
+  background: #F4F8F6;
+}
+.hv-mk-sd__top {
+  display: flex;
+  align-items: center;
+  gap: 1.2cqw;
+  padding-bottom: 1.4cqw;
+  border-bottom: .18cqw solid #E2EBE7;
+}
+.hv-mk-sd__logo {
+  flex-shrink: 0;
+  width: 3.2cqw;
+  height: 3.2cqw;
+  border-radius: 1cqw;
+  background: var(--hv-grad-accent);
+}
+/* The "agents online" chip. The dot breathes rather than blinks - at this
+   size a blink reads as an error light. */
+.hv-mk-sd__live {
+  display: flex;
+  align-items: center;
+  gap: .8cqw;
+  margin-left: auto;
+  padding: .7cqw 1.2cqw;
+  border-radius: 10cqw;
+  background: rgba(16, 185, 129, .12);
+  width: 22%;
+}
+.hv-mk-sd__live i {
+  flex-shrink: 0;
+  width: 1.1cqw;
+  height: 1.1cqw;
+  border-radius: 50%;
+  background: var(--hv-accent);
+  animation: hv-mk-sd-pulse 2.4s var(--hv-ease) infinite;
+}
+.hv-mk-sd__live .hv-mk-bar { background: rgba(10, 127, 82, .34); }
+@keyframes hv-mk-sd-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .35; }
+}
+
+.hv-mk-sd__list { display: flex; flex-direction: column; gap: .9cqw; }
+.hv-mk-sd__row {
+  display: flex;
+  align-items: center;
+  gap: 1.2cqw;
+  padding: 1.2cqw 1.4cqw;
+  border-radius: 1.2cqw;
+  background: #fff;
+  box-shadow: 0 .3cqw 1cqw rgba(6, 40, 34, .05);
+}
+.hv-mk-sd__dot {
+  flex-shrink: 0;
+  width: 1.3cqw;
+  height: 1.3cqw;
+  border-radius: 50%;
+  background: var(--hv-accent);
+}
+.hv-mk-sd__row.is-open { background: #FFFBF2; }
+.hv-mk-sd__row.is-open .hv-mk-sd__dot { background: #F5B544; }
+.hv-mk-sd__txt { flex: 1; min-width: 0; display: flex; }
+.hv-mk-sd__tag {
+  flex-shrink: 0;
+  height: 1.8cqw;
+  border-radius: 10cqw;
+  background: #E6EFEA;
+}
+.hv-mk-sd__row.is-open .hv-mk-sd__tag { background: #FAEBCF; }
+
+.hv-mk-sd__meters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1cqw;
+  margin-top: auto;
+}
+.hv-mk-sd__meters b { color: var(--hv-accent-strong); }
+
 .hv-mk-wl__brands {
   position: absolute;
   z-index: 3;
@@ -1115,6 +1205,7 @@
   .hv-mk-flow__edges path,
   .hv-mk-fun__edges path,
   .hv-mk-chip.is-live .hv-mk-chip__dot,
+  .hv-mk-sd__live i,
   .hv-mk-wave i { animation: none; }
   .hv-wwd__card:hover,
   .hv-wwd__card:focus-within { transform: none; }
