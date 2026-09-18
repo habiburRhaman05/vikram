@@ -552,6 +552,25 @@
   .sd-form__row:has(.sd-form__phone) { grid-template-columns: minmax(0, 1fr); }
 }
 
+/* Shown when a submit is refused. Not a field error - those sit under
+   their own field - this is the one line that tells someone who pressed
+   the button and saw nothing move what just happened. */
+.sd-form__summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: var(--hv-s5) 0 0;
+  padding: 12px 14px;
+  border-radius: var(--hv-r-md);
+  border: 1px solid rgba(194, 65, 12, .3);
+  background: rgba(194, 65, 12, .07);
+  font-family: var(--hv-font-body);
+  font-size: .855rem;
+  line-height: 1.5;
+  color: #9A3412;
+}
+.sd-form__summary svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: .15em; }
+
 /* Honeypot: off-canvas rather than display:none, because some bots skip
    fields that are not rendered at all. */
 .sd-form__hp {

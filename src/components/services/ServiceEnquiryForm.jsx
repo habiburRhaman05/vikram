@@ -114,7 +114,11 @@ export default function ServiceEnquiryForm({
   const options = serviceOptions(service);
   const [status, setStatus] = useState("idle"); // idle | sending | done | fallback
   const [step, setStep] = useState(1);
+  /* One plain sentence shown when a submit is refused, so the button press
+     always produces something the visitor can read. */
+  const [summary, setSummary] = useState("");
   const stepHeadRef = useRef(null);
+  const formRef = useRef(null);
   /* The step the focus effect below last acted on. Starts equal to the
      initial step, so no focus moves until the visitor actually changes
      step - see the effect for why the guard is shaped like this. */
@@ -177,22 +181,62 @@ export default function ServiceEnquiryForm({
     if (await trigger(STEP_FIELDS[1], { shouldFocus: true })) setStep(2);
   };
 
+  /* WHY THIS EXISTS: a rejected submit used to do nothing at all.
+     handleSubmit() with only a success callback sets the errors and calls
+     nobody, and on step 2 an error on a step-1 field renders against an
+     input that is no longer on screen - so pressing the button produced no
+     message, no movement and no request. "The form doesn't submit."
+
+     Now every rejection goes somewhere visible: if anything in step 1 is
+     at fault the form walks back to step 1 and focuses the field, and
+     otherwise the first bad field on this step takes focus. `summary`
+     backs that up with a line the visitor can actually read, for the case
+     where the offending field is below the fold. */
+  const onInvalid = (invalid) => {
+    const firstStepOne = STEP_FIELDS[1].find((f) => invalid[f]);
+
+    if (firstStepOne) {
+      setStep(1);
+      setSummary("Something on the first step needs fixing - we've taken you back to it.");
+      /* After the step-1 inputs have rendered again, not before. */
+      requestAnimationFrame(() => {
+        formRef.current?.querySelector(`[name="${firstStepOne}"]`)?.focus();
+      });
+      return;
+    }
+
+    setSummary("Please check the highlighted fields and try again.");
+    const firstStepTwo = STEP_FIELDS[2].find((f) => invalid[f]);
+    if (firstStepTwo) formRef.current?.querySelector(`[name="${firstStepTwo}"]`)?.focus();
+
+    if (import.meta.env.DEV) {
+      console.warn("[ServiceEnquiryForm] submit rejected:", Object.keys(invalid).join(", "), invalid);
+    }
+  };
+
   /* One <form>, two behaviours. Enter inside step 1 has to advance rather
      than submit - a browser fires submit on Enter in any text input, and
      without this the first step would try to send a half-filled lead. */
   const onFormSubmit = (ev) => {
+    ev.preventDefault();
+    setSummary("");
     if (step === 1) {
-      ev.preventDefault();
       goNext();
       return;
     }
-    handleSubmit(onValid)(ev);
+    handleSubmit(onValid, onInvalid)(ev);
   };
 
-  const onValid = async (data, ev) => {
+  const onValid = async (data) => {
     /* Honeypot: hidden from people and screen readers, filled by bots. Not
-       part of the zod schema - it isn't a real field, just a trap. */
-    if (ev?.currentTarget?.company_website?.value) return;
+       part of the zod schema - it isn't a real field, just a trap.
+
+       Read off the form node rather than the submit event. handleSubmit
+       awaits validation before calling this, and React has nulled the
+       synthetic event's currentTarget by then - so the old
+       `ev.currentTarget.company_website` was always undefined and the trap
+       never actually fired. */
+    if (formRef.current?.elements?.company_website?.value) return;
 
     const dialedCountry = countryByCode(data.country);
     const lead = {
@@ -366,7 +410,7 @@ export default function ServiceEnquiryForm({
                 </div>
               </div>
             ) : (
-              <form onSubmit={onFormSubmit} noValidate>
+              <form ref={formRef} onSubmit={onFormSubmit} noValidate>
                 <div className="sd-form__card-head">
                   <div>
                     <span>Free consultation for</span>
@@ -597,6 +641,17 @@ export default function ServiceEnquiryForm({
                   </div>
                 )}
 
+                {/* Only ever set by a refused submit, and cleared at the top
+                    of the next one. role="alert" so it is announced the
+                    moment it appears - the visitor pressed a button and is
+                    waiting to find out what happened. */}
+                {summary && (
+                  <p className="sd-form__summary" role="alert">
+                    <Icon name="close" aria-hidden="true" strokeWidth={2.6} />
+                    {summary}
+                  </p>
+                )}
+
                 {/* Honeypot - hidden from people and assistive tech, not a
                     registered react-hook-form field. Outside both steps, so
                     it is in the DOM for the whole time a bot is filling the
@@ -625,7 +680,7 @@ export default function ServiceEnquiryForm({
                     className="hv-btn hv-btn--primary hv-btn--lg sd-form__submit"
                     disabled={status === "sending"}
                   >
-                    {step === 1 ? "Continue" : status === "sending" ? "Sending..." : "Get Free Consultation"}
+                    {step === 1 ? "Continue" : status === "sending" ? "Sending..." : "Send Request"}
                     {status !== "sending" && <Icon name="arrowRight" aria-hidden="true" />}
                   </button>
                 </div>
