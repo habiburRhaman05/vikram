@@ -33,7 +33,7 @@ export default function Privacy() {
         ]}
       />
 
-      <PageHero crumb="Privacy Policy" title="Privacy Policy" lede="How we collect, use and protect information you share with us." />
+      <PageHero crumb="Privacy Policy" title="Privacy Policy" lede="How we collect, use and protect information you share with us." center={true} />
 
       <Section>
         <LegalBody sections={PRIVACY_SECTIONS} />

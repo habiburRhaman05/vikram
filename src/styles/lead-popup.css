@@ -338,7 +338,8 @@
   color: #35544D;
   /* An address someone typed is the one string here with no spaces in it,
      so it is the one that can push the panel wider than the dialog. */
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 .lp__next svg {
   width: 17px;

@@ -205,8 +205,8 @@
 .home-v2 .wb-hero,
 .home-v2 .wl-hero,
 .home-v2 .wls-hero {
-  margin-top: calc(-1 * var(--header-h, 80px));
-  padding-top: calc(var(--header-h, 80px) + clamp(8px, 1.5vw, 20px));
+  margin-top: calc(-1 * var(--header-base-h, var(--header-h, 80px)));
+  padding-top: calc(var(--header-base-h, var(--header-h, 80px)) + clamp(8px, 1.5vw, 20px));
 }
 
 /* The shared .page-hero (Contact, Book, ...) used to carry its own flat

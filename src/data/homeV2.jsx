@@ -710,10 +710,9 @@ export const CLOSING = {
   /* Anchors back up to the "How We Work" pipeline section (id="how-we-work")
      on this same page, so someone not ready to book yet can see the process
      first. A plain hash href, not a router Link - it never leaves "/". */
-  explore: { label: "Explore the Onboarding Journey", href: "#how-we-work", icon: "trendUp" },
-  /* Anchors to the Services tab section (id="services") on this same
-     page - same reasoning as `explore` above, just a different section. */
-  secondary: { label: "Browse Our Services", href: "#services" },
+  explore: { label: "Explore the Onboarding Journey", href: "/#how-we-work", icon: "trendUp" },
+  /* Points to the Services hub page. */
+  secondary: { label: "Browse Our Services", to: "/services" },
   note: "Let's create something amazing together!",
   /* Short reassurances shown under the CTA row - the kind of quick,
      low-commitment facts that remove hesitation right at the decision
@@ -731,10 +730,14 @@ export const CLOSING = {
 export const FOOTER_COLUMNS = [
   {
     title: "Services",
-    /* Built from SERVICE_LINEUP itself rather than re-typed, so a footer
-       link can never drift from the real /services/:slug route the hero
-       tiles and the Services tab bar already use for the same service. */
-    links: SERVICE_LINEUP.map((s) => ({ label: s.label, to: s.to })),
+    links: [
+      { label: "CRM & Sub-account Setup", to: "/services/crm-sub-account-setup" },
+      { label: "AI Agents & Chatbots", to: "/services/ai-agents-chatbots" },
+      { label: "Workflow Automation", to: "/services/workflow-automation" },
+      { label: "Funnel Design & Builds", to: "/services/funnel-design-builds" },
+      { label: "Email & SMS Campaigns", to: "/services/email-sms-campaigns" },
+      { label: "White-Label Support", to: "/services/white-label-support" },
+    ],
   },
   {
     title: "Company",
@@ -751,7 +754,7 @@ export const FOOTER_COLUMNS = [
       { label: "Book a Consultation", to: "/book" },
       { label: "Plans & Pricing", to: "/pricing" },
       { label: "FAQ", href: "/#faq" },
-      { label: "Our Services", href: "/#services" },
+      { label: "Our Services", to: "/services" },
     ],
   },
   /* There was a fourth "Legal" column here, holding exactly the two links the

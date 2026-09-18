@@ -679,6 +679,10 @@
   line-height: 1.5;
   color: var(--hv-text);
 }
+.sd-form__result-next li span {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
 .sd-form__result-next svg { width: 16px; height: 16px; color: var(--hv-accent-strong); flex-shrink: 0; margin-top: 2px; }
 
 .sd-form__result h3 {
@@ -753,7 +757,7 @@
 /* An address someone typed is the one string on this card with no spaces
    in it, so it is the one that can push the panel wider than the card. */
 .sd-form__result-next,
-.sd-form__result p { overflow-wrap: anywhere; }
+.sd-form__result p { overflow-wrap: break-word; word-break: break-word; }
 
 @media (prefers-reduced-motion: reduce) {
   .sd-form__field input,

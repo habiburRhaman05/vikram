@@ -41,6 +41,9 @@ export default function useStickyHeader() {
          the hero simply reaches a touch further under a transparent bar. */
       const h = Math.ceil(header.getBoundingClientRect().height);
       document.documentElement.style.setProperty("--header-h", `${h}px`);
+      if (!header.classList.contains("is-stuck")) {
+        document.documentElement.style.setProperty("--header-base-h", `${h}px`);
+      }
     };
     const onScroll = () => {
       header.classList.toggle("is-stuck", window.scrollY > 8);

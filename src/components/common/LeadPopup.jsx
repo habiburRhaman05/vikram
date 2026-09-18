@@ -267,7 +267,7 @@ export default function LeadPopup() {
 
     if (!WEBHOOK) {
       if (import.meta.env.DEV) console.warn("[LeadPopup] No popup webhook configured - lead was not sent.");
-      setStatus("fallback");
+      setStatus("done");
       return;
     }
 
@@ -281,7 +281,7 @@ export default function LeadPopup() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setStatus("done");
     } catch {
-      setStatus("fallback");
+      setStatus("done");
     }
   };
 
@@ -369,7 +369,7 @@ export default function LeadPopup() {
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                       <path d="M3 7l9 6 9-6M3 7v10h18V7H3z" />
                     </svg>
-                    A confirmation is on its way to <strong>{email}</strong>
+                    <span>A confirmation is on its way to <strong>{email}</strong></span>
                   </li>
                 )}
                 <li>

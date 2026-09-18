@@ -23,7 +23,7 @@ export default function ClosingCta() {
             <Btn href={CLOSING.explore.href} variant="outline" size="lg" iconAfter={CLOSING.explore.icon}>
               {CLOSING.explore.label}
             </Btn>
-            <Btn href={CLOSING.secondary.href} variant="ghost" size="lg">
+            <Btn to={CLOSING.secondary.to} href={CLOSING.secondary.href} variant="ghost" size="lg">
               {CLOSING.secondary.label}
             </Btn>
           </BtnRow>

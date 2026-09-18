@@ -33,7 +33,7 @@ export default function Terms() {
         ]}
       />
 
-      <PageHero crumb="Terms of Service" title="Terms of Service" lede="The terms that govern use of this website and the GHLevelUp platform." />
+      <PageHero crumb="Terms of Service" title="Terms of Service" lede="The terms that govern use of this website and the GHLevelUp platform." center={true} />
 
       <Section>
         <LegalBody sections={TERMS_SECTIONS} />

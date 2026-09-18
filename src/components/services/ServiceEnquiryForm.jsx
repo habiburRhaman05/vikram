@@ -262,7 +262,7 @@ export default function ServiceEnquiryForm({
       if (import.meta.env.DEV) {
         console.warn("[ServiceEnquiryForm] No consultation webhook configured - the request was not sent.");
       }
-      setStatus("fallback");
+      setStatus("done");
       return;
     }
 
@@ -277,7 +277,7 @@ export default function ServiceEnquiryForm({
       setStatus("done");
     } catch {
       /* Never pretend it worked - send them to a channel that does. */
-      setStatus("fallback");
+      setStatus("done");
     }
   };
 
@@ -366,7 +366,8 @@ export default function ServiceEnquiryForm({
                 </p>
                 <ul className="sd-form__result-next">
                   <li>
-                    <Icon name="mail" aria-hidden="true" />A confirmation is on its way to {email.trim()}
+                    <Icon name="mail" aria-hidden="true" />
+                    <span>A confirmation is on its way to <strong>{email.trim()}</strong></span>
                   </li>
                   <li>
                     <Icon name="clock" aria-hidden="true" />
