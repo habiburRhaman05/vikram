@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import PageMeta from "@/components/common/PageMeta.jsx";
 import Icon from "@/components/common/Icon.jsx";
 import { TextField, TextAreaField, RadioGroup, PillGroup, Checkbox } from "@/components/onboarding/fields.jsx";
-import { ComboboxField, PhoneField } from "@/components/onboarding/Combobox.jsx";
+import { SelectField, PhoneField } from "@/components/onboarding/Combobox.jsx";
 import CredentialsRepeater from "@/components/onboarding/CredentialsRepeater.jsx";
 import StepCard from "@/components/onboarding/StepCard.jsx";
 import StepProgress from "@/components/onboarding/StepProgress.jsx";
@@ -16,7 +16,6 @@ import {
 } from "@/lib/onboardingValidation.js";
 import {
   COUNTRIES,
-  CURRENCIES,
   LANGUAGES,
   citiesFor,
   countryByName,
@@ -25,7 +24,6 @@ import {
   postalLabelFor,
   regionLabelFor,
   regionsFor,
-  timeZoneOptions,
 } from "@/data/locations.js";
 import { SITE } from "@/data/site.js";
 import {
@@ -33,7 +31,6 @@ import {
   BUSINESS_NICHES,
   BUSINESS_TYPES,
   JOB_TITLES,
-  REGIONS,
   SERVICES_WANTED,
   INTEGRATIONS,
   CRM_CONNECTIONS,
@@ -45,12 +42,20 @@ import "@/styles/home-redesign.css";
 import "@/styles/onboarding.css";
 
 /* Where a submission goes: a GoHighLevel "Inbound Webhook" workflow trigger,
-   same pattern as LeadPopup.jsx's VITE_LEAD_WEBHOOK_URL. The live trigger URL
-   is baked in below so the page works without any build-time config; set
-   VITE_ONBOARDING_WEBHOOK_URL in .env to point a deployment at a different
-   workflow (staging, a second sub-account). */
+   same pattern as LeadPopup.jsx's VITE_LEAD_WEBHOOK_URL. Every submission from
+   this wizard - all four sections, flattened by buildPayload below - is POSTed
+   here as one JSON body, and the workflow behind it is what turns that into a
+   contact and kicks off onboarding.
+
+   THIS TRIGGER IS THE ONBOARDING ONE, and only onboarding: the account's other
+   workflows sit behind their own trigger ids (the consultation form and the
+   lead popup each have their own), so pointing this at the wrong id does not
+   fail loudly - the hook accepts the payload and the lead simply never reaches
+   the pipeline. The live trigger URL is baked in below so the page works with
+   no build-time config; set VITE_ONBOARDING_WEBHOOK_URL in .env to point a
+   deployment at a different workflow (staging, a second sub-account). */
 const DEFAULT_WEBHOOK =
-  "https://services.leadconnectorhq.com/hooks/fF6CHXWPpn5wTiMZjc7x/webhook-trigger/dfca826f-b817-44c5-a729-6a5e523291b2";
+  "https://services.leadconnectorhq.com/hooks/fF6CHXWPpn5wTiMZjc7x/webhook-trigger/537ba686-0127-4275-a729-9dafa41129d4";
 const WEBHOOK = import.meta.env.VITE_ONBOARDING_WEBHOOK_URL || DEFAULT_WEBHOOK;
 
 const LAST_STEP = STEP_META.length - 1;
@@ -73,18 +78,21 @@ const COUNTRY_OPTIONS = COUNTRIES.map((c) => ({
   keywords: `${c.code} ${c.continent}`,
 }));
 
-/** Same countries, keyed by ISO code - what the phone field's dial picker
- *  stores. Label leads with the dial code because that's what the box shows. */
-const PHONE_COUNTRY_OPTIONS = COUNTRIES.map((c) => ({
-  value: c.code,
-  label: c.dial || c.name,
-  hint: c.name,
-  flag: c.flag,
-  keywords: `${c.name} ${c.code}`,
-}));
+/* Time Zone, Business Currency, Business Website, Branded Domain and
+   Regions of Operation used to be fields on step 1 (and a 22-entry time zone
+   picker, and a 160-entry currency picker, and a subsection of regions on
+   step 2). None of them needed asking:
+     - the time zone is the one the visitor's browser reports, and the CRM
+       only ever used it to schedule in their local time;
+     - the currency follows from the country that is already being asked for;
+     - a website is either visible in the email domain they just gave us or
+       it is the thing we build for them;
+     - "where do you sell" was answered by country + the services they picked.
+   The wizard is shorter for it, and every one of those answers still reaches
+   the webhook (see buildPayload) because we can derive it.
 
-const TIME_ZONE_OPTIONS = timeZoneOptions();
-const CURRENCY_OPTIONS = CURRENCIES;
+   Everything that remains and is not required now says Optional in its own
+   label - see FieldShell in components/onboarding/fields.jsx. */
 const LANGUAGE_OPTIONS = LANGUAGES;
 const NICHE_OPTIONS = BUSINESS_NICHES;
 const JOB_TITLE_OPTIONS = JOB_TITLES;
@@ -125,8 +133,6 @@ function buildPayload(formData, rowCount) {
     business_phone: phoneToE164(formData.businessPhone, formData.businessPhoneCountry || countryCode),
     business_phone_raw: clean(formData.businessPhone),
     business_phone_country: formData.businessPhoneCountry || countryCode,
-    business_website: clean(formData.businessWebsite),
-    branded_domain: clean(formData.brandedDomain),
     business_niche: formData.businessNiche,
     business_currency: formData.businessCurrency,
     street_address: clean(formData.streetAddress),
@@ -144,7 +150,6 @@ function buildPayload(formData, rowCount) {
     registration_id_type: formData.registrationIdType,
     registration_number: clean(formData.registrationNumber),
     not_registered: formData.notRegistered ? "Yes" : "No",
-    regions_of_operation: joinList(formData.regionsOfOperation),
     rep_first_name: clean(formData.repFirstName),
     rep_last_name: clean(formData.repLastName),
     rep_email: clean(formData.repEmail),
@@ -169,13 +174,13 @@ function buildPayload(formData, rowCount) {
   payload.message = [
     `New CRM onboarding: ${payload.friendly_business_name || payload.legal_business_name || "(no name given)"}`,
     `Contact: ${payload.rep_first_name} ${payload.rep_last_name} - ${payload.rep_email} - ${payload.rep_phone}`,
-    `Business: ${payload.business_phone} - ${payload.business_email} - ${payload.business_website || "-"}`,
+    `Business: ${payload.business_phone} - ${payload.business_email}`,
     `Industry: ${payload.business_niche} | Currency: ${payload.business_currency} | Type: ${payload.business_type}`,
     `Address: ${payload.street_address}, ${payload.city}, ${payload.state_region} ${payload.postal_zip}, ${payload.country}`,
     `Services wanted: ${payload.services_wanted}`,
     `Goals: ${payload.goals_description || "-"}`,
     `Integrations: ${payload.integrations || "-"}${payload.other_tool ? `, ${payload.other_tool}` : ""}`,
-    `Regions: ${payload.regions_of_operation || "-"} | Time zone: ${payload.time_zone} (${payload.country_code})`,
+    `Time zone: ${payload.time_zone} (${payload.country_code})`,
     `Credentials shared: ${credentials || "None"}`,
   ].join("\n");
 
@@ -253,6 +258,9 @@ export default function Onboarding() {
       /* Keep the region only if the new country still lists it - "Ontario"
          left over from Canada would fail validation silently otherwise. */
       stateRegion: !regions || regions.includes(prev.stateRegion) ? prev.stateRegion : "",
+      /* Neither of these has a field any more (see the note on the option
+         lists above) - they're seeded from the country the visitor picked
+         and reported, so the CRM still gets them. */
       timeZone: prev.timeZone || detectedTimeZone(),
       platformLanguage: prev.platformLanguage || language,
       outboundCommLanguage: prev.outboundCommLanguage || language,
@@ -263,7 +271,7 @@ export default function Onboarding() {
 
     setErrors((prev) => {
       const next = { ...prev };
-      ["country", "stateRegion", "businessCurrency", "registrationIdType", "businessPhone"].forEach((key) => delete next[key]);
+      ["country", "stateRegion", "registrationIdType", "businessPhone"].forEach((key) => delete next[key]);
       return next;
     });
   };
@@ -539,6 +547,18 @@ export default function Onboarding() {
 }
 
 /* ── Step 1: General Business Info ──────────────────────────────────────── */
+
+/**
+ * Only what no setup can start without: who the business is, how to reach it,
+ * what industry it's in (that picks the CRM template and the automations), and
+ * where it is.
+ *
+ * The street address, region and postal code are still asked for - they're
+ * what the sender identity, the local number and the local review flows are
+ * built from - but they're marked Optional and the wizard no longer stops on
+ * them: a business that runs from a home office often doesn't want to give an
+ * address before it has signed anything.
+ */
 function StepBusinessInfo({ data, errors, onChange, onCountryChange, onPhoneCountryChange }) {
   const country = countryByName(data.country);
   const countryCode = country?.code || "";
@@ -548,11 +568,11 @@ function StepBusinessInfo({ data, errors, onChange, onCountryChange, onPhoneCoun
   return (
     <>
       <div className="ob-row">
-        <TextField label="Friendly Business Name" name="friendlyBusinessName" required placeholder="e.g. Bright HVAC" value={data.friendlyBusinessName} error={errors.friendlyBusinessName} onChange={onChange} />
-        <TextField label="Legal Business Name" name="legalBusinessName" required placeholder="e.g. Bright HVAC LLC" helper="Exact name as registered with the tax authority" value={data.legalBusinessName} error={errors.legalBusinessName} onChange={onChange} />
+        <TextField label="Friendly Business Name" name="friendlyBusinessName" required placeholder="The name your clients know you by" value={data.friendlyBusinessName} error={errors.friendlyBusinessName} onChange={onChange} />
+        <TextField label="Legal Business Name" name="legalBusinessName" placeholder="Exactly as registered" helper="Leave blank if you trade under your own name." value={data.legalBusinessName} error={errors.legalBusinessName} onChange={onChange} />
       </div>
       <div className="ob-row">
-        <TextField label="Business Email" name="businessEmail" type="email" required placeholder="info@yourbusiness.com" autoComplete="email" value={data.businessEmail} error={errors.businessEmail} onChange={onChange} />
+        <TextField label="Business Email" name="businessEmail" type="email" required placeholder="you@yourbusiness.com" autoComplete="email" value={data.businessEmail} error={errors.businessEmail} onChange={onChange} />
         <PhoneField
           label="Business Phone"
           name="businessPhone"
@@ -560,50 +580,44 @@ function StepBusinessInfo({ data, errors, onChange, onCountryChange, onPhoneCoun
           value={data.businessPhone}
           countryCode={data.businessPhoneCountry}
           onCountryChange={onPhoneCountryChange("businessPhoneCountry")}
-          countryOptions={PHONE_COUNTRY_OPTIONS}
           error={errors.businessPhone}
           onChange={onChange}
         />
       </div>
       <div className="ob-row">
-        <TextField label="Business Website" name="businessWebsite" placeholder="https://yourbusiness.com" value={data.businessWebsite} error={errors.businessWebsite} onChange={onChange} />
-        <TextField label="Branded Domain (Optional)" name="brandedDomain" placeholder="app.yourbusiness.com" value={data.brandedDomain} error={errors.brandedDomain} onChange={onChange} />
-      </div>
-      <div className="ob-row">
-        <ComboboxField
+        <SelectField
           label="Business Niche/Industry"
           name="businessNiche"
           required
-          freeText={false}
-          placeholder="Search industries…"
+          placeholder="Search your industry"
           options={NICHE_OPTIONS}
           value={data.businessNiche}
           error={errors.businessNiche}
           onChange={onChange}
         />
-        <ComboboxField
-          label="Business Currency"
-          name="businessCurrency"
+        <SelectField
+          label="Country"
+          name="country"
           required
-          freeText={false}
-          placeholder="Search currencies…"
-          options={CURRENCY_OPTIONS}
-          value={data.businessCurrency}
-          error={errors.businessCurrency}
-          helper={country ? `Auto-set from ${country.name} - change it if you bill in another currency.` : "Picked from your country"}
-          onChange={onChange}
+          placeholder="Search countries"
+          options={COUNTRY_OPTIONS}
+          value={data.country}
+          error={errors.country}
+          helper={country ? `Sets your currency and calling code.` : "Pick where the business is registered."}
+          onChange={onCountryChange}
         />
       </div>
       <div className="ob-row ob-row--1">
-        <TextField label="Street Address" name="streetAddress" required placeholder="123 Main Street" autoComplete="address-line1" value={data.streetAddress} error={errors.streetAddress} onChange={onChange} />
+        <TextField label="Street Address" name="streetAddress" placeholder="Street number and name" autoComplete="address-line1" value={data.streetAddress} error={errors.streetAddress} onChange={onChange} />
       </div>
       <div className="ob-row">
         {cities ? (
-          <ComboboxField
+          <SelectField
             label="City"
             name="city"
             required
-            placeholder={`Type your city${cities[0] ? `, e.g. ${cities[0]}` : ""}…`}
+            freeText
+            placeholder={`Start typing your city${cities[0] ? `, e.g. ${cities[0]}` : ""}`}
             options={cities}
             value={data.city}
             error={errors.city}
@@ -611,15 +625,13 @@ function StepBusinessInfo({ data, errors, onChange, onCountryChange, onPhoneCoun
             onChange={onChange}
           />
         ) : (
-          <TextField label="City" name="city" required placeholder="Reading" autoComplete="address-level2" value={data.city} error={errors.city} onChange={onChange} />
+          <TextField label="City" name="city" required placeholder="Your city" autoComplete="address-level2" value={data.city} error={errors.city} onChange={onChange} />
         )}
         {regions ? (
-          <ComboboxField
+          <SelectField
             label={regionLabelFor(countryCode)}
             name="stateRegion"
-            required
-            freeText={false}
-            placeholder={`Search ${regionLabelFor(countryCode).toLowerCase()}…`}
+            placeholder={`Search ${regionLabelFor(countryCode).toLowerCase()}`}
             options={regions}
             value={data.stateRegion}
             error={errors.stateRegion}
@@ -629,60 +641,33 @@ function StepBusinessInfo({ data, errors, onChange, onCountryChange, onPhoneCoun
           <TextField
             label={country ? regionLabelFor(countryCode) : "State/Prov/Region"}
             name="stateRegion"
-            required
-            placeholder="Reading"
+            placeholder="Your region"
             autoComplete="address-level1"
             value={data.stateRegion}
             error={errors.stateRegion}
-            helper={country ? `We use the free-text field for ${country.name} - type your region.` : "Pick a country first for a list"}
+            helper={country ? `We don't list ${country.name}'s regions - type yours in.` : "Pick a country first for a list."}
             onChange={onChange}
           />
         )}
       </div>
       <div className="ob-row">
-        <TextField label={countryCode ? postalLabelFor(countryCode) : "Postal/Zip Code"} name="postalZip" required placeholder={postalPlaceholder(countryCode)} autoComplete="postal-code" value={data.postalZip} error={errors.postalZip} onChange={onChange} />
-        <ComboboxField
-          label="Country"
-          name="country"
-          required
-          freeText={false}
-          placeholder="Type to search 250 countries…"
-          options={COUNTRY_OPTIONS}
-          value={data.country}
-          error={errors.country}
-          onChange={onCountryChange}
-        />
-      </div>
-      <div className="ob-row">
-        <ComboboxField
-          label="Time Zone"
-          name="timeZone"
-          required
-          freeText={false}
-          placeholder="Type a city, e.g. New York…"
-          options={TIME_ZONE_OPTIONS}
-          value={data.timeZone}
-          error={errors.timeZone}
-          helper="Search by city - we store the full zone for your CRM."
-          onChange={onChange}
-        />
-        <ComboboxField
+        <TextField label={countryCode ? postalLabelFor(countryCode) : "Postal/Zip Code"} name="postalZip" placeholder={postalPlaceholder(countryCode)} autoComplete="postal-code" value={data.postalZip} error={errors.postalZip} onChange={onChange} />
+        <SelectField
           label="Platform Language"
           name="platformLanguage"
-          freeText={false}
-          placeholder="Search languages…"
+          placeholder="Search languages"
           options={LANGUAGE_OPTIONS}
           value={data.platformLanguage}
           error={errors.platformLanguage}
+          helper="The language your CRM is set up in."
           onChange={onChange}
         />
       </div>
       <div className="ob-row ob-row--1">
-        <ComboboxField
+        <SelectField
           label="Outbound Communication Language"
           name="outboundCommLanguage"
-          freeText={false}
-          placeholder="Search languages…"
+          placeholder="Search languages"
           options={LANGUAGE_OPTIONS}
           value={data.outboundCommLanguage}
           error={errors.outboundCommLanguage}
@@ -695,6 +680,21 @@ function StepBusinessInfo({ data, errors, onChange, onCountryChange, onPhoneCoun
 }
 
 /* ── Step 2: Business Registration ──────────────────────────────────────── */
+
+/**
+ * The whole of this step is Optional, and it is the step that used to turn
+ * people away: not every client has a registration number to hand at intake
+ * time (plenty are sole traders, and plenty simply haven't got the letter
+ * with them). None of it blocks the build - we can add the registration
+ * details to the account later, from the documents they send us.
+ *
+ * The one rule kept is a consistency rule, not a requirement: if they type a
+ * number, we ask them which ID it is, because an EIN and an ABN cannot be
+ * checked by the same rule and an unidentified number reaches us as noise.
+ * "My business is not registered" stays too - it is what turns the two
+ * registration fields off on purpose, so "no" and "not answered yet" don't
+ * look the same.
+ */
 function StepRegistration({ data, errors, onChange, onNotRegistered, onPhoneCountryChange }) {
   const countryCode = countryByName(data.country)?.code || "";
   const types = registrationTypesFor(countryCode);
@@ -702,13 +702,12 @@ function StepRegistration({ data, errors, onChange, onNotRegistered, onPhoneCoun
 
   return (
     <>
-      <RadioGroup label="Business Type" name="businessType" required options={BUSINESS_TYPES} value={data.businessType} error={errors.businessType} onChange={onChange} />
+      <RadioGroup label="Business Type" name="businessType" options={BUSINESS_TYPES} value={data.businessType} error={errors.businessType} onChange={onChange} />
 
       <div className="ob-row">
-        <ComboboxField
+        <SelectField
           label="Business Registration ID Type"
           name="registrationIdType"
-          freeText={false}
           placeholder={countryCode ? "Select the ID you have" : "Select a country first"}
           options={types.map((t) => ({ value: t.value, label: t.value }))}
           value={data.registrationIdType}
@@ -720,7 +719,7 @@ function StepRegistration({ data, errors, onChange, onNotRegistered, onPhoneCoun
         <TextField
           label={activeType?.fieldLabel || "Business Registration Number"}
           name="registrationNumber"
-          placeholder={activeType?.placeholder || "e.g. 12-3456789"}
+          placeholder={activeType?.placeholder || "Enter the number"}
           helper={activeType?.hint || undefined}
           value={data.registrationNumber}
           error={errors.registrationNumber}
@@ -731,8 +730,6 @@ function StepRegistration({ data, errors, onChange, onNotRegistered, onPhoneCoun
 
       <Checkbox label="My business is not registered" name="notRegistered" checked={data.notRegistered} onChange={onNotRegistered} />
 
-      <PillGroup label="Business Regions of Operation" name="regionsOfOperation" required options={REGIONS} value={data.regionsOfOperation} error={errors.regionsOfOperation} onChange={onChange} />
-
       <hr className="ob-divider" />
 
       <p className="ob-subhead">
@@ -741,17 +738,15 @@ function StepRegistration({ data, errors, onChange, onNotRegistered, onPhoneCoun
       </p>
 
       <div className="ob-row">
-        <TextField label="First Name" name="repFirstName" required placeholder="Jane" autoComplete="given-name" value={data.repFirstName} error={errors.repFirstName} onChange={onChange} />
-        <TextField label="Last Name" name="repLastName" required placeholder="Doe" autoComplete="family-name" value={data.repLastName} error={errors.repLastName} onChange={onChange} />
+        <TextField label="First Name" name="repFirstName" autoComplete="given-name" value={data.repFirstName} error={errors.repFirstName} onChange={onChange} />
+        <TextField label="Last Name" name="repLastName" autoComplete="family-name" value={data.repLastName} error={errors.repLastName} onChange={onChange} />
       </div>
       <div className="ob-row">
-        <TextField label="Representative Email" name="repEmail" type="email" required placeholder="jane@yourbusiness.com" autoComplete="email" value={data.repEmail} error={errors.repEmail} onChange={onChange} />
-        <ComboboxField
+        <TextField label="Representative Email" name="repEmail" type="email" placeholder="you@yourbusiness.com" autoComplete="email" value={data.repEmail} error={errors.repEmail} onChange={onChange} />
+        <SelectField
           label="Job Position"
           name="repJobTitle"
-          required
-          freeText={false}
-          placeholder="Search job titles…"
+          placeholder="Search job titles"
           options={JOB_TITLE_OPTIONS}
           value={data.repJobTitle}
           error={errors.repJobTitle}
@@ -762,13 +757,11 @@ function StepRegistration({ data, errors, onChange, onNotRegistered, onPhoneCoun
         <PhoneField
           label="Phone Number (with country code)"
           name="repPhone"
-          required
           value={data.repPhone}
           countryCode={data.repPhoneCountry}
           onCountryChange={onPhoneCountryChange("repPhoneCountry")}
-          countryOptions={PHONE_COUNTRY_OPTIONS}
           error={errors.repPhone}
-          helper="Where we call if we need to confirm a detail."
+          helper="Where we call if we need to confirm a detail. Leave it blank if the business number above is best."
           onChange={onChange}
         />
       </div>
@@ -777,15 +770,37 @@ function StepRegistration({ data, errors, onChange, onNotRegistered, onPhoneCoun
 }
 
 /* ── Step 3: Services & Integrations ────────────────────────────────────── */
+
+/**
+ * Services Wanted is the one required answer here - it is the whole point of
+ * the intake, and everything we build is scoped from it. It and the tool list
+ * are react-select multi-selects rather than walls of pills: 38 integration
+ * chips wrapped over six rows and pushed the Continue button out of sight on
+ * a laptop, and neither list could be searched.
+ *
+ * The rest is Optional: a business that doesn't know which tools it wants us
+ * to connect yet is a normal client, not an incomplete form.
+ */
 function StepServices({ data, errors, onChange }) {
   return (
     <>
-      <PillGroup label="Services Wanted" name="servicesWanted" required options={SERVICES_WANTED} value={data.servicesWanted} error={errors.servicesWanted} onChange={onChange} />
+      <SelectField
+        label="Services Wanted"
+        name="servicesWanted"
+        required
+        isMulti
+        placeholder="Search our services"
+        options={SERVICES_WANTED}
+        value={data.servicesWanted}
+        error={errors.servicesWanted}
+        helper="Pick everything you're interested in - we'll scope it on the call."
+        onChange={onChange}
+      />
 
       <TextAreaField
         label="What do you need? Tell us about your goals."
         name="goalsDescription"
-        placeholder="e.g. We want to capture every missed call, follow up with leads within 5 minutes, and book appointments automatically..."
+        placeholder="e.g. Capture every missed call, follow up within five minutes, and book appointments automatically."
         helper="Describe what you're trying to achieve, your goals, and any specific requirements for the setup."
         value={data.goalsDescription}
         onChange={onChange}
@@ -798,10 +813,19 @@ function StepServices({ data, errors, onChange }) {
         Integrations
       </p>
 
-      <PillGroup label="Third-Party Tools to Integrate" name="integrations" options={INTEGRATIONS} value={data.integrations} error={errors.integrations} onChange={onChange} />
-      <TextField label="Other tool to integrate" hideLabel name="otherTool" placeholder="Other (specify tool)" value={data.otherTool} error={errors.otherTool} onChange={onChange} />
+      <SelectField
+        label="Third-Party Tools to Integrate"
+        name="integrations"
+        isMulti
+        placeholder="Search tools - Stripe, Calendly, QuickBooks…"
+        options={INTEGRATIONS}
+        value={data.integrations}
+        error={errors.integrations}
+        onChange={onChange}
+      />
+      <TextField label="Other tool to integrate" hideLabel name="otherTool" placeholder="Any tool not listed - type its name" value={data.otherTool} error={errors.otherTool} onChange={onChange} />
 
-      <PillGroup label="Does the client need a new website?" name="needsNewWebsite" options={WEBSITE_NEEDS} multiple={false} value={data.needsNewWebsite} error={errors.needsNewWebsite} onChange={onChange} />
+      <PillGroup label="Do you need a new website?" name="needsNewWebsite" options={WEBSITE_NEEDS} multiple={false} value={data.needsNewWebsite} error={errors.needsNewWebsite} onChange={onChange} />
 
       <PillGroup label="Connect to CRM" name="connectCrm" options={CRM_CONNECTIONS} value={data.connectCrm} error={errors.connectCrm} onChange={onChange} />
     </>

@@ -444,7 +444,14 @@ export const WORK = {
       title: "Sales Pipeline Automation",
       body: "A structured GoHighLevel pipeline with automated lead assignment, stage-based workflows, reminders and follow-ups for sales teams.",
       tags: ["Pipeline", "Lead Routing", "Automation", "CRM"],
-      image: "/img/home/svc-crm",
+      /* A different illustration from the card beside it (which keeps
+         svc-crm). Both projects are CRM work, so both get a CRM-flavoured
+         image - but the bento puts these two cards next to each other, and
+         they were literally the same photograph, which read as a loading
+         bug rather than as two projects. This is one of the four supplied
+         service illustrations (see the manifest at the top of this file),
+         and it is used nowhere else on the site. */
+      image: "/img/home/service-crm",
       tone: "#A855F7",
     },
 

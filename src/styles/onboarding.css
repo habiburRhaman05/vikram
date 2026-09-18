@@ -17,7 +17,7 @@
      01. Page shell & header
      02. Progress bar + step tabs
      03. Card
-     04. Form fields (shared shell, input, select, textarea, autosuggest combobox, phone)
+     04. Form fields (shared shell, input, textarea, react-select lists, phone)
      05. Radio group
      06. Pill picker
      07. Checkbox
@@ -238,11 +238,32 @@ body:has(.ob-page) chat-widget { display: none !important; }
 .ob-field { display: flex; flex-direction: column; gap: 7px; }
 
 .ob-field__label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   font-size: .82rem;
   font-weight: 600;
   color: var(--hv-on-dark-muted);
 }
 .ob-field__req { color: var(--hv-accent-bright); margin-left: 2px; }
+
+/* Every field that isn't required says so out loud. Most of this wizard is
+   optional, and an unmarked optional field is indistinguishable from a
+   required one - the visitor either hunts for something to put in it or
+   assumes the form is broken when it lets them past. Pinned to the right of
+   the label so it never pushes the label itself around. */
+.ob-field__opt {
+  margin-left: auto;
+  padding: 1px 8px;
+  border-radius: var(--hv-r-pill);
+  border: 1px solid var(--hv-border-dark);
+  background: rgba(255, 255, 255, .03);
+  color: rgba(146, 179, 170, .9);
+  font-size: .66rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
 
 .ob-field__msg { font-size: .78rem; color: var(--hv-on-dark-muted); margin: 0; }
 .ob-field__msg--error { color: #FF9B8A; font-weight: 600; }
@@ -272,119 +293,69 @@ body:has(.ob-page) chat-widget { display: none !important; }
 
 .ob-textarea { resize: vertical; min-height: 96px; line-height: 1.55; }
 
-.ob-select { position: relative; }
-.ob-select select {
-  appearance: none;
-  cursor: pointer;
-  padding-right: 40px;
-}
-.ob-select select:invalid { color: rgba(220, 239, 232, .45); }
-.ob-select select option { background: #0A2620; color: #fff; }
-.ob-select__caret {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  color: var(--hv-on-dark-muted);
-  pointer-events: none;
-}
+/* react-select lists: country, city, state/region, language, and the two
+   multi-selects. react-select paints itself from the theme tokens handed to
+   it in Combobox.jsx - the box, its border, the text, the focused ring and
+   the option rows all come from that - so nothing here re-declares them.
 
-/* Autosuggest combobox (country, city, time zone, currency, language).
-   The list is absolutely positioned: a country dropdown that pushed the
-   card down would shove the Continue button off screen on every focus. */
-.ob-combobox { position: relative; }
-.ob-combobox__input { padding-right: 38px; }
+   What is left is the handful of things a token can't express. The selectors
+   are two classes deep (or two plus a state class) ON PURPOSE: react-select's
+   own styles arrive as single-class rules from emotion's runtime <style> tag,
+   which is injected into <head> after this stylesheet, so on equal specificity
+   the library wins and nothing here would take effect. */
+.ob-card__body .ob-sel__control { background: rgba(255, 255, 255, .04); }
+.ob-card__body .ob-sel__control:hover { border-color: var(--hv-border-strong); }
+.ob-field--error .ob-sel__control,
+.ob-field--error .ob-sel__control:hover { border-color: #FF9B8A; }
+.ob-field--error .ob-sel__control--is-focused { box-shadow: 0 0 0 1px #FF9B8A; }
 
-.ob-combobox__clear {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, .08);
-  color: var(--hv-on-dark-muted);
-  cursor: pointer;
-}
-.ob-combobox__clear:hover { background: rgba(255, 255, 255, .18); color: #fff; }
-.ob-combobox__clear svg { width: 12px; height: 12px; }
+/* Every field row's control is a stacking context of its own, so an open menu
+   would otherwise be painted UNDER the row below it. */
+.ob-card__body .ob-sel__menu { z-index: 40; }
+.ob-card__body .ob-sel__menu-list { overscroll-behavior: contain; }
 
-.ob-combobox__list {
-  position: absolute;
-  z-index: 30;
-  top: calc(100% + 6px);
-  left: 0;
-  right: 0;
-  max-height: 284px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  margin: 0;
-  padding: 6px;
-  list-style: none;
-  border: 1px solid rgba(195, 226, 214, .35);
-  border-radius: var(--hv-r-md);
-  background: rgba(3, 33, 30, .985);
-  box-shadow: 0 24px 52px rgba(0, 0, 0, .5);
-}
-
-.ob-combobox__option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 10px;
-  border-radius: var(--hv-r-sm);
-  font-size: .88rem;
-  color: var(--hv-on-dark);
-  cursor: pointer;
-}
-.ob-combobox__option.is-active { background: rgba(53, 217, 160, .14); }
-.ob-combobox__option.is-selected .ob-combobox__label { color: var(--hv-accent-bright); font-weight: 600; }
-
-.ob-combobox__flag { font-size: 1rem; line-height: 1; flex-shrink: 0; }
-.ob-combobox__label { flex-shrink: 0; }
-/* The country/dial-code hint can outrank the label on a narrow option row -
-   truncate it rather than wrap the row to two lines. */
-.ob-combobox__hint {
-  color: var(--hv-on-dark-muted);
+/* One menu row: flag, name, and the reference detail pinned right (dial code,
+   language code, currency name). */
+.ob-opt { display: flex; align-items: baseline; gap: 8px; width: 100%; }
+.ob-opt__flag { flex-shrink: 0; line-height: 1.2; }
+.ob-opt__label { flex-shrink: 0; }
+/* A hint can outrank the label on a narrow row - truncate it rather than
+   wrap the row to two lines. */
+.ob-opt__hint {
+  color: rgba(146, 179, 170, .85);
   font-size: .82rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.ob-combobox__meta {
+.ob-opt__meta {
   margin-left: auto;
   flex-shrink: 0;
-  color: var(--hv-on-dark-muted);
+  color: rgba(146, 179, 170, .85);
   font-size: .78rem;
   font-variant-numeric: tabular-nums;
 }
-.ob-combobox__tick { width: 15px; height: 15px; flex-shrink: 0; color: var(--hv-accent-bright); }
 
-.ob-combobox__empty { padding: 10px; font-size: .82rem; color: var(--hv-on-dark-muted); }
-
-/* Phone: dial-code picker plus a national-number box, joined so they read as
-   one control. */
-.ob-phone { display: flex; gap: 8px; align-items: flex-start; }
-.ob-phone__dial { flex: 0 0 132px; }
-.ob-phone__dial .ob-combobox__input { padding-inline: 12px; }
-.ob-phone__input { flex: 1 1 auto; min-width: 0; }
-.ob-phone__meta {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0;
-  font-size: .78rem;
-  color: var(--hv-on-dark-muted);
+/* Multi-select chips, tinted with the accent instead of react-select's
+   default neutral grey: a picked tool or service should read as picked. */
+.ob-card__body .ob-sel__multi-value { background: rgba(53, 217, 160, .14); border-radius: 8px; }
+.ob-card__body .ob-sel__multi-value__label {
+  color: var(--hv-accent-bright);
+  font-size: .82rem;
+  font-weight: 600;
 }
-.ob-phone__meta span { color: rgba(146, 179, 170, .75); }
-.ob-phone__meta .ob-phone__dial-code { color: var(--hv-on-dark); font-weight: 600; font-variant-numeric: tabular-nums; }
+.ob-card__body .ob-sel__multi-value__remove:hover { background: rgba(255, 155, 138, .25); color: #fff; }
+
+/* Phone: react-phone-number-input's own country select (rendered through the
+   same react-select control, see CountrySelect in Combobox.jsx) beside its
+   number box, so the two read as one control. The library puts its own
+   `PhoneInput` class on this root alongside ours, which is what the focused
+   rule below keys off - the box that has focus is the number, but the pair
+   is what the visitor sees change. */
+.ob-phone { display: flex; gap: 8px; align-items: flex-start; }
+.ob-phone__country { flex: 0 0 132px; min-width: 0; }
+.ob-phone__number { flex: 1 1 auto; min-width: 0; }
+.ob-phone.PhoneInput--focus .ob-phone__country .ob-sel__control { border-color: var(--hv-accent-bright); }
 
 
 /* 05. Radio group =========================================================== */
@@ -656,8 +627,8 @@ body:has(.ob-page) chat-widget { display: none !important; }
   /* The dial picker sits above the number instead of beside it - at 132px
      wide on a 360px screen the two inputs leave neither enough room. */
   .ob-phone { flex-direction: column; gap: 8px; }
-  .ob-phone__dial { flex: 1 1 auto; width: 100%; }
-  .ob-phone__input { width: 100%; }
+  .ob-phone__country { flex: 1 1 auto; width: 100%; }
+  .ob-phone__number { width: 100%; }
   .ob-creds__row { grid-template-columns: 1fr; gap: var(--hv-s3); }
   .ob-creds__remove { margin-top: 0; justify-self: flex-end; }
   .ob-header h1 { font-size: 1.7rem; }
@@ -668,4 +639,8 @@ body:has(.ob-page) chat-widget { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .ob-tab, .ob-pill, .ob-btn, .ob-input, .ob-progress__fill { transition: none; }
   .ob-btn:hover, .ob-pill:hover { transform: none; }
+  /* react-select animates its own control, menu and options around these. */
+  .ob-card__body .ob-sel__control,
+  .ob-card__body .ob-sel__menu,
+  .ob-card__body .ob-sel__option { transition: none; }
 }

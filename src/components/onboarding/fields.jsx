@@ -12,10 +12,17 @@ import Icon from "@/components/common/Icon.jsx";
  * under the control, and the control itself pointing at that message's id
  * so a screen reader announces it the moment the field takes blame.
  *
- * Combobox/PhoneField (the autosuggest country, city and phone controls)
- * live in Combobox.jsx next door - they need AsYouType and a few hundred
- * lines of interaction code that would bury these five small wrappers.
- * They wrap this same FieldShell, exported for that reason.
+ * SelectField/PhoneField (the react-select lists and the phone number)
+ * live in Combobox.jsx next door - they wrap a library's control, not one of
+ * these, but they sit in this same FieldShell, which is exported for that
+ * reason.
+ *
+ * REQUIRED AND OPTIONAL ARE BOTH STATED, in the label, on every field. Most
+ * of this wizard is optional now (see Onboarding.jsx), and an optional field
+ * that looks exactly like a required one reads as a required field - people
+ * hunt for a value to put in it, or assume the form is broken when it lets
+ * them through without one. The asterisk says required; the tag says
+ * optional; neither is ever implied.
  */
 export function FieldShell({ label, required, error, helper, htmlFor, hideLabel, children }) {
   const msgId = htmlFor ? `${htmlFor}-msg` : undefined;
@@ -23,11 +30,13 @@ export function FieldShell({ label, required, error, helper, htmlFor, hideLabel,
     <div className={`ob-field${error ? " ob-field--error" : ""}`}>
       {label && (
         <label className={`ob-field__label${hideLabel ? " hv-sr-only" : ""}`} htmlFor={htmlFor}>
-          {label}
-          {required && (
+          <span className="ob-field__name">{label}</span>
+          {required ? (
             <span className="ob-field__req" aria-hidden="true">
               *
             </span>
+          ) : (
+            <span className="ob-field__opt">Optional</span>
           )}
         </label>
       )}
@@ -82,36 +91,6 @@ export function TextAreaField({ label, name, value, onChange, placeholder, helpe
         aria-describedby={error || helper ? `${id}-msg` : undefined}
         className="ob-input ob-textarea"
       />
-    </FieldShell>
-  );
-}
-
-export function SelectField({ label, name, value, onChange, options, required, error, helper, placeholder = "Select an option", disabled = false }) {
-  const id = `ob-${name}`;
-  return (
-    <FieldShell label={label} required={required} error={error} helper={helper} htmlFor={id}>
-      <div className="ob-select">
-        <select
-          id={id}
-          name={name}
-          value={value}
-          onChange={(e) => onChange(name, e.target.value)}
-          aria-invalid={!!error}
-          aria-describedby={error || helper ? `${id}-msg` : undefined}
-          disabled={disabled}
-          className="ob-input"
-        >
-          <option value="" disabled>
-            {placeholder}
-          </option>
-          {options.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
-          ))}
-        </select>
-        <Icon name="chevronDown" className="ob-select__caret" />
-      </div>
     </FieldShell>
   );
 }

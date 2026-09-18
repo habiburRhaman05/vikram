@@ -12,39 +12,22 @@
  * than a length guess, so +44 20 7946 0958 passes and +44 20 7946 09 fails.
  */
 import { isValidPhoneNumber, parsePhoneNumberFromString } from "libphonenumber-js/max";
-import { COUNTRIES, LANGUAGES, countryByCode, countryByName, regionsFor } from "@/data/locations.js";
+import { LANGUAGES, countryByCode, countryByName, regionsFor } from "@/data/locations.js";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+/* Business names: anything with letters, digits and the punctuation a real
+   registered name carries ("Smith & Sons, LLC"). At least two characters -
+   a one-letter business name is a typo. */
 const NAME_RE = /^[\p{L}\p{N}][\p{L}\p{N}\s&'’.,\-()]{1,}$/u;
+/* People's names are looser on purpose: single initials, apostrophes,
+   hyphens and particles are all normal, and these fields are optional -
+   rejecting "J" or "O'Brien" here would be our rule failing, not theirs. */
+const PERSON_NAME_RE = /^[\p{L}][\p{L}\s'’.-]*$/u;
 const CITY_RE = /^[\p{L}][\p{L}\s.'’-]{1,}$/u;
-const URL_RE = /^(https?:\/\/)?([\w-]+\.)+[a-z]{2,}([/?#]\S*)?$/i;
-const DOMAIN_RE = /^([\w-]+\.)+[a-z]{2,}$/i;
 
 const REQUIRED = "This field is required.";
 
-const CURRENCY_CODES = new Set(COUNTRIES.flatMap((c) => c.currencies));
 const LANGUAGE_NAMES = new Set(LANGUAGES.map((l) => l.value));
-
-/**
- * Accept any zone Intl can actually resolve, rather than requiring an exact
- * match in the picker's list.
- *
- * Intl.supportedValuesOf("timeZone") returns the *canonical* set for the
- * runtime's ICU version - Chrome and Safari still list Asia/Calcutta where
- * newer builds list Asia/Kolkata, and a visitor whose browser reports one
- * name must not be blocked for typing the other. Anything Intl can't parse
- * ("New York", a typo) still fails.
- */
-export function isValidTimeZone(value) {
-  const zone = String(value || "").trim();
-  if (!zone) return false;
-  try {
-    new Intl.DateTimeFormat("en-US", { timeZone: zone });
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 function requireField(errors, data, field, message = REQUIRED) {
   if (!String(data[field] || "").trim()) errors[field] = message;
@@ -337,12 +320,16 @@ export function validateStep(stepIndex, data) {
   const countryCode = country?.code || "";
 
   if (stepIndex === 0) {
+    /* REQUIRED: the business, how to reach it, what it does and where it is.
+       Everything else on this step is optional by design (see the note on
+       StepBusinessInfo in pages/Onboarding.jsx) and is checked only for
+       shape when the visitor has chosen to fill it in - an empty optional
+       field is an answer, not an omission. */
     requireField(errors, data, "friendlyBusinessName");
     if (data.friendlyBusinessName && !NAME_RE.test(data.friendlyBusinessName.trim())) {
       errors.friendlyBusinessName = "Use letters and numbers - no symbols only.";
     }
 
-    requireField(errors, data, "legalBusinessName");
     if (data.legalBusinessName && !NAME_RE.test(data.legalBusinessName.trim())) {
       errors.legalBusinessName = "Enter the registered name as it appears on your documents.";
     }
@@ -363,23 +350,14 @@ export function validateStep(stepIndex, data) {
       errors.businessPhone = country ? `That doesn't look like a valid ${country.name} number.` : "Enter a valid phone number.";
     }
 
-    if (data.businessWebsite && !URL_RE.test(data.businessWebsite.trim())) {
-      errors.businessWebsite = "Enter a valid website address, e.g. https://yourbusiness.com.";
-    }
-    if (data.brandedDomain) {
-      const domain = data.brandedDomain.trim().replace(/^https?:\/\//i, "").replace(/\/.*$/, "");
-      if (!DOMAIN_RE.test(domain)) errors.brandedDomain = "Enter a domain like app.yourbusiness.com.";
-    }
-
+    /* No website and no branded domain any more: the domain is visible in
+       the email they just gave us, and a site is usually the thing we are
+       building for them. The currency has no field either - it is set from
+       the country, and reported from there. */
     requireField(errors, data, "businessNiche", "Select your industry.");
-    requireField(errors, data, "businessCurrency", "Select a currency.");
-    if (data.businessCurrency && !CURRENCY_CODES.has(data.businessCurrency)) {
-      errors.businessCurrency = "Pick a currency from the list.";
-    }
 
-    requireField(errors, data, "streetAddress");
     if (data.streetAddress && digits(data.streetAddress).length === 0) {
-      errors.streetAddress = "Include the street number, e.g. 123 Main Street.";
+      errors.streetAddress = "Include the street number, so we can find you.";
     }
 
     requireField(errors, data, "city");
@@ -388,7 +366,6 @@ export function validateStep(stepIndex, data) {
     requireField(errors, data, "country", "Select a country.");
     if (data.country && !country) errors.country = "Pick a country from the list.";
 
-    requireField(errors, data, "stateRegion", "Select a state, province or region.");
     if (data.stateRegion && countryCode) {
       const regions = regionsFor(countryCode);
       if (regions && !regions.includes(data.stateRegion)) {
@@ -396,18 +373,15 @@ export function validateStep(stepIndex, data) {
       }
     }
 
-    requireField(errors, data, "postalZip");
     if (data.postalZip && countryCode) {
       const rule = POSTAL_RULES[countryCode];
       if (rule && !rule.re.test(data.postalZip.trim())) errors.postalZip = rule.message;
       else if (!rule && data.postalZip.trim().length < 3) errors.postalZip = "Enter a valid postal code.";
     }
 
-    requireField(errors, data, "timeZone", "Select your time zone.");
-    if (data.timeZone && !isValidTimeZone(data.timeZone)) {
-      errors.timeZone = "Pick a time zone from the list (search by city, e.g. New York).";
-    }
-
+    /* The time zone is reported, never asked for: it comes from the browser
+       (detectedTimeZone) or from the browser's own Intl data, so there is no
+       answer to validate here. */
     if (data.platformLanguage && !LANGUAGE_NAMES.has(data.platformLanguage)) {
       errors.platformLanguage = "Pick a language from the list.";
     }
@@ -416,18 +390,18 @@ export function validateStep(stepIndex, data) {
     }
   }
 
+  /* The whole registration section is optional; what is left are the checks
+     that only make sense once something has been typed. */
   if (stepIndex === 1) {
-    requireField(errors, data, "businessType", "Select a business type.");
-
     const meta = registrationTypeMeta(countryCode, data.registrationIdType);
     const number = String(data.registrationNumber || "").trim();
 
     if (data.notRegistered) {
       /* Nothing to check - the checkbox means they don't have one. */
     } else if (number && !data.registrationIdType) {
+      /* A consistency rule, not a requirement: we can't tell an EIN from an
+         ABN from a GSTIN, so an unidentified number is noise to the team. */
       errors.registrationIdType = "Select what kind of ID this number is.";
-    } else if (data.registrationIdType && !number) {
-      errors.registrationNumber = "Enter the number, or clear the ID type above.";
     } else if (number && meta?.validate) {
       const message = meta.validate(number, countryCode);
       if (message) errors.registrationNumber = message;
@@ -435,17 +409,9 @@ export function validateStep(stepIndex, data) {
       errors.registrationNumber = "That looks too short for a registration number.";
     }
 
-    if (!data.regionsOfOperation?.length) {
-      errors.regionsOfOperation = "Select at least one region.";
-    }
+    if (data.repFirstName && !PERSON_NAME_RE.test(data.repFirstName.trim())) errors.repFirstName = "Enter a valid first name.";
+    if (data.repLastName && !PERSON_NAME_RE.test(data.repLastName.trim())) errors.repLastName = "Enter a valid last name.";
 
-    requireField(errors, data, "repFirstName");
-    if (data.repFirstName && !NAME_RE.test(data.repFirstName.trim())) errors.repFirstName = "Enter a valid first name.";
-    requireField(errors, data, "repLastName");
-    if (data.repLastName && !NAME_RE.test(data.repLastName.trim())) errors.repLastName = "Enter a valid last name.";
-    requireField(errors, data, "repJobTitle", "Select a job position.");
-
-    requireField(errors, data, "repEmail");
     if (data.repEmail) {
       const email = data.repEmail.trim();
       if (!EMAIL_RE.test(email)) errors.repEmail = "Enter a valid email address.";
@@ -456,21 +422,21 @@ export function validateStep(stepIndex, data) {
       }
     }
 
-    requireField(errors, data, "repPhone");
     if (data.repPhone && !phoneIsValid(data.repPhone, data.repPhoneCountry || countryCode)) {
       errors.repPhone = "Enter a valid phone number, including the area code.";
     }
   }
 
   if (stepIndex === 2) {
+    /* Services wanted is the one required answer in this section - it is the
+       scope everything else is built from. The goals text and the website
+       question are optional; the goals length check only applies once they
+       have started writing, so a one-word answer isn't silently dropped. */
     if (!data.servicesWanted?.length) {
       errors.servicesWanted = "Select at least one service.";
     }
     if (data.goalsDescription && data.goalsDescription.trim().length < 15) {
       errors.goalsDescription = "A sentence or two helps us configure the right thing.";
-    }
-    if (data.needsNewWebsite !== "Yes" && data.needsNewWebsite !== "No") {
-      errors.needsNewWebsite = "Let us know whether you need a new website.";
     }
   }
 

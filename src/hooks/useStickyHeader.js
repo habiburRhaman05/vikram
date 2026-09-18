@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 
 /**
  * Port of main.js's "1. Sticky header" behaviour: expose the header's real
@@ -23,11 +23,21 @@ import { useEffect, useRef } from "react";
  * loading, and the nav row can rewrap. A ResizeObserver catches every one
  * of those, whatever the cause, which is the point of using one rather
  * than trying to enumerate the triggers.
+ *
+ * It is a LAYOUT effect, so the measurement and the .is-stuck decision are
+ * both in place before the browser paints. A passive effect paints the
+ * header once in its wrong state first: on a page opened at an offset (a
+ * reload halfway down, a restored scroll position), the bar painted
+ * transparent with light-on-dark text over the middle of the page for a
+ * frame, then the glass faded in over --hv-dur-slow and the nav row shrank
+ * 64px tall - which is a visible blink, and a 16px jump of everything
+ * under the bar at the same time. Running before paint means the first
+ * frame anyone sees is already the right one.
  */
 export default function useStickyHeader() {
   const ref = useRef(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const header = ref.current;
     if (!header) return;
 

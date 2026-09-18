@@ -13,34 +13,38 @@
  * build is a support ticket waiting to happen.
  */
 
+/* Each description says out loud how much of its section is optional. Most of
+   this form now is, and a step that doesn't say so reads as four steps of
+   paperwork - which is what it used to be, and what made people stop in the
+   middle of it. */
 export const STEP_META = [
   {
     key: "business-info",
     tabLabel: "General Business Info",
     icon: "building",
     heading: "Section 1: General Business Info",
-    description: "Basic details about your business for account setup.",
+    description: "The essentials about your business. Everything marked Optional can be left blank.",
   },
   {
     key: "registration",
     tabLabel: "Business Registration",
     icon: "file",
     heading: "Section 2: Business Registration",
-    description: "Legal registration details and your authorized representative.",
+    description: "Optional: registration details and the person we should speak to, if you have them to hand.",
   },
   {
     key: "services",
     tabLabel: "Services & Integrations",
     icon: "sliders",
     heading: "Section 3: Services & Integrations",
-    description: "Choose which AI services you want configured and tools to connect.",
+    description: "Tell us which services you want and which tools we should connect. The tool list is optional.",
   },
   {
     key: "credentials",
     tabLabel: "Access & Credentials",
     icon: "key",
     heading: "Section 4: Access & Credentials",
-    description: "Securely share optional login details for tools we'll configure.",
+    description: "Entirely optional: login details for anything we need to configure on your behalf.",
   },
 ];
 
@@ -109,18 +113,6 @@ export const JOB_TITLES = [
   "IT / Systems Administrator",
   "Consultant",
   "Other",
-];
-
-/** Where the business sells - drives which campaign defaults we set up. */
-export const REGIONS = [
-  "USA and Canada",
-  "Latin America",
-  "Europe",
-  "Middle East",
-  "Africa",
-  "Asia",
-  "Oceania",
-  "Global (online only)",
 ];
 
 export const SERVICES_WANTED = [
@@ -206,7 +198,6 @@ export const DEFAULT_CREDENTIALS = [
 export function createInitialFormData() {
   return {
     ...INITIAL_FORM_DATA_SHAPE,
-    regionsOfOperation: [],
     servicesWanted: [],
     integrations: [],
     connectCrm: [],
@@ -223,16 +214,16 @@ const INITIAL_FORM_DATA_SHAPE = {
   /* The dial code lives beside the number rather than inside it: validation
      and the webhook payload both need the region to read the digits. */
   businessPhoneCountry: "",
-  businessWebsite: "",
-  brandedDomain: "",
   businessNiche: "",
+  /* No field on the form - set from the country the visitor picks (see
+     handleCountryChange in pages/Onboarding.jsx) and reported from here. */
   businessCurrency: "",
+  timeZone: "",
   streetAddress: "",
   city: "",
   stateRegion: "",
   postalZip: "",
   country: "",
-  timeZone: "",
   platformLanguage: "",
   outboundCommLanguage: "",
 
@@ -241,7 +232,6 @@ const INITIAL_FORM_DATA_SHAPE = {
   registrationIdType: "",
   registrationNumber: "",
   notRegistered: false,
-  regionsOfOperation: [],
   repFirstName: "",
   repLastName: "",
   repEmail: "",

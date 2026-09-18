@@ -1,274 +1,236 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { AsYouType, getExampleNumber } from "libphonenumber-js/max";
+import { useMemo } from "react";
+import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
+/* The `max` entry point is the same component with libphonenumber-js' full
+   metadata, which the rest of the wizard already validates against
+   (onboardingValidation.js imports libphonenumber-js/max too) - the default
+   `min` build would format some numbers differently from how they validate. */
+import PhoneInput from "react-phone-number-input/max";
+import { getCountryCallingCode, getExampleNumber } from "libphonenumber-js/max";
 /* Google's per-country sample numbers (4 kB). Passed explicitly because the
    `max` metadata build ships no examples of its own, so getExampleNumber()
    alone returns undefined. */
 import exampleNumbers from "libphonenumber-js/examples.mobile.json";
-import Icon from "@/components/common/Icon.jsx";
+/* Flag emoji from the ISO code we already have - countries-list is already a
+   dependency (data/locations.js), so the phone picker doesn't need a second
+   flags package. */
+import { getEmojiFlag } from "countries-list";
 import { FieldShell } from "@/components/onboarding/fields.jsx";
 
 /**
- * Autosuggest dropdown used everywhere a plain <select> stops scaling: 250
- * countries, ~400 time zones, 180 languages. A native select listing 400
- * zones is unusable; this filters as you type, keeps the answer as a real
- * option value (so GoHighLevel receives "America/New_York", not something
- * loosely typed), and still allows free text where the list can't be
- * complete - cities, mostly.
+ * Every long list in the wizard - country, city, state/region, language, and
+ * the tools to integrate - through react-select, and the phone number through
+ * react-phone-number-input.
  *
- * Keyboard and ARIA follow the ARIA 1.2 combobox pattern: the input keeps
- * DOM focus while `aria-activedescendant` points at the highlighted option,
- * so screen readers announce the moving highlight without a focus change.
+ * Both used to be hand-rolled here: a ~330-line combobox with its own ARIA
+ * wiring, its own filtering, its own dropdown, plus a country picker and a
+ * dial-code formatter glued together by hand. It worked, and it looked like
+ * something we built rather than something the visitor recognises: the
+ * highlight didn't follow the pointer reliably, the menu had no scroll
+ * affordances, multi-select didn't exist at all, and the phone control was
+ * two boxes pretending to be one.
+ *
+ * These two packages are the standard answer to exactly these controls.
+ * react-select handles keyboard, ARIA (a real combobox: aria-activedescendant,
+ * a live region for match counts, typeahead), touch, scrolling and the
+ * open/close/filter state machine; react-phone-number-input owns the
+ * country-to-dial-code rules and formats as you type, so the country and the
+ * number can never disagree. What is left here is the part only we can know:
+ * our option shape, our dark palette, and where the answer goes in the form.
+ *
+ * Styling is ours, in styles/onboarding.css, keyed off `classNamePrefix`
+ * ("ob-sel"). react-select derives its DEFAULT look from a handful of theme
+ * tokens, so `theme` below repaints the whole control for the dark wizard
+ * without a component-level style object - and any part we don't override
+ * still keeps a sane default instead of falling back to nothing.
  */
 
-/** Options may be plain strings or objects; one shape downstream. */
-function normalizeOptions(options = []) {
-  return options.map((opt, i) => {
+/** The wizard's dark surfaces, as react-select theme tokens. Everything the
+ *  control paints - the box, its border, the text, the focused ring, the
+ *  highlighted and selected option rows, the danger tint on an invalid one -
+ *  resolves from these, which is why there is no `.ob-select` component CSS
+ *  block to keep in sync with this file. */
+const DARK_COLORS = {
+  primary: "#35D9A0",
+  primary75: "rgba(53, 217, 160, .75)",
+  primary50: "rgba(53, 217, 160, .38)",
+  primary25: "rgba(53, 217, 160, .14)",
+  danger: "#FF9B8A",
+  dangerLight: "rgba(255, 155, 138, .22)",
+  neutral0: "#03211E",
+  neutral5: "#062A26",
+  neutral10: "rgba(255, 255, 255, .08)",
+  neutral20: "rgba(195, 226, 214, .22)",
+  neutral30: "rgba(195, 226, 214, .45)",
+  neutral40: "rgba(214, 236, 228, .5)",
+  neutral50: "rgba(214, 236, 228, .55)",
+  neutral60: "rgba(214, 236, 228, .7)",
+  neutral70: "rgba(214, 236, 228, .85)",
+  neutral80: "#EAF6F2",
+  neutral90: "#FFFFFF",
+};
+
+/**
+ * A FUNCTION, not the object: react-select REPLACES its theme with whatever
+ * is passed, so the default has to be spread in. Hand it DARK_COLORS alone
+ * and every key it doesn't mention (the spacing ramp, geometry, the neutral
+ * shadows behind the menu) resolves to undefined and the control comes apart.
+ * Module scope, so the identity is stable across renders - react-select
+ * memoises on it.
+ *
+ * controlHeight 44 matches the 12px-padded `.ob-input` next to it, so a
+ * select and a text box on the same row are the same height.
+ */
+function selectTheme(defaultTheme) {
+  return {
+    ...defaultTheme,
+    borderRadius: 12,
+    spacing: { ...defaultTheme.spacing, controlHeight: 44, menuGutter: 6 },
+    colors: { ...defaultTheme.colors, ...DARK_COLORS },
+  };
+}
+
+/** Options come in as plain strings (`citiesFor` returns names) or as
+ *  {value,label,hint,flag,meta,keywords} objects (COUNTRIES and friends); one
+ *  shape downstream either way. */
+function normalize(options = []) {
+  return options.map((opt) => {
     if (typeof opt === "string") return { value: opt, label: opt, hint: "", flag: "", meta: "", keywords: "" };
-    const value = String(opt.value ?? opt.label ?? i);
+    const value = String(opt.value ?? opt.label ?? "");
     return {
       value,
       label: opt.label ?? value,
       hint: opt.hint || "",
       flag: opt.flag || "",
-      /* `meta` may be a function so expensive ones (a time zone's UTC offset)
-         are only computed for rows actually rendered. */
+      /* `meta` may be a function so expensive ones are only computed for the
+         rows actually rendered. */
       meta: opt.meta || "",
       keywords: opt.keywords || "",
     };
   });
 }
 
-/** What the input shows once a value is picked. */
-function displayFor(option) {
-  if (!option) return "";
-  return `${option.flag ? `${option.flag} ` : ""}${option.label}${option.hint ? ` · ${option.hint}` : ""}`;
+/** react-select's own filter only ever sees `label`. Ours also matches the
+ *  ISO code, the dial code, the continent and a language's native spelling,
+ *  so "DE", "+49" and "Deutsch" all find Germany - the behaviour the old
+ *  combobox had, and the reason a 250-row country list stays usable. */
+function filterOption(option, inputValue) {
+  const query = inputValue.trim().toLowerCase();
+  if (!query) return true;
+  const data = option.data;
+  const haystack = `${data.label} ${data.hint} ${data.keywords} ${data.value}`.toLowerCase();
+  return query.split(/\s+/).every((token) => haystack.includes(token));
 }
 
-export function Combobox({
-  id,
-  value,
-  onChange,
-  options,
-  placeholder = "Start typing…",
-  disabled = false,
-  invalid = false,
-  describedBy,
-  freeText = true,
-  autoComplete = "off",
-  maxVisible = 60,
-}) {
-  const normalized = useMemo(() => normalizeOptions(options), [options]);
-  const selected = useMemo(() => normalized.find((o) => o.value === value) || null, [normalized, value]);
-
-  /* A stored value that isn't in the list still has to be visible - the four
-     step wizard is long enough that a field appearing to have lost its answer
-     reads as a bug. (Time zones are the real case: ICU and the visitor's
-     browser disagree on a few legacy aliases.) */
-  const display = selected ? displayFor(selected) : String(value ?? "");
-
-  const [text, setText] = useState(display);
-  const [open, setOpen] = useState(false);
-  const [active, setActive] = useState(-1);
-  const typing = useRef(false);
-  const listRef = useRef(null);
-  const listId = `${id}-listbox`;
-
-  /* Keep the box showing the authoritative label - unless the visitor is
-     mid-edit, in which case their keystrokes win. */
-  useEffect(() => {
-    if (typing.current) return;
-    setText(display);
-  }, [display]);
-
-  const query = text.trim().toLowerCase();
-  const browsing = !query || text === display;
-  const matches = useMemo(() => {
-    if (browsing) return normalized;
-    const tokens = query.split(/\s+/);
-    return normalized.filter((o) => {
-      const haystack = `${o.label} ${o.hint} ${o.keywords} ${o.value}`.toLowerCase();
-      return tokens.every((t) => haystack.includes(t));
-    });
-  }, [normalized, query, browsing]);
-
-  const visible = matches.slice(0, maxVisible);
-  const activeOption = visible[active] || null;
-
-  useEffect(() => {
-    if (!open || active < 0) return;
-    listRef.current?.querySelector(`[data-index="${active}"]`)?.scrollIntoView({ block: "nearest" });
-  }, [active, open]);
-
-  const commit = (option) => {
-    typing.current = false;
-    setText(displayFor(option));
-    setOpen(false);
-    setActive(-1);
-    if (option && option.value !== value) onChange(option.value);
-    else if (!option && freeText) onChange(text.trim());
-  };
-
-  const close = () => {
-    typing.current = false;
-    setOpen(false);
-    setActive(-1);
-    /* A typed value that matches no option is only kept when free text is
-       allowed; otherwise the box snaps back to the real selection. */
-    if (freeText) onChange(text.trim());
-    else setText(display);
-  };
-
-  const onKeyDown = (e) => {
-    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-      e.preventDefault();
-      if (!open) {
-        setOpen(true);
-        setActive(0);
-        return;
-      }
-      setActive((i) => {
-        const next = e.key === "ArrowDown" ? i + 1 : i - 1;
-        if (next < 0) return 0;
-        return Math.min(next, visible.length - 1);
-      });
-      return;
-    }
-    if (e.key === "Enter") {
-      if (open && activeOption) {
-        e.preventDefault();
-        commit(activeOption);
-      } else if (open) {
-        e.preventDefault();
-        close();
-      }
-      return;
-    }
-    if (e.key === "Escape") {
-      if (!open) return;
-      e.preventDefault();
-      setText(display);
-      typing.current = false;
-      setOpen(false);
-      setActive(-1);
-      return;
-    }
-    if (e.key === "Tab") {
-      close();
-    }
-  };
-
-  const clear = () => {
-    typing.current = false;
-    setText("");
-    setOpen(false);
-    setActive(-1);
-    onChange("");
-  };
-
+/** One row inside the menu: flag, name, and the secondary hint pinned right
+ *  (a dial code, a currency name, a UTC offset). */
+function OptionRow({ data }) {
   return (
-    <div className="ob-combobox">
-      <input
-        id={id}
-        type="text"
-        role="combobox"
-        className="ob-input ob-combobox__input"
-        value={text}
-        placeholder={placeholder}
-        disabled={disabled}
-        aria-invalid={invalid || undefined}
-        aria-describedby={describedBy}
-        aria-expanded={open}
-        aria-controls={listId}
-        aria-autocomplete="list"
-        aria-activedescendant={open && activeOption ? `${id}-opt-${active}` : undefined}
-        autoComplete={autoComplete}
-        spellCheck={false}
-        onChange={(e) => {
-          const next = e.target.value;
-          typing.current = true;
-          setText(next);
-          setOpen(true);
-          setActive(-1);
-        }}
-        onFocus={(e) => {
-          setOpen(true);
-          /* Selected: typing replaces it. Empty: nothing to select. */
-          e.target.select?.();
-        }}
-        onBlur={close}
-        onKeyDown={onKeyDown}
-      />
-
-      {value !== "" && value != null && !disabled && (
-        <button type="button" className="ob-combobox__clear" onClick={clear} aria-label="Clear selection" tabIndex={-1}>
-          <Icon name="close" />
-        </button>
-      )}
-
-      {open && !disabled && (
-        <ul className="ob-combobox__list" id={listId} role="listbox" ref={listRef}>
-          {visible.map((option, i) => (
-            <li
-              key={`${option.value}-${i}`}
-              id={`${id}-opt-${i}`}
-              data-index={i}
-              role="option"
-              aria-selected={option.value === value}
-              className={`ob-combobox__option${i === active ? " is-active" : ""}${
-                option.value === value ? " is-selected" : ""
-              }`}
-              onMouseDown={(e) => e.preventDefault()}
-              onMouseEnter={() => setActive(i)}
-              onClick={() => commit(option)}
-            >
-              {option.flag && (
-                <span className="ob-combobox__flag" aria-hidden="true">
-                  {option.flag}
-                </span>
-              )}
-              <span className="ob-combobox__label">{option.label}</span>
-              {option.hint && <span className="ob-combobox__hint">{option.hint}</span>}
-              {option.meta && (
-                <span className="ob-combobox__meta">{typeof option.meta === "function" ? option.meta() : option.meta}</span>
-              )}
-              {option.value === value && <Icon name="tick" className="ob-combobox__tick" />}
-            </li>
-          ))}
-          {!visible.length && <li className="ob-combobox__empty">No match - {freeText ? "keep typing to enter it" : "try another spelling"}.</li>}
-        </ul>
-      )}
-    </div>
+    <span className="ob-opt">
+      {data.flag ? (
+        <span className="ob-opt__flag" aria-hidden="true">
+          {data.flag}
+        </span>
+      ) : null}
+      <span className="ob-opt__label">{data.label}</span>
+      {data.hint ? <span className="ob-opt__hint">{data.hint}</span> : null}
+      {data.meta ? <span className="ob-opt__meta">{typeof data.meta === "function" ? data.meta() : data.meta}</span> : null}
+    </span>
   );
 }
 
-/** Combobox inside the shared label/required/error shell. */
-export function ComboboxField({
+/* The closed control shows the answer, not the reference material: a flag and
+   a name (as a plain string, so react-select's own ellipsis and single-line
+   handling keep working on a narrow row), never the dial code or the offset
+   the menu shows alongside it. */
+function formatOptionLabel(data, { context }) {
+  if (context === "value") return `${data.flag ? `${data.flag} ` : ""}${data.label}`;
+  return <OptionRow data={data} />;
+}
+
+/**
+ * A searchable select in the shared label/required/error shell.
+ *
+ * `freeText` swaps in CreatableSelect, which is how cities work: our list is
+ * suggestions, and a town that isn't in it has to be typeable - the visitor
+ * would otherwise be blocked by our data. Everything else is closed, because
+ * the answer has to be a real option value ("America/New_York") for the
+ * webhook to mean anything.
+ *
+ * `isMulti` returns an array of values rather than one, which is what the
+ * "Services wanted" and "Tools to integrate" pickers store.
+ */
+export function SelectField({
   label,
   name,
   value,
   onChange,
-  options,
+  options = [],
   placeholder,
   required,
   error,
   helper,
   disabled = false,
-  freeText = true,
+  freeText = false,
+  isMulti = false,
   hideLabel = false,
 }) {
   const id = `ob-${name}`;
+  const normalized = useMemo(() => normalize(options), [options]);
+
+  /* The option the form is holding. A value that isn't in the list still has
+     to be visible - a field that looks like it lost its answer reads as a
+     bug, and it is reachable (a city typed by hand, a list that changed
+     between visits) - so an unmatched value becomes a synthetic option rather
+     than silently rendering as empty. */
+  const selected = useMemo(() => {
+    if (isMulti) {
+      const values = Array.isArray(value) ? value : [];
+      return normalized.filter((option) => values.includes(option.value));
+    }
+    if (!value) return null;
+    return normalized.find((option) => option.value === value) || { value, label: String(value), flag: "", hint: "", meta: "" };
+  }, [normalized, value, isMulti]);
+
+  const Component = freeText && !isMulti ? CreatableSelect : Select;
+
   return (
     <FieldShell label={label} required={required} error={error} helper={helper} htmlFor={id} hideLabel={hideLabel}>
-      <Combobox
-        id={id}
-        value={value}
-        onChange={(next) => onChange(name, next)}
-        options={options}
+      <Component
+        inputId={id}
+        className="ob-sel"
+        classNamePrefix="ob-sel"
+        theme={selectTheme}
+        options={normalized}
+        value={selected}
+        onChange={(option) => {
+          if (isMulti) onChange(name, option ? option.map((choice) => choice.value) : []);
+          else onChange(name, option ? option.value : "");
+        }}
         placeholder={placeholder}
-        disabled={disabled}
-        invalid={!!error}
-        describedBy={error || helper ? `${id}-msg` : undefined}
-        freeText={freeText}
+        isMulti={isMulti}
+        isDisabled={disabled}
+        isClearable
+        isSearchable
+        closeMenuOnSelect={!isMulti}
+        blurInputOnSelect
+        menuPlacement="auto"
+        maxMenuHeight={280}
+        filterOption={filterOption}
+        formatOptionLabel={formatOptionLabel}
+        formatCreateLabel={(inputValue) => `Use "${inputValue}"`}
+        noOptionsMessage={({ inputValue }) =>
+          !inputValue
+            ? "Start typing to search"
+            : freeText
+              ? `Press Enter to use "${inputValue}"`
+              : "No match - try another spelling"
+        }
+        aria-invalid={!!error}
+        /* react-select owns aria-describedby itself (it points at its own
+           live region), so the error travels by aria-errormessage and by the
+           visible role="alert" message the shell already renders. */
+        aria-errormessage={error ? `${id}-msg` : undefined}
       />
     </FieldShell>
   );
@@ -278,24 +240,81 @@ export function ComboboxField({
 
 /** Placeholder shown before anything is typed, per country: "(201) 555-0123"
  *  tells a US visitor what shape the field wants far better than a generic
- *  "555 000 0000" does, and it changes with the dial code they pick. */
+ *  "555 000 0000" does, and it changes with the country they pick. */
 function examplePlaceholder(countryCode) {
-  if (!countryCode) return "555 000 0000";
+  if (!countryCode) return "Phone number";
   try {
-    return getExampleNumber(countryCode, exampleNumbers)?.formatNational() || "";
+    return getExampleNumber(countryCode, exampleNumbers)?.formatNational() || "Phone number";
   } catch {
-    return "";
+    return "Phone number";
   }
 }
 
 /**
- * Country picker + national number, rather than one free-text box.
+ * react-phone-number-input's country list, rendered through react-select so
+ * it matches every other picker on the page (the library's own default is a
+ * native `<select>` next to a flag icon).
  *
- * The dial code is prefixed by the picker so the visitor never types "+1"
- * themselves, and the country is kept in a separate field: validation and
- * the webhook payload both need the region to interpret the digits, and
- * `AsYouType(country)` can then format the number as it's typed the way
- * that country actually writes phone numbers.
+ * The contract is the library's: `value` is a two-letter code or undefined
+ * for its "International" entry, and `onChange` takes the code back. The
+ * rest of the props it forwards are for the native control it expects -
+ * `iconComponent` and `name` are caught here (and renamed, so the underscore
+ * says "deliberately dropped") rather than spread onto react-select, which
+ * would put an unknown prop on a DOM node and add a hidden input nobody
+ * reads, since this wizard posts JSON rather than a <form>.
+ */
+function CountrySelect({ value, onChange, options, disabled, readOnly, className, iconComponent: _iconComponent, name: _name, ...rest }) {
+  const selectOptions = useMemo(
+    () =>
+      options
+        .filter((option) => !option.divider)
+        .map((option) => ({
+          value: option.value || "",
+          label: option.label,
+          flag: option.value ? getEmojiFlag(option.value) : "🌐",
+          /* Pinned right in the menu, and the whole answer in the closed
+             control: the dial code is what the visitor matches against the
+             number in the box beside it, and "United States" would be
+             truncated to nothing in a column this narrow. */
+          meta: option.value ? `+${getCountryCallingCode(option.value)}` : "",
+        })),
+    [options]
+  );
+
+  const selected = selectOptions.find((option) => option.value === (value || "")) || null;
+
+  return (
+    <Select
+      className={className}
+      classNamePrefix="ob-sel"
+      theme={selectTheme}
+      options={selectOptions}
+      value={selected}
+      onChange={(option) => onChange(option ? option.value || undefined : undefined)}
+      isSearchable
+      isDisabled={disabled || readOnly}
+      menuPlacement="auto"
+      maxMenuHeight={280}
+      /* Unlike the shared formatter, the closed control shows the dial code
+         ("🇺🇸 +1"), which is what has to sit next to the number itself. */
+      formatOptionLabel={(option, { context }) =>
+        context === "value" ? `${option.flag} ${option.meta || option.label}` : <OptionRow data={option} />
+      }
+      filterOption={filterOption}
+      {...rest}
+    />
+  );
+}
+
+/**
+ * One control for the whole number: the country (which sets the dial code)
+ * and the national number, formatted as it is typed the way that country
+ * writes numbers, and emitted as an E.164 string ("+15182509662") so the
+ * webhook, the validation rules and the CRM all see the same thing.
+ *
+ * The country is stored in the form separately (`countryCode`/`onCountryChange`)
+ * because more than the formatting needs it - validation has to know which
+ * country's rules apply, and the payload records it beside the number.
  */
 export function PhoneField({
   label,
@@ -304,58 +323,30 @@ export function PhoneField({
   onChange,
   countryCode,
   onCountryChange,
-  countryOptions,
   required,
   error,
   helper,
+  autoComplete = "tel",
 }) {
   const id = `ob-${name}`;
-  const countryId = `${id}-country`;
-
-  /* Recreated on country change so formatting switches with the dial code.
-     A fresh instance per keystroke would reset AsYouType's own state and
-     re-format the whole string on every character. */
-  const formatter = useRef(new AsYouType(countryCode || undefined));
-  useEffect(() => {
-    formatter.current = new AsYouType(countryCode || undefined);
-  }, [countryCode]);
-
-  const country = countryOptions.find((c) => c.value === countryCode) || null;
 
   return (
     <FieldShell label={label} required={required} error={error} helper={helper} htmlFor={id}>
-      <div className={`ob-phone${error ? " ob-phone--error" : ""}`}>
-        <div className="ob-phone__dial">
-          <Combobox
-            id={countryId}
-            value={countryCode || ""}
-            onChange={onCountryChange}
-            options={countryOptions}
-            placeholder="Country"
-            invalid={!!error}
-            freeText={false}
-            maxVisible={80}
-          />
-        </div>
-        <input
-          id={id}
-          name={name}
-          type="tel"
-          inputMode="tel"
-          autoComplete="tel-national"
-          className="ob-input ob-phone__input"
-          value={value}
-          placeholder={examplePlaceholder(countryCode)}
-          aria-invalid={!!error}
-          aria-describedby={error || helper ? `${id}-msg` : undefined}
-          onChange={(e) => onChange(name, formatter.current.input(e.target.value))}
-        />
-      </div>
-      {country && (
-        <p className="ob-phone__meta">
-          {country.flag} {country.name} <span>{country.hint}</span>
-        </p>
-      )}
+      <PhoneInput
+        id={id}
+        name={name}
+        className="ob-phone"
+        numberInputProps={{ className: "ob-input ob-phone__number" }}
+        countrySelectComponent={CountrySelect}
+        countrySelectProps={{ className: "ob-phone__country", "aria-label": "Country calling code" }}
+        value={value || undefined}
+        onChange={(next) => onChange(name, next || "")}
+        country={countryCode || undefined}
+        onCountryChange={(next) => onCountryChange(next || "")}
+        placeholder={examplePlaceholder(countryCode)}
+        autoComplete={autoComplete}
+        aria-invalid={!!error}
+      />
     </FieldShell>
   );
 }
