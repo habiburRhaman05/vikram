@@ -15,14 +15,38 @@
 /* -- Hero + toggle ------------------------------------------------------------- */
 
 .pr-hero {
+  isolation: isolate;
   position: relative;
-  background: radial-gradient(120% 140% at 50% -20%, #0E4B3E 0%, var(--hv-bg-dark) 50%, var(--hv-bg-dark-2) 100%);
+  background: radial-gradient(120% 140% at 14% -10%, #0A3F35 0%, var(--hv-bg-dark) 38%, var(--hv-bg-dark-2) 100%);
   color: var(--hv-on-dark);
   padding-bottom: clamp(56px, 7vw, 96px);
   text-align: center;
 }
 
-.pr-hero__inner { max-width: 700px; margin: 0 auto; }
+/* Same overlay as .sd-hero::after, so this hero and a service detail hero
+   are the same surface rather than two near-misses. */
+.pr-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* The masked accent grid every service detail hero carries (.sd-hero,
+     .cs-hero, .wls-hero). It is the difference the eye reads as "deeper" -
+     the wash alone made this page open lighter than the service pages it
+     sits beside. */
+  background-image:
+    linear-gradient(rgba(53, 217, 160, .07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(53, 217, 160, .07) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(65% 65% at 20% 10%, #000 0%, transparent 75%);
+  -webkit-mask-image: radial-gradient(65% 65% at 20% 10%, #000 0%, transparent 75%);
+}
+
+/* Above the grid overlay: .pr-hero::after is a positioned pseudo-element
+   in this hero's own stacking context, so unpositioned content would be
+   painted underneath it. */
+.pr-hero__inner { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
 
 .pr-hero__eyebrow {
   display: inline-flex;

@@ -88,9 +88,9 @@ function Hero() {
         <Reveal index={1}>
           <figure className="fnl-hero__photo">
             <picture>
-              <source type="image/webp" srcSet="/img/services/funnel-hero.webp" />
+              <source type="image/webp" srcSet="/funnel-desing.png" />
               <img
-                src="/img/services/funnel-hero.jpg"
+                src="/funnel-desing.pngg"
                 alt=""
                 width={880}
                 height={1100}
@@ -99,10 +99,7 @@ function Hero() {
                 fetchPriority="high"
               />
             </picture>
-            <figcaption className="fnl-hero__cap">
-              <Icon name="target" aria-hidden="true" />
-              One page, one offer, one action - built to be measured
-            </figcaption>
+           
           </figure>
         </Reveal>
       </div>

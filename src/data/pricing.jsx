@@ -50,10 +50,13 @@ export const PRICING_TIERS = pricingData.pricingPlans.map((plan) => ({
   bestFor: plan.description,
   monthly: plan.price,
   setup: plan.setupFee,
-  cta:
-    plan.billing === "custom"
-      ? { label: "Contact Us", to: "/contact" }
-      : { label: "Get Started", to: "/book" },
+  /* Every tier's CTA opens the contact form on /contact: there is no
+     self-serve checkout for a "Get Started" button to send anyone to, so
+     both labels land on the same page. */
+  cta: {
+    label: plan.billing === "custom" ? "Contact Us" : "Get Started",
+    to: "/contact",
+  },
   features: plan.features,
 }));
 

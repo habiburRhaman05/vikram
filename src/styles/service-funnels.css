@@ -112,7 +112,11 @@
 .fnl-hero__title {
   margin: 0 0 var(--hv-s5);
   font-family: var(--hv-font);
-  font-size: clamp(2.3rem, 1.5rem + 3vw, 3.6rem);
+  /* The floor is what a phone actually gets, and 2.3rem made this the
+     largest hero title of the set - four lines of it before the lede even
+     started. 2rem matches the rest of the service pages; the ceiling is
+     unchanged, so nothing below tablet width moves. */
+  font-size: clamp(2rem, 1.35rem + 3vw, 3.6rem);
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: -.03em;
@@ -162,8 +166,7 @@
 .fnl-hero__photo {
   border-radius: var(--hv-r-xl);
   overflow: hidden;
-  box-shadow: 0 30px 70px rgba(0, 0, 0, .38);
-  outline: 1px solid var(--hv-border-dark);
+
 }
 .fnl-hero__photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .fnl-hero__cap {
@@ -1025,8 +1028,9 @@
 
 @media (max-width: 900px) {
   .fnl-hero__inner { grid-template-columns: minmax(0, 1fr); }
-  /* The photo follows the copy on a phone. */
-  .fnl-hero__photo { max-width: 520px; }
+  /* The photo follows the copy on a phone, so it needs the gap the
+     column gap used to give it. */
+  .fnl-hero__photo { max-width: 520px; margin-top: clamp(36px, 8vw, 64px); }
   .fnl-hero__copy { text-align: center; }
   .fnl-hero__crumbs,
   .fnl-hero__ctas { justify-content: center; }

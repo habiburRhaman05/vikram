@@ -78,45 +78,20 @@ function DeskPanel() {
 
   return (
     <div className="wls-desk" aria-hidden="true">
-      <div className="wls-desk__bar">
-        <span className="wls-desk__avatar">{desk.brand.charAt(0)}</span>
-        <span className="wls-desk__id">
-          <b>{desk.brand}</b>
-          <i>
-            <span className="wls-desk__pulse" />
-            {desk.status}
-          </i>
-        </span>
-        <span className="wls-desk__sample">Sample queue</span>
-      </div>
-
-      <ul className="wls-desk__list">
-        {desk.tickets.map((t) => (
-          <li className={`wls-ticket is-${t.state}`} key={t.id}>
-            <span className="wls-ticket__id">{t.id}</span>
-            <span className="wls-ticket__subject">{t.subject}</span>
-            <span className="wls-ticket__tag">{t.tag}</span>
-            <span className="wls-ticket__state">
-              {t.state === "resolved" ? "Resolved" : "In progress"}
-            </span>
-            <span className="wls-ticket__age">{t.age}</span>
-          </li>
-        ))}
-      </ul>
-
-      <ul className="wls-desk__meters">
-        {desk.meters.map((m) => (
-          <li key={m.label}>
-            <b>{m.value}</b>
-            <span>{m.label}</span>
-          </li>
-        ))}
-      </ul>
-
-      <p className="wls-desk__note">
-        <Icon name="arrowUp" strokeWidth={2.4} />
-        {desk.note}
-      </p>
+     <Reveal index={1}>
+          <picture className="sd-hero__art">
+            <source type="image/webp" srcSet="/whitelebel.png" />
+            <img
+              src="/whitelebel.png"
+              alt=""
+              aria-hidden="true"
+              width={1200}
+              height={621}
+              decoding="async"
+              fetchPriority="high"
+            />
+          </picture>
+        </Reveal>
     </div>
   );
 }
@@ -155,32 +130,15 @@ function Hero() {
             </Btn>
           </div>
 
-          <ul className="wls-hero__badges">
-            {WLS_HERO.badges.map((b) => (
-              <li key={b.label}>
-                <Icon name={b.icon} strokeWidth={2.2} aria-hidden="true" />
-                {b.label}
-              </li>
-            ))}
-          </ul>
+   
         </Reveal>
 
         <Reveal className="wls-hero__viz" index={1}>
           <DeskPanel />
         </Reveal>
 
-        {/* Welded to the bottom edge of the hero rather than floated as its
-            own section: these four are the hero's supporting evidence, and
-            a reader should meet them before they decide whether to scroll,
-            not after a section break. */}
-        <Reveal as="ul" className="wls-stats" index={2}>
-          {WLS_HERO.stats.map((s) => (
-            <li key={s.label}>
-              <b>{s.value}</b>
-              <span>{s.label}</span>
-            </li>
-          ))}
-        </Reveal>
+    
+       
       </div>
     </section>
   );

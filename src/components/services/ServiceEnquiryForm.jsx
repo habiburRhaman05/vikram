@@ -349,17 +349,7 @@ export default function ServiceEnquiryForm({
               </li>
             </ul>
 
-            <div className="sd-form__direct">
-              <p>Would rather just talk?</p>
-              <a href={SITE.phoneHref} className="sd-form__direct-link">
-                <Icon name="phone" aria-hidden="true" />
-                {SITE.phone}
-              </a>
-              <a href={SITE.emailHref} className="sd-form__direct-link">
-                <Icon name="mail" aria-hidden="true" />
-                {SITE.email}
-              </a>
-            </div>
+
           </Reveal>
 
           {/* -- Right: the form ----------------------------------------- */}

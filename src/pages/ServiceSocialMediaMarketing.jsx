@@ -50,31 +50,6 @@ import "@/styles/service-social.css";
  * see the top-of-file comment on why.
  */
 
-/* -- Hero -------------------------------------------------------------- */
-
-function PostCard({ post, i }) {
-  return (
-    <Reveal className={`sm-post sm-post--${i}`} index={i}>
-      <div className="sm-post__head">
-        <span className="sm-post__icon" aria-hidden="true">
-          <Icon name={post.platform} />
-        </span>
-        <div>
-          <b>{post.handle}</b>
-          <span>{post.kind}</span>
-        </div>
-      </div>
-      <p className="sm-post__caption">{post.caption}</p>
-      <div className="sm-post__foot">
-        <Icon name="clock" aria-hidden="true" />
-        {post.stat}
-      </div>
-      <span className="sm-post__sample" aria-hidden="true">
-        Sample post
-      </span>
-    </Reveal>
-  );
-}
 
 function Hero() {
   return (
@@ -110,11 +85,32 @@ function Hero() {
           </Reveal>
         </div>
 
-        <div className="sm-hero__stack" aria-hidden="false">
-          {SM_HERO.posts.map((post, i) => (
-            <PostCard post={post} i={i} key={post.handle + i} />
-          ))}
-        </div>
+        {/* The hero's right column is the supplied artwork - one person
+            posting, with the networks it goes out to orbiting them. It
+            replaces the stack of sample post cards that used to sit here:
+            those were invented captions from invented handles, and on a
+            page about content they invited the reader to judge writing
+            nobody actually published.
+
+            Decorative: alt="" and aria-hidden. The networks it draws are
+            named in the platforms section further down the page.
+
+            Centred in its own column and against the copy beside it - see
+            .sm-hero__art in service-social.css. */}
+        <Reveal className="sm-hero__art" index={1}>
+          <picture>
+            <source type="image/webp" srcSet="/social-media-images.png" />
+            <img
+              src="/social-media-images.png"
+              alt=""
+              aria-hidden="true"
+              width={738}
+              height={416}
+              decoding="async"
+              fetchPriority="high"
+            />
+          </picture>
+        </Reveal>
       </div>
     </section>
   );
@@ -173,7 +169,7 @@ function Pillars() {
 
       <ul className="sm-bento">
         {SM_PILLARS.items.map((item, i) => (
-          <Reveal as="li" className={item.big ? "sm-bento__cell sm-bento__cell--big" : "sm-bento__cell"} key={item.title} index={i}>
+          <Reveal as="li" className="sm-bento__cell" key={item.title} index={i}>
             <span className="sm-bento__icon" aria-hidden="true">
               <Icon name={item.icon} />
             </span>

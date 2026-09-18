@@ -47,54 +47,6 @@ import "@/styles/service-detail.css";
 
 /* -- Sections -------------------------------------------------------------- */
 
-/** The hero's flow mock: one trigger firing two parallel actions and
- *  landing on an outcome - the shape of an automation, not a screenshot of
- *  one. Hardcoded here rather than in the data file, same reasoning as the
- *  AI page's call-mock bubbles: it's decoration for this hero specifically,
- *  not page copy. */
-function WfMock() {
-  return (
-    <div className="sd-heromock sd-wfmock" aria-hidden="true">
-      <div className="sd-heromock__head">
-        <span className="sd-heromock__badge">
-          <Icon name="bolt" />
-        </span>
-        <div className="sd-heromock__who">
-          <b>New booking</b>
-          <span>Automation running</span>
-        </div>
-        <span className="sd-heromock__live">Live</span>
-      </div>
-
-      <div className="sd-wfmock__body">
-        <div className="sd-wfmock__node sd-wfmock__node--trigger">
-          <Icon name="bolt" />
-          Booking confirmed
-        </div>
-
-        <span className="sd-wfmock__link" />
-
-        <div className="sd-wfmock__branches">
-          <div className="sd-wfmock__node">
-            <Icon name="mail" />
-            Confirmation sent
-          </div>
-          <div className="sd-wfmock__node">
-            <Icon name="calendar" />
-            Reminder started
-          </div>
-        </div>
-
-        <span className="sd-wfmock__link" />
-
-        <div className="sd-wfmock__node sd-wfmock__node--done">
-          <Icon name="check" />
-          CRM record updated
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function Hero() {
   return (
@@ -128,8 +80,31 @@ function Hero() {
           </div>
         </Reveal>
 
+        {/* The hero's right column is the supplied artwork: the actual
+            GoHighLevel workflow builder, with the trigger block and the
+            action chain it fires marked up on the canvas. It replaces the
+            coded WfMock, which drew the SHAPE of an automation - one
+            trigger, two parallel actions, an outcome - where the real
+            screen shows the thing itself, annotated. On a page selling
+            work done inside this builder, the builder is the better
+            picture.
+
+            Decorative: alt="" and aria-hidden. Triggers, actions and the
+            hand-offs between them are named in the lede and throughout
+            the page, so describing the screenshot would say it twice. */}
         <Reveal index={1}>
-          <WfMock />
+          <picture className="sd-hero__art">
+            <source type="image/webp" srcSet="/workflow-automation.png" />
+            <img
+              src="/workflow-automation.png"
+              alt=""
+              aria-hidden="true"
+              width={1200}
+              height={621}
+              decoding="async"
+              fetchPriority="high"
+            />
+          </picture>
         </Reveal>
       </div>
     </section>

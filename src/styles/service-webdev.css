@@ -114,7 +114,9 @@
   margin: 0 0 var(--hv-s5);
   max-width: 18ch;
   font-family: var(--hv-font);
-  font-size: clamp(2.3rem, 1.5rem + 3vw, 3.6rem);
+  /* Floor matched to the rest of the service heroes - see the note on
+     .fnl-hero__title, which had the same outsized phone size. */
+  font-size: clamp(2rem, 1.35rem + 3vw, 3.6rem);
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: -.03em;

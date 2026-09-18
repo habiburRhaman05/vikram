@@ -105,201 +105,263 @@
 .sm-hero__ctas { display: flex; flex-wrap: wrap; gap: var(--hv-s4); }
 
 /* Fanned post-card stack. */
-.sm-hero__stack {
+/* -- Hero artwork ---------------------------------------------------------
+   Centred twice over, which is what the column needs: `margin-inline:auto`
+   centres the image inside its own grid cell, and `align-self: center`
+   centres the whole block against the copy beside it - the hero grid sets
+   `align-items: start` so the crumbs and headline stay pinned to the top,
+   and without this the artwork would hang off that same top edge with all
+   the slack left underneath it.
+
+   Framed, like the other service heroes that carry an image: this one has
+   its own deep navy background, and unframed it reads as a rectangle of a
+   different brand pasted onto the green wash.
+
+   Sources: public/img/services/social-hero.{webp,jpg} (17KB / 22KB) from
+   public/social-media-images.jpg at its native 738x416.
+   ------------------------------------------------------------------------- */
+/* Top-aligned with the copy beside it, not centred against it. The grid
+   sets `align-items: start`, the crumbs are their own full-width row
+   above, and the artwork is within a few pixels of the copy block's own
+   height - so starting them together also finishes them together, which
+   centring did not: it left the frame beginning above the kicker and
+   aligned with nothing at either end.
+
+   No width cap either. 560px was narrower than the column it sits in at
+   desktop widths, which read as a small picture with an unexplained
+   gutter rather than a deliberate one. */
+.sm-hero__art {
   position: relative;
-  min-height: 400px;
+  width: 100%;
+  margin-inline: auto;
 }
 
-.sm-post {
+/* The bloom. The illustration ships on its own deep navy, which is a
+   different colour family from this hero's green - dropped straight onto
+   the wash it reads as a foreign rectangle. A soft accent glow spilling
+   out from behind the frame is what ties the two together: the eye reads
+   the navy as the dark centre of a green light rather than as a patch of
+   somebody else's palette. Sits behind everything and catches no clicks. */
+.sm-hero__art::before {
+  content: "";
   position: absolute;
-  width: min(300px, 82vw);
-  background: rgba(6, 42, 36, .88);
-  border: 1px solid rgba(255, 255, 255, .1);
-  border-radius: 18px;
-  padding: var(--hv-s5);
-  box-shadow: 0 24px 50px rgba(2, 20, 16, .45);
-  backdrop-filter: blur(6px);
+  z-index: 0;
+  inset: 8% -6% -10%;
+  border-radius: 50%;
+  background: radial-gradient(60% 55% at 50% 60%, rgba(53, 217, 160, .28) 0%, rgba(53, 217, 160, 0) 70%);
+  filter: blur(12px);
+  pointer-events: none;
 }
-.sm-post--0 { top: 4%; left: 4%; transform: rotate(-6deg); z-index: 3; }
-.sm-post--1 { top: 24%; left: 30%; transform: rotate(3deg); z-index: 2; }
-.sm-post--2 { top: 46%; left: 10%; transform: rotate(-2deg); z-index: 1; }
 
-.sm-post__head { display: flex; align-items: center; gap: var(--hv-s3); margin-bottom: var(--hv-s3); }
-.sm-post__icon {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: rgba(53, 217, 160, .16);
-  color: var(--hv-accent-bright);
-  flex-shrink: 0;
+/* The frame. `picture` carries it rather than the wrapper, so the radius
+   clips the image itself and the bloom above is free to sit outside it.
+
+   Two rings, not one: the outer border separates the artwork from the
+   hero, and the inset highlight is the light catching the top edge, which
+   is what stops a dark panel on a dark ground from reading as a hole. */
+.sm-hero__art picture {
+  position: relative;
+  z-index: 1;
+  display: block;
+  /* The same radius the other service heroes frame their artwork with. */
+  border-radius: var(--hv-r-xl);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, .16);
+  box-shadow:
+    0 34px 68px -30px rgba(0, 0, 0, .7),
+    inset 0 1px 0 rgba(255, 255, 255, .14);
 }
-.sm-post__icon svg { width: 17px; height: 17px; }
-.sm-post__head div { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.sm-post__head b { font-size: var(--hv-fs-sm); color: var(--hv-on-dark); }
-.sm-post__head span { font-size: var(--hv-fs-xs); color: var(--hv-on-dark-muted); }
-
-.sm-post__caption { font-family: var(--hv-font-body); font-size: var(--hv-fs-sm); line-height: 1.5; color: var(--hv-on-dark); margin: 0 0 var(--hv-s4); }
-
-.sm-post__foot {
-  display: flex;
-  align-items: center;
-  gap: var(--hv-s2);
-  font-size: var(--hv-fs-xs);
-  color: var(--hv-accent-bright);
-  font-weight: 600;
-}
-.sm-post__foot svg { width: 14px; height: 14px; }
-
-.sm-post__sample {
-  position: absolute;
-  top: -10px;
-  right: 14px;
-  font-size: .65rem;
-  font-weight: 700;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  background: var(--hv-bg-dark-2);
-  border: 1px solid rgba(255, 255, 255, .14);
-  color: var(--hv-on-dark-muted);
-  padding: 3px 9px;
-  border-radius: var(--hv-r-pill);
+.sm-hero__art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* The source is a flat export; a touch of contrast and saturation keeps
+     it from going muddy once it is sitting on a dark ground. */
+  filter: saturate(1.06) contrast(1.03);
 }
 
 @media (max-width: 900px) {
   .sm-hero__inner { grid-template-columns: 1fr; }
-  .sm-hero__stack { min-height: 340px; margin-top: var(--hv-s8); }
-  .sm-post--0 { left: 2%; }
-  .sm-post--1 { left: 22%; }
-  .sm-post--2 { left: 6%; }
   .sm-hero__copy { text-align: center; }
   .sm-hero__crumbs,
   .sm-hero__ctas { justify-content: center; }
   .sm-hero__title,
   .sm-hero__lede { margin-inline: auto; }
+  /* Stacked: the artwork follows the copy instead of sitting beside it,
+     so it needs the gap the column gap used to give it. */
+  .sm-hero__art { margin-top: clamp(36px, 8vw, 64px); }
 }
-@media (max-width: 460px) {
-  .sm-hero__stack { min-height: 300px; }
-  .sm-post { width: min(260px, 86vw); padding: var(--hv-s4); }
-}
-
 /* -- Intro ----------------------------------------------------------------------
    A pinned-caption banner, magazine-column prose and a connected fact strip -
    deliberately not the aside+sticky-quote formula the other service pages
    (including this page's own Email & SMS sibling) use. */
 
-.sm-intro__head { max-width: 56ch; margin-bottom: var(--hv-s8); }
+/* The heading, the pull-quote, the argument, and the four facts that back
+   it - centred as one column so they read as one section.
+
+   WHAT WAS WRONG BEFORE: the heading was left-aligned above a centred
+   banner, so the section started in two places at once; and the prose ran
+   in `column-count: 2`, which with `break-inside: avoid` produced two
+   ragged columns of visibly different lengths - newspaper columns without
+   a newspaper's ability to balance them. Multi-column also makes the
+   reader's eye travel to the bottom of the page and back up again for a
+   block of text only three paragraphs long, which is the one thing a
+   short section should never ask. */
+.sm-intro__head { max-width: 46ch; margin: 0 auto var(--hv-s8); text-align: center; }
 .sm-intro__head .hv-h2 { margin-top: var(--hv-s3); }
 
+/* The pull-quote. Dark, to sit apart from the prose under it, with the
+   quote mark as a badge rather than a 4.5rem serif glyph floating free -
+   at that size it read as a decorative flourish that had lost its text. */
 .sm-intro__banner {
   position: relative;
-  max-width: 860px;
+  max-width: 780px;
   margin: 0 auto var(--hv-s9);
-  padding: var(--hv-s8) var(--hv-s8) var(--hv-s7);
-  border-radius: 28px;
+  padding: var(--hv-s8);
+  border-radius: 24px;
   background: linear-gradient(158deg, var(--hv-bg-dark) 0%, var(--hv-bg-dark-2) 100%);
   color: var(--hv-on-dark);
   text-align: center;
   overflow: hidden;
 }
+/* A single hairline of accent across the top edge, so the panel is anchored
+   to the brand rather than being a generic dark box. */
+.sm-intro__banner::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: var(--hv-grad-accent);
+}
 .sm-intro__mark {
-  display: block;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin: 0 auto var(--hv-s5);
+  border-radius: 50%;
+  background: rgba(53, 217, 160, .14);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 4.5rem;
+  font-size: 2rem;
   line-height: 1;
+  /* The glyph sits high in its own em box; this drops it onto the optical
+     centre of the circle instead of the mathematical one. */
+  padding-top: .38em;
   color: var(--hv-accent-bright);
-  margin-bottom: -10px;
-  opacity: .9;
 }
 .sm-intro__banner-text {
   font-family: var(--hv-font);
   font-weight: 700;
   font-size: clamp(1.15rem, 1rem + .9vw, 1.55rem);
-  line-height: 1.4;
-  max-width: 36ch;
-  margin: 0 auto var(--hv-s5);
+  line-height: 1.45;
+  letter-spacing: -.015em;
+  max-width: 34ch;
+  margin: 0 auto var(--hv-s6);
+  text-wrap: balance;
 }
 .sm-intro__banner-foot {
   display: inline-block;
-  font-size: var(--hv-fs-sm);
-  color: var(--hv-on-dark-muted);
-  padding-top: var(--hv-s4);
+  max-width: 44ch;
+  padding-top: var(--hv-s5);
   border-top: 1px solid rgba(255, 255, 255, .14);
+  font-family: var(--hv-font-body);
+  font-size: var(--hv-fs-sm);
+  line-height: 1.5;
+  color: var(--hv-on-dark-muted);
 }
 
+/* One measure, not two columns. 68ch is a long-form line; the paragraphs
+   are few enough that the page does not need the height back. */
 .sm-intro__prose {
-  max-width: 980px;
+  max-width: 68ch;
   margin: 0 auto var(--hv-s9);
-  column-count: 2;
-  column-gap: var(--hv-s8);
 }
 .sm-intro__prose p {
   font-family: var(--hv-font-body);
   font-size: var(--hv-fs-body);
-  line-height: 1.7;
+  line-height: 1.75;
   color: var(--hv-text-muted);
   margin: 0 0 var(--hv-s5);
-  break-inside: avoid;
 }
+.sm-intro__prose p:last-child { margin-bottom: 0; }
 
+/* The four facts. Cells divided by hairlines rather than dots threaded on
+   a connector line: the four are not a sequence - nothing flows from
+   "Weekly" to "5" - and drawing them on a rail said they were. */
 .sm-intro__strip {
   list-style: none;
-  margin: 0;
-  padding: var(--hv-s7) 0 0;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--hv-s6);
-  position: relative;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  border-radius: 18px;
+  border: 1px solid var(--hv-border);
+  background: var(--hv-border);
+  overflow: hidden;
 }
-.sm-intro__strip::before {
-  content: "";
-  position: absolute;
-  top: 14px;
-  left: 6%;
-  right: 6%;
-  height: 2px;
-  background: var(--hv-border-strong);
+.sm-intro__strip li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: var(--hv-s7) var(--hv-s5);
+  background: #fff;
+  text-align: center;
 }
-.sm-intro__strip li { position: relative; display: flex; flex-direction: column; gap: 4px; text-align: center; }
 .sm-intro__strip-dot {
-  position: relative;
-  z-index: 1;
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  background: var(--hv-grad-accent);
-  color: #fff;
-  font-size: .75rem;
+  background: var(--hv-bg-mint-deep);
+  color: var(--hv-accent-strong);
+  font-size: .72rem;
   font-weight: 800;
-  margin: 0 auto var(--hv-s3);
+  margin-bottom: var(--hv-s3);
 }
-.sm-intro__strip b { font-size: 1.3rem; font-weight: 800; color: var(--hv-accent-strong); }
+.sm-intro__strip b {
+  font-family: var(--hv-font);
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+  color: var(--hv-accent-strong);
+}
 .sm-intro__strip strong { font-size: var(--hv-fs-sm); font-weight: 700; color: var(--hv-text); }
-.sm-intro__strip span:last-child { font-size: var(--hv-fs-xs); color: var(--hv-text-muted); }
+.sm-intro__strip span:last-child { font-size: var(--hv-fs-xs); line-height: 1.45; color: var(--hv-text-muted); }
 
-@media (max-width: 760px) {
-  .sm-intro__prose { column-count: 1; }
-}
+/* The prose needs no band of its own any more - one measure reflows on its
+   own, which was half the reason for dropping the columns. */
 @media (max-width: 700px) {
   .sm-intro__strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .sm-intro__strip::before { display: none; }
 }
 @media (max-width: 560px) {
-  .sm-intro__banner { padding: var(--hv-s7) var(--hv-s5) var(--hv-s6); }
+  .sm-intro__banner { padding: var(--hv-s7) var(--hv-s5); }
+  .sm-intro__strip { grid-template-columns: minmax(0, 1fr); }
+  .sm-intro__strip li { padding: var(--hv-s6) var(--hv-s5); }
 }
 
 /* -- Content pillars (bento grid) ----------------------------------------------- */
 
+/* Six cards, three across, two even rows.
+   It used to be a bento: four columns with one cell spanning 2x2 as a
+   green feature tile. Two things were wrong with that. The feature tile's
+   body copy was unreadable - `.sm-bento__cell p` is declared after
+   `.sm-bento__cell--big p` at the same specificity, so the muted dark grey
+   won and sat on a dark green fill. And six items never tiled into a
+   four-column bento: the last card was left stranded on a row of its own.
+
+   `grid-auto-rows: 1fr` is what makes every card the same height rather
+   than only the cards that share a row - all six now match the tallest. */
 .sm-bento {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-auto-rows: minmax(160px, auto);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
   gap: var(--hv-s5);
 }
 
@@ -313,18 +375,6 @@
   transition: border-color var(--hv-dur) var(--hv-ease), transform var(--hv-dur) var(--hv-ease), box-shadow var(--hv-dur) var(--hv-ease);
 }
 .sm-bento__cell:hover { border-color: var(--hv-accent-bright); transform: translateY(-3px); box-shadow: var(--hv-sh-md); }
-
-.sm-bento__cell--big {
-  grid-column: span 2;
-  grid-row: span 2;
-  background: var(--hv-grad-accent);
-  color: #fff;
-  border-color: transparent;
-  justify-content: flex-end;
-}
-.sm-bento__cell--big h3 { color: #fff; }
-.sm-bento__cell--big p { color: rgba(255, 255, 255, .84); }
-.sm-bento__cell--big .sm-bento__icon { background: rgba(255, 255, 255, .18); color: #fff; }
 
 .sm-bento__icon {
   display: grid;
@@ -343,11 +393,11 @@
 
 @media (max-width: 1000px) {
   .sm-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .sm-bento__cell--big { grid-column: span 2; grid-row: span 1; }
 }
 @media (max-width: 560px) {
-  .sm-bento { grid-template-columns: 1fr; }
-  .sm-bento__cell--big { grid-column: span 1; }
+  /* One per row: equal heights stop being a virtue once each card is the
+     only thing on its line, and forcing them would pad the short ones. */
+  .sm-bento { grid-template-columns: 1fr; grid-auto-rows: auto; }
 }
 
 /* -- Platforms -------------------------------------------------------------------- */

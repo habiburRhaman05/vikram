@@ -32,25 +32,6 @@ export const CS_HERO = {
 
   primary: { label: "Get Free Consultation", to: "/book", icon: "arrowRight" },
   secondary: { label: "See What's Included", href: "#included" },
-
-  /* The architecture tree in the hero - the shape of a properly structured
-     account, not a screenshot of one. */
-  tree: {
-    root: { icon: "building", label: "Agency account" },
-    branches: [
-      {
-        icon: "key",
-        label: "Sub-account: Location A",
-        children: ["Sales pipeline", "Booking calendar", "A2P registered"],
-      },
-      {
-        icon: "key",
-        label: "Sub-account: Location B",
-        children: ["Sales pipeline", "Booking calendar", "A2P registered"],
-      },
-    ],
-    snapshot: "Saved as a reusable snapshot",
-  },
 };
 
 /* -- 2. Overview / the detail ----------------------------------------------- */

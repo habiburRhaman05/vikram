@@ -22,33 +22,6 @@ export const SM_HERO = {
 
   primary: { label: "Get Free Consultation", to: "/book", icon: "arrowRight" },
   secondary: { label: "See What's Included", href: "#pillars" },
-
-  /* The three post-mockup cards fanned in the hero. Content is written to
-     read as a realistic sample post, not a real client's - see the "sample"
-     label rendered with each card in the Hero component. */
-  posts: [
-    {
-      platform: "instagram",
-      handle: "@yourbusiness",
-      kind: "Carousel",
-      caption: "Behind the scenes of our Tuesday install - swipe for the before/after.",
-      stat: "Scheduled for 9:00 AM",
-    },
-    {
-      platform: "facebook",
-      handle: "Your Business",
-      kind: "Update",
-      caption: "We're now booking for next month. Comment or DM to grab a slot.",
-      stat: "Scheduled for 12:30 PM",
-    },
-    {
-      platform: "linkedin",
-      handle: "Your Business",
-      kind: "Article share",
-      caption: "Three questions to ask before you sign with any provider.",
-      stat: "Scheduled for 4:00 PM",
-    },
-  ],
 };
 
 /* -- 2. Intro ----------------------------------------------------------------- */
@@ -85,7 +58,6 @@ export const SM_PILLARS = {
       icon: "star",
       title: "Proof of work",
       body: "Before/after shots, finished jobs, real results - the content that answers \"can they actually do this.\"",
-      big: true,
     },
     {
       icon: "users",

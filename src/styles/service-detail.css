@@ -68,6 +68,33 @@
    Marketing hero draws, so every service detail hero carries an identical
    background treatment. Masked from the top-left so it fades out before it
    reaches the visual column. */
+/* -- Hero artwork ---------------------------------------------------------
+   For a .sd-hero--split page whose right column is a real image rather
+   than one of the coded .sd-heromock panels. Framed, because these are
+   opaque screenshots with their own backgrounds: without an edge they read
+   as a rectangle of unrelated pixels pasted onto the hero wash. Same
+   hairline rim and lift the mock panels use, so the two kinds of hero
+   visual belong to one family.
+
+   Sources live in public/img/services/ at the width they render at, as
+   WebP with a JPEG fallback. They are the LCP element on their page, so
+   they are NOT lazy - see the markup for the fetchPriority note.
+   ------------------------------------------------------------------------- */
+.sd-hero__art {
+  display: block;
+  position: relative;
+  border-radius: var(--hv-r-xl);
+  border: 1px solid rgba(255, 255, 255, .14);
+  background: rgba(4, 30, 25, .6);
+  overflow: hidden;
+  box-shadow: 0 34px 68px -30px rgba(0, 0, 0, .66);
+}
+.sd-hero__art img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .sd-hero::after {
   content: "";
   position: absolute;
@@ -1838,58 +1865,6 @@
   box-shadow: 0 0 0 3px rgba(53, 217, 160, .25);
 }
 
-/* -- Workflow Automation: trigger -> branch -> outcome ---------------------- */
-
-.sd-wfmock__body { padding: var(--hv-s6); display: flex; flex-direction: column; align-items: center; }
-.sd-wfmock__node {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 11px 15px;
-  border-radius: var(--hv-r-md);
-  border: 1px solid rgba(255, 255, 255, .16);
-  background: rgba(255, 255, 255, .06);
-  font-family: var(--hv-font);
-  font-size: .84rem;
-  font-weight: 700;
-  color: #fff;
-}
-.sd-wfmock__node svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--hv-accent-bright); }
-.sd-wfmock__node--trigger { border-color: rgba(53, 217, 160, .4); }
-.sd-wfmock__node--done { background: var(--hv-grad-accent); border-color: transparent; }
-.sd-wfmock__node--done svg { color: #fff; }
-
-.sd-wfmock__link { width: 1px; height: 20px; background: linear-gradient(180deg, rgba(53, 217, 160, .7), rgba(53, 217, 160, .25)); }
-
-.sd-wfmock__branches {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--hv-s4);
-  position: relative;
-  padding-top: var(--hv-s6);
-}
-.sd-wfmock__branches::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 25%;
-  right: 25%;
-  height: 1px;
-  background: rgba(53, 217, 160, .45);
-}
-.sd-wfmock__branches > .sd-wfmock__node { position: relative; font-size: .76rem; padding: 10px; text-align: center; }
-.sd-wfmock__branches > .sd-wfmock__node::before {
-  content: "";
-  position: absolute;
-  top: calc(var(--hv-s6) * -1);
-  left: 50%;
-  width: 1px;
-  height: var(--hv-s6);
-  background: rgba(53, 217, 160, .45);
-}
-
 /* -- Funnel Design & Builds: the funnel shape --------------------------------- */
 
 .sd-funnelviz { padding: var(--hv-s7) var(--hv-s6) var(--hv-s6); }
@@ -2274,6 +2249,16 @@
   .sd-hero--split .sd-hero__ctas { justify-content: center; }
   .sd-hero--split .sd-hero__title,
   .sd-hero--split .sd-hero__lede { max-width: none; margin-inline: auto; }
+  /* Stacked, the visual sits directly under the buttons. The grid's
+     row-gap is 0 - it was written for the two-column case, where the only
+     gap that mattered was the column one - so without this the artwork
+     butts straight against the last CTA with nothing between them. Set on
+     the last child rather than as a row-gap because the crumbs are their
+     own full-width row above, and a row-gap would push those apart too.
+
+     Targets whatever is in the second column: a .sd-hero__art image on
+     one page, an .sd-heromock panel on the next. */
+  .sd-hero--split .sd-hero__inner > :last-child { margin-top: clamp(36px, 8vw, 64px); }
 
   .sd-intro__inner { grid-template-columns: minmax(0, 1fr); }
   /* Nothing tall beside it to stick against once this is one column. */

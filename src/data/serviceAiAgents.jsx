@@ -65,22 +65,7 @@ export const AI_HERO = {
   /* The hero's visual: the four doors one agent answers, each showing the
      state it hands on, funnelling into the single contact record they all
      write to. Statuses are process states, not performance figures - see
-     rule 2 at the top of this file. */
-  spine: {
-    caption: "One agent, every door",
-    channels: [
-      { icon: "phone", label: "Voice call", note: "Your main line, or a number of its own", status: "Answered" },
-      { icon: "message", label: "Text & SMS", note: "A missed call becomes a conversation", status: "Replied" },
-      { icon: "chatWindow", label: "Website chat", note: "On the pages where people hesitate", status: "Qualified" },
-      { icon: "megaphone", label: "Social DMs", note: "Instagram, Facebook and WhatsApp", status: "Booked" },
-    ],
-    record: {
-      icon: "layers",
-      label: "One contact record",
-      note: "Transcript, recording and outcome land on the same contact in your CRM",
-    },
-  },
-};
+     rule 2 at the top of this file. */};
 
 /* -- 2. Intro: what this actually is -------------------------------------- */
 

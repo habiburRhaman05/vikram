@@ -52,42 +52,8 @@ import "@/styles/service-crm-setup.css";
  * reviews before launch - see the note in data/serviceCrmSetup.jsx.
  */
 
-/* -- 1. Hero: architecture tree ---------------------------------------------- */
+/* -- 1. Hero ------------------------------------------------------------------ */
 
-function ArchTree() {
-  const { tree } = CS_HERO;
-  return (
-    <div className="cs-tree" aria-hidden="true">
-      <div className="cs-tree__root">
-        <Icon name={tree.root.icon} />
-        {tree.root.label}
-      </div>
-
-      <div className="cs-tree__fork" />
-
-      <div className="cs-tree__branches">
-        {tree.branches.map((b) => (
-          <div className="cs-tree__branch" key={b.label}>
-            <div className="cs-tree__node">
-              <Icon name={b.icon} />
-              {b.label}
-            </div>
-            <ul>
-              {b.children.map((c) => (
-                <li key={c}>{c}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-
-      <div className="cs-tree__snapshot">
-        <Icon name="layers" />
-        {tree.snapshot}
-      </div>
-    </div>
-  );
-}
 
 function Hero() {
   return (
@@ -118,8 +84,36 @@ function Hero() {
           </div>
         </Reveal>
 
+        {/* The hero's right column is the supplied artwork: a configured
+            account on screen - sidebar, pipeline board, stage cards and
+            the reporting rail - which is what this service hands over.
+            It replaces the coded architecture tree, which drew the same
+            structure as a diagram and was competing with the before/after
+            account panel in the section directly below it.
+
+            Decorative: alt="" and aria-hidden. Every part of the build it
+            shows is named in the lede and in "What's included", so a
+            description of the screenshot would be a second, vaguer telling
+            of the same thing.
+
+            Not lazy and fetchPriority="high": this is the hero image on a
+            page people arrive at cold, so it is the LCP candidate, and
+            deferring it is deferring first paint. The 1240px sources are
+            generated from public/crm-setup.png (1536px, 1.7MB) - see the
+            note in service-crm-setup.css. */}
         <Reveal className="cs-hero__viz" index={1}>
-          <ArchTree />
+          <picture className="cs-hero__art">
+            <source type="image/webp" srcSet="/img/services/crm-setup-hero.webp" />
+            <img
+              src="/img/services/crm-setup-hero.jpg"
+              alt=""
+              aria-hidden="true"
+              width={1240}
+              height={827}
+              decoding="async"
+              fetchPriority="high"
+            />
+          </picture>
         </Reveal>
       </div>
     </section>

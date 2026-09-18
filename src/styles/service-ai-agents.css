@@ -1289,6 +1289,9 @@
   .ai-hero__crumbs,
   .ai-hero__ctas { justify-content: center; }
   .ai-hero__lede { margin-inline: auto; }
+  /* Stacked: the artwork follows the copy, so it needs the gap the column
+     gap used to give it. */
+  .ai-hero__aside { margin-top: clamp(36px, 8vw, 64px); }
 
   /* The bento loses its spans and becomes one plain column of tiles, and the
      wide tiles' two-column item list collapses with it. */
@@ -1327,4 +1330,50 @@
   .ai-route__branches { grid-template-columns: minmax(0, 1fr); }
   .ai-channel__head { flex-wrap: wrap; }
   .ai-channel__tag { margin-left: 0; }
+}
+
+
+/* -- Hero artwork ---------------------------------------------------------
+   The supplied AI-core graphic, in place of the coded channel panel that
+   used to fill this column. Transparent PNG on the hero's own wash, so it
+   needs no plate - only a soft green bloom behind it, which stops the
+   artwork's own glow from stopping dead at the edge of the file.
+
+   It is capped rather than stretched: the source is 666px wide and
+   upscaling a raster mark that is mostly thin strokes is exactly where it
+   starts to look soft.
+   ------------------------------------------------------------------------- */
+.ai-hero__aside {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.ai-hero__aside::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  width: min(86%, 420px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(53, 217, 160, .26) 0%, rgba(53, 217, 160, 0) 68%);
+  pointer-events: none;
+}
+.ai-hero__art {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  /* A gentle rise, matched to the dotted-orbit motion elsewhere in the
+     family. Held still under prefers-reduced-motion below. */
+  animation: ai-hero-float 7s var(--hv-ease) infinite;
+}
+@keyframes ai-hero-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-hero__art { animation: none; }
 }

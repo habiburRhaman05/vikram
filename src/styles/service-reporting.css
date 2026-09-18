@@ -171,7 +171,7 @@
 
 @media (max-width: 900px) {
   .rd-hero__inner { grid-template-columns: 1fr; }
-  .rd-hero__mock { margin-top: var(--hv-s8); }
+  .rd-hero__mock { margin-top: clamp(36px, 8vw, 64px); }
   .rd-hero__copy { text-align: center; }
   .rd-hero__crumbs,
   .rd-hero__ctas { justify-content: center; }

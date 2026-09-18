@@ -862,7 +862,7 @@
   .wls-closing__grid {
     grid-template-columns: minmax(0, 1fr);
   }
-  .wls-hero__viz { margin-top: var(--hv-s8); }
+  .wls-hero__viz { margin-top: clamp(36px, 8vw, 64px); }
   .wls-hero__title,
   .wls-hero__lede { max-width: none; }
 

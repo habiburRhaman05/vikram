@@ -21,19 +21,10 @@ export const ES_HERO = {
   primary: { label: "Get Free Consultation", to: "/book", icon: "arrowRight" },
   secondary: { label: "See a Sample Sequence", href: "#preview" },
 
-  /* Sample SMS thread + email preview shown in the hero mockups. Written as
-     an illustrative sample, not a real client's sequence. */
-  sms: [
-    { from: "them", text: "Hi, do you still have availability this week?" },
-    { from: "us", text: "Yes! We've got Thursday 2pm or Friday 10am open - want me to hold one?" },
-    { from: "them", text: "Friday 10am works" },
-    { from: "us", text: "Booked - you'll get a reminder the day before. See you Friday!" },
-  ],
-  email: {
-    subject: "Still thinking it over? Here's what happens next.",
-    preheader: "A quick recap, and the easiest way to get started.",
-    from: "Your Business",
-  },
+  /* The hero's sample SMS thread and email preview used to live here, for
+     two coded mock panels. Both are now in the hero artwork itself - see
+     ServiceEmailSmsCampaigns.jsx. The sample sequence further down the
+     page (ES_PREVIEW) is unaffected and is still real page copy. */
 };
 
 /* -- 2. Intro ----------------------------------------------------------------- */

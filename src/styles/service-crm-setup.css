@@ -99,126 +99,46 @@
 }
 .cs-hero__ctas { display: flex; flex-wrap: wrap; gap: var(--hv-s4); }
 
-/* The tree itself - a real hierarchy, drawn with connectors. */
-.cs-tree {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--hv-s7) var(--hv-s6);
+/* -- Hero artwork ---------------------------------------------------------
+   The supplied CRM screenshot, in place of the coded architecture tree
+   that used to fill this column.
+
+   Framed rather than bare: unlike the AI page's artwork this is an opaque
+   raster with its own background, so it needs an edge to sit against the
+   hero wash instead of floating as a rectangle of unrelated pixels. The
+   rim is the same hairline every dark panel in this family uses, and the
+   shadow is what lifts it off the gradient.
+
+   SOURCES: public/img/services/crm-setup-hero.{webp,jpg} at 1240px, made
+   from public/crm-setup.png (1536x1024, 1.7MB) with sharp - 54KB and 90KB
+   respectively. Regenerate both if the source changes; shipping the raw
+   PNG puts 1.7MB on the critical path of this page's largest element.
+   ------------------------------------------------------------------------- */
+.cs-hero__art {
+  display: block;
+  position: relative;
   border-radius: var(--hv-r-xl);
   border: 1px solid rgba(255, 255, 255, .14);
   background: rgba(4, 30, 25, .6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  overflow: hidden;
+  box-shadow: 0 34px 68px -30px rgba(0, 0, 0, .66);
 }
-
-.cs-tree__root,
-.cs-tree__node {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--hv-font);
-  font-weight: 700;
-  color: #fff;
-  white-space: nowrap;
-}
-.cs-tree__root {
-  padding: 11px 20px;
-  border-radius: var(--hv-r-pill);
-  background: var(--hv-grad-accent);
-  box-shadow: var(--hv-sh-accent-sm);
-  font-size: .9rem;
-}
-.cs-tree__root svg { width: 17px; height: 17px; }
-
-.cs-tree__fork { width: 1px; height: 22px; background: rgba(53, 217, 160, .5); }
-
-.cs-tree__branches {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--hv-s4);
+.cs-hero__art img {
+  display: block;
   width: 100%;
-  padding-top: var(--hv-s5);
-}
-/* The horizontal rail plus a drop into each branch. */
-.cs-tree__branches::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 25%;
-  right: 25%;
-  height: 1px;
-  background: rgba(53, 217, 160, .5);
-}
-.cs-tree__branch { position: relative; }
-.cs-tree__branch::before {
-  content: "";
-  position: absolute;
-  top: calc(var(--hv-s5) * -1);
-  left: 50%;
-  width: 1px;
-  height: var(--hv-s5);
-  background: rgba(53, 217, 160, .5);
+  height: auto;
 }
 
-.cs-tree__node {
-  justify-content: center;
-  width: 100%;
-  padding: 9px 12px;
-  border-radius: var(--hv-r-md);
-  border: 1px solid rgba(255, 255, 255, .16);
-  background: rgba(255, 255, 255, .06);
-  font-size: .78rem;
-}
-.cs-tree__node svg { width: 14px; height: 14px; color: var(--hv-accent-bright); flex-shrink: 0; }
-
-.cs-tree__branch ul { list-style: none; margin: 8px 0 0; padding: 0 0 0 var(--hv-s4); display: flex; flex-direction: column; gap: 5px; }
-.cs-tree__branch li {
-  position: relative;
-  padding-left: 13px;
-  font-size: .72rem;
-  color: var(--hv-on-dark-muted);
-}
-.cs-tree__branch li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 7px;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: rgba(53, 217, 160, .6);
-}
-
-.cs-tree__snapshot {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: var(--hv-s6);
-  padding: 6px 14px;
-  border-radius: var(--hv-r-pill);
-  border: 1px dashed rgba(53, 217, 160, .45);
-  background: rgba(53, 217, 160, .08);
-  font-size: .72rem;
-  font-weight: 700;
-  color: var(--hv-accent-bright);
-}
-.cs-tree__snapshot svg { width: 13px; height: 13px; }
-
+/* The hero stacks before the rest of the page does: two columns stop
+   working here as soon as the headline has to wrap to four lines. */
 @media (max-width: 900px) {
   .cs-hero__inner { grid-template-columns: 1fr; }
-  .cs-hero__viz { margin-top: var(--hv-s8); }
+  .cs-hero__viz { margin-top: clamp(36px, 8vw, 64px); }
   .cs-hero__copy { text-align: center; }
   .cs-hero__crumbs,
   .cs-hero__ctas { justify-content: center; }
   .cs-hero__title,
   .cs-hero__lede { margin-inline: auto; }
-}
-@media (max-width: 440px) {
-  .cs-tree__branches { grid-template-columns: 1fr; gap: var(--hv-s5); }
-  .cs-tree__branches::before { display: none; }
-  .cs-tree__branch::before { display: none; }
 }
 
 /* -- 2. Overview + before/after states ----------------------------------------- */

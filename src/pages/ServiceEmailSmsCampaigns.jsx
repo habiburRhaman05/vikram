@@ -83,32 +83,34 @@ function Hero() {
           </Reveal>
         </div>
 
-        <Reveal className="es-hero__mocks" index={1}>
-          <div className="es-mock es-mock--sms">
-            <div className="es-mock__bar">
-              <span>Messages</span>
-            </div>
-            <div className="es-mock__body">
-              {ES_HERO.sms.map((m, i) => (
-                <p key={i} className={`es-bubble es-bubble--${m.from}`}>
-                  {m.text}
-                </p>
-              ))}
-            </div>
-            <span className="es-mock__sample" aria-hidden="true">Sample thread</span>
-          </div>
+        {/* The hero's right column is the supplied artwork: the SMS
+            thread on the phone and the email inbox on the screen behind
+            it - both halves of this service in one picture. It replaces
+            two coded mock panels that drew the same two things side by
+            side.
 
-          <div className="es-mock es-mock--email">
-            <div className="es-mock__bar">
-              <span>Inbox</span>
-            </div>
-            <div className="es-mock__body es-mock__body--email">
-              <p className="es-email__from">{ES_HERO.email.from}</p>
-              <p className="es-email__subject">{ES_HERO.email.subject}</p>
-              <p className="es-email__pre">{ES_HERO.email.preheader}</p>
-            </div>
-            <span className="es-mock__sample" aria-hidden="true">Sample email</span>
-          </div>
+            The artwork labels the conversation "Sample thread" on its own
+            face, which is the same promise the coded mocks made with their
+            own corner labels - nothing here is a real customer exchange.
+
+            Decorative: alt="" and aria-hidden. Every channel it shows is
+            named in the headline and the lede beside it.
+
+            Centred against the copy - see .es-hero__art in
+            service-email-sms.css. */}
+        <Reveal className="es-hero__art" index={1}>
+          <picture>
+            <source type="image/webp" srcSet="/img/services/email-sms-hero.webp" />
+            <img
+              src="/img/services/email-sms-hero.jpg"
+              alt=""
+              aria-hidden="true"
+              width={1120}
+              height={630}
+              decoding="async"
+              fetchPriority="high"
+            />
+          </picture>
         </Reveal>
       </div>
     </section>

@@ -86,76 +86,45 @@
 
 .es-hero__ctas { display: flex; flex-wrap: wrap; gap: var(--hv-s4); }
 
-/* Phone + inbox mockup pair. */
-.es-hero__mocks { display: flex; gap: var(--hv-s5); align-items: flex-end; justify-content: center; }
+/* -- Hero artwork ---------------------------------------------------------
+   Centred twice over, which is what this column needs: `margin-inline:auto`
+   centres the image inside its own grid cell, and `align-self: center`
+   centres the block against the copy beside it - the hero grid sets
+   `align-items: start` so the crumbs and headline stay pinned to the top,
+   and without this the artwork would hang off that same top edge.
 
-.es-mock {
-  position: relative;
+   Framed like the other service heroes carrying an image: this is an
+   opaque photograph, and unframed it reads as a rectangle pasted onto the
+   hero wash rather than part of it.
+
+   Sources: public/img/services/email-sms-hero.{webp,jpg} at 1120px (38KB /
+   57KB), from public/"email-sms -campain.png" (1672x941, 1.5MB). Shipping
+   that PNG as-is would put 1.5MB on the critical path of this page's
+   largest element.
+   ------------------------------------------------------------------------- */
+.es-hero__art {
+  align-self: center;
   width: 100%;
-  max-width: 250px;
-  background: rgba(6, 42, 36, .9);
-  border: 1px solid rgba(255, 255, 255, .1);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 24px 50px rgba(2, 20, 16, .45);
-}
-.es-mock--sms { transform: translateY(-14px); }
-
-.es-mock__bar {
-  padding: var(--hv-s4) var(--hv-s5);
-  border-bottom: 1px solid rgba(255, 255, 255, .08);
-  font-size: var(--hv-fs-xs);
-  font-weight: 700;
-  color: var(--hv-on-dark-muted);
-  text-align: center;
-}
-
-.es-mock__body { padding: var(--hv-s5); display: flex; flex-direction: column; gap: var(--hv-s3); min-height: 220px; }
-
-.es-bubble {
-  max-width: 84%;
-  padding: 9px 13px;
-  border-radius: 14px;
-  font-size: .8rem;
-  line-height: 1.4;
-  margin: 0;
-}
-.es-bubble--them { align-self: flex-start; background: rgba(255, 255, 255, .1); color: var(--hv-on-dark); border-bottom-left-radius: 4px; }
-.es-bubble--us { align-self: flex-end; background: var(--hv-grad-accent); color: #fff; border-bottom-right-radius: 4px; }
-
-.es-mock__body--email { gap: var(--hv-s2); }
-.es-email__from { font-size: var(--hv-fs-xs); color: var(--hv-on-dark-muted); margin: 0; }
-.es-email__subject { font-size: .92rem; font-weight: 700; color: var(--hv-on-dark); margin: 4px 0; }
-.es-email__pre { font-size: .8rem; color: var(--hv-on-dark-muted); margin: 0; }
-
-.es-mock__sample {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: .62rem;
-  font-weight: 700;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  background: var(--hv-bg-dark-2);
+  max-width: 580px;
+  margin-inline: auto;
+  border-radius: var(--hv-r-xl);
   border: 1px solid rgba(255, 255, 255, .14);
-  color: var(--hv-on-dark-muted);
-  padding: 3px 8px;
-  border-radius: var(--hv-r-pill);
+  overflow: hidden;
+  box-shadow: 0 34px 68px -30px rgba(0, 0, 0, .66);
 }
+.es-hero__art picture { display: block; }
+.es-hero__art img { display: block; width: 100%; height: auto; }
 
 @media (max-width: 900px) {
   .es-hero__inner { grid-template-columns: 1fr; }
-  .es-hero__mocks { margin-top: var(--hv-s8); }
   .es-hero__copy { text-align: center; }
   .es-hero__crumbs,
   .es-hero__ctas { justify-content: center; }
   .es-hero__title,
   .es-hero__lede { margin-inline: auto; }
-}
-@media (max-width: 560px) {
-  .es-hero__mocks { flex-direction: column; align-items: center; }
-  .es-mock--sms { transform: none; }
-  .es-mock { max-width: 320px; }
+  /* Stacked: the artwork follows the copy instead of sitting beside it,
+     so it needs the gap the column gap used to give it. */
+  .es-hero__art { margin-top: clamp(36px, 8vw, 64px); align-self: auto; }
 }
 
 /* -- Intro ------------------------------------------------------------------

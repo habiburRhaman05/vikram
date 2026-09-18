@@ -196,6 +196,14 @@
 .home-v2 .wk-hero,
 .home-v2 .wk-dhero,
 .home-v2 .fnl-hero,
+/* Both of these were rendering with a white strip across the top until
+   they were added here - .wb-hero is Websites & Landing Pages, .wl-hero is
+   the White-Label Platform page. They are the reason the warning below is
+   in capitals: a hero that is missing from this list looks fine on the
+   page it was built on, because the author scrolls past the one place it
+   shows, and the bug reaches a phone before anyone sees it. */
+.home-v2 .wb-hero,
+.home-v2 .wl-hero,
 .home-v2 .wls-hero {
   margin-top: calc(-1 * var(--header-h, 80px));
   padding-top: calc(var(--header-h, 80px) + clamp(8px, 1.5vw, 20px));
@@ -208,7 +216,8 @@
    still opens with the generic PageHero component reads as the same
    family instead of a different page style. */
 .home-v2 .page-hero {
-  background: radial-gradient(120% 140% at 14% -10%, #0E4B3E 0%, var(--hv-bg-dark) 46%, var(--hv-bg-dark-2) 100%);
+  background: radial-gradient(120% 140% at 14% -10%, #0A3F35 0%, var(--hv-bg-dark) 38%, var(--hv-bg-dark-2) 100%);
+  text-align: center;
 }
 .home-v2 .page-hero::after { content: none; }
 .home-v2 .page-hero::before {
@@ -1254,4 +1263,46 @@
   .home-v2 .hv-card--hover:focus-within {
     transform: none;
   }
+}
+
+
+/* ==========================================================================
+   Hero rhythm on a phone
+   --------------------------------------------------------------------------
+   Every hero on the site sets its vertical gaps for the wide, two-column
+   case, where the copy has a picture beside it to fill the height. Stacked
+   on a 380px screen those same gaps push the buttons most of a screen below
+   the headline - the crumbs, the kicker, four lines of display type, the
+   lede and two full-width buttons, each separated as if there were room to
+   spare.
+
+   Tightened here as a SET, so the block still reads as crumbs / kicker /
+   headline / lede / actions - just closer together.
+
+   WHY ONE RULE INSTEAD OF FOURTEEN: every hero on the site names these
+   parts the same way - <prefix>-hero__title, __lede, __eyebrow, __crumbs,
+   __ctas - across .sd-, .ai-, .cs-, .wls-, .sm-, .es-, .rd-, .fnl-, .wl-,
+   .wb-, .svcs-, .ab-, .bl-, .pr-, .wk- and the home page's own .hv-. An
+   attribute match on that shared suffix covers all of them and covers the
+   next one for free. It is safe because no class extends those names (no
+   __title-sub, no __lede--wide); if one is ever added, it inherits this,
+   which is why the values below are a rhythm rather than anything
+   layout-specific.
+
+   The `.home-v2` prefix is doing real work: it puts these at (0,2,0), above
+   the (0,1,0) rules in each page's own stylesheet, which load after this
+   file. Without it they would all lose.
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .home-v2 [class*="-hero__crumbs"] { margin-bottom: var(--hv-s3); }
+  .home-v2 [class*="-hero__eyebrow"] { margin-bottom: var(--hv-s3); }
+  .home-v2 [class*="-hero__title"] {
+    margin-bottom: var(--hv-s4);
+    /* 1.05 is a display line-height, set for type at 3.6rem. At the phone
+       size it closes the lines up until the descenders touch. */
+    line-height: 1.12;
+  }
+  .home-v2 [class*="-hero__lede"] { margin-bottom: var(--hv-s6); }
+  .home-v2 [class*="-hero__ctas"] { gap: var(--hv-s3); }
 }

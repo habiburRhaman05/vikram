@@ -41,10 +41,11 @@
   isolation: isolate;
   overflow: hidden;
   padding-block: clamp(52px, 5vw, 84px) clamp(56px, 5.5vw, 92px);
-  background:
-    radial-gradient(70% 60% at 50% 8%, rgba(14, 164, 107, .46) 0%, rgba(14, 164, 107, 0) 62%),
-    radial-gradient(56% 50% at 92% 92%, rgba(53, 217, 160, .24) 0%, rgba(53, 217, 160, 0) 60%),
-    linear-gradient(122deg, #04241F 0%, #073E34 48%, #03211D 100%);
+  /* One dark radial wash, the same recipe every service detail hero opens
+     with (.sd-hero, .page-hero, .pr-hero): the two accent glows and the
+     teal linear gradient this used to carry made /about the brightest of
+     the four heroes. */
+  background: radial-gradient(120% 140% at 14% -10%, #0A3F35 0%, var(--hv-bg-dark) 38%, var(--hv-bg-dark-2) 100%);
   color: #fff;
   text-align: center;
 }
@@ -67,6 +68,11 @@
 .ab-hero__crumbs {
   margin: 0 0 var(--hv-s5);
   display: flex;
+  /* text-align on .ab-hero centres the inline siblings, but this row is a
+     flex container: without its own justify-content it sat hard against
+     the left of the reveal block, which is as wide as the lede below it. */
+  justify-content: center;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   font-size: var(--hv-fs-sm);
@@ -76,12 +82,11 @@
 .ab-hero__crumbs a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 .ab-hero__crumbs span { opacity: .45; }
 
+/* Plain text, the same treatment as .sd-hero__eyebrow - the pill's border
+   and tinted fill are gone, so the label reads as a kicker above the
+   headline rather than a badge sitting beside it. */
 .ab-hero__eyebrow {
   display: inline-block;
-  padding: 7px 16px;
-  border: 1px solid rgba(53, 217, 160, .38);
-  border-radius: var(--hv-r-pill);
-  background: rgba(53, 217, 160, .12);
   font-family: var(--hv-font);
   font-size: var(--hv-fs-xs);
   font-weight: 800;
@@ -130,9 +135,14 @@
 .ab-trust__item {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--hv-s4);
   width: 100%;
-  padding: var(--hv-s5) var(--hv-s5) var(--hv-s5) 0;
+  padding: var(--hv-s5);
+  /* The icon plate and its value/label sit as one centred group in each
+     cell; the text inside that group is centred too, so a two-line label
+     stacks evenly under its value. */
+  text-align: center;
 }
 .ab-trust__row > li:not(:last-child) .ab-trust__item { border-right: 1px solid var(--hv-border); }
 

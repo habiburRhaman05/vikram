@@ -79,39 +79,6 @@ import "@/styles/service-ai-agents.css";
 /** The four doors one agent answers, and the one record they all write to.
  *  Decorative: aria-hidden, because the copy beside it already states the
  *  same offer in prose. */
-function ChannelSpine() {
-  const { spine } = AI_HERO;
-  return (
-    <div className="ai-spine" aria-hidden="true">
-      <p className="ai-spine__cap">{spine.caption}</p>
-
-      <ul className="ai-spine__channels">
-        {spine.channels.map((channel) => (
-          <li className="ai-spine__channel" key={channel.label}>
-            <span className="ai-spine__icon">
-              <Icon name={channel.icon} />
-            </span>
-            <span className="ai-spine__text">
-              <b>{channel.label}</b>
-              <small>{channel.note}</small>
-            </span>
-            <span className="ai-spine__status">{channel.status}</span>
-          </li>
-        ))}
-      </ul>
-
-      <p className="ai-spine__record">
-        <span className="ai-spine__icon">
-          <Icon name={spine.record.icon} />
-        </span>
-        <span className="ai-spine__text">
-          <b>{spine.record.label}</b>
-          <small>{spine.record.note}</small>
-        </span>
-      </p>
-    </div>
-  );
-}
 
 function Hero() {
   return (
@@ -148,8 +115,27 @@ function Hero() {
           </div>
         </Reveal>
 
+        {/* The hero's right column is the supplied artwork - one AI core
+            with the four channels it answers on wired into it, which is
+            the page's whole proposition in a single mark. It replaces the
+            coded ChannelSpine panel, which said the same thing in a list
+            and competed with the channel detail further down the page.
+
+            Decorative: alt="" and aria-hidden, because every channel it
+            draws is named in the headline, the lede and the channel
+            section below. The PNG is transparent, so it sits directly on
+            the hero wash with no plate behind it. */}
         <Reveal className="ai-hero__aside" index={1}>
-          <ChannelSpine />
+          <img
+            className="ai-hero__art"
+            src="/chatbot-voice-ai.png"
+            alt=""
+            aria-hidden="true"
+            width={666}
+            height={375}
+            decoding="async"
+            fetchPriority="high"
+          />
         </Reveal>
       </div>
     </section>

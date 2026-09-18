@@ -253,7 +253,7 @@
 
 @media (max-width: 900px) {
   .wl-hero__inner { grid-template-columns: 1fr; }
-  .wl-hero__mock { margin-top: var(--hv-s8); }
+  .wl-hero__mock { margin-top: clamp(36px, 8vw, 64px); }
   .wl-hero__copy { text-align: center; }
   .wl-hero__crumbs,
   .wl-hero__ctas { justify-content: center; }
