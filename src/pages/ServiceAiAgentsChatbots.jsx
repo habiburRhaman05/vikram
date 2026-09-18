@@ -115,27 +115,38 @@ function Hero() {
           </div>
         </Reveal>
 
-        {/* The hero's right column is the supplied artwork - one AI core
-            with the four channels it answers on wired into it, which is
-            the page's whole proposition in a single mark. It replaces the
-            coded ChannelSpine panel, which said the same thing in a list
-            and competed with the channel detail further down the page.
+        {/* The hero's right column is the supplied artwork: an AI agent
+            working the channels a business gets enquiries on - call, chat,
+            SMS - and landing them as a booked appointment, which is the
+            page's whole proposition in one picture.
+
+            Framed, not bare. The first version of this artwork was a
+            transparent PNG that sat directly on the hero wash; this one is
+            an opaque render with its own background, and without an edge
+            it reads as a rectangle pasted onto the page.
+
+            Served from 1120px WebP/JPEG (45KB / 66KB) generated from
+            public/chatbot-voice-ai.png, which is 1403x941 and 1.6MB - see
+            the note in service-ai-agents.css. width/height are the real
+            aspect of those files, so the browser reserves the right box
+            before the image arrives instead of jumping when it does.
 
             Decorative: alt="" and aria-hidden, because every channel it
             draws is named in the headline, the lede and the channel
-            section below. The PNG is transparent, so it sits directly on
-            the hero wash with no plate behind it. */}
+            section below. */}
         <Reveal className="ai-hero__aside" index={1}>
-          <img
-            className="ai-hero__art"
-            src="/chatbot-voice-ai.png"
-            alt=""
-            aria-hidden="true"
-            width={666}
-            height={375}
-            decoding="async"
-            fetchPriority="high"
-          />
+          <picture className="ai-hero__art">
+            <source type="image/webp" srcSet="/img/services/ai-agents-hero.webp" />
+            <img
+              src="/img/services/ai-agents-hero.jpg"
+              alt=""
+              aria-hidden="true"
+              width={1120}
+              height={751}
+              decoding="async"
+              fetchPriority="high"
+            />
+          </picture>
         </Reveal>
       </div>
     </section>

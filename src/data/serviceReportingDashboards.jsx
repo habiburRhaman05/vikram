@@ -25,22 +25,6 @@ export const RD_HERO = {
   primary: { label: "Get Free Consultation", to: "/book", icon: "arrowRight" },
   secondary: { label: "See What Gets Tracked", href: "#widgets" },
 
-  /* Coded dashboard mockup shown in the hero - sample data, not a real
-     account. See the file header note above. */
-  dash: {
-    tabs: ["Overview", "Sources", "Revenue"],
-    kpis: [
-      { label: "New leads", value: "128", delta: "+12%" },
-      { label: "Booked calls", value: "54", delta: "+8%" },
-      { label: "Cost / lead", value: "$19", delta: "-6%" },
-    ],
-    sources: [
-      { icon: "search", label: "Organic search", pct: 38 },
-      { icon: "megaphone", label: "Paid ads", pct: 27 },
-      { icon: "instagram", label: "Social", pct: 19 },
-      { icon: "mail", label: "Email & SMS", pct: 16 },
-    ],
-  },
 };
 
 /* -- 2. Intro ----------------------------------------------------------------- */
@@ -307,10 +291,4 @@ export const RD_FAQ = {
         "Both are available. Most clients keep a monthly review to walk through what changed and adjust the views as the business does - a dashboard nobody explains tends to go unopened.",
     },
   ],
-  card: {
-    eyebrow: "Let's talk",
-    title: "What can't you currently answer in one look?",
-    body: "Tell us what's scattered across tools right now. We'll say what a dashboard would need to pull together to fix that.",
-    cta: { label: "Get Free Consultation", to: "/book", icon: "arrowRight" },
-  },
 };

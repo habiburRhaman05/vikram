@@ -89,85 +89,23 @@
 
 .rd-hero__ctas { display: flex; flex-wrap: wrap; gap: var(--hv-s4); }
 
-/* The dashboard mock itself. */
-.rd-dash {
-  position: relative;
-  background: rgba(6, 42, 36, .92);
-  border: 1px solid rgba(255, 255, 255, .1);
-  border-radius: 18px;
+/* -- Hero artwork ---------------------------------------------------------
+   A hairline border and a small radius, the same treatment as the other
+   service heroes framing an opaque image - without an edge it reads as a
+   rectangle pasted onto the hero wash. The inset highlight is the light on
+   the top edge, which keeps a dark panel from reading as a hole.
+   ------------------------------------------------------------------------- */
+.rd-hero__art {
+  display: block;
+  width: 100%;
+  border-radius: var(--hv-r-md);
   overflow: hidden;
-  box-shadow: 0 28px 60px rgba(2, 20, 16, .5);
-  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, .16);
+  box-shadow:
+    0 30px 60px -28px rgba(0, 0, 0, .7),
+    inset 0 1px 0 rgba(255, 255, 255, .14);
 }
-
-.rd-dash__bar {
-  display: flex;
-  align-items: center;
-  gap: var(--hv-s5);
-  padding: var(--hv-s4) var(--hv-s5);
-  border-bottom: 1px solid rgba(255, 255, 255, .08);
-}
-.rd-dash__dots { display: flex; gap: 6px; flex-shrink: 0; }
-.rd-dash__dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, .18); display: block; }
-.rd-dash__tabs { display: flex; gap: var(--hv-s5); font-size: var(--hv-fs-xs); color: var(--hv-on-dark-muted); }
-.rd-dash__tabs .is-active { color: var(--hv-accent-bright); font-weight: 700; }
-
-.rd-dash__body { padding: var(--hv-s5) var(--hv-s5) var(--hv-s6); }
-
-.rd-dash__kpis {
-  list-style: none;
-  margin: 0 0 var(--hv-s5);
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--hv-s3);
-}
-.rd-dash__kpis li {
-  background: rgba(255, 255, 255, .04);
-  border: 1px solid rgba(255, 255, 255, .08);
-  border-radius: 12px;
-  padding: var(--hv-s4);
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.rd-dash__kpi-label { font-size: .68rem; color: var(--hv-on-dark-muted); }
-.rd-dash__kpi-value { font-size: 1.25rem; font-weight: 800; color: var(--hv-on-dark); }
-.rd-dash__kpi-delta { display: inline-flex; align-items: center; gap: 3px; font-size: .68rem; font-weight: 700; color: var(--hv-accent-bright); }
-.rd-dash__kpi-delta svg { width: 10px; height: 10px; }
-
-.rd-dash__chart {
-  background: rgba(255, 255, 255, .03);
-  border: 1px solid rgba(255, 255, 255, .08);
-  border-radius: 12px;
-  padding: var(--hv-s3) var(--hv-s3) 0;
-  margin-bottom: var(--hv-s5);
-}
-.rd-dash__chart svg { width: 100%; height: 92px; display: block; }
-
-.rd-dash__sources { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--hv-s3); }
-.rd-dash__sources li { display: grid; grid-template-columns: 22px minmax(0, 1fr) minmax(60px, .8fr) 34px; align-items: center; gap: var(--hv-s3); }
-.rd-dash__source-icon { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: rgba(53, 217, 160, .14); color: var(--hv-accent-bright); }
-.rd-dash__source-icon svg { width: 12px; height: 12px; }
-.rd-dash__source-label { font-size: .74rem; color: var(--hv-on-dark-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.rd-dash__source-bar { display: block; height: 6px; border-radius: var(--hv-r-pill); background: rgba(255, 255, 255, .08); overflow: hidden; }
-.rd-dash__source-bar span { display: block; height: 100%; background: var(--hv-grad-accent); border-radius: inherit; }
-.rd-dash__source-pct { font-size: .7rem; font-weight: 700; color: var(--hv-on-dark); text-align: right; }
-
-.rd-dash__sample {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  font-size: .62rem;
-  font-weight: 700;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  background: var(--hv-bg-dark-2);
-  border: 1px solid rgba(255, 255, 255, .14);
-  color: var(--hv-on-dark-muted);
-  padding: 3px 8px;
-  border-radius: var(--hv-r-pill);
-}
+.rd-hero__art img { display: block; width: 100%; height: auto; }
 
 @media (max-width: 900px) {
   .rd-hero__inner { grid-template-columns: 1fr; }
@@ -177,12 +115,6 @@
   .rd-hero__ctas { justify-content: center; }
   .rd-hero__title,
   .rd-hero__lede { margin-inline: auto; }
-}
-@media (max-width: 460px) {
-  .rd-dash__kpis { grid-template-columns: 1fr 1fr; }
-  .rd-dash__kpis li:last-child { grid-column: span 2; }
-  .rd-dash__sources li { grid-template-columns: 20px minmax(0, 1fr) 30px; }
-  .rd-dash__source-bar { display: none; }
 }
 
 /* -- Intro: scorecards + insight card ------------------------------------------
@@ -514,12 +446,11 @@
 
 /* -- FAQ ----------------------------------------------------------------------------------- */
 
-.rd-faq__inner {
-  display: grid;
-  grid-template-columns: minmax(0, 1.22fr) minmax(0, .88fr);
-  gap: clamp(32px, 5vw, 56px);
-  align-items: stretch;
-}
-.rd-faq__list { margin-top: var(--hv-s7); }
-
-@media (max-width: 900px) { .rd-faq__inner { grid-template-columns: 1fr; } }
+/* A single centred column at a reading width. The questions are full
+   sentences with an answer underneath each, so they want a measure, not
+   the whole container - 820px keeps a question on one line on desktop
+   without the answer paragraphs running wide enough to lose the eye. */
+.rd-faq__inner { max-width: 820px; margin-inline: auto; }
+.rd-faq__head { text-align: center; }
+.rd-faq__head .hv-body { max-width: 52ch; margin-inline: auto; }
+.rd-faq__list { margin-top: var(--hv-s8); }

@@ -5,7 +5,6 @@ import Icon from "@/components/common/Icon.jsx";
 import Faq from "@/components/common/Faq.jsx";
 import StructuredData from "@/components/common/StructuredData.jsx";
 import { HvSection, Reveal, Btn } from "@/components/home/primitives.jsx";
-import ServiceContactCard from "@/components/services/ServiceContactCard.jsx";
 import ServiceEnquiryForm from "@/components/services/ServiceEnquiryForm.jsx";
 import RelatedServices from "@/components/services/RelatedServices.jsx";
 
@@ -32,9 +31,8 @@ import {
    service-detail.css is still imported for two components. */
 import "@/styles/home-redesign.css";
 import "@/styles/home-chrome.css";
-/* Only for the shared utility components (ServiceContactCard's
-   .sd-contact-card, RelatedServices' .sd-rel) - see the matching note on
-   the other new service pages for why those two are the exception. */
+/* Only for RelatedServices' .sd-rel classes - see the matching note on the
+   other new service pages for why that component is the exception. */
 import "@/styles/service-detail.css";
 import "@/styles/service-reporting.css";
 
@@ -46,87 +44,6 @@ import "@/styles/service-reporting.css";
  * and related services, and FAQ.
  */
 
-/* -- Hero: coded dashboard mockup ------------------------------------------- */
-
-function DashMock() {
-  const { tabs, kpis, sources } = RD_HERO.dash;
-  return (
-    <div className="rd-dash">
-      <div className="rd-dash__bar">
-        <span className="rd-dash__dots" aria-hidden="true">
-          <i />
-          <i />
-          <i />
-        </span>
-        <nav className="rd-dash__tabs" aria-hidden="true">
-          {tabs.map((t, i) => (
-            <span className={i === 0 ? "is-active" : ""} key={t}>
-              {t}
-            </span>
-          ))}
-        </nav>
-      </div>
-
-      <div className="rd-dash__body">
-        <ul className="rd-dash__kpis">
-          {kpis.map((k) => (
-            <li key={k.label}>
-              <span className="rd-dash__kpi-label">{k.label}</span>
-              <span className="rd-dash__kpi-value">{k.value}</span>
-              <span className="rd-dash__kpi-delta">
-                <Icon name="arrowUp" strokeWidth={3} />
-                {k.delta}
-              </span>
-            </li>
-          ))}
-        </ul>
-
-        <div className="rd-dash__chart" aria-hidden="true">
-          <svg viewBox="0 0 320 110" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="rdFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#35D9A0" stopOpacity=".38" />
-                <stop offset="100%" stopColor="#35D9A0" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M0,86 L27,80 54,88 81,62 108,70 135,46 162,54 189,34 216,40 243,20 270,28 297,10 320,14 L320,110 0,110 Z"
-              fill="url(#rdFill)"
-            />
-            <path
-              d="M0,86 L27,80 54,88 81,62 108,70 135,46 162,54 189,34 216,40 243,20 270,28 297,10 320,14"
-              fill="none"
-              stroke="#35D9A0"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <circle cx="297" cy="10" r="4" fill="#052E29" stroke="#35D9A0" strokeWidth="2.5" />
-          </svg>
-        </div>
-
-        <ul className="rd-dash__sources">
-          {sources.map((s) => (
-            <li key={s.label}>
-              <span className="rd-dash__source-icon" aria-hidden="true">
-                <Icon name={s.icon} />
-              </span>
-              <span className="rd-dash__source-label">{s.label}</span>
-              <span className="rd-dash__source-bar">
-                <span style={{ width: `${s.pct}%` }} />
-              </span>
-              <span className="rd-dash__source-pct">{s.pct}%</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <span className="rd-dash__sample" aria-hidden="true">
-        Sample dashboard
-      </span>
-    </div>
-  );
-}
 
 function Hero() {
   return (
@@ -162,8 +79,29 @@ function Hero() {
           </Reveal>
         </div>
 
+        {/* The supplied artwork: every source feeding one live dashboard -
+            which is this service in a single picture. It replaces the coded
+            DashMock panel. Framed with a hairline border and a small
+            radius, the same treatment as the other service heroes that
+            carry an opaque image.
+
+            Served from 1120px WebP/JPEG (47KB / 78KB) generated from
+            public/reporting-dashboard.png (1672x941, 1.4MB); regenerate
+            both if that file changes. Decorative: every metric it shows is
+            named in the copy and the widget section below. */}
         <Reveal className="rd-hero__mock" index={1}>
-          <DashMock />
+          <picture className="rd-hero__art">
+            <source type="image/webp" srcSet="/img/services/reporting-hero.webp" />
+            <img
+              src="/img/services/reporting-hero.jpg"
+              alt=""
+              aria-hidden="true"
+              width={1120}
+              height={630}
+              decoding="async"
+              fetchPriority="high"
+            />
+          </picture>
         </Reveal>
       </div>
     </section>
@@ -426,18 +364,21 @@ function FaqSection() {
         ]}
       />
 
+      {/* One centred column. The contact card that used to sit beside the
+          questions was the third call to action in the last screen of the
+          page - the enquiry form and the related services are directly
+          above it - so it is gone, and the questions have the section to
+          themselves. */}
       <div className="rd-faq__inner">
-        <Reveal>
+        <Reveal className="rd-faq__head">
           <span className="hv-eyebrow">{RD_FAQ.eyebrow}</span>
           <h2 className="hv-h2">{RD_FAQ.title}</h2>
           <p className="hv-body">{RD_FAQ.lede}</p>
-
-          <div className="rd-faq__list">
-            <Faq items={RD_FAQ.items} />
-          </div>
         </Reveal>
 
-        <ServiceContactCard card={RD_FAQ.card} />
+        <Reveal className="rd-faq__list" index={1}>
+          <Faq items={RD_FAQ.items} />
+        </Reveal>
       </div>
     </HvSection>
   );

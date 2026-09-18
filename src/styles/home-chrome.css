@@ -290,6 +290,18 @@
   margin-inline: auto;
 }
 
+/* The same tie, a second time: `.cta-band h2` centres the closing band's
+   headline with `margin-inline: auto` under a 20ch cap, and the
+   `.home-v2 h2 { margin: 0 }` reset has identical specificity and loads
+   later. So on every v2 page that closes with <CtaBand> the lede and the
+   buttons centred while the headline sat in a 20ch box pinned to the
+   left edge - its lines centred on each other, the block visibly off to
+   one side. Industries is where it was spotted; the fix is here rather
+   than there because CtaBand is shared and every copy had it. */
+.home-v2 .cta-band h2 {
+  margin-inline: auto;
+}
+
 /* The hero is now the page's darkest surface, and the bar is transparent
    on top of it, so at rest the header has to be a light-on-dark bar and
    only becomes dark-on-glass once it has scrolled away from the hero.

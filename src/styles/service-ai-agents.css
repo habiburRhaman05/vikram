@@ -1334,14 +1334,24 @@
 
 
 /* -- Hero artwork ---------------------------------------------------------
-   The supplied AI-core graphic, in place of the coded channel panel that
-   used to fill this column. Transparent PNG on the hero's own wash, so it
-   needs no plate - only a soft green bloom behind it, which stops the
-   artwork's own glow from stopping dead at the edge of the file.
+   An opaque render in a frame: medium radius, a hairline border, and the
+   light catching its top edge.
 
-   It is capped rather than stretched: the source is 666px wide and
-   upscaling a raster mark that is mostly thin strokes is exactly where it
-   starts to look soft.
+   This column used to hold a transparent PNG - a glowing AI core with no
+   background of its own - which sat bare on the hero wash with a bloom
+   behind it and a slow float. The artwork has since been replaced with an
+   opaque scene at the same path, and neither treatment survives that: a
+   bare opaque image reads as a rectangle pasted onto the page, and a framed
+   panel bobbing up and down reads as unsteady rather than alive. So the
+   float is gone and the frame is new; the bloom stays, pushed out behind
+   the frame, because it still does the job of seating a dark panel on a
+   dark ground.
+
+   SOURCES: public/img/services/ai-agents-hero.{webp,jpg} at 1120px (45KB /
+   66KB), generated with sharp from public/chatbot-voice-ai.png (1403x941,
+   1.6MB). Regenerate both if that file changes again - and note the
+   markup's width/height must change with it, or the browser reserves the
+   wrong box and the hero jumps when the image lands.
    ------------------------------------------------------------------------- */
 .ai-hero__aside {
   position: relative;
@@ -1352,10 +1362,10 @@
   content: "";
   position: absolute;
   z-index: 0;
-  width: min(86%, 420px);
-  aspect-ratio: 1;
+  inset: 6% -4% -8%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(53, 217, 160, .26) 0%, rgba(53, 217, 160, 0) 68%);
+  background: radial-gradient(60% 55% at 50% 58%, rgba(53, 217, 160, .24) 0%, rgba(53, 217, 160, 0) 70%);
+  filter: blur(14px);
   pointer-events: none;
 }
 .ai-hero__art {
@@ -1363,17 +1373,19 @@
   z-index: 1;
   display: block;
   width: 100%;
-  max-width: 560px;
+  max-width: 580px;
+  border-radius: var(--hv-r-md);
+  overflow: hidden;
+  /* Two rings: the border separates the render from the hero, and the
+     inset highlight is the light on the top edge - without it a dark panel
+     on a dark ground reads as a hole rather than a surface. */
+  border: 1px solid rgba(255, 255, 255, .16);
+  box-shadow:
+    0 30px 60px -28px rgba(0, 0, 0, .7),
+    inset 0 1px 0 rgba(255, 255, 255, .14);
+}
+.ai-hero__art img {
+  display: block;
+  width: 100%;
   height: auto;
-  /* A gentle rise, matched to the dotted-orbit motion elsewhere in the
-     family. Held still under prefers-reduced-motion below. */
-  animation: ai-hero-float 7s var(--hv-ease) infinite;
-}
-@keyframes ai-hero-float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-10px); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ai-hero__art { animation: none; }
 }
