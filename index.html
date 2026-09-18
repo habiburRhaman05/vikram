@@ -36,6 +36,10 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Onboarding submit POSTs to a GHL inbound webhook on this host;
+         warming DNS+TLS shaves a beat off the submit round trip. -->
+    <link rel="preconnect" href="https://services.leadconnectorhq.com" />
+    <link rel="dns-prefetch" href="https://services.leadconnectorhq.com" />
     <!-- display=swap: the fallback font paints first and the real face
          swaps in when ready. This previously ran with display=optional,
          which SKIPS the webfont entirely whenever it does not arrive

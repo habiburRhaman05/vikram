@@ -50,10 +50,17 @@ import "@/styles/onboarding.css";
    VITE_ONBOARDING_WEBHOOK_URL in .env to point a deployment at a different
    workflow (staging, a second sub-account). */
 const DEFAULT_WEBHOOK =
-  "https://services.leadconnectorhq.com/hooks/fF6CHXWPpn5wTiMZjc7x/webhook-trigger/15146891-572e-47b7-b24d-40ec6a5e2a24";
+  "https://services.leadconnectorhq.com/hooks/fF6CHXWPpn5wTiMZjc7x/webhook-trigger/dfca826f-b817-44c5-a729-6a5e523291b2";
 const WEBHOOK = import.meta.env.VITE_ONBOARDING_WEBHOOK_URL || DEFAULT_WEBHOOK;
 
 const LAST_STEP = STEP_META.length - 1;
+
+/* GoHighLevel's inbound webhook sometimes accepts the connection but takes
+   its time answering; without a deadline the submit button sits on
+   "Submitting..." for as long as the browser is willing to wait, which is
+   the "form hangs" report this constant answers. The workflow almost always
+   fired long before this fires - we give up waiting, not sending. */
+const SUBMIT_TIMEOUT_MS = 12000;
 
 /* Option lists are built once at module scope: they're derived from static
    ISO data, and rebuilding 250 country objects on every keystroke would make
@@ -186,9 +193,17 @@ export default function Onboarding() {
     timeZone: detectedTimeZone(),
   }));
   const [errors, setErrors] = useState({});
-  const [status, setStatus] = useState("idle"); // idle | sending | done
+  /* "warn" shares the done screen but marks the tick amber: the visitor is
+     through, the delivery just couldn't be confirmed. */
+  const [status, setStatus] = useState("idle"); // idle | sending | done | warn
   const shellRef = useRef(null);
   const firstRender = useRef(true);
+  /* The smooth scroll effect on `step` runs one frame later than the click
+     that set the step (requestAnimationFrame inside focusFirstError), so a
+     fast Back → Continue can leave a scroll scheduled for a step this visit
+     is no longer on. Cancelling keeps the page from yanking back on its own
+     - one of the small "it feels stuck" janks. */
+  const scrollRaf = useRef(0);
   /* Once the visitor picks a dial code by hand, changing the country must
      stop overwriting that choice. */
   const manualPhoneCountry = useRef(false);
@@ -198,14 +213,16 @@ export default function Onboarding() {
       firstRender.current = false;
       return;
     }
-    shellRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    cancelAnimationFrame(scrollRaf.current);
+    scrollRaf.current = requestAnimationFrame(() => shellRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    return () => cancelAnimationFrame(scrollRaf.current);
   }, [step]);
 
   /* The result card replaces four steps' worth of form, so a visitor who
      submits from the bottom of the page would otherwise land on a short card
      with the tick out of view. */
   useEffect(() => {
-    if (status === "done") shellRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (status === "done" || status === "warn") shellRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [status]);
 
   const updateField = (name, value) => {
@@ -252,11 +269,23 @@ export default function Onboarding() {
   };
 
   const toggleNotRegistered = (name, checked) => {
-    updateField("notRegistered", checked);
-    if (checked) {
-      updateField("registrationIdType", "");
-      updateField("registrationNumber", "");
-    }
+    /* One update, not three: each updateField was its own setState round
+       trip, and the second read `registrationIdType` before the first had
+       landed - enough of a stutter on the step-2 checkbox to read as a
+       hang on a slow device. */
+    setFormData((prev) => ({
+      ...prev,
+      notRegistered: checked,
+      ...(checked ? { registrationIdType: "", registrationNumber: "" } : {}),
+    }));
+    setErrors((prev) => {
+      if (!("notRegistered" in prev || "registrationIdType" in prev || "registrationNumber" in prev)) return prev;
+      const next = { ...prev };
+      delete next.notRegistered;
+      delete next.registrationIdType;
+      delete next.registrationNumber;
+      return next;
+    });
   };
 
   const updateCredential = (id, field, value) => {
@@ -287,7 +316,8 @@ export default function Onboarding() {
   };
 
   const focusFirstError = (stepErrors) => {
-    requestAnimationFrame(() => {
+    cancelAnimationFrame(scrollRaf.current);
+    scrollRaf.current = requestAnimationFrame(() => {
       const el = shellRef.current?.querySelector(".ob-field--error input, .ob-field--error select, .ob-field--error textarea");
       el?.focus();
       if (!el) {
@@ -343,6 +373,13 @@ export default function Onboarding() {
     ).length;
 
     setStatus("sending");
+    /* AbortController is the deadline: GHL inbound webhooks occasionally
+       stall (their answer just never arrives, though the workflow fired).
+       Without it the button stayed on "Submitting..." for minutes - the
+       hang being reported. 12s is past every normal answer; past it we stop
+       waiting and show the done screen with a delivery note. */
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), SUBMIT_TIMEOUT_MS);
     try {
       const res = await fetch(WEBHOOK, {
         method: "POST",
@@ -351,23 +388,31 @@ export default function Onboarding() {
           Accept: "application/json",
         },
         body: JSON.stringify(buildPayload(formData, credentialsShared)),
+        signal: controller.signal,
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setStatus("done");
     } catch (err) {
       /* That hook endpoint answers with Access-Control-Allow-Origin: *, so a
-         throw here means the request never left the browser. The visitor has
-         still just spent four steps on this form - they get the success
-         screen and the support address below, not a dead end. */
+         throw here means the request never left the browser (or we gave up
+         waiting on it - the abort lands here too). The visitor has still
+         just spent four steps on this form - they get the success screen
+         and the support address below, not a dead end. */
       console.error("[Onboarding] submission failed:", err);
+      setStatus("warn");
+    } finally {
+      clearTimeout(timer);
     }
-    setStatus("done");
   };
 
   const onFormSubmit = (e) => {
     e.preventDefault();
+    if (status === "sending") return; // Enter in a field must not double-fire Submit
     if (step === LAST_STEP) submit();
     else goNext();
   };
+
+  const sending = status === "sending";
 
   const meta = STEP_META[step];
 
@@ -392,16 +437,18 @@ export default function Onboarding() {
           </Link>
         </div>
 
-        {status === "done" ? (
+        {status === "done" || status === "warn" ? (
           <div className="ob-card ob-result" role="status">
-            <span className="ob-result__tick" aria-hidden="true">
+            <span className={`ob-result__tick${status === "warn" ? " ob-result__tick--warn" : ""}`} aria-hidden="true">
               <Icon name="check" />
             </span>
             <h2>You&rsquo;re all set{formData.friendlyBusinessName ? `, ${formData.friendlyBusinessName}` : ""}!</h2>
-            <p>
-              Thanks for completing your business profile &mdash; your answers are with our team. We&rsquo;ll reach
-              out within one business day to confirm the details and start configuring your CRM.
-            </p>
+            {status === "warn" && (
+              <p className="ob-result__warning">
+                We couldn&rsquo;t confirm delivery of your answers - the connection to our system didn&rsquo;t respond
+                in time. Nothing is lost on your end; email {SITE.email} so nothing slips through.
+              </p>
+            )}
 
             <ol className="ob-result__steps">
               <li>We review your profile, services and goals, and flag anything we need to clarify.</li>
@@ -472,8 +519,8 @@ export default function Onboarding() {
                   Back
                 </button>
                 {step === LAST_STEP ? (
-                  <button type="submit" className="ob-btn ob-btn--primary" disabled={status === "sending"}>
-                    {status === "sending" ? "Submitting..." : "Submit Onboarding"}
+                  <button type="submit" className="ob-btn ob-btn--primary" disabled={sending}>
+                    {sending ? "Submitting..." : "Submit Onboarding"}
                     <Icon name="check" />
                   </button>
                 ) : (

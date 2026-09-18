@@ -370,7 +370,6 @@ function Process() {
               className={`svcs-process-pane ${activeStep === i ? 'is-active' : ''}`}
               style={{ "--tone": step.tone }}
             >
-              <span className="svcs-process-pane__ghost" aria-hidden="true">0{step.num}</span>
               <span className="svcs-process-pane__icon">
                 <Icon name={step.icon} strokeWidth={2} />
               </span>

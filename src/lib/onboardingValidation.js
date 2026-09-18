@@ -295,6 +295,11 @@ export function postalPlaceholder(countryCode) {
 export function phoneIsValid(value, countryCode) {
   const raw = String(value || "").trim();
   if (raw.length < 4) return false;
+  /* A hard digit ceiling shared by every real national number (libphonenumber's
+     own MAX_LENGTH_FOR_PHONE_NUMBER); without it a mangled input like the
+     20-digit "47311160574682114171" seen on the live form parses as a valid
+     short number and sails through. */
+  if (digits(raw).length > 15) return false;
   if (raw.startsWith("+") && !countryCode) return parsePhoneNumberFromString(raw)?.isValid() ?? false;
   if (!countryCode) return /\d{6,15}/.test(digits(raw));
   try {

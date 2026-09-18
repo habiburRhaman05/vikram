@@ -923,20 +923,6 @@
   }
 }
 
-.svcs-process-pane__ghost {
-  position: absolute;
-  top: -10%;
-  right: -5%;
-  font-family: var(--hv-font);
-  font-size: 12rem;
-  font-weight: 800;
-  line-height: 1;
-  color: color-mix(in srgb, var(--tone) 6%, transparent);
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
-}
-
 .svcs-process-pane__icon {
   position: relative;
   z-index: 1;
