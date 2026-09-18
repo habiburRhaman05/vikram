@@ -38,7 +38,7 @@ const service = (title, body) => ({ title, body, to: `/services/${slugify(title)
 export const NAV_MENUS = [
   {
     id: "ai",
-    label: "AI Automation",
+    label: "CRM & AI Automation",
     to: `/services/${slugify("AI Automation")}`,
     icon: "brain",
     accent: "bright",
@@ -47,6 +47,8 @@ export const NAV_MENUS = [
       service("CRM & Sub-account Setup", "Numbers, calendars, domains and A2P registration configured end to end"),
       service("Reporting Dashboards", "Source, conversion and revenue visible without exporting a spreadsheet"),
       service("Workflow Automation", "Hand-offs between your tools that keep running once they are configured"),
+      service("White-Label Support", "A 24/7 helpdesk answering your clients under your brand, never ours"),
+    
     ],
   },
   {
@@ -87,25 +89,7 @@ export const NAV_MENUS = [
       service("Funnel Design & Builds", "Conversion-first funnels mapped to your offer and your pipeline stages"),
     ],
   },
-  {
-    /* The agency/reseller lane. Both of these are sold to someone who
-       resells what we build rather than uses it themselves, which is why
-       they are their own category instead of being filed under the three
-       above - a reader looking for either one is not browsing "Marketing".
-
-       They are also the two services most often confused with each other,
-       so the two bodies below are written to be read side by side: one
-       puts your brand on the SOFTWARE, the other puts it on the PEOPLE. */
-    id: "whitelabel",
-    label: "White-Label",
-    to: `/services/${slugify("White-Label")}`,
-    icon: "key",
-    accent: "soft",
-    items: [
-      service("White-Label Support", "A 24/7 helpdesk answering your clients under your brand, never ours"),
-
-    ],
-  },
+ 
 ];
 
 /** Every title that resolves under /services/:slug, keyed by its own slug -
