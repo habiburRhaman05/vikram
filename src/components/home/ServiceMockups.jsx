@@ -135,70 +135,93 @@ function SoftwareMock() {
   );
 }
 
-/* -- 2. AI & automation ---------------------------------------------------- */
+/* -- 2. AI & automation (GHL Workflow Builder) ------------------------------- */
 
-/* Node positions in % of the canvas. The edges are drawn in the same
-   coordinate space by an SVG with a 100x100 viewBox stretched to the
-   canvas. Nodes are 18% x 14% (see .hv-mk-node), so a node at (x, y) has
-   its left-middle at (x, y+7) and right-middle at (x+18, y+7) - exactly
-   where each connector below starts and ends. */
-const NODES = [
-  { id: "trigger", x: 4, y: 42, tone: "is-trigger" },
-  { id: "ai", x: 34, y: 14, tone: "is-ai" },
-  { id: "crm", x: 34, y: 66 },
-  { id: "sms", x: 70, y: 14 },
-  { id: "book", x: 70, y: 66, tone: "is-done" },
-];
-const EDGES = [
-  "M22 49 C 28 49, 28 21, 34 21",
-  "M22 49 C 28 49, 28 73, 34 73",
-  "M52 21 L 70 21",
-  "M52 73 L 70 73",
-  "M52 25 C 61 25, 61 69, 70 69",
-];
-
-function AiMock() {
+function GhlWorkflowMock() {
   return (
     <div className="hv-mk-scene">
       <Laptop>
-        <div className="hv-mk-flow">
-          <div className="hv-mk-flow__rail">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <span key={i} className={i === 1 ? "is-on" : ""} />
-            ))}
+        <div className="hv-mk-ghl-flow">
+          {/* Top Navbar */}
+          <div className="hv-mk-ghl-flow__top">
+            <div className="hv-mk-ghl-flow__tabs">
+              <span className="is-active">Actions</span>
+              <span>Settings</span>
+              <span>History</span>
+              <span>Status</span>
+            </div>
+            <div className="hv-mk-ghl-flow__actions">
+              <span className="hv-mk-ghl-flow__toggle">
+                <span className="hv-mk-ghl-flow__knob" />
+                Draft
+              </span>
+              <span className="hv-mk-ghl-flow__save">Save</span>
+            </div>
           </div>
-          <div className="hv-mk-flow__canvas">
-            <svg className="hv-mk-flow__edges" viewBox="0 0 100 100" preserveAspectRatio="none">
-              {EDGES.map((d, i) => (
-                <path key={i} d={d} />
-              ))}
-            </svg>
-            {NODES.map((n) => (
-              <div
-                key={n.id}
-                className={`hv-mk-node ${n.tone || ""}`}
-                style={{ left: `${n.x}%`, top: `${n.y}%` }}
-              >
-                <span className="hv-mk-node__ic" />
-                <span className="hv-mk-node__txt">
-                  <Bar w={80} c="is-strong" />
-                  <Bar w={54} />
-                </span>
+
+          <div className="hv-mk-ghl-flow__main">
+            {/* Canvas with Nodes */}
+            <div className="hv-mk-ghl-flow__canvas">
+              {/* Trigger Node */}
+              <div className="hv-mk-ghl-flow__node is-trigger">
+                <div className="hv-mk-ghl-flow__node-ic">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                </div>
+                <div className="hv-mk-ghl-flow__node-txt">
+                  <strong>Contact Created</strong>
+                  <span>Add New Workflow Trigger</span>
+                </div>
               </div>
-            ))}
-          </div>
-          <div className="hv-mk-flow__chat">
-            <span className="hv-mk-bubble">
-              <Bar w={90} />
-              <Bar w={60} />
-            </span>
-            <span className="hv-mk-bubble is-me">
-              <Bar w={70} />
-            </span>
-            <span className="hv-mk-bubble">
-              <Bar w={84} />
-              <Bar w={40} />
-            </span>
+              
+              <div className="hv-mk-ghl-flow__line"><span className="hv-mk-ghl-flow__plus">+</span></div>
+              
+              {/* Action Node 1 */}
+              <div className="hv-mk-ghl-flow__node is-action">
+                <div className="hv-mk-ghl-flow__node-ic">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"></path></svg>
+                </div>
+                <div className="hv-mk-ghl-flow__node-txt">
+                  <strong>Send SMS</strong>
+                  <span>AI Agent Intro</span>
+                </div>
+              </div>
+
+              <div className="hv-mk-ghl-flow__line"><span className="hv-mk-ghl-flow__plus">+</span></div>
+
+              {/* Action Node 2 */}
+              <div className="hv-mk-ghl-flow__node is-action">
+                <div className="hv-mk-ghl-flow__node-ic">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                </div>
+                <div className="hv-mk-ghl-flow__node-txt">
+                  <strong>AI Booking Bot</strong>
+                  <span>Qualify & Book</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Sidebar Settings */}
+            <div className="hv-mk-ghl-flow__sidebar">
+              <div className="hv-mk-ghl-flow__sidebar-top">
+                <strong>Send SMS</strong>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </div>
+              <div className="hv-mk-ghl-flow__sidebar-body">
+                <div className="hv-mk-ghl-flow__field">
+                  <span>Action Name</span>
+                  <div className="hv-mk-ghl-flow__input">Send SMS</div>
+                </div>
+                <div className="hv-mk-ghl-flow__field">
+                  <span>Message</span>
+                  <div className="hv-mk-ghl-flow__textarea">
+                    <Bar w={80} c="is-strong" />
+                    <Bar w={50} />
+                    <Bar w={65} />
+                  </div>
+                </div>
+                <div className="hv-mk-ghl-flow__save-btn">Save Action</div>
+              </div>
+            </div>
           </div>
         </div>
       </Laptop>
@@ -519,7 +542,7 @@ function VoiceMock() {
 
 const MOCKS = {
   software: SoftwareMock,
-  ai: AiMock,
+  ai: GhlWorkflowMock,
   funnel: FunnelMock,
   marketing: MarketingMock,
   whitelabel: WhiteLabelMock,

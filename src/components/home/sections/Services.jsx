@@ -149,14 +149,6 @@ export default function Services() {
             <div className="hv-svc__stage">
               <ServiceMockup kind={panel.mock} />
             </div>
-
-            <div className="hv-svc__chip">
-              <span className="hv-svc__chip-dot" />
-              <span className="hv-svc__chip-text">
-                <strong>{panel.chip.value}</strong>
-                <span>{panel.chip.label}</span>
-              </span>
-            </div>
           </div>
         </div>
       </Reveal>

@@ -1,9 +1,10 @@
 /**
  * /pricing - a SaaS-style product page, deliberately not built on
  * service-detail.css or any of the sm-/es-/rd- bespoke section stylesheets.
- * Own prefix (pr-), own layout grammar: a billing toggle, four-column tier
- * cards, a real feature comparison table, and an add-on grid - the shapes
- * a pricing page actually needs, not a service page's section list.
+ * Own prefix (pr-), own layout grammar: four-column tier cards (full
+ * feature list per card, straight from data/pricingPlans.json) and an
+ * add-on grid - the shapes a pricing page actually needs, not a service
+ * page's section list.
  */
 
 .pr-pg { --pr-radius: 18px; }
@@ -51,42 +52,6 @@
   margin: 0 auto var(--hv-s8);
 }
 
-.pr-toggle {
-  display: inline-flex;
-  gap: 4px;
-  padding: 5px;
-  border-radius: var(--hv-r-pill);
-  background: rgba(255, 255, 255, .06);
-  border: 1px solid rgba(255, 255, 255, .12);
-}
-.pr-toggle button {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border: 0;
-  border-radius: var(--hv-r-pill);
-  background: transparent;
-  font-family: var(--hv-font);
-  font-size: .88rem;
-  font-weight: 700;
-  color: var(--hv-on-dark-muted);
-  cursor: pointer;
-  transition: background var(--hv-dur) var(--hv-ease), color var(--hv-dur) var(--hv-ease);
-}
-.pr-toggle button:hover { color: var(--hv-on-dark); }
-.pr-toggle button.is-active { background: var(--hv-grad-accent); color: #fff; }
-.pr-toggle__save {
-  font-size: .68rem;
-  font-weight: 800;
-  padding: 2px 8px;
-  border-radius: var(--hv-r-pill);
-  background: rgba(255, 255, 255, .2);
-  color: #fff;
-}
-.pr-toggle button:not(.is-active) .pr-toggle__save { background: rgba(53, 217, 160, .18); color: var(--hv-accent-bright); }
-
 .pr-hero__note { margin: var(--hv-s5) 0 0; font-size: var(--hv-fs-sm); color: var(--hv-on-dark-muted); }
 
 /* -- Tier cards ------------------------------------------------------------------ */
@@ -100,6 +65,10 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--hv-s5);
+  /* Every card the same height regardless of feature-list length - the
+     lists in pricingPlans.json are trimmed to a near-equal count (14-16
+     items) precisely so this doesn't leave a shorter card with a large
+     dead gap at the bottom. */
   align-items: stretch;
 }
 
@@ -152,57 +121,12 @@
 @media (max-width: 1100px) { .pr-tier-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .pr-tier-cell.is-featured .pr-tier { transform: none; } }
 @media (max-width: 620px) { .pr-tier-grid { grid-template-columns: 1fr; } }
 
-/* -- Feature matrix ---------------------------------------------------------------- */
-
-.pr-matrix__scroll { overflow-x: auto; border-radius: var(--pr-radius); background: #fff; box-shadow: var(--hv-sh-md); }
-.pr-matrix table { width: 100%; border-collapse: collapse; min-width: 640px; }
-
-.pr-matrix thead th {
-  padding: var(--hv-s5) var(--hv-s4);
+.pr-tiers__note {
+  margin: var(--hv-s7) 0 0;
+  font-size: var(--hv-fs-xs);
+  color: var(--hv-text-muted);
   text-align: center;
-  font-family: var(--hv-font);
-  font-size: .92rem;
-  font-weight: 800;
-  color: var(--hv-text);
-  border-bottom: 2px solid var(--hv-border);
-  white-space: nowrap;
 }
-.pr-matrix thead th.pr-matrix__feature-col { text-align: left; }
-.pr-matrix thead th.is-featured { color: var(--hv-accent-strong); background: var(--hv-bg-mint); }
-
-.pr-matrix__group th {
-  text-align: left;
-  padding: 10px var(--hv-s4);
-  background: var(--hv-bg-mint-deep);
-  font-family: var(--hv-font);
-  font-size: .72rem;
-  font-weight: 800;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  color: var(--hv-accent-strong);
-}
-
-.pr-matrix tbody tr:not(.pr-matrix__group) th {
-  text-align: left;
-  padding: 11px var(--hv-s4);
-  font-family: var(--hv-font-body);
-  font-size: var(--hv-fs-sm);
-  font-weight: 500;
-  color: var(--hv-text);
-  border-bottom: 1px solid var(--hv-border);
-  white-space: nowrap;
-}
-.pr-matrix tbody td {
-  text-align: center;
-  padding: 11px var(--hv-s4);
-  border-bottom: 1px solid var(--hv-border);
-}
-.pr-matrix tbody td.is-featured { background: var(--hv-bg-mint); }
-
-.pr-matrix__yes { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--hv-bg-mint-deep); color: var(--hv-accent-strong); }
-.pr-matrix__yes svg { width: 13px; height: 13px; }
-.pr-matrix__no { color: var(--hv-border-strong); font-size: 1.1rem; }
-.pr-matrix__val { font-size: var(--hv-fs-xs); font-weight: 700; color: var(--hv-text); }
 
 /* -- Add-ons --------------------------------------------------------------------------- */
 
@@ -240,25 +164,123 @@
 
 /* -- Risk-reversal closing --------------------------------------------------------------- */
 
-.pr-closing__inner { max-width: 640px; margin: 0 auto; text-align: center; }
+/* A dark radial wash + the same accent grid texture every bespoke hero on
+   the site shares (.sd-hero, .ai-hero, ...) - the flat solid fill this
+   section used to sit on read as noticeably plainer than everywhere else,
+   for a section whose whole job is to close the sale. */
+.pr-closing {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: radial-gradient(120% 160% at 82% 8%, #0E4B3E 0%, var(--hv-bg-dark) 48%, var(--hv-bg-dark-2) 100%);
+}
+.pr-closing::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(53, 217, 160, .08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(53, 217, 160, .08) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(60% 90% at 85% 15%, #000 0%, transparent 75%);
+  -webkit-mask-image: radial-gradient(60% 90% at 85% 15%, #000 0%, transparent 75%);
+}
+
+/* Two columns instead of one narrow centred island - the copy gets a real
+   reading measure instead of being squeezed into a 640px column in the
+   middle of a full-width dark band, and the "how it works" card gives the
+   section something concrete to look at beside the text. */
+.pr-closing__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  gap: clamp(40px, 6vw, 88px);
+  align-items: center;
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+.pr-closing__copy .hv-body { max-width: 54ch; margin-top: var(--hv-s4); }
+
 .pr-closing__points {
   list-style: none;
-  margin: var(--hv-s7) 0;
+  margin: var(--hv-s7) 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
   gap: var(--hv-s3);
-  text-align: left;
-  max-width: 460px;
-  margin-inline: auto;
 }
 .pr-closing__points li { display: flex; align-items: flex-start; gap: var(--hv-s3); font-size: var(--hv-fs-body); color: var(--hv-on-dark); }
 .pr-closing__points li svg { width: 18px; height: 18px; color: var(--hv-accent-bright); flex-shrink: 0; margin-top: 2px; }
 
-.pr-closing__ctas { display: flex; align-items: center; justify-content: center; gap: var(--hv-s6); flex-wrap: wrap; margin-top: var(--hv-s7); }
-.pr-closing__link { display: inline-flex; align-items: center; gap: 6px; color: var(--hv-on-dark-muted); font-weight: 600; text-decoration: none; }
-.pr-closing__link:hover { color: var(--hv-on-dark); text-decoration: underline; text-underline-offset: 3px; }
-.pr-closing__link svg { width: 15px; height: 15px; }
+.pr-closing__ctas { display: flex; align-items: center; gap: var(--hv-s4); flex-wrap: wrap; margin-top: var(--hv-s7); }
+
+.pr-closing__phone { margin: var(--hv-s5) 0 0; font-size: var(--hv-fs-sm); color: var(--hv-on-dark-muted); }
+.pr-closing__phone a { color: var(--hv-accent-bright); font-weight: 700; text-decoration: none; }
+.pr-closing__phone a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* -- The "how it works" trust card ------------------------------------------------------- */
+
+.pr-closing__card {
+  padding: var(--hv-s7) var(--hv-s6);
+  border-radius: var(--pr-radius);
+  background: rgba(255, 255, 255, .04);
+  border: 1px solid rgba(255, 255, 255, .12);
+  box-shadow: var(--hv-sh-lg);
+  backdrop-filter: blur(8px);
+}
+
+.pr-closing__card-tag {
+  display: inline-block;
+  margin-bottom: var(--hv-s6);
+  font-family: var(--hv-font);
+  font-size: var(--hv-fs-xs);
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--hv-accent-bright);
+}
+
+.pr-closing__steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--hv-s6); }
+.pr-closing__steps li { display: flex; align-items: flex-start; gap: var(--hv-s4); }
+.pr-closing__steps li:not(:last-child) { position: relative; padding-bottom: var(--hv-s6); }
+.pr-closing__steps li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 34px;
+  left: 15px;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, .14);
+}
+.pr-closing__step-num {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--hv-grad-accent);
+  color: #fff;
+  font-family: var(--hv-font);
+  font-size: .84rem;
+  font-weight: 800;
+}
+.pr-closing__steps h3 { margin: 0 0 4px; font-family: var(--hv-font); font-size: .98rem; font-weight: 800; color: #fff; }
+.pr-closing__steps p { margin: 0; font-size: var(--hv-fs-sm); line-height: 1.5; color: var(--hv-on-dark-muted); }
+
+@media (max-width: 900px) {
+  .pr-closing__grid { grid-template-columns: minmax(0, 1fr); }
+  .pr-closing__copy { text-align: center; }
+  .pr-closing__copy .hv-body { margin-inline: auto; }
+  .pr-closing__points { text-align: left; max-width: 460px; margin-inline: auto; }
+  .pr-closing__ctas { justify-content: center; }
+}
 
 @media (max-width: 700px) {
   .pr-tiers { margin-top: calc(var(--hv-s8) * -1); }

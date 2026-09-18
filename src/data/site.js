@@ -11,8 +11,8 @@
  * and the LocalBusiness structured data - so changing a value here
  * changes it everywhere it is shown or published. */
 export const SITE = {
-  phone: "(518) 250-9662",
-  phoneHref: "tel:+15182509662",
+  phone: "+1 518-941-8455",
+  phoneHref: "tel:+15189418455",
   email: "admin@ghlevelup.com",
   emailHref: "mailto:admin@ghlevelup.com",
   addressLine1: "292 Washington Ave Ext, Ste 110",

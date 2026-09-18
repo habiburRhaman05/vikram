@@ -1,0 +1,103 @@
+{
+  "pricingPlans": [
+    {
+      "name": "Starter",
+      "price": 97,
+      "billing": "month",
+      "setupFee": 97,
+      "description": "Setup and foundation for businesses getting started with a white-label CRM platform.",
+      "features": [
+        "GoHighLevel sub-account setup",
+        "White-label account setup",
+        "Custom domain setup",
+        "Business profile and account configuration",
+        "Calendar setup",
+        "Phone number setup",
+        "A2P verification and submission",
+        "Basic CRM setup",
+        "Basic pipeline setup",
+        "Lead capture form setup",
+        "Booking calendar setup",
+        "Basic email configuration",
+        "Basic SMS configuration",
+        "Standard onboarding and setup support"
+      ]
+    },
+    {
+      "name": "Growth",
+      "price": 250,
+      "billing": "month",
+      "setupFee": 0,
+      "description": "Lead capture, follow-up and automation for growing businesses.",
+      "features": [
+        "Everything in Starter",
+        "Lead capture workflows",
+        "Lead assignment automation",
+        "Booking automation",
+        "Chat widget",
+        "Website chat bot",
+        "Automated email follow-up",
+        "Automated SMS follow-up",
+        "Lead nurturing sequences",
+        "Appointment reminder workflows",
+        "Missed-call text-back",
+        "Lead reactivation campaigns",
+        "Review request automation",
+        "Multi-step workflows",
+        "Basic reporting dashboard",
+        "Workflow optimization and support"
+      ]
+    },
+    {
+      "name": "Premium",
+      "price": 497,
+      "billing": "month",
+      "setupFee": 0,
+      "description": "Advanced AI, campaigns and CRM automation for businesses ready to scale.",
+      "features": [
+        "Everything in Growth",
+        "Voice AI / AI receptionist",
+        "Conversation AI",
+        "Advanced AI chatbot",
+        "AI-powered lead qualification",
+        "AI appointment handling",
+        "SMS campaigns",
+        "Email campaigns",
+        "Advanced pipeline management",
+        "Multiple pipelines",
+        "Lead scoring and segmentation",
+        "Advanced nurture automation",
+        "Advanced reporting and dashboards",
+        "Custom workflow automation",
+        "Custom CRM configuration",
+        "Priority support"
+      ]
+    },
+    {
+      "name": "Enterprise",
+      "price": null,
+      "billing": "custom",
+      "setupFee": null,
+      "description": "Complete white-label solution with full control, customization and dedicated support.",
+      "features": [
+        "Everything in Premium",
+        "Full white-label implementation",
+        "Complete CRM configuration",
+        "Multi-location management",
+        "Multiple account and sub-account management",
+        "Advanced user roles and permissions",
+        "Custom pipelines and processes",
+        "Custom AI workflows",
+        "Advanced SMS and email campaigns",
+        "Custom integrations",
+        "Custom website and funnel implementation",
+        "Custom dashboards",
+        "Dedicated account manager",
+        "Priority support",
+        "Custom onboarding",
+        "Team training"
+      ]
+    }
+  ],
+  "pricingNote": "Third-party usage fees for phone, SMS, email, AI, APIs or other external services may apply."
+}

@@ -31,6 +31,7 @@
 
 import { slugify } from "@/lib/slugify.js";
 import { LATEST_POSTS } from "./blog.js";
+import pricingData from "./pricingPlans.json";
 
 /* -- 0. Service lineup ------------------------------------------------------ */
 
@@ -56,7 +57,7 @@ export const SERVICE_LINEUP = [
   { id: "crm", icon: "target", img: "/services-icons/lead-crm.png", label: "CRM & GoHighLevel", tone: "#3E8EF7", to: `/services/${slugify("CRM & GoHighLevel")}` },
   { id: "ai", icon: "brain", img: "/services-icons/ai-automation.png", label: "AI Automation", tone: "#35D9A0", to: `/services/${slugify("AI Automation")}` },
   { id: "marketing", icon: "megaphone", img: "/services-icons/social-media.png", label: "Marketing", tone: "#F59E0B", to: `/services/${slugify("Marketing")}` },
-  { id: "development", icon: "code", img: "/services-icons/coding.png", label: "Funnels, Websites & GHL", tone: "#A855F7", to: `/services/${slugify("Funnels, Websites & GHL")}` },
+  { id: "development", icon: "code", img: "/services-icons/coding.png", label: "Funnels & Landing Page Design", tone: "#A855F7", to: `/services/${slugify("Funnels & Landing Page Design")}` },
 ];
 
 /** SERVICE_LINEUP's own labels, keyed by slug - ServiceComingSoon merges
@@ -199,56 +200,72 @@ export const WHAT_WE_DO = {
    One tab per entry in SERVICE_LINEUP, joined by `id`, so the tab's tile,
    label and colour come from the lineup and only the panel copy lives here.
 
-   PLACEHOLDER PRICES: every `from` is a dummy figure in the same spirit as
-   PRICING below - replace with real starting prices before launch. */
+   PLACEHOLDER PRICES: every `from` is a dummy figure - replace with real
+   starting prices before launch. (PRICING below is no longer a placeholder;
+   it's sourced from data/pricingPlans.json.) */
 export const SERVICES = {
   eyebrow: "Services",
   titleLines: ["Choose the right system", "for every stage of your growth"],
   panels: {
     crm: {
-      from: "Starting from $497/mo",
+      from: "Starting from $97/mo",
       badge: { icon: "bolt", text: "Done-for-you setup" },
       titleLines: ["Complete CRM &", "GoHighLevel Systems"],
       body: "Pipelines, calendars and follow-up configured end to end, so every lead is captured and worked.",
       features: [
-        { icon: "layers", text: "Custom pipelines, forms and booking flows mapped to how you actually sell." },
-        { icon: "message", text: "Email and SMS sequences that follow up on every lead automatically." },
+        { icon: "checkCircle", text: "CRM setup" },
+        { icon: "checkCircle", text: "Sub-account setup" },
+        { icon: "checkCircle", text: "White labeling" },
+        { icon: "checkCircle", text: "Domain setup" },
+        { icon: "checkCircle", text: "A2P submission" },
+        { icon: "checkCircle", text: "Phone verification" },
+        { icon: "checkCircle", text: "Number buy" },
+        { icon: "checkCircle", text: "Core features" },
       ],
       mock: "crm",
       chip: { value: "New lead captured", label: "Added to pipeline - just now" },
     },
     ai: {
-      from: "Starting from $997/mo",
+      from: "Starting from $497/mo",
       badge: { icon: "clock", text: "Always on, 24/7" },
       titleLines: ["AI Agents That Work", "Around the Clock"],
       body: "Answer, qualify and book leads instantly with AI trained on your own business.",
       features: [
-        { icon: "brain", text: "AI chat and voice agents that qualify and book in your tone of voice." },
-        { icon: "bolt", text: "Workflow automations that hand work between your tools with no manual steps." },
+        { icon: "checkCircle", text: "Voice AI" },
+        { icon: "checkCircle", text: "Conversational AI" },
+        { icon: "checkCircle", text: "Workflow automation" },
+        { icon: "checkCircle", text: "Lead nurture automation" },
+        { icon: "checkCircle", text: "Appointment booking automation" },
+        { icon: "checkCircle", text: "Auto follow up" },
       ],
       mock: "ai",
       chip: { value: "Call booked by AI", label: "Tomorrow, 10:30 AM" },
     },
     marketing: {
-      from: "Starting from $797/mo",
+      from: "Starting from $250/mo",
       badge: { icon: "trendUp", text: "Measurable growth" },
       titleLines: ["Marketing That Turns", "Leads Into Customers"],
       body: "Multi-channel campaigns and reporting that show exactly what is driving your revenue.",
       features: [
-        { icon: "megaphone", text: "Campaigns across email, SMS, social and paid, all run from one CRM." },
-        { icon: "barChart", text: "Dashboards tracking source, conversion and revenue in real time." },
+        { icon: "checkCircle", text: "SMS campaign" },
+        { icon: "checkCircle", text: "Email campaign" },
+        { icon: "checkCircle", text: "Social media marketing" },
+        { icon: "checkCircle", text: "Instagram & Facebook" },
+        { icon: "checkCircle", text: "Email templates" },
+        { icon: "checkCircle", text: "Newsletters" },
       ],
       mock: "marketing",
       chip: { value: "Campaign sent", label: "Email + SMS - scheduled" },
     },
     development: {
-      from: "Starting from $2,500/project",
+      from: "Custom Pricing",
       badge: { icon: "shieldCheck", text: "Built to convert" },
-      titleLines: ["Funnels, Websites &", "GoHighLevel Builds"],
+      titleLines: ["Funnels &", "Landing Page Design"],
       body: "Conversion-first funnels and websites designed, built and wired into GoHighLevel - so every form lands in your pipeline.",
       features: [
-        { icon: "code", text: "Funnel and landing page designs built around the one action that matters most." },
-        { icon: "layers", text: "Websites and GHL sub-accounts wired to forms, calendars and automations from day one." },
+        { icon: "checkCircle", text: "Funnel build" },
+        { icon: "checkCircle", text: "Landing page design" },
+        { icon: "checkCircle", text: "Survey form" },
       ],
       mock: "funnel",
       chip: { value: "Funnel published", label: "Live and capturing leads" },
@@ -268,13 +285,69 @@ export const JOURNEY = {
      active (and inline under the stage on a phone); `details` are the
      bullet list beside it. */
   steps: [
-    { icon: "target", title: "Traffic", sub: "Awareness & reach", body: "Paid, organic and social campaigns that put your business in front of the people most likely to buy.", details: ["Google & Meta ads managed to a target cost per lead", "Local SEO that ranks you for the searches that matter", "Social content planned, produced and posted for you"] },
-    { icon: "filePlus", title: "Lead Capture", sub: "Website & social", body: "Forms, chat and landing pages that turn a visitor into a contact the moment they show interest.", details: ["High-converting landing pages built and A/B tested", "AI chat that answers questions and captures the contact", "Every form, call and DM flows into one lead inbox"] },
-    { icon: "users", title: "CRM", sub: "Manage & nurture", body: "Every lead lands in one pipeline - tagged, tracked and ready for follow-up, with nothing living in someone's inbox.", details: ["Custom pipelines built around how you actually sell", "Automated follow-up sequences by email, SMS and call", "No lead slips through - stale ones get flagged and reworked"] },
-    { icon: "brain", title: "AI", sub: "Automate & engage", body: "AI agents reply in seconds, qualify the enquiry and book the appointment, day or night.", details: ["Instant responses to every new enquiry, 24/7", "Lead qualification against your own criteria", "Appointments booked straight into your calendar"] },
-    { icon: "chatWindow", title: "Website & App", sub: "Your digital home", body: "A fast site or app that gives every visitor one clear next step, and loads before they lose interest.", details: ["Design that matches your brand and converts visitors", "Built fast, hosted fast - Core Web Vitals in the green", "Forms, booking and payments wired into the CRM"] },
-    { icon: "megaphone", title: "Marketing", sub: "Retarget & convert", body: "Retargeting, email and SMS bring back the people who were interested but did not convert the first time.", details: ["Retargeting ads that follow up on site visitors", "Email & SMS campaigns written and scheduled for you", "Seasonal offers and win-back campaigns on autopilot"] },
-    { icon: "trendUp", title: "Growth", sub: "More sales & revenue", body: "Reporting shows exactly what is working, so each month builds on the last instead of starting over.", details: ["One dashboard: leads, calls, bookings and revenue", "Monthly review of what to scale and what to cut", "A growth plan for next quarter, not just a report"] },
+    { 
+      mock: "marketing",
+      icon: "target", 
+      title: "Traffic", 
+      sub: "Awareness & reach", 
+      body: "Paid, organic and social campaigns that put your business in front of the people most likely to buy.",
+      howItWorks: "We analyze your ideal customer profile and deploy targeted campaigns across Google and Meta. By continuously A/B testing ad creatives and optimizing bids based on live conversion data, we ensure your ad spend generates high-intent traffic rather than empty clicks.",
+      details: ["Google & Meta ads managed to a target cost per lead", "Local SEO that ranks you for the searches that matter", "Social content planned, produced and posted for you"] 
+    },
+    { 
+      mock: "funnel",
+      icon: "filePlus", 
+      title: "Lead Capture", 
+      sub: "Website & social", 
+      body: "Forms, chat and landing pages that turn a visitor into a contact the moment they show interest.",
+      howItWorks: "Using GoHighLevel's funnel builder, we deploy conversion-optimized landing pages. When a visitor lands, interactive elements like multi-step surveys and conversational AI chatbots engage them instantly, capturing their contact details before they leave.",
+      details: ["High-converting landing pages built and A/B tested", "AI chat that answers questions and captures the contact", "Every form, call and DM flows into one lead inbox"] 
+    },
+    { 
+      mock: "crm",
+      icon: "users", 
+      title: "CRM", 
+      sub: "Manage & nurture", 
+      body: "Every lead lands in one pipeline - tagged, tracked and ready for follow-up, with nothing living in someone's inbox.",
+      howItWorks: "As soon as a lead is captured, our system creates a contact record and assigns them to the correct pipeline stage. Automated tags are applied based on their origin, which triggers instant notifications to your sales team so they can strike while the iron is hot.",
+      details: ["Custom pipelines built around how you actually sell", "Automated follow-up sequences by email, SMS and call", "No lead slips through - stale ones get flagged and reworked"] 
+    },
+    { 
+      mock: "ai",
+      icon: "brain", 
+      title: "AI", 
+      sub: "Automate & engage", 
+      body: "AI agents reply in seconds, qualify the enquiry and book the appointment, day or night.",
+      howItWorks: "An AI agent trained on your business knowledge base reads incoming messages (SMS, Webchat, IG, FB). It answers FAQs contextually, asks pre-qualifying questions, and if the lead is a good fit, sends a calendar link to book them without any human intervention.",
+      details: ["Instant responses to every new enquiry, 24/7", "Lead qualification against your own criteria", "Appointments booked straight into your calendar"] 
+    },
+    { 
+      mock: "software",
+      icon: "chatWindow", 
+      title: "Website & App", 
+      sub: "Your digital home", 
+      body: "A fast site or app that gives every visitor one clear next step, and loads before they lose interest.",
+      howItWorks: "We build lightweight, rapid-loading interfaces where every button and link is intentionally placed to drive action. Booking calendars, payment gateways, and lead forms are natively integrated with your CRM, creating a seamless user experience.",
+      details: ["Design that matches your brand and converts visitors", "Built fast, hosted fast - Core Web Vitals in the green", "Forms, booking and payments wired into the CRM"] 
+    },
+    { 
+      mock: "marketing",
+      icon: "megaphone", 
+      title: "Marketing", 
+      sub: "Retarget & convert", 
+      body: "Retargeting, email and SMS bring back the people who were interested but did not convert the first time.",
+      howItWorks: "Contacts who haven't booked are automatically added to nurture sequences. The system drips highly relevant value-driven emails and texts over weeks or months, while retargeting ads keep your brand top-of-mind until they are finally ready to buy.",
+      details: ["Retargeting ads that follow up on site visitors", "Email & SMS campaigns written and scheduled for you", "Seasonal offers and win-back campaigns on autopilot"] 
+    },
+    { 
+      mock: "whitelabel",
+      icon: "trendUp", 
+      title: "Growth", 
+      sub: "More sales & revenue", 
+      body: "Reporting shows exactly what is working, so each month builds on the last instead of starting over.",
+      howItWorks: "We connect all data sources into a single live dashboard. You see exactly which ads, pages, and emails are generating booked appointments and closed revenue, allowing us to confidently scale the winners and cut the losers.",
+      details: ["One dashboard: leads, calls, bookings and revenue", "Monthly review of what to scale and what to cut", "A growth plan for next quarter, not just a report"] 
+    },
   ],
 };
 
@@ -566,85 +639,29 @@ export const BLOG = {
 
 /* -- 11b. Pricing ----------------------------------------------------------- */
 
-/* PLACEHOLDER NUMBERS - tier names, prices and every figure below are
-   dummy values modelled on typical GoHighLevel/AI-agency pricing, not
-   your real rates. Confirm and replace every `price`/`setup` before this
-   goes live; nothing here should be read as a live quote. */
+/* Tier names, prices, setup fees and features are real, sourced from
+   data/pricingPlans.json (the same file /pricing's tier cards read from -
+   see data/pricing.jsx). This teaser only trims each tier's feature list
+   to the first five entries so the home page card stays a teaser rather
+   than reproducing the full plan sheet; /pricing shows every feature. */
 export const PRICING = {
   eyebrow: "Pricing",
   title: "Simple Plans That Scale With You",
   lede: "Pick the plan that fits where your business is today - every tier is month-to-month, no long contracts.",
   billingNote: "+ one-time setup - cancel any time",
-  tiers: [
-    {
-      id: "starter",
-      name: "Starter",
-      badge: null,
-      bestFor: "Solo operators and small teams losing leads to slow follow-up",
-      price: 497,
-      setup: 497,
-      cta: { label: "Get Started", to: "/book" },
-      features: [
-        "GoHighLevel sub-account setup",
-        "Lead capture forms & booking calendar",
-        "Missed-call text-back",
-        "Email & SMS follow-up sequences",
-        "Single pipeline & CRM",
-        "Ready in 5 business days",
-      ],
-    },
-    {
-      id: "growth",
-      name: "Growth",
-      badge: "Most Popular",
-      bestFor: "Growing businesses running paid, organic and referral leads at once",
-      price: 997,
-      setup: 1500,
-      cta: { label: "Get Started", to: "/book" },
-      features: [
-        "Everything in Starter",
-        "AI chat & voice receptionist",
-        "Multi-channel campaigns (SMS, email, social)",
-        "Review request automation",
-        "Multi-stage pipelines & reporting dashboard",
-        "Monthly strategy call",
-      ],
-    },
-    {
-      id: "command",
-      name: "Command",
-      badge: null,
-      bestFor: "Established businesses ready to unify every tool into one system",
-      price: 1997,
-      setup: 3500,
-      cta: { label: "Schedule a Call", to: "/book" },
-      features: [
-        "Everything in Growth",
-        "Custom AI workflow automation",
-        "Full website or app build",
-        "Invoicing & payment collection",
-        "Team roles, permissions & reporting",
-        "Priority support",
-      ],
-    },
-    {
-      id: "enterprise",
-      name: "Enterprise",
-      badge: null,
-      bestFor: "Multi-location or franchise operators needing centralised control",
-      price: null,
-      setup: null,
-      cta: { label: "Contact Us", to: "/contact" },
-      features: [
-        "Everything in Command",
-        "Multi-location management",
-        "API & custom integrations",
-        "Dedicated account manager",
-        "Custom onboarding & training",
-        "Volume-based pricing",
-      ],
-    },
-  ],
+  tiers: pricingData.pricingPlans.map((plan) => ({
+    id: plan.name.toLowerCase(),
+    name: plan.name,
+    badge: null,
+    bestFor: plan.description,
+    price: plan.price,
+    setup: plan.setupFee,
+    cta:
+      plan.billing === "custom"
+        ? { label: "Contact Us", to: "/contact" }
+        : { label: "Get Started", to: "/book" },
+    features: plan.features.slice(0, 5),
+  })),
   /* The trusted-companies strip that closes the section, under the tier
      grid. PLACEHOLDER BRANDS - well-known companies used purely as a
      design stand-in, exactly like the dummy pricing numbers above; they

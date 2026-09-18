@@ -23,6 +23,13 @@ const paths = {
       <circle cx="12" cy="12" r="10" />
     </>
   ),
+  // Modern feather check-circle
+  checkCircle: (
+    <>
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+      <polyline points="22 4 12 14.01 9 11.01" />
+    </>
+  ),
   // Bold standalone tick - "document received" rows.
   tick: <path d="m5 13 4 4L19 7" />,
   // Dismiss / clear. Named close rather than "x", which is already the X

@@ -157,24 +157,7 @@ export const SVC_GRID = {
       image: "/img/home/post-landing.jpg",
       imageWebp: "/img/home/post-landing.webp",
     },
-    {
-      icon: "mail",
-      title: "Email & SMS Campaigns",
-      body: "Follow-up sequences that reach every lead without anyone having to remember to send them.",
-      to: "/services/email-sms-campaigns",
-      tone: "#6366F1",
-      image: "/img/home/why-2.jpg",
-      imageWebp: "/img/home/why-2.webp",
-    },
-    {
-      icon: "megaphone",
-      title: "Social Media Marketing",
-      body: "Strategic, scheduled social content and campaign management that keeps your brand in front of the right people.",
-      to: "/services/social-media-marketing",
-      tone: "#EC4899",
-      image: "/img/home/svc-creative.jpg",
-      imageWebp: "/img/home/svc-creative.webp",
-    },
+
     {
       icon: "lineChart",
       title: "Reporting Dashboards",

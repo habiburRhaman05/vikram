@@ -3,6 +3,7 @@ import Icon from "@/components/common/Icon.jsx";
 import HaloButton from "../HaloButton.jsx";
 import { Reveal } from "../primitives.jsx";
 import { JOURNEY } from "@/data/homeV2";
+import ServiceMockup from "../ServiceMockups.jsx";
 
 /** How long each stage stays active before the flow moves on. */
 const DWELL = 3200;
@@ -175,17 +176,24 @@ export default function Journey() {
                   </li>
                 ))}
               </ul>
-            </div>
-            <div className="hv-flowx__controls">
-              <div className="hv-flowx__arrows">
-                <button type="button" className="hv-flowx__arrow" onClick={() => go(active - 1)} aria-label="Previous stage">
-                  <Icon name="chevronLeft" aria-hidden="true" />
-                </button>
-                <button type="button" className="hv-flowx__arrow" onClick={() => go(active + 1)} aria-label="Next stage">
-                  <Icon name="chevronRight" aria-hidden="true" />
-                </button>
+              
+              <div className="hv-flowx__controls">
+                <div className="hv-flowx__arrows">
+                  <button type="button" className="hv-flowx__arrow" onClick={() => go(active - 1)} aria-label="Previous stage">
+                    <Icon name="chevronLeft" aria-hidden="true" />
+                  </button>
+                  <button type="button" className="hv-flowx__arrow" onClick={() => go(active + 1)} aria-label="Next stage">
+                    <Icon name="chevronRight" aria-hidden="true" />
+                  </button>
+                </div>
+                <HaloButton to={JOURNEY.cta.to}>{JOURNEY.cta.label}</HaloButton>
               </div>
-              <HaloButton to={JOURNEY.cta.to}>{JOURNEY.cta.label}</HaloButton>
+            </div>
+
+            <div className="hv-flowx__panel-visual" aria-hidden="true">
+              <div className="hv-flowx__panel-mock-wrapper">
+                <ServiceMockup kind={step.mock} />
+              </div>
             </div>
           </div>
         </Reveal>

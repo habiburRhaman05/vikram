@@ -46,29 +46,28 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  /* Bottom half only: home-chrome.css sets this hero's padding-top (the v2
-     header is transparent and the hero runs up underneath it), and that rule
-     is two classes deep, so it wins over anything written here. */
   padding-block: clamp(48px, 5vw, 76px) clamp(60px, 6vw, 104px);
-  background:
-    radial-gradient(44% 56% at 88% 6%, rgba(62, 142, 247, .32) 0%, rgba(62, 142, 247, 0) 64%),
-    radial-gradient(40% 54% at 6% 88%, rgba(124, 92, 252, .26) 0%, rgba(124, 92, 252, 0) 66%),
-    radial-gradient(74% 80% at 50% 42%, rgba(14, 164, 107, .46) 0%, rgba(14, 164, 107, 0) 68%),
-    linear-gradient(122deg, #04241F 0%, #073E34 46%, #03211D 100%);
+  background: radial-gradient(120% 140% at 14% -10%, #0E4B3E 0%, var(--hv-bg-dark) 46%, var(--hv-bg-dark-2) 100%);
   color: #fff;
   text-align: center;
 }
 
-/* Faint concentric marks behind the headline - the reference's dotted orbits.
-   Decoration only, so it is painted behind everything and never hit-tested.
-   Oversized and off-centre so the rings read as an arc across the width
-   rather than as two circles parked behind the words. */
-.svcs-hero__orbits {
+.svcs-hero::after {
+  content: "";
   position: absolute;
-  inset: -14% -8%;
+  inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: .42;
+  background-image:
+    linear-gradient(rgba(53, 217, 160, .08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(53, 217, 160, .08) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(65% 65% at 50% 10%, #000 0%, transparent 75%);
+  -webkit-mask-image: radial-gradient(65% 65% at 50% 10%, #000 0%, transparent 75%);
+}
+
+.svcs-hero__orbits {
+  display: none;
 }
 
 .svcs-hero__inner {
@@ -294,7 +293,7 @@
 .svcs-card {
   --tone: var(--hv-accent);
   --tone-ink: color-mix(in srgb, var(--tone) 74%, #04241F);
-  --tone-soft: color-mix(in srgb, var(--tone) 7%, #fff);
+  --tone-soft: color-mix(in srgb, var(--tone) 5%, #fff);
 
   position: relative;
   display: flex;
@@ -306,22 +305,19 @@
   background: #fff;
   text-decoration: none;
   color: inherit;
-  box-shadow: var(--hv-sh-sm);
+  box-shadow: 0 4px 12px -2px rgba(6, 40, 34, .04), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
   transition:
-    transform var(--hv-dur) var(--hv-ease),
-    box-shadow var(--hv-dur) var(--hv-ease),
-    border-color var(--hv-dur) var(--hv-ease);
+    transform 400ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 400ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 400ms cubic-bezier(0.16, 1, 0.3, 1);
 }
-/* The lift shadow is mixed from the card's own hue rather than taken from
-   the shared green elevation - eight cards rising into the same green glow
-   is what makes a colour-coded grid go flat again. */
 .svcs-card:hover,
 .svcs-card:focus-visible {
-  transform: translateY(-6px);
-  border-color: color-mix(in srgb, var(--tone) 40%, var(--hv-border));
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--tone) 35%, var(--hv-border));
   box-shadow:
-    0 22px 46px color-mix(in srgb, var(--tone) 22%, transparent),
-    0 6px 16px rgba(6, 40, 34, .06);
+    0 24px 48px -12px color-mix(in srgb, var(--tone) 15%, rgba(0,0,0,0.15)),
+    0 8px 16px -4px rgba(6, 40, 34, .08);
 }
 
 .svcs-card__media {
@@ -365,22 +361,26 @@
   pointer-events: none;
 }
 
-/* The icon plate: white, with the hue's dark end on the glyph. A white plate
-   is the one treatment that survives all eight tints underneath it, and the
-   dark end is what keeps the glyph readable on the white. */
 .svcs-card__plate {
   position: absolute;
   z-index: 2;
   left: var(--hv-s5);
-  bottom: var(--hv-s5);
+  bottom: calc(var(--hv-s5) * -1 + 8px); /* Let it overlap slightly with content */
   display: grid;
   place-items: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
-  background: #fff;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   color: var(--tone-ink);
-  box-shadow: 0 10px 22px rgba(3, 26, 22, .28);
+  box-shadow: 0 8px 16px rgba(3, 26, 22, .12);
+  transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.svcs-card:hover .svcs-card__plate {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(3, 26, 22, .18);
 }
 .svcs-card__plate svg { width: 22px; height: 22px; }
 

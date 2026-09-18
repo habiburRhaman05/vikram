@@ -43,19 +43,22 @@ const LOGOS = {
 };
 
 /**
- * Pricing - four tiers, one "Most Popular" ribbon, and a trusted-companies
- * logo strip closing the section.
+ * Pricing - four tiers and a trusted-companies logo strip closing the
+ * section.
  *
- * PLACEHOLDER NUMBERS. Every price and setup fee here comes straight from
- * PRICING in homeV2.jsx, which is marked as dummy data - see the comment
- * there. This component renders whatever it's given; swapping in real
- * numbers is a data-file edit, not a component change.
+ * Every price and setup fee here comes straight from PRICING in
+ * homeV2.jsx, which maps data/pricingPlans.json into a five-feature
+ * teaser per tier - see the comment there. This component renders
+ * whatever it's given; changing numbers or copy is a data-file edit,
+ * not a component change.
  *
  * Enterprise's price is `null` rather than 0 or "" - a tier with a real
  * number and a tier with "Custom" pricing are different shapes of fact,
  * and collapsing them to the same field with a magic value (0 meaning
  * "actually free" vs 0 meaning "no price") is exactly the kind of bug
  * that survives review because it looks like data, not a code path.
+ * Setup fee follows the same rule: `null` is "custom", `0` is "no fee",
+ * anything else is a real one-time amount - handled below.
  *
  * The trusted-companies strip renders inside this same section, under the
  * tier grid - it closes the offer instead of standing as its own section.
@@ -102,8 +105,10 @@ export default function Pricing() {
                 )}
               </div>
               <p className="hv-pricing__setup">
-                {tier.price == null
+                {tier.setup == null
                   ? "Custom setup & onboarding"
+                  : tier.setup === 0
+                  ? "No setup fee"
                   : `+ $${tier.setup.toLocaleString()} one-time setup`}
               </p>
 

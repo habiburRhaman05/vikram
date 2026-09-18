@@ -27,21 +27,20 @@
 
 .cs-hero {
   position: relative;
-  background: linear-gradient(170deg, var(--hv-bg-dark) 0%, #073029 58%, var(--hv-bg-dark-2) 100%);
+  background: radial-gradient(120% 140% at 14% -10%, #0E4B3E 0%, var(--hv-bg-dark) 46%, var(--hv-bg-dark-2) 100%);
   color: var(--hv-on-dark);
   padding-bottom: clamp(72px, 9vw, 120px);
   overflow: clip;
 }
-/* A faint blueprint grid - squarer and more regular than the other heroes'
-   textures, because this page's whole argument is structure. */
+/* A faint blueprint grid - updated to match the neon grid of other service detail pages */
 .cs-hero::before {
   content: "";
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
-  background-size: 36px 36px;
+    linear-gradient(rgba(53, 217, 160, .08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(53, 217, 160, .08) 1px, transparent 1px);
+  background-size: 42px 42px;
   mask-image: radial-gradient(90% 80% at 72% 20%, #000 10%, transparent 88%);
   -webkit-mask-image: radial-gradient(90% 80% at 72% 20%, #000 10%, transparent 88%);
   pointer-events: none;
