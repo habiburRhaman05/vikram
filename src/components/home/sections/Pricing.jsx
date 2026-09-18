@@ -132,18 +132,6 @@ export default function Pricing() {
           </Reveal>
         ))}
       </ul>
-
-      <Reveal className="hv-pricing__trusted" index={1}>
-        <h3 className="hv-pricing__trusted-title" id="trusted-title">{PRICING.trusted.title}</h3>
-        <p className="hv-pricing__trusted-lede">{PRICING.trusted.lede}</p>
-        <ul className="hv-pricing__logos">
-          {PRICING.trusted.items.map((item) => (
-            <li key={item.name} className="hv-pricing__logo" title={item.name}>
-              {LOGOS[item.logo]}
-            </li>
-          ))}
-        </ul>
-      </Reveal>
     </HvSection>
   );
 }

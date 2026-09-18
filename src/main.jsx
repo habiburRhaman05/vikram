@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App.jsx";
+import "./tmp-measure.js"; // TEMPORARY - see the file header
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
