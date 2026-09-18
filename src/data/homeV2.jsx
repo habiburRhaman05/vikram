@@ -152,7 +152,7 @@ export const WHAT_WE_DO = {
       title: "CRM Setup & Management",
       body: "GoHighLevel CRM configured end to end - pipelines, contacts, calendars and follow-up, ready on day one.",
       mock: "crm",
-      to: `/services/${slugify("CRM & GoHighLevel")}`,
+      to: `/services/crm-sub-account-setup`,
     },
     {
       id: "voice-ai",
