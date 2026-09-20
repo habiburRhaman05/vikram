@@ -30,7 +30,7 @@ export const STEP_META = [
     tabLabel: "Business Registration",
     icon: "file",
     heading: "Section 2: Business Registration",
-    description: "Optional: registration details and the person we should speak to, if you have them to hand.",
+    description: "Registration details and the authorized representative's info are required, unless you mark the business as unregistered.",
   },
   {
     key: "services",
@@ -207,7 +207,6 @@ export function createInitialFormData() {
 
 const INITIAL_FORM_DATA_SHAPE = {
   // Step 1 - General Business Info
-  friendlyBusinessName: "",
   legalBusinessName: "",
   businessEmail: "",
   businessPhone: "",

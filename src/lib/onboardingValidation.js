@@ -20,8 +20,8 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
    a one-letter business name is a typo. */
 const NAME_RE = /^[\p{L}\p{N}][\p{L}\p{N}\s&'’.,\-()]{1,}$/u;
 /* People's names are looser on purpose: single initials, apostrophes,
-   hyphens and particles are all normal, and these fields are optional -
-   rejecting "J" or "O'Brien" here would be our rule failing, not theirs. */
+   hyphens and particles are all normal - rejecting "J" or "O'Brien" here
+   would be our rule failing, not theirs. */
 const PERSON_NAME_RE = /^[\p{L}][\p{L}\s'’.-]*$/u;
 const CITY_RE = /^[\p{L}][\p{L}\s.'’-]{1,}$/u;
 
@@ -325,11 +325,7 @@ export function validateStep(stepIndex, data) {
        StepBusinessInfo in pages/Onboarding.jsx) and is checked only for
        shape when the visitor has chosen to fill it in - an empty optional
        field is an answer, not an omission. */
-    requireField(errors, data, "friendlyBusinessName");
-    if (data.friendlyBusinessName && !NAME_RE.test(data.friendlyBusinessName.trim())) {
-      errors.friendlyBusinessName = "Use letters and numbers - no symbols only.";
-    }
-
+    requireField(errors, data, "legalBusinessName");
     if (data.legalBusinessName && !NAME_RE.test(data.legalBusinessName.trim())) {
       errors.legalBusinessName = "Enter the registered name as it appears on your documents.";
     }
@@ -356,6 +352,7 @@ export function validateStep(stepIndex, data) {
        the country, and reported from there. */
     requireField(errors, data, "businessNiche", "Select your industry.");
 
+    requireField(errors, data, "streetAddress");
     if (data.streetAddress && digits(data.streetAddress).length === 0) {
       errors.streetAddress = "Include the street number, so we can find you.";
     }
@@ -373,6 +370,10 @@ export function validateStep(stepIndex, data) {
       }
     }
 
+    /* The UAE has no postal code system (POSTAL_RULES.AE is null on purpose -
+       see the note there), so it's the one country this field stays optional
+       for; everywhere else it's required like the rest of the address. */
+    if (countryCode !== "AE") requireField(errors, data, "postalZip");
     if (data.postalZip && countryCode) {
       const rule = POSTAL_RULES[countryCode];
       if (rule && !rule.re.test(data.postalZip.trim())) errors.postalZip = rule.message;
@@ -390,28 +391,39 @@ export function validateStep(stepIndex, data) {
     }
   }
 
-  /* The whole registration section is optional; what is left are the checks
-     that only make sense once something has been typed. */
+  /* Business Type, the registration ID/number and the Authorized
+     Representative fields are all required now. The one carve-out is the
+     "My business is not registered" checkbox: checking it is itself the
+     answer for registrationIdType/registrationNumber, so those two stay
+     required only when it's unchecked. */
   if (stepIndex === 1) {
+    requireField(errors, data, "businessType", "Select your business type.");
+
     const meta = registrationTypeMeta(countryCode, data.registrationIdType);
     const number = String(data.registrationNumber || "").trim();
 
     if (data.notRegistered) {
       /* Nothing to check - the checkbox means they don't have one. */
-    } else if (number && !data.registrationIdType) {
-      /* A consistency rule, not a requirement: we can't tell an EIN from an
-         ABN from a GSTIN, so an unidentified number is noise to the team. */
-      errors.registrationIdType = "Select what kind of ID this number is.";
-    } else if (number && meta?.validate) {
-      const message = meta.validate(number, countryCode);
-      if (message) errors.registrationNumber = message;
-    } else if (number && number.replace(/[^a-z0-9]/gi, "").length < 4) {
-      errors.registrationNumber = "That looks too short for a registration number.";
+    } else {
+      requireField(errors, data, "registrationIdType", "Select what kind of ID this number is.");
+      requireField(errors, data, "registrationNumber", "Enter your registration number.");
+      if (!errors.registrationIdType && !errors.registrationNumber) {
+        if (meta?.validate) {
+          const message = meta.validate(number, countryCode);
+          if (message) errors.registrationNumber = message;
+        } else if (number.replace(/[^a-z0-9]/gi, "").length < 4) {
+          errors.registrationNumber = "That looks too short for a registration number.";
+        }
+      }
     }
 
+    requireField(errors, data, "repFirstName");
     if (data.repFirstName && !PERSON_NAME_RE.test(data.repFirstName.trim())) errors.repFirstName = "Enter a valid first name.";
+
+    requireField(errors, data, "repLastName");
     if (data.repLastName && !PERSON_NAME_RE.test(data.repLastName.trim())) errors.repLastName = "Enter a valid last name.";
 
+    requireField(errors, data, "repEmail");
     if (data.repEmail) {
       const email = data.repEmail.trim();
       if (!EMAIL_RE.test(email)) errors.repEmail = "Enter a valid email address.";
@@ -422,6 +434,9 @@ export function validateStep(stepIndex, data) {
       }
     }
 
+    requireField(errors, data, "repJobTitle", "Select your job position.");
+
+    requireField(errors, data, "repPhone");
     if (data.repPhone && !phoneIsValid(data.repPhone, data.repPhoneCountry || countryCode)) {
       errors.repPhone = "Enter a valid phone number, including the area code.";
     }

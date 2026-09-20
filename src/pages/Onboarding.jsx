@@ -127,7 +127,11 @@ function buildPayload(formData, rowCount) {
     submitted_at: new Date().toISOString(),
 
     // Section 1 - General Business Info
-    friendly_business_name: clean(formData.friendlyBusinessName),
+    /* The wizard asks for the business name once now (Legal Business Name -
+       see StepBusinessInfo) rather than a separate "friendly" name.
+       friendly_business_name is still sent, mirroring the same value, so an
+       existing GoHighLevel workflow mapped to that key keeps working. */
+    friendly_business_name: clean(formData.legalBusinessName),
     legal_business_name: clean(formData.legalBusinessName),
     business_email: clean(formData.businessEmail),
     business_phone: phoneToE164(formData.businessPhone, formData.businessPhoneCountry || countryCode),
@@ -450,7 +454,7 @@ export default function Onboarding() {
             <span className={`ob-result__tick${status === "warn" ? " ob-result__tick--warn" : ""}`} aria-hidden="true">
               <Icon name="check" />
             </span>
-            <h2>You&rsquo;re all set{formData.friendlyBusinessName ? `, ${formData.friendlyBusinessName}` : ""}!</h2>
+            <h2>You&rsquo;re all set{formData.legalBusinessName ? `, ${formData.legalBusinessName}` : ""}!</h2>
             {status === "warn" && (
               <p className="ob-result__warning">
                 We couldn&rsquo;t confirm delivery of your answers - the connection to our system didn&rsquo;t respond
@@ -553,11 +557,10 @@ export default function Onboarding() {
  * what industry it's in (that picks the CRM template and the automations), and
  * where it is.
  *
- * The street address, region and postal code are still asked for - they're
- * what the sender identity, the local number and the local review flows are
- * built from - but they're marked Optional and the wizard no longer stops on
- * them: a business that runs from a home office often doesn't want to give an
- * address before it has signed anything.
+ * The street address, city and postal code are required (region stays
+ * optional) - they're what the sender identity, the local number and the
+ * local review flows are built from, so the wizard needs a real answer
+ * before moving on rather than letting the address go unset.
  */
 function StepBusinessInfo({ data, errors, onChange, onCountryChange, onPhoneCountryChange }) {
   const country = countryByName(data.country);
@@ -568,11 +571,10 @@ function StepBusinessInfo({ data, errors, onChange, onCountryChange, onPhoneCoun
   return (
     <>
       <div className="ob-row">
-        <TextField label="Friendly Business Name" name="friendlyBusinessName" required placeholder="The name your clients know you by" value={data.friendlyBusinessName} error={errors.friendlyBusinessName} onChange={onChange} />
-        <TextField label="Legal Business Name" name="legalBusinessName" placeholder="Exactly as registered" helper="Leave blank if you trade under your own name." value={data.legalBusinessName} error={errors.legalBusinessName} onChange={onChange} />
+        <TextField label="Legal Business Name" name="legalBusinessName" required placeholder="Exactly as registered" value={data.legalBusinessName} error={errors.legalBusinessName} onChange={onChange} />
+        <TextField label="Business Email" name="businessEmail" type="email" required placeholder="you@yourbusiness.com" autoComplete="email" value={data.businessEmail} error={errors.businessEmail} onChange={onChange} />
       </div>
       <div className="ob-row">
-        <TextField label="Business Email" name="businessEmail" type="email" required placeholder="you@yourbusiness.com" autoComplete="email" value={data.businessEmail} error={errors.businessEmail} onChange={onChange} />
         <PhoneField
           label="Business Phone"
           name="businessPhone"
@@ -583,8 +585,6 @@ function StepBusinessInfo({ data, errors, onChange, onCountryChange, onPhoneCoun
           error={errors.businessPhone}
           onChange={onChange}
         />
-      </div>
-      <div className="ob-row">
         <SelectField
           label="Business Niche/Industry"
           name="businessNiche"
@@ -595,6 +595,8 @@ function StepBusinessInfo({ data, errors, onChange, onCountryChange, onPhoneCoun
           error={errors.businessNiche}
           onChange={onChange}
         />
+      </div>
+      <div className="ob-row ob-row--1">
         <SelectField
           label="Country"
           name="country"
@@ -608,7 +610,7 @@ function StepBusinessInfo({ data, errors, onChange, onCountryChange, onPhoneCoun
         />
       </div>
       <div className="ob-row ob-row--1">
-        <TextField label="Street Address" name="streetAddress" placeholder="Street number and name" autoComplete="address-line1" value={data.streetAddress} error={errors.streetAddress} onChange={onChange} />
+        <TextField label="Street Address" name="streetAddress" required placeholder="Street number and name" autoComplete="address-line1" value={data.streetAddress} error={errors.streetAddress} onChange={onChange} />
       </div>
       <div className="ob-row">
         {cities ? (
@@ -651,7 +653,7 @@ function StepBusinessInfo({ data, errors, onChange, onCountryChange, onPhoneCoun
         )}
       </div>
       <div className="ob-row">
-        <TextField label={countryCode ? postalLabelFor(countryCode) : "Postal/Zip Code"} name="postalZip" placeholder={postalPlaceholder(countryCode)} autoComplete="postal-code" value={data.postalZip} error={errors.postalZip} onChange={onChange} />
+        <TextField label={countryCode ? postalLabelFor(countryCode) : "Postal/Zip Code"} name="postalZip" required={countryCode !== "AE"} placeholder={postalPlaceholder(countryCode)} autoComplete="postal-code" value={data.postalZip} error={errors.postalZip} onChange={onChange} />
         <SelectField
           label="Platform Language"
           name="platformLanguage"
@@ -702,12 +704,13 @@ function StepRegistration({ data, errors, onChange, onNotRegistered, onPhoneCoun
 
   return (
     <>
-      <RadioGroup label="Business Type" name="businessType" options={BUSINESS_TYPES} value={data.businessType} error={errors.businessType} onChange={onChange} />
+      <RadioGroup label="Business Type" name="businessType" required options={BUSINESS_TYPES} value={data.businessType} error={errors.businessType} onChange={onChange} />
 
       <div className="ob-row">
         <SelectField
           label="Business Registration ID Type"
           name="registrationIdType"
+          required={!data.notRegistered}
           placeholder={countryCode ? "Select the ID you have" : "Select a country first"}
           options={types.map((t) => ({ value: t.value, label: t.value }))}
           value={data.registrationIdType}
@@ -719,6 +722,7 @@ function StepRegistration({ data, errors, onChange, onNotRegistered, onPhoneCoun
         <TextField
           label={activeType?.fieldLabel || "Business Registration Number"}
           name="registrationNumber"
+          required={!data.notRegistered}
           placeholder={activeType?.placeholder || "Enter the number"}
           helper={activeType?.hint || undefined}
           value={data.registrationNumber}
@@ -738,14 +742,15 @@ function StepRegistration({ data, errors, onChange, onNotRegistered, onPhoneCoun
       </p>
 
       <div className="ob-row">
-        <TextField label="First Name" name="repFirstName" autoComplete="given-name" value={data.repFirstName} error={errors.repFirstName} onChange={onChange} />
-        <TextField label="Last Name" name="repLastName" autoComplete="family-name" value={data.repLastName} error={errors.repLastName} onChange={onChange} />
+        <TextField label="First Name" name="repFirstName" required autoComplete="given-name" value={data.repFirstName} error={errors.repFirstName} onChange={onChange} />
+        <TextField label="Last Name" name="repLastName" required autoComplete="family-name" value={data.repLastName} error={errors.repLastName} onChange={onChange} />
       </div>
       <div className="ob-row">
-        <TextField label="Representative Email" name="repEmail" type="email" placeholder="you@yourbusiness.com" autoComplete="email" value={data.repEmail} error={errors.repEmail} onChange={onChange} />
+        <TextField label="Representative Email" name="repEmail" type="email" required placeholder="you@yourbusiness.com" autoComplete="email" value={data.repEmail} error={errors.repEmail} onChange={onChange} />
         <SelectField
           label="Job Position"
           name="repJobTitle"
+          required
           placeholder="Search job titles"
           options={JOB_TITLE_OPTIONS}
           value={data.repJobTitle}
@@ -757,11 +762,12 @@ function StepRegistration({ data, errors, onChange, onNotRegistered, onPhoneCoun
         <PhoneField
           label="Phone Number (with country code)"
           name="repPhone"
+          required
           value={data.repPhone}
           countryCode={data.repPhoneCountry}
           onCountryChange={onPhoneCountryChange("repPhoneCountry")}
           error={errors.repPhone}
-          helper="Where we call if we need to confirm a detail. Leave it blank if the business number above is best."
+          helper="Where we call if we need to confirm a detail about the business."
           onChange={onChange}
         />
       </div>
